@@ -1,0 +1,59 @@
+import 'package:handyman_provider_flutter/models/user_data.dart';
+import 'package:handyman_provider_flutter/provider/jobRequest/models/post_job_data.dart';
+
+class BidderData {
+  num? id;
+  num? postRequestId;
+  num? providerId;
+  num? price;
+  String? duration;
+  String? whyChooseMe;
+  String? type;
+  UserData? provider;
+  PostJobData? postJobData;
+
+  BidderData({
+    this.id,
+    this.postRequestId,
+    this.providerId,
+    this.price,
+    this.duration,
+    this.whyChooseMe,
+    this.type,
+    this.provider,
+    this.postJobData,
+  });
+
+  BidderData.fromJson(dynamic json) {
+    id = json['id'];
+    postRequestId = json['post_request_id'];
+    providerId = json['provider_id'];
+    price = json['price'];
+    duration = json['duration'];
+    type = json['type'];
+    whyChooseMe = json["why_choose_me"];
+    provider =
+        json['provider'] != null ? UserData.fromJson(json['provider']) : null;
+    postJobData = json['post_detail'] != null
+        ? PostJobData.fromJson(json['post_detail'])
+        : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['id'] = id;
+    map['post_request_id'] = postRequestId;
+    map['provider_id'] = providerId;
+    map['price'] = price;
+    map['duration'] = duration;
+    map['type'] = type;
+    map['why_choose_me'] = whyChooseMe;
+    if (provider != null) {
+      map['provider'] = provider?.toJson();
+    }
+    if (postJobData != null) {
+      map['post_detail'] = postJobData?.toJson();
+    }
+    return map;
+  }
+}

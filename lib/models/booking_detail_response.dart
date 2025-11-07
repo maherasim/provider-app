@@ -62,7 +62,14 @@ class BookingDetailResponse {
     if (json['handyman_data'] != null) {
       handymanData = [];
       json['handyman_data'].forEach((v) {
-        handymanData!.add(new UserData.fromJson(v));
+        // Some APIs return each item as { "handyman": { ...user... }, "handyman_review": ... }
+        // Fallback to the nested 'handyman' map if present; otherwise treat the item itself as the user map.
+        if (v is Map<String, dynamic>) {
+          final dynamic maybeUser = v.containsKey('handyman') ? v['handyman'] : v;
+          if (maybeUser is Map<String, dynamic>) {
+            handymanData!.add(UserData.fromJson(maybeUser));
+          }
+        }
       });
     }
     if (json['service_proof'] != null) {

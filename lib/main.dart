@@ -48,6 +48,13 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   log('Message Data : ${message.data}');
   Firebase.initializeApp();
+  try {
+    final title = message.notification?.title ?? 'New message';
+    final body = message.notification?.body ?? (message.data['preview']?.toString() ?? 'You have a new message');
+    showNotification(currentTimeStamp(), title, body, message);
+  } catch (e) {
+    log('Background showNotification error: $e');
+  }
 }
 //endregion
 

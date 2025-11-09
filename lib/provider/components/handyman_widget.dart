@@ -48,7 +48,8 @@ class _HandymanWidgetState extends State<HandymanWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> address = widget.data!.address.validate().split(',');
+    final String cleanedAddress = parseHtmlString(widget.data!.address.validate());
+    final List<String> address = cleanedAddress.split(',').map((e) => e.trim()).toList();
     print(widget.data?.address);
     return Stack(
       children: [
@@ -95,10 +96,12 @@ class _HandymanWidgetState extends State<HandymanWidget> {
                         isHandymanAvailable: widget.data!.isHandymanAvailable,
                         size: 14,
                       ).center(),
-                      if (widget.data!.address.validate().isNotEmpty) ...[
+                      if (cleanedAddress.isNotEmpty) ...[
                         5.height,
                         Text(
-                          '${address.first.validate()}-${address.last.validate()}',
+                          address.length >= 2
+                              ? '${address.first.validate()}-${address.last.validate()}'
+                              : cleanedAddress,
                           style: primaryTextStyle(size: 10),
                           maxLines: 1,
                         ).center(),

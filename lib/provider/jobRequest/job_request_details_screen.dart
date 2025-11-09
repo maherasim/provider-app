@@ -5,14 +5,14 @@ import 'package:handyman_provider_flutter/components/base_scaffold_widget.dart';
 import 'package:handyman_provider_flutter/components/empty_error_state_widget.dart';
 import 'package:handyman_provider_flutter/components/price_widget.dart';
 import 'package:handyman_provider_flutter/main.dart';
-import 'package:handyman_provider_flutter/models/user_data.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/components/extra_charges_dialog.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/components/hold_dialog.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/components/split_payment.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/models/post_job_data.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/models/post_job_detail_response.dart';
-import 'package:handyman_provider_flutter/screens/chat/user_chat_screen.dart';
+import 'package:handyman_provider_flutter/networks/frobster_chat_api.dart';
+import 'package:handyman_provider_flutter/screens/chat/frobster_chat_thread_screen.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
@@ -20,7 +20,6 @@ import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/extensions/num_extenstions.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class JobRequestDetailsScreen extends StatefulWidget {
   final num acceptedBidId;
@@ -422,7 +421,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   ),
                 ],
               ).paddingOnly(bottom: 24),
-              if(postJobDetail!.status == RequestStatus.remainingPaid) Row(
+              if([RequestStatus.advancePaid, RequestStatus.inProcess, RequestStatus.inProgress, RequestStatus.hold, RequestStatus.done, RequestStatus.confirmDone, RequestStatus.completed, RequestStatus.remainingPaid].contains(postJobDetail!.status)) Row(
                 children: [
                   Expanded(
                     child: AppButton(
@@ -431,20 +430,33 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                       color: context.primaryColor,
                       width: context.width(),
                       onTap: () async {
+                        final customerId = postJobDetail?.customer?.id;
+                        if (customerId == null) {
+                          toast(languages.somethingWentWrong);
+                          return;
+                        }
                         toast(languages.pleaseWaitWhileWeLoadChatDetails);
-                        UserData? user = await userService.getUserNull(email: postJobDetail?.customer?.id?.toString(),key: 'id');
-                        if (user != null) {
+                        try {
+                          final res = await FrobsterChatApi.openWithUser(userId: customerId, title: 'Direct Message');
                           Fluttertoast.cancel();
-                          UserChatScreen(receiverUser: user).launch(context);
-                        } else {
+                          if (res.status && res.conversationId != 0) {
+                            FrobsterChatThreadScreen(
+                              conversationId: res.conversationId,
+                              title: 'Direct Message',
+                              otherDisplayName: postJobDetail?.customer?.displayName,
+                            ).launch(context);
+                          } else {
+                            toast("${postJobDetail?.customer?.displayName} ${languages.isNotAvailableForChat}");
+                          }
+                        } catch (e) {
                           Fluttertoast.cancel();
-                          toast("${postJobDetail?.customer?.displayName} ${languages.isNotAvailableForChat}");
+                          toast(e.toString(), print: true);
                         }
                       },
                     ),
                   ),
-                  16.width,
-                  Expanded(
+                  if(postJobDetail!.status == RequestStatus.remainingPaid) 16.width,
+                  if(postJobDetail!.status == RequestStatus.remainingPaid) Expanded(
                     child: AppButton(
                       text: 'Download',
                       textStyle: boldTextStyle(color: white, size: 16),

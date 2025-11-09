@@ -5,7 +5,8 @@ import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/models/booking_list_response.dart';
 import 'package:handyman_provider_flutter/models/service_model.dart';
 import 'package:handyman_provider_flutter/models/user_data.dart';
-import 'package:handyman_provider_flutter/screens/chat/user_chat_screen.dart';
+import 'package:handyman_provider_flutter/networks/frobster_chat_api.dart';
+import 'package:handyman_provider_flutter/screens/chat/frobster_chat_thread_screen.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
@@ -172,28 +173,7 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
                   ),
               ],
             ).expand(),
-            if (showContactWidgets) ...[
-              GestureDetector(
-                onTap: () {
-                  String phoneNumber = "";
-                  if (widget.handymanData != null &&
-                      widget.handymanData!.contactNumber
-                          .validate()
-                          .contains('+')) {
-                    phoneNumber =
-                        "${contactNumber.validate().replaceAll('-', '')}";
-                  } else {
-                    phoneNumber =
-                        "+${contactNumber.validate().replaceAll('-', '')}";
-                  }
-                  launchUrl(
-                      Uri.parse(
-                          '${getSocialMediaLink(LinkProvider.WHATSAPP)}$phoneNumber'),
-                      mode: LaunchMode.externalApplication);
-                },
-                child: Image.asset(ic_whatsapp, height: 22),
-              ).paddingRight(8).visible(contactNumber.validate().isNotEmpty),
-            ]
+            // Removed WhatsApp quick action
           ],
         ),
         if (widget.bookingDetail!.canCustomerContact && widget.flag == 0)
@@ -264,29 +244,10 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
               ],
             ],
           ).paddingSymmetric(horizontal: 4),
-        if (contactNumber.validate().isNotEmpty) ...[
+        if (showChat) ...[
           16.height,
           Row(
             children: [
-              if (showContactWidgets) ...[
-                AppButton(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(calling, height: 18, width: 18),
-                      16.width,
-                      Text(languages.lblCall, style: boldTextStyle()),
-                    ],
-                  ),
-                  width: context.width(),
-                  color: context.scaffoldBackgroundColor,
-                  elevation: 0,
-                  onTap: () {
-                    launchCall(contactNumber.validate());
-                  },
-                ).expand(),
-                24.width
-              ],
               AppButton(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -298,31 +259,32 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
                         style: boldTextStyle(color: Colors.white)),
                   ],
                 ),
-                width:
-                    showContactWidgets ? context.width() : context.width() / 2,
+                width: context.width(),
                 elevation: 0,
                 color: primaryColor,
                 onTap: () async {
-                  //ChatScreen(chatUser: ChatUserModel(id: userData.uid!, email: userData.email!, name: userData.firstName!)).launch(context);
+                  final receiverId = userData.id;
+                  if (receiverId == null) {
+                    toast(languages.somethingWentWrong);
+                    return;
+                  }
                   toast(languages.pleaseWaitWhileWeLoadChatDetails);
-                  UserData? user = await userService.getUserNull(
-                      email: userData.email.validate());
-                  if (user != null) {
+                  try {
+                    final res = await FrobsterChatApi.openWithUser(userId: receiverId, title: 'Direct Message');
                     Fluttertoast.cancel();
-                    if (widget.bookingDetail != null) {
-                      isChattingAllow = widget.bookingDetail!.status ==
-                              BookingStatusKeys.complete ||
-                          widget.bookingDetail!.status ==
-                              BookingStatusKeys.cancelled;
+                    if (res.status && res.conversationId != 0) {
+                      FrobsterChatThreadScreen(
+                        conversationId: res.conversationId,
+                        title: 'Direct Message',
+                        otherDisplayName: name,
+                        otherAvatarUrl: profileUrl,
+                      ).launch(context);
+                    } else {
+                      toast("${name.validate()} ${languages.isNotAvailableForChat}");
                     }
-                    UserChatScreen(
-                            receiverUser: user,
-                            isChattingAllow: isChattingAllow)
-                        .launch(context);
-                  } else {
+                  } catch (e) {
                     Fluttertoast.cancel();
-                    toast(
-                        "${userData.firstName} ${languages.isNotAvailableForChat}");
+                    toast(e.toString(), print: true);
                   }
                 },
               ).expand(),

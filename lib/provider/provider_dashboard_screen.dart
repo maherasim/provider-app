@@ -8,13 +8,14 @@ import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/provider/fragments/provider_home_fragment.dart';
 import 'package:handyman_provider_flutter/provider/fragments/provider_profile_fragment.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/job_list_screen.dart';
-import 'package:handyman_provider_flutter/screens/chat/user_chat_list_screen.dart';
+import 'package:handyman_provider_flutter/screens/chat/frobster_conversation_list_screen.dart';
+import 'package:handyman_provider_flutter/networks/frobster_chat_api.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
-import 'package:nb_utils/nb_utils.dart';
 
 import '../booking_filter/booking_filter_screen.dart';
 import '../components/image_border_component.dart';
@@ -33,11 +34,13 @@ class ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
 
   DateTime? currentBackPressTime;
 
+  int _chatUnread = 0;
+
   List<Widget> fragmentList = [
     ProviderHomeFragment(),
     BookingFragment(),
     JobListScreen(fromDashboard: true),
-    ChatListScreen(),
+    FrobsterConversationListScreen(),
     ProviderProfileFragment(),
   ];
 
@@ -60,6 +63,14 @@ class ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
                 .setDarkMode(context.platformBrightness() == Brightness.light);
           }
         };
+
+        // Initial chat unread fetch
+        _refreshChatUnread();
+
+        // Refresh chat unread on push or other events
+        LiveStream().on(LIVESTREAM_UPDATE_CHAT_UNREAD, (p0) {
+          _refreshChatUnread();
+        });
       },
     );
 
@@ -83,6 +94,17 @@ class ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
   void dispose() {
     super.dispose();
     LiveStream().dispose(LIVESTREAM_PROVIDER_ALL_BOOKING);
+    LiveStream().dispose(LIVESTREAM_UPDATE_CHAT_UNREAD);
+  }
+
+  Future<void> _refreshChatUnread() async {
+    try {
+      final res = await FrobsterChatApi.getUnreadSummary();
+      final total = res.totalUnread;
+      if (mounted) setState(() => _chatUnread = total);
+    } catch (e) {
+      // ignore errors
+    }
   }
 
   @override
@@ -183,10 +205,44 @@ class ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
                   label: languages.lblJob,
                 ),
                 NavigationDestination(
-                  icon: Image.asset(chat,
-                      height: 20, width: 20, color: appTextSecondaryColor),
-                  selectedIcon:
+                  icon: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Image.asset(chat, height: 20, width: 20, color: appTextSecondaryColor),
+                      if (_chatUnread > 0)
+                        Positioned(
+                          top: -8,
+                          right: -10,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: boxDecorationDefault(color: Colors.red, shape: BoxShape.rectangle, borderRadius: radius(10)),
+                            child: Text(
+                              _chatUnread.toString(),
+                              style: primaryTextStyle(size: 10, color: Colors.white),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  selectedIcon: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
                       Image.asset(ic_fill_textMsg, height: 26, width: 26),
+                      if (_chatUnread > 0)
+                        Positioned(
+                          top: -6,
+                          right: -8,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: boxDecorationDefault(color: Colors.red, shape: BoxShape.rectangle, borderRadius: radius(10)),
+                            child: Text(
+                              _chatUnread.toString(),
+                              style: primaryTextStyle(size: 10, color: Colors.white),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                   label: languages.lblChat,
                 ),
                 Observer(builder: (context) {

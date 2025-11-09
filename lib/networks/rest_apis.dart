@@ -71,6 +71,8 @@ import '../provider/jobRequest/models/bidder_data.dart';
 import '../provider/jobRequest/models/post_job_data.dart';
 import '../utils/app_configuration.dart';
 import '../utils/firebase_messaging_utils.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:handyman_provider_flutter/networks/push_api.dart';
 
 //region Auth API
 
@@ -109,6 +111,15 @@ Future<void> logout(BuildContext context) async {
                     onTap: () async {
                       if (await isNetworkAvailable()) {
                         appStore.setLoading(true);
+                        // Unregister FCM token from backend first (best-effort)
+                        try {
+                          final token = await FirebaseMessaging.instance.getToken();
+                          if (token != null) {
+                            await PushApi.unregister(token: token);
+                          }
+                        } catch (e) {
+                          log('Push unregister error: $e');
+                        }
                         logoutApi().then((value) async {}).catchError((e) {
                           toast(e.toString());
                         });

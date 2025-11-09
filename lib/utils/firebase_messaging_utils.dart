@@ -13,8 +13,9 @@ import 'package:path_provider/path_provider.dart';
 import '../main.dart';
 import '../provider/services/service_detail_screen.dart';
 import '../screens/booking_detail_screen.dart';
-import '../screens/chat/user_chat_list_screen.dart';
+import '../screens/chat/frobster_chat_thread_screen.dart';
 import 'constant.dart';
+import '../networks/push_api.dart';
 
 Future<void> initFirebaseMessaging() async {
   await FirebaseMessaging.instance
@@ -35,15 +36,54 @@ Future<void> initFirebaseMessaging() async {
       await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(alert: true, badge: true, sound: true).catchError((e) {
         log('------setForegroundNotificationPresentationOptions ERROR-----------');
       });
+
+      // Register push token with backend
+      try {
+        final token = await FirebaseMessaging.instance.getToken();
+        if (token != null) {
+          final platform = Platform.isAndroid ? 'android' : (Platform.isIOS ? 'ios' : 'web');
+          await PushApi.register(token: token, platform: platform);
+        }
+        // Re-register on refresh
+        FirebaseMessaging.instance.onTokenRefresh.listen((t) async {
+          final platform = Platform.isAndroid ? 'android' : (Platform.isIOS ? 'ios' : 'web');
+          await PushApi.register(token: t, platform: platform);
+        });
+      } catch (e) {
+        log('Push register error: $e');
+      }
     }
   });
 }
 
 Future<void> registerNotificationListeners() async {
   FirebaseMessaging.instance.setAutoInitEnabled(true).then((value) {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       if (message.notification != null && message.notification!.title.validate().isNotEmpty && message.notification!.body.validate().isNotEmpty) {
         showNotification(currentTimeStamp(), message.notification!.title.validate(), parseHtmlString(message.notification!.body.validate()), message);
+      } else {
+        // Data-only push - build a basic notification
+        final data = message.data;
+        final title = data['title']?.toString().validate().isNotEmpty == true ? data['title'].toString() : 'New message';
+        final body = data['preview']?.toString().validate().isNotEmpty == true ? data['preview'].toString() : 'You have a new message';
+        showNotification(currentTimeStamp(), title, body, message);
+      }
+      // Foreground chat handling (optional lightweight)
+      try {
+        final data = message.data;
+        if (data['type'] == 'chat' && data['conversation_id'] != null) {
+          LiveStream().emit(LIVESTREAM_UPDATE_CHAT_UNREAD);
+          // Increment top bell badge like WhatsApp (in-app counter)
+          try {
+            final current = appStore.notificationCount;
+            final next = (current > 0) ? current + 1 : 1;
+            await appStore.setNotificationCount(next);
+          } catch (e) {
+            log('increment notificationCount error: $e');
+          }
+        }
+      } catch (e) {
+        log('onMessage chat parse error: $e');
       }
     }, onError: (e) {
       log("setAutoInitEnabled error $e");
@@ -116,10 +156,12 @@ Future<bool> unsubscribeFirebaseTopic(int userId) async {
 }
 
 void handleNotificationClick(RemoteMessage message) {
-  if (message.data.containsKey('is_chat')) {
-    if (message.data.isNotEmpty) {
-      navigatorKey.currentState!.push(MaterialPageRoute(builder: (context) => ChatListScreen()));
-      // navigatorKey.currentState!.push(MaterialPageRoute(builder: (context) => UserChatScreen(receiverUser: UserData.fromJson(message.data))));
+  if ((message.data['type'] == 'chat' || message.data.containsKey('conversation_id'))) {
+    final cidRaw = message.data['conversation_id']?.toString();
+    final cid = int.tryParse(cidRaw ?? '');
+    if (cid != null && cid > 0) {
+      navigatorKey.currentState!.push(MaterialPageRoute(builder: (context) => FrobsterChatThreadScreen(conversationId: cid)));
+      return;
     }
   } else if (message.data.containsKey('additional_data')) {
     Map<String, dynamic> additionalData = jsonDecode(message.data["additional_data"]) ?? {};
@@ -140,9 +182,13 @@ void handleNotificationClick(RemoteMessage message) {
 }
 
 void showNotification(int id, String title, String message, RemoteMessage remoteMessage) async {
-  log('Notification : ${remoteMessage.notification!.toMap()}');
-  log('Message Data : ${remoteMessage.data}');
-  log("Provider Message Image Url : ${remoteMessage.data["image_url"]} ");
+  if (remoteMessage.notification != null) {
+    log('Notification : ${remoteMessage.notification!.toMap()}');
+  }
+  if (remoteMessage.data.isNotEmpty) {
+    log('Message Data : ${remoteMessage.data}');
+    log("Provider Message Image Url : ${remoteMessage.data["image_url"]} ");
+  }
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   //code for background notification channel
@@ -210,5 +256,5 @@ void showNotification(int id, String title, String message, RemoteMessage remote
     macOS: darwinPlatformChannelSpecifics,
   );
 
-  flutterLocalNotificationsPlugin.show(id, remoteMessage.notification!.title.validate(), remoteMessage.notification!.body.validate(), platformChannelSpecifics);
+  flutterLocalNotificationsPlugin.show(id, title, message, platformChannelSpecifics);
 }

@@ -27,6 +27,8 @@ import 'package:nb_utils/nb_utils.dart';
 import '../../components/chat_gpt_loder.dart';
 import '../../models/multi_language_request_model.dart';
 import '../../models/static_data_model.dart';
+import '../../models/user_data.dart';
+import '../../provider/jobRequest/models/post_job_data.dart';
 
 class AddServices extends StatefulWidget {
   final ServiceData? data;
@@ -139,6 +141,13 @@ class _AddServicesState extends State<AddServices> {
   Map<String, MultiLanguageRequest> translations = {};
   MultiLanguageRequest enTranslations = MultiLanguageRequest();
 
+  // New fields for documentation requirements
+  int? selectedProviderId;
+  List<UserData> providerList = [];
+  RemoteWorkLevel? selectedRemoteWorkLevel = RemoteWorkLevel.onsite0;
+  CareerLevel? selectedCareerLevel = CareerLevel.entry;
+  TravelRequirement? selectedTravelRequired = TravelRequirement.no;
+
   @override
   void initState() {
     super.initState();
@@ -194,12 +203,87 @@ class _AddServicesState extends State<AddServices> {
       selectedVisitType = visitTypeData.firstWhere(
           (element) => element.key == widget.data!.visitType.validate(),
           orElse: () => visitTypeData.first);
+
+      // Load new fields from existing data if available
+      selectedProviderId = widget.data!.providerId;
+      
+      // Load remote work level
+      if (widget.data!.remoteWorkLevel != null) {
+        try {
+          selectedRemoteWorkLevel = RemoteWorkLevel.values.firstWhere(
+            (e) => e.backendValue == widget.data!.remoteWorkLevel,
+            orElse: () => RemoteWorkLevel.onsite0,
+          );
+        } catch (e) {
+          selectedRemoteWorkLevel = RemoteWorkLevel.onsite0;
+        }
+      }
+      
+      // Load career level
+      if (widget.data!.careerLevel != null) {
+        try {
+          selectedCareerLevel = CareerLevel.values.firstWhere(
+            (e) => e.backendValue == widget.data!.careerLevel,
+            orElse: () => CareerLevel.entry,
+          );
+        } catch (e) {
+          selectedCareerLevel = CareerLevel.entry;
+        }
+      }
+      
+      // Load travel required
+      if (widget.data!.travelRequired != null) {
+        try {
+          selectedTravelRequired = TravelRequirement.values.firstWhere(
+            (e) => e.backendValue == widget.data!.travelRequired,
+            orElse: () => TravelRequirement.no,
+          );
+        } catch (e) {
+          selectedTravelRequired = TravelRequirement.no;
+        }
+      }
     }
 
+    // Load provider list if user is admin
+    if (_isAdminUser()) {
+      await loadProviderList();
+    }
    
     await getCountryStateCityData();
     setState(() {});
     await timeSlotStore.timeSlotForProvider();
+  }
+
+  bool _isAdminUser() {
+    final userType = appStore.userType.toLowerCase();
+    return userType == 'admin' || userType == 'demo_admin';
+  }
+
+  Future<void> loadProviderList() async {
+    appStore.setLoading(true);
+    try {
+      await getProviderList(
+        page: 1,
+        keyword: '',
+        status: '',
+        list: providerList,
+        lastPageCallback: (isLast) {},
+      );
+      if (isUpdate && selectedProviderId != null) {
+        // Find and set selected provider
+        final provider = providerList.firstWhere(
+          (p) => p.id == selectedProviderId,
+          orElse: () => providerList.isNotEmpty ? providerList.first : UserData(),
+        );
+        if (provider.id != null) {
+          selectedProviderId = provider.id;
+        }
+      }
+    } catch (e) {
+      toast('$e', print: true);
+    }
+    appStore.setLoading(false);
+    setState(() {});
   }
 
   getCountryStateCityData() async {
@@ -283,6 +367,37 @@ class _AddServicesState extends State<AddServices> {
       return;
     }
 
+    // Validate required fields per documentation
+    if (stateId == 0) {
+      toast('Please select state');
+      return;
+    }
+
+    if (cityId == 0) {
+      toast('Please select city');
+      return;
+    }
+
+    if (selectedRemoteWorkLevel == null) {
+      toast('Please select remote work level');
+      return;
+    }
+
+    if (selectedCareerLevel == null) {
+      toast('Please select career level');
+      return;
+    }
+
+    if (selectedTravelRequired == null) {
+      toast('Please select travel required');
+      return;
+    }
+
+    if (_isAdminUser() && selectedProviderId == null) {
+      toast('Please select provider');
+      return;
+    }
+
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
       hideKeyboard(context);
@@ -316,7 +431,9 @@ class _AddServicesState extends State<AddServices> {
   Map<String, dynamic> _buildServiceRequest() {
     final req = {
       AddServiceKey.name: enTranslations.name.validate(),
-      AddServiceKey.providerId: appStore.userId.validate(),
+      AddServiceKey.providerId: _isAdminUser() && selectedProviderId != null 
+          ? selectedProviderId!.validate() 
+          : appStore.userId.validate(),
       AddServiceKey.categoryId: categoryId,
       AddServiceKey.type: serviceType.validate(),
       AddServiceKey.price: priceCont.text,
@@ -332,9 +449,11 @@ class _AddServicesState extends State<AddServices> {
       CommonKeys.stateId: stateId.toString(),
       CommonKeys.cityId: cityId.toString(),
       AddServiceKey.countryTax: countryId.toString(),
-      AddServiceKey.cancellationPolicy: countryId.toString(),
-      AddServiceKey.minBooking: minBookingCont.text.validate(),
       AddServiceKey.cancellationPolicy: cancellationPolicyCont.text.validate(),
+      AddServiceKey.minBooking: minBookingCont.text.validate(),
+      AddServiceKey.remoteWorkLevel: selectedRemoteWorkLevel!.backendValue,
+      AddServiceKey.careerLevel: selectedCareerLevel!.backendValue,
+      AddServiceKey.travelRequired: selectedTravelRequired!.backendValue,
     };
 
     if (subCategoryId != -1) {
@@ -467,7 +586,7 @@ class _AddServicesState extends State<AddServices> {
 
 //region Build Widget
   Widget buildFormWidget() {
-    final bool isAdmin = false;
+    final bool isAdmin = _isAdminUser();
     return Container(
       key: formWidgetKey,
       // padding: EdgeInsets.all(16),
@@ -552,6 +671,10 @@ class _AddServicesState extends State<AddServices> {
                       dropdownColor: context.cardColor,
                       menuMaxHeight: 300,
                       value: selectedState,
+                      validator: (value) {
+                        if (value == null) return errorThisFieldRequired;
+                        return null;
+                      },
                       items: stateList.map((StateListResponse e) {
                         return DropdownMenuItem<StateListResponse>(
                           value: e,
@@ -582,6 +705,10 @@ class _AddServicesState extends State<AddServices> {
                   menuMaxHeight: 400,
                   value: selectedCity,
                   dropdownColor: context.cardColor,
+                  validator: (value) {
+                    if (value == null) return errorThisFieldRequired;
+                    return null;
+                  },
                   items: cityList.map(
                     (CityListResponse e) {
                       return DropdownMenuItem<CityListResponse>(
@@ -598,6 +725,127 @@ class _AddServicesState extends State<AddServices> {
                   onChanged: (CityListResponse? value) async {
                     selectedCity = value;
                     cityId = value!.id!;
+                    setState(() {});
+                  },
+                ),
+                // Provider dropdown (only for admin/demo_admin)
+                if (_isAdminUser() && providerList.isNotEmpty) DropdownButtonFormField<UserData>(
+                  decoration: inputDecoration(
+                    context,
+                    hint: 'Select Provider',
+                    fillColor: context.scaffoldBackgroundColor,
+                  ),
+                  isExpanded: true,
+                  menuMaxHeight: 300,
+                  value: selectedProviderId != null
+                      ? providerList.where((p) => p.id == selectedProviderId).isNotEmpty
+                          ? providerList.firstWhere((p) => p.id == selectedProviderId)
+                          : null
+                      : null,
+                  dropdownColor: context.cardColor,
+                  validator: (value) {
+                    if (value == null) return errorThisFieldRequired;
+                    return null;
+                  },
+                  items: providerList.map((UserData e) {
+                    return DropdownMenuItem<UserData>(
+                      value: e,
+                      child: Text(
+                        '${e.firstName ?? ''} ${e.lastName ?? ''}'.trim().isEmpty
+                            ? e.username ?? 'Provider ${e.id}'
+                            : '${e.firstName ?? ''} ${e.lastName ?? ''}'.trim(),
+                        style: primaryTextStyle(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (UserData? value) {
+                    selectedProviderId = value?.id;
+                    setState(() {});
+                  },
+                ),
+                // Remote Work Level dropdown
+                DropdownButtonFormField<RemoteWorkLevel>(
+                  decoration: inputDecoration(
+                    context,
+                    hint: 'Remote Work Level',
+                    fillColor: context.scaffoldBackgroundColor,
+                  ),
+                  isExpanded: true,
+                  value: selectedRemoteWorkLevel,
+                  dropdownColor: context.cardColor,
+                  validator: (value) {
+                    if (value == null) return errorThisFieldRequired;
+                    return null;
+                  },
+                  items: RemoteWorkLevel.values.map((RemoteWorkLevel level) {
+                    return DropdownMenuItem<RemoteWorkLevel>(
+                      value: level,
+                      child: Text(
+                        level.displayName,
+                        style: primaryTextStyle(),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (RemoteWorkLevel? value) {
+                    selectedRemoteWorkLevel = value;
+                    setState(() {});
+                  },
+                ),
+                // Career Level dropdown
+                DropdownButtonFormField<CareerLevel>(
+                  decoration: inputDecoration(
+                    context,
+                    hint: 'Career Level',
+                    fillColor: context.scaffoldBackgroundColor,
+                  ),
+                  isExpanded: true,
+                  value: selectedCareerLevel,
+                  dropdownColor: context.cardColor,
+                  validator: (value) {
+                    if (value == null) return errorThisFieldRequired;
+                    return null;
+                  },
+                  items: CareerLevel.values.map((CareerLevel level) {
+                    return DropdownMenuItem<CareerLevel>(
+                      value: level,
+                      child: Text(
+                        level.displayName,
+                        style: primaryTextStyle(),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (CareerLevel? value) {
+                    selectedCareerLevel = value;
+                    setState(() {});
+                  },
+                ),
+                // Travel Required dropdown
+                DropdownButtonFormField<TravelRequirement>(
+                  decoration: inputDecoration(
+                    context,
+                    hint: 'Travel Required',
+                    fillColor: context.scaffoldBackgroundColor,
+                  ),
+                  isExpanded: true,
+                  value: selectedTravelRequired,
+                  dropdownColor: context.cardColor,
+                  validator: (value) {
+                    if (value == null) return errorThisFieldRequired;
+                    return null;
+                  },
+                  items: TravelRequirement.values.map((TravelRequirement req) {
+                    return DropdownMenuItem<TravelRequirement>(
+                      value: req,
+                      child: Text(
+                        req.displayName,
+                        style: primaryTextStyle(),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (TravelRequirement? value) {
+                    selectedTravelRequired = value;
                     setState(() {});
                   },
                 ),

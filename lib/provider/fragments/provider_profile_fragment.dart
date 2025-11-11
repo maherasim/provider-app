@@ -815,8 +815,6 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                 logout(context);
               },
             ).center().visible(appStore.isLoggedIn),
-            VersionInfoWidget(prefixText: 'v', textStyle: secondaryTextStyle())
-                .center(),
             16.height,
           ],
         );

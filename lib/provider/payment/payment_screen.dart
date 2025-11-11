@@ -13,6 +13,7 @@ import '../../components/app_common_dialog.dart';
 import '../../components/empty_error_state_widget.dart';
 import '../../networks/rest_apis.dart';
 import '../../utils/app_configuration.dart';
+import '../../provider/provider_dashboard_screen.dart';
 import 'components/airtel_money/airtel_money_service.dart';
 import 'components/cinet_pay_services_new.dart';
 import 'components/flutter_wave_service_new.dart';
@@ -259,6 +260,196 @@ class _PaymentScreenState extends State<PaymentScreen> {
         appStore.setLoading(false);
         toast(e);
       });
+    } else if (selectedPaymentSetting!.type == PAYMENT_METHOD_FROM_WALLET) {
+      // Handle wallet payment
+      appStore.setLoading(true);
+      savePayment(
+        data: widget.selectedPricingPlan,
+        paymentMethod: PAYMENT_METHOD_FROM_WALLET,
+        paymentStatus: BOOKING_STATUS_PAID,
+        txnId: 'wallet_${DateTime.now().millisecondsSinceEpoch}',
+      ).catchError((e) {
+        appStore.setLoading(false);
+        toast(e.toString());
+      });
+    } else if (selectedPaymentSetting!.type == 'bank_transfer') {
+      // Handle bank transfer payment - show bank details first
+      _showBankDetailsDialog();
+    }
+  }
+
+  void _showBankDetailsDialog() {
+    showInDialog(
+      context,
+      contentPadding: EdgeInsets.zero,
+      barrierDismissible: false,
+      builder: (context) {
+        return AppCommonDialog(
+          title: 'Bank Transfer Details',
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Please transfer the amount to the following bank account:',
+                  style: secondaryTextStyle(),
+                ),
+                16.height,
+                Container(
+                  padding: EdgeInsets.all(16),
+                  decoration: boxDecorationWithRoundedCorners(
+                    backgroundColor: context.cardColor,
+                    borderRadius: radius(),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildBankDetailRow('Bank Name:', 'Norisbank'),
+                      8.height,
+                      _buildBankDetailRow('Country:', 'Germany'),
+                      8.height,
+                      _buildBankDetailRow('Account Number:', '4776167'),
+                      8.height,
+                      _buildBankDetailRow('IBAN:', 'DE57760260000477616700'),
+                      8.height,
+                      _buildBankDetailRow('BIC/Swift:', 'NORDSDE71XXX'),
+                    ],
+                  ),
+                ),
+                24.height,
+                Row(
+                  children: [
+                    AppButton(
+                      text: languages.lblCancel,
+                      color: Colors.grey,
+                      onTap: () {
+                        finish(context);
+                      },
+                    ).expand(),
+                    16.width,
+                    AppButton(
+                      text: languages.lblProceed,
+                      color: context.primaryColor,
+                      onTap: () {
+                        finish(context);
+                        _showBankTransferReferenceDialog();
+                      },
+                    ).expand(),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBankDetailRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: secondaryTextStyle(size: 14),
+        ).flexible(flex: 2),
+        8.width,
+        Text(
+          value,
+          style: boldTextStyle(size: 14),
+        ).flexible(flex: 3),
+      ],
+    );
+  }
+
+  void _showBankTransferReferenceDialog() {
+    TextEditingController referenceIdController = TextEditingController();
+    
+    showInDialog(
+      context,
+      contentPadding: EdgeInsets.zero,
+      barrierDismissible: false,
+      builder: (context) {
+        return AppCommonDialog(
+          title: 'Bank Transfer',
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  languages.selectABankTransferMoneyAndEnterTheReferenceIDInTheTextFieldBelow,
+                  style: secondaryTextStyle(),
+                ),
+                16.height,
+                AppTextField(
+                  controller: referenceIdController,
+                  textFieldType: TextFieldType.NAME,
+                  decoration: InputDecoration(
+                    hintText: 'Reference Number',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+                24.height,
+                Row(
+                  children: [
+                    AppButton(
+                      text: languages.lblCancel,
+                      color: Colors.grey,
+                      onTap: () {
+                        finish(context);
+                      },
+                    ).expand(),
+                    16.width,
+                    AppButton(
+                      text: languages.lblProceed,
+                      color: context.primaryColor,
+                      onTap: () {
+                        if (referenceIdController.text.isEmpty) {
+                          toast(languages.hintRequired);
+                          return;
+                        }
+                        finish(context);
+                        appStore.setLoading(true);
+                        _processBankTransfer(referenceIdController.text.trim());
+                      },
+                    ).expand(),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _processBankTransfer(String referenceId) async {
+    try {
+      Map<String, dynamic> request = {
+        'plan_id': widget.selectedPricingPlan.id.toString(),
+        'plan_type': widget.selectedPricingPlan.planType.validate(),
+        'plan_amount': widget.selectedPricingPlan.amount.validate().toString(),
+        'reference_id': referenceId,
+      };
+
+      await bankTransferSubscription(request).then((value) async {
+        toast("${widget.selectedPricingPlan.title.validate()} ${languages.successfullyActivated}");
+        await setValue(LAST_APP_CONFIGURATION_SYNCED_TIME, 0);
+        push(ProviderDashboardScreen(index: 0), isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+      }).catchError((e) {
+        toast(e.toString());
+      }).whenComplete(() {
+        appStore.setLoading(false);
+      });
+    } catch (e) {
+      appStore.setLoading(false);
+      toast(e.toString());
     }
   }
 

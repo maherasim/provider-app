@@ -876,6 +876,10 @@ Future<ProviderSubscriptionModel> saveSubscription(Map request) async {
   return ProviderSubscriptionModel.fromJson(await handleResponse(await buildHttpResponse('save-subscription', request: request, method: HttpMethodType.POST)));
 }
 
+Future<BaseResponseModel> bankTransferSubscription(Map request) async {
+  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('subscription/bank-transfer', request: request, method: HttpMethodType.POST)));
+}
+
 Future<List<ProviderSubscriptionModel>> getSubscriptionHistory({
   int? page,
   int? perPage = PER_PAGE_ITEM,

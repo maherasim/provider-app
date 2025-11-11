@@ -42,6 +42,9 @@ class ServiceData {
   num? totalReview;
   num? totalRating;
   int? isFavourite;
+  num? views;
+  num? totalBookingCount;
+  num? completedBookingCount;
   List<ServiceAddressMapping>? serviceAddressMapping;
   Map<String, MultiLanguageRequest>? translations;
 
@@ -64,6 +67,9 @@ class ServiceData {
   num? isEnableAdvancePayment;
   num? advancePaymentAmount;
   num? advancePaymentPercentage;
+  String? remoteWorkLevel;
+  String? careerLevel;
+  String? travelRequired;
 
   //Local
   bool get isHourlyService => type.validate() == SERVICE_TYPE_HOURLY;
@@ -136,6 +142,9 @@ class ServiceData {
       this.isEnableAdvancePayment,
       this.advancePaymentAmount,
       this.advancePaymentPercentage,
+      this.remoteWorkLevel,
+      this.careerLevel,
+      this.travelRequired,
       this.translations});
 
   ServiceData.fromJson(Map<String, dynamic> json) {
@@ -192,6 +201,9 @@ class ServiceData {
     totalReview = json['total_review'];
     totalRating = json['total_rating'];
     isFavourite = json['is_favourite'];
+    views = json['views'];
+    totalBookingCount = json['total_booking_count'];
+    completedBookingCount = json['completed_booking_count'];
 
     if (json['service_address_mapping'] != null) {
       serviceAddressMapping = [];
@@ -208,6 +220,25 @@ class ServiceData {
     isEnableAdvancePayment = json[AdvancePaymentKey.isEnableAdvancePayment];
     advancePaymentAmount = json[AdvancePaymentKey.advancePaymentAmount];
     advancePaymentPercentage = json[AdvancePaymentKey.advancePaymentAmount];
+    
+    // Handle remote_work_level - can be string, null, or other types
+    if (json['remote_work_level'] != null) {
+      remoteWorkLevel = json['remote_work_level'].toString();
+    }
+    
+    // Handle career_level - can be string, null, or other types
+    if (json['career_level'] != null) {
+      careerLevel = json['career_level'].toString();
+    }
+    
+    // Handle travel_required - can be bool (0/1), int, string, or null
+    if (json['travel_required'] != null) {
+      if (json['travel_required'] is bool) {
+        travelRequired = json['travel_required'] ? '1' : '0';
+      } else {
+        travelRequired = json['travel_required'].toString();
+      }
+    }
   }
 
   Map<String, dynamic> toJson() {

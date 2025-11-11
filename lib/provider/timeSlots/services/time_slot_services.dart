@@ -9,7 +9,19 @@ Future<List<SlotData>> getProviderTimeSlots() async {
   appStore.setLoading(true);
 
   await getProviderSlot(val: appStore.userId.validate()).then((value) {
-    timeSlotsList = value;
+    // Clean duplicates from backend response
+    timeSlotsList = value.map((slot) {
+      if (slot.slot != null && slot.slot!.isNotEmpty) {
+        // Remove duplicates from slots array
+        List<String> cleanSlots = slot.slot!.toSet().toList();
+        return SlotData(
+          day: slot.day,
+          date: slot.date,
+          slot: cleanSlots,
+        );
+      }
+      return slot;
+    }).toList();
   }).catchError((e) {
     toast(e.toString());
   });

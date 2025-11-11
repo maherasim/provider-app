@@ -86,8 +86,15 @@ class _MyTimeSlotsScreenState extends State<MyTimeSlotsScreen> {
                 DaysComponent(
                   initialDate: selectedDay,
                   onEditTap: () async {
+                    // Create a deep copy of timeSlotsList to avoid modifying the original
+                    List<SlotData> slotDataCopy = timeSlotsList.map((slot) => SlotData(
+                      day: slot.day,
+                      date: slot.date,
+                      slot: slot.slot != null ? List<String>.from(slot.slot!) : null,
+                    )).toList();
+                    
                     await EditTimeSlotScreen(
-                      slotData: timeSlotsList,
+                      slotData: slotDataCopy,
                       selectedDay: selectedDay,
                       onSave: (val) async {
                         Map<String, dynamic> request = {

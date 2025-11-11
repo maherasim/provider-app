@@ -469,10 +469,6 @@ class _HandymanProfileFragmentState extends State<HandymanProfileFragment> {
                   logout(context);
                 },
               ).center().visible(appStore.isLoggedIn),
-              VersionInfoWidget(
-                prefixText: 'v',
-                textStyle: secondaryTextStyle(),
-              ).center(),
             ],
           );
         },

@@ -49,7 +49,6 @@ class _HandymanWidgetState extends State<HandymanWidget> {
   @override
   Widget build(BuildContext context) {
     final String cleanedAddress = parseHtmlString(widget.data!.address.validate());
-    final List<String> address = cleanedAddress.split(',').map((e) => e.trim()).toList();
     print(widget.data?.address);
     return Stack(
       children: [
@@ -96,16 +95,31 @@ class _HandymanWidgetState extends State<HandymanWidget> {
                         isHandymanAvailable: widget.data!.isHandymanAvailable,
                         size: 14,
                       ).center(),
-                      if (cleanedAddress.isNotEmpty) ...[
-                        5.height,
-                        Text(
-                          address.length >= 2
-                              ? '${address.first.validate()}-${address.last.validate()}'
-                              : cleanedAddress,
+                      // City - Address line (fallback 'n/a')
+                      5.height,
+                      Builder(builder: (context) {
+                        final city = widget.data?.cityName.validate() ?? '';
+                        final country = widget.data?.countryName.validate() ?? '';
+                        final addr = cleanedAddress;
+                        String display = '';
+                        if (city.isNotEmpty && country.isNotEmpty) {
+                          display = '$city - $country';
+                        } else if (city.isNotEmpty) {
+                          display = city;
+                        } else if (country.isNotEmpty) {
+                          display = country;
+                        } else if (addr.isNotEmpty) {
+                          display = addr;
+                        } else {
+                          display = 'n/a';
+                        }
+                        return Text(
+                          display,
                           style: primaryTextStyle(size: 10),
                           maxLines: 1,
-                        ).center(),
-                      ],
+                          overflow: TextOverflow.ellipsis,
+                        ).center();
+                      }),
                     ],
                   ),
                   16.height,
@@ -129,22 +143,23 @@ class _HandymanWidgetState extends State<HandymanWidget> {
                                 color: primaryColor, height: 14, width: 14),
                           ),
                         ),
-                      if (widget.data!.email.validate().isNotEmpty)
-                        TextIcon(
-                          onTap: () {
-                            launchMail(widget.data!.email.validate());
-                          },
-                          prefix: Container(
-                            padding: EdgeInsets.all(8),
-                            decoration: boxDecorationWithRoundedCorners(
-                              boxShape: BoxShape.circle,
-                              backgroundColor:
-                                  primaryColor.withValues(alpha: 0.1),
-                            ),
-                            child: ic_message.iconImage(
-                                size: 14, color: primaryColor),
-                          ),
-                        ),
+                      if (widget.data!.contactNumber.validate().isNotEmpty) 12.width,
+                      // if (widget.data!.email.validate().isNotEmpty)
+                      //   TextIcon(
+                      //     onTap: () {
+                      //       launchMail(widget.data!.email.validate());
+                      //     },
+                      //     prefix: Container(
+                      //       padding: EdgeInsets.all(8),
+                      //       decoration: boxDecorationWithRoundedCorners(
+                      //         boxShape: BoxShape.circle,
+                      //         backgroundColor:
+                      //             primaryColor.withValues(alpha: 0.1),
+                      //       ),
+                      //       child: ic_message.iconImage(
+                      //           size: 14, color: primaryColor),
+                      //     ),
+                      //   ),
                       if (widget.data!.contactNumber.validate().isNotEmpty)
                         TextIcon(
                           onTap: () async {

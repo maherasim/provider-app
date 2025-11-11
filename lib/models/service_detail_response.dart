@@ -49,8 +49,10 @@ class ServiceAddressMapping {
   ProviderAddressMapping? providerAddressMapping;
   int? serviceId;
   String? updatedAt;
+  String? cityName;
+  String? countryName;
 
-  ServiceAddressMapping({this.createdAt, this.id, this.providerAddressId, this.providerAddressMapping, this.serviceId, this.updatedAt});
+  ServiceAddressMapping({this.createdAt, this.id, this.providerAddressId, this.providerAddressMapping, this.serviceId, this.updatedAt, this.cityName, this.countryName});
 
   factory ServiceAddressMapping.fromJson(Map<String, dynamic> json) {
     return ServiceAddressMapping(
@@ -60,6 +62,8 @@ class ServiceAddressMapping {
       providerAddressMapping: json['provider_address_mapping'] != null ? ProviderAddressMapping.fromJson(json['provider_address_mapping']) : null,
       serviceId: json['service_id'],
       updatedAt: json['updated_at'],
+      cityName: json['city_name'],
+      countryName: json['country_name'],
     );
   }
 
@@ -76,6 +80,12 @@ class ServiceAddressMapping {
     }
     if (this.updatedAt != null) {
       data['updated_at'] = this.updatedAt;
+    }
+    if (this.cityName != null) {
+      data['city_name'] = this.cityName;
+    }
+    if (this.countryName != null) {
+      data['country_name'] = this.countryName;
     }
     return data;
   }

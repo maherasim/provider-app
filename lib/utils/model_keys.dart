@@ -112,6 +112,9 @@ class AddServiceKey {
   static String countryTax = 'tax_country_id';
   static String minBooking = 'minimum_booking';
   static String cancellationPolicy = 'cancellation_policy';
+  static String remoteWorkLevel = 'remote_work_level';
+  static String careerLevel = 'career_level';
+  static String travelRequired = 'travel_required';
 }
 
 class AddAddressKey {

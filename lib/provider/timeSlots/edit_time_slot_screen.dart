@@ -37,6 +37,15 @@ class EditTimeSlotScreenState extends State<EditTimeSlotScreen> {
 
   void init() async {
     selectedDay = widget.selectedDay ?? DateTime.now();
+    // Initialize selectedTimeSlots with the current day's slots (remove duplicates)
+    List<String> daySlots = widget.slotData.firstWhere(
+      (element) => element.date?.year == selectedDay.year && 
+                   element.date?.month == selectedDay.month && 
+                   element.date?.day == selectedDay.day,
+      orElse: () => SlotData(slot: [], day: ''),
+    ).slot.validate();
+    // Remove duplicates and create a fresh copy
+    selectedTimeSlots = daySlots.toSet().toList();
     setState(() {});
   }
 
@@ -69,6 +78,15 @@ class EditTimeSlotScreenState extends State<EditTimeSlotScreen> {
                   initialDate: selectedDay,
                   onDayChanged: (day) {
                     selectedDay = day;
+                    // Reset selectedTimeSlots to the current day's slots when day changes (remove duplicates)
+                    List<String> daySlots = widget.slotData.firstWhere(
+                      (element) => element.date?.year == day.year && 
+                                   element.date?.month == day.month && 
+                                   element.date?.day == day.day,
+                      orElse: () => SlotData(slot: [], day: ''),
+                    ).slot.validate();
+                    // Remove duplicates and create a fresh copy
+                    selectedTimeSlots = daySlots.toSet().toList();
                     keyForTimeSlotWidget = UniqueKey();
                     setState(() {});
                   },
@@ -125,9 +143,28 @@ class EditTimeSlotScreenState extends State<EditTimeSlotScreen> {
         color: primaryColor,
         text: languages.lblUpdate,
         onTap: () {
-          widget.slotData.removeWhere((element) => element.date?.year == selectedDay.year && element.date?.month == selectedDay.month && element.date?.day == selectedDay.day,);
-          widget.slotData.add(SlotData(date: DateTime(selectedDay.year,selectedDay.month,selectedDay.day), day: DateFormat('EE').format(selectedDay).toLowerCase(), slot: selectedTimeSlots.toSet().toList()));
+          // Remove existing slot for the selected day
+          widget.slotData.removeWhere((element) => 
+            element.date?.year == selectedDay.year && 
+            element.date?.month == selectedDay.month && 
+            element.date?.day == selectedDay.day
+          );
+          
+          // Add new slot data only if there are selected time slots
+          if (selectedTimeSlots.isNotEmpty) {
+            // Remove duplicates and ensure clean list
+            List<String> cleanSlots = selectedTimeSlots.toSet().toList();
+            widget.slotData.add(SlotData(
+              date: DateTime(selectedDay.year, selectedDay.month, selectedDay.day), 
+              day: DateFormat('EE').format(selectedDay).toLowerCase(), 
+              slot: cleanSlots
+            ));
+          }
+          
+          // Sort by date
           widget.slotData.sort((a,b) => a.date!.compareTo(b.date!));
+          
+          // Call onSave with updated slot data
           widget.onSave.call(widget.slotData);
           setState((){});
         },

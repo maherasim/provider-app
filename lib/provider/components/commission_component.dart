@@ -37,17 +37,16 @@ class CommissionComponent extends StatelessWidget {
                       style: boldTextStyle(size: 12)),
                 ],
               ),
+              
               8.height,
               RichTextWidget(
                 textAlign: TextAlign.center,
                 list: [
                   TextSpan(
-                      text: '${languages.lblMyCommission}: ',
+                      text: 'Admin Commission: ',
                       style: secondaryTextStyle(size: 12)),
                   TextSpan(
-                    text: isCommissionTypePercent(commission.type)
-                        ? '${commission.commission.validate()}%'
-                        : commission.commission.validate().toPriceFormat(),
+                    text: '10%',
                     style: boldTextStyle(size: 12),
                   ),
                 ],

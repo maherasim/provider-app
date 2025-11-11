@@ -38,6 +38,27 @@ class _ServiceDetailHeaderComponentState
     setStatusBarColor(transparentColor, delayInMilliSeconds: 1000);
   }
 
+  String _getLocationText() {
+    if (widget.serviceDetail.serviceAddressMapping == null ||
+        widget.serviceDetail.serviceAddressMapping!.isEmpty) {
+      return 'N/A';
+    }
+
+    final mapping = widget.serviceDetail.serviceAddressMapping!.first;
+    
+    // Get city_name and country_name from service_address_mapping
+    if (mapping.cityName != null && mapping.countryName != null) {
+      return '${mapping.cityName} - ${mapping.countryName}';
+    }
+    
+    // Fallback to provider_address_mapping address if city/country not available
+    if (mapping.providerAddressMapping?.address != null) {
+      return mapping.providerAddressMapping!.address!;
+    }
+    
+    return 'N/A';
+  }
+
   void removeService() {
     deleteService(widget.serviceDetail.id.validate()).then((value) {
       appStore.setLoading(true);
@@ -310,6 +331,21 @@ class _ServiceDetailHeaderComponentState
                           ],
                         ),
                       ),
+                      // Location from service_address_mapping
+                      if (widget.serviceDetail.serviceAddressMapping != null &&
+                          widget.serviceDetail.serviceAddressMapping!.isNotEmpty)
+                        TextIcon(
+                          edgeInsets:
+                              EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+                          text: 'Location',
+                          textStyle: secondaryTextStyle(size: 14),
+                          expandedText: true,
+                          suffix: Text(
+                            _getLocationText(),
+                            style: boldTextStyle(color: primaryColor),
+                          ),
+                        ),
+                      // Views
                       TextIcon(
                         edgeInsets:
                             EdgeInsets.symmetric(horizontal: 0, vertical: 8),
@@ -317,7 +353,19 @@ class _ServiceDetailHeaderComponentState
                         textStyle: secondaryTextStyle(size: 14),
                         expandedText: true,
                         suffix: Text(
-                          "${widget.serviceDetail.totalReview.validate()}",
+                          "${widget.serviceDetail.views?.validate() ?? 0}",
+                          style: boldTextStyle(color: primaryColor),
+                        ),
+                      ),
+                      // Bookings (total_booking_count)
+                      TextIcon(
+                        edgeInsets:
+                            EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+                        text: 'Bookings:',
+                        textStyle: secondaryTextStyle(size: 14),
+                        expandedText: true,
+                        suffix: Text(
+                          "${widget.serviceDetail.totalBookingCount?.validate() ?? 0}",
                           style: boldTextStyle(color: primaryColor),
                         ),
                       ),

@@ -141,30 +141,63 @@ class DaysComponentState extends State<DaysComponent> {
                     style: boldTextStyle(),
                   ),
                   16.width,
-                  if(!(currentMonth.year == DateTime.now().year && currentMonth.month == DateTime.now().month)) GestureDetector(
-                    onTap: () => onArrowTap(isForward: false),
-                    child: Container(
-                      height: 24,
-                      width: 24,
-                      alignment: Alignment.center,
-                      decoration: boxDecorationWithRoundedCorners(
-                        backgroundColor: context.primaryColor,
-                        borderRadius: BorderRadius.circular(defaultRadius),
+                  // Left Arrow Button
+                  if(!(currentMonth.year == DateTime.now().year && currentMonth.month == DateTime.now().month))
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => onArrowTap(isForward: false),
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          height: 36,
+                          width: 36,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: context.primaryColor,
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: [
+                              BoxShadow(
+                                color: context.primaryColor.withOpacity(0.3),
+                                blurRadius: 4,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.chevron_left,
+                            size: 20,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                      child: Icon(Icons.arrow_back_ios,size: 12),
-                    ),
-                  ).paddingOnly(right: 8),
-                  GestureDetector(
-                    onTap: onArrowTap,
-                    child: Container(
-                      height: 24,
-                      width: 24,
-                      alignment: Alignment.center,
-                      decoration: boxDecorationWithRoundedCorners(
-                        backgroundColor: context.primaryColor,
-                        borderRadius: BorderRadius.circular(defaultRadius),
+                    ).paddingOnly(right: 8),
+                  // Right Arrow Button
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: onArrowTap,
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        height: 36,
+                        width: 36,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: context.primaryColor,
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: context.primaryColor.withOpacity(0.3),
+                              blurRadius: 4,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.chevron_right,
+                          size: 20,
+                          color: Colors.white,
+                        ),
                       ),
-                      child: Icon(Icons.arrow_forward_ios,size: 12),
                     ),
                   ),
                 ],

@@ -15,7 +15,6 @@ Future<List<SlotData>> getProviderTimeSlots() async {
         // Remove duplicates from slots array
         List<String> cleanSlots = slot.slot!.toSet().toList();
         return SlotData(
-          day: slot.day,
           date: slot.date,
           slot: cleanSlots,
         );

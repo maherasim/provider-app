@@ -39,7 +39,14 @@ abstract class TimeSlotStoreBase with Store {
 
   @action
   Future<void> removeSlotData({required SlotData value}) async {
-    serviceSlotData.removeWhere((element) => element.day == value.day.validate());
+    if (value.date != null) {
+      serviceSlotData.removeWhere((element) => 
+        element.date != null &&
+        element.date!.year == value.date!.year &&
+        element.date!.month == value.date!.month &&
+        element.date!.day == value.date!.day
+      );
+    }
   }
 
   @action
@@ -55,8 +62,14 @@ abstract class TimeSlotStoreBase with Store {
   }
 
   @action
-  List<String> checkIsAvailable({required String selectedDay}) {
-    return serviceSlotData.firstWhere((element) => element.day == selectedDay, orElse: () => SlotData(slot: [], day: '')).slot.validate();
+  List<String> checkIsAvailable({required DateTime selectedDate}) {
+    return serviceSlotData.firstWhere((element) => 
+      element.date != null &&
+      element.date!.year == selectedDate.year &&
+      element.date!.month == selectedDate.month &&
+      element.date!.day == selectedDate.day,
+      orElse: () => SlotData(slot: [])
+    ).slot.validate();
   }
 
   @action

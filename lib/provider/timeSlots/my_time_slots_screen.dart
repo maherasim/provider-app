@@ -3,7 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:handyman_provider_flutter/components/app_widgets.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
-import 'package:handyman_provider_flutter/provider/timeSlots/components/days_component.dart';
+import 'package:handyman_provider_flutter/provider/timeSlots/components/full_calendar_component.dart';
 import 'package:handyman_provider_flutter/provider/timeSlots/components/disclaimer_widget.dart';
 import 'package:handyman_provider_flutter/provider/timeSlots/components/slot_component.dart';
 import 'package:handyman_provider_flutter/provider/timeSlots/edit_time_slot_screen.dart';
@@ -68,7 +68,7 @@ class _MyTimeSlotsScreenState extends State<MyTimeSlotsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> temp = timeSlotsList.isNotEmpty ? timeSlotsList.firstWhere((element) => element.date?.year == selectedDay.year && element.date?.month == selectedDay.month && element.date?.day == selectedDay.day, orElse: () => SlotData(slot: [], day: '')).slot.validate() : [];
+    List<String> temp = timeSlotsList.isNotEmpty ? timeSlotsList.firstWhere((element) => element.date?.year == selectedDay.year && element.date?.month == selectedDay.month && element.date?.day == selectedDay.day, orElse: () => SlotData(slot: [])).slot.validate() : [];
     print(temp);
     return Scaffold(
       appBar: appBarWidget(
@@ -83,12 +83,12 @@ class _MyTimeSlotsScreenState extends State<MyTimeSlotsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 16.height,
-                DaysComponent(
+                FullCalendarComponent(
                   initialDate: selectedDay,
+                  slotData: timeSlotsList,
                   onEditTap: () async {
                     // Create a deep copy of timeSlotsList to avoid modifying the original
                     List<SlotData> slotDataCopy = timeSlotsList.map((slot) => SlotData(
-                      day: slot.day,
                       date: slot.date,
                       slot: slot.slot != null ? List<String>.from(slot.slot!) : null,
                     )).toList();
@@ -97,11 +97,31 @@ class _MyTimeSlotsScreenState extends State<MyTimeSlotsScreen> {
                       slotData: slotDataCopy,
                       selectedDay: selectedDay,
                       onSave: (val) async {
+                        // Filter and ensure all slots have dates before sending
+                        List<Map<String, dynamic>> slotsList = val
+                            .where((e) => e.date != null && e.slot != null && e.slot!.isNotEmpty)
+                            .map((e) {
+                              Map<String, dynamic> slotJson = e.toJsonRequest();
+                              // Debug: print what we're sending
+                              log('Slot data: $slotJson');
+                              // Ensure date is included
+                              if (!slotJson.containsKey('date') || slotJson['date'] == null) {
+                                log('ERROR: Slot missing date! Slot: $e');
+                              }
+                              return slotJson;
+                            })
+                            .where((json) => json.containsKey('date') && json['date'] != null)
+                            .toList();
+                        
+                        log('Filtered slots count: ${slotsList.length}');
+                        log('All slots: ${val.map((e) => 'date: ${e.date}, slots: ${e.slot}').join(', ')}');
+                        
                         Map<String, dynamic> request = {
                           "id": "",
                           "provider_id": appStore.userId.validate(),
-                          "slots": val.map((e) => e.toJsonRequest()).toList(),
+                          "slots": slotsList,
                         };
+                        log('Final request payload: $request');
                         appStore.setLoading(true);
 
                         await saveProviderSlot(request).then((value) {

@@ -7,7 +7,6 @@ import 'package:handyman_provider_flutter/provider/timeSlots/components/days_com
 import 'package:handyman_provider_flutter/provider/timeSlots/models/slot_data.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
-import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 class EditTimeSlotScreen extends StatefulWidget {
@@ -42,7 +41,7 @@ class EditTimeSlotScreenState extends State<EditTimeSlotScreen> {
       (element) => element.date?.year == selectedDay.year && 
                    element.date?.month == selectedDay.month && 
                    element.date?.day == selectedDay.day,
-      orElse: () => SlotData(slot: [], day: ''),
+      orElse: () => SlotData(slot: []),
     ).slot.validate();
     // Remove duplicates and create a fresh copy
     selectedTimeSlots = daySlots.toSet().toList();
@@ -83,7 +82,7 @@ class EditTimeSlotScreenState extends State<EditTimeSlotScreen> {
                       (element) => element.date?.year == day.year && 
                                    element.date?.month == day.month && 
                                    element.date?.day == day.day,
-                      orElse: () => SlotData(slot: [], day: ''),
+                      orElse: () => SlotData(slot: []),
                     ).slot.validate();
                     // Remove duplicates and create a fresh copy
                     selectedTimeSlots = daySlots.toSet().toList();
@@ -130,7 +129,7 @@ class EditTimeSlotScreenState extends State<EditTimeSlotScreen> {
                     setState(() {});
                   },
                   availableSlots: [],
-                  selectedSlots: widget.slotData.firstWhere((element) =>  element.date?.year == selectedDay.year && element.date?.month == selectedDay.month && element.date?.day == selectedDay.day, orElse: () => SlotData(slot: [], day: '')).slot.validate(),
+                  selectedSlots: widget.slotData.firstWhere((element) =>  element.date?.year == selectedDay.year && element.date?.month == selectedDay.month && element.date?.day == selectedDay.day, orElse: () => SlotData(slot: [])).slot.validate(),
                 ).paddingSymmetric(horizontal: 16, vertical: 16),
               ],
             ),
@@ -154,15 +153,28 @@ class EditTimeSlotScreenState extends State<EditTimeSlotScreen> {
           if (selectedTimeSlots.isNotEmpty) {
             // Remove duplicates and ensure clean list
             List<String> cleanSlots = selectedTimeSlots.toSet().toList();
-            widget.slotData.add(SlotData(
-              date: DateTime(selectedDay.year, selectedDay.month, selectedDay.day), 
-              day: DateFormat('EE').format(selectedDay).toLowerCase(), 
+            // Create date at midnight to ensure consistent date format
+            DateTime slotDate = DateTime(selectedDay.year, selectedDay.month, selectedDay.day);
+            log('Creating SlotData with date: $slotDate, slots: $cleanSlots');
+            SlotData newSlot = SlotData(
+              date: slotDate, 
               slot: cleanSlots
-            ));
+            );
+            log('Created SlotData - date: ${newSlot.date}, slot: ${newSlot.slot}');
+            widget.slotData.add(newSlot);
           }
           
           // Sort by date
           widget.slotData.sort((a,b) => a.date!.compareTo(b.date!));
+          
+          // Debug: Log all slots before sending
+          log('All slots before sending:');
+          for (var slot in widget.slotData) {
+            log('  - date: ${slot.date}, slots: ${slot.slot}');
+            if (slot.date != null) {
+              log('    toJsonRequest: ${slot.toJsonRequest()}');
+            }
+          }
           
           // Call onSave with updated slot data
           widget.onSave.call(widget.slotData);

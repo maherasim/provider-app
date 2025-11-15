@@ -201,7 +201,7 @@ class ServiceData {
     totalReview = json['total_review'];
     totalRating = json['total_rating'];
     isFavourite = json['is_favourite'];
-    views = json['views'];
+    views = json['views'] ?? json['total_views'];
     totalBookingCount = json['total_booking_count'];
     completedBookingCount = json['completed_booking_count'];
 

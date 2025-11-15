@@ -1,21 +1,30 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:handyman_provider_flutter/components/app_widgets.dart';
 import 'package:handyman_provider_flutter/components/back_widget.dart';
 import 'package:handyman_provider_flutter/components/cached_image_widget.dart';
+import 'package:handyman_provider_flutter/components/custom_image_picker.dart';
 import 'package:handyman_provider_flutter/main.dart';
+import 'package:handyman_provider_flutter/models/city_list_response.dart';
+import 'package:handyman_provider_flutter/models/country_list_response.dart';
 import 'package:handyman_provider_flutter/models/service_address_response.dart';
+import 'package:handyman_provider_flutter/models/state_list_response.dart';
 import 'package:handyman_provider_flutter/models/user_data.dart';
 import 'package:handyman_provider_flutter/models/user_type_response.dart';
+import 'package:handyman_provider_flutter/networks/network_utils.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
-import 'package:handyman_provider_flutter/utils/extensions/num_extenstions.dart';
 import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
+import 'package:http/http.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../provider/earning/handyman_payout_list_screen.dart';
@@ -45,6 +54,15 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
   TextEditingController designationCont = TextEditingController();
   TextEditingController addressCont = TextEditingController();
   TextEditingController educationCont = TextEditingController();
+  // New fields from documentation
+  TextEditingController companyNameCont = TextEditingController();
+  TextEditingController vatNumberCont = TextEditingController();
+  TextEditingController aboutMeCont = TextEditingController();
+  TextEditingController skillsCont = TextEditingController();
+  TextEditingController certificationCont = TextEditingController();
+  TextEditingController mobilityCont = TextEditingController();
+  TextEditingController experienceCont = TextEditingController();
+  TextEditingController handymanCommissionCont = TextEditingController();
 
   FocusNode fNameFocus = FocusNode();
   FocusNode lNameFocus = FocusNode();
@@ -56,22 +74,55 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
   FocusNode cPasswordFocus = FocusNode();
   FocusNode designationFocus = FocusNode();
   FocusNode educationFocus = FocusNode();
+  FocusNode companyNameFocus = FocusNode();
+  FocusNode vatNumberFocus = FocusNode();
+  FocusNode aboutMeFocus = FocusNode();
+  FocusNode skillsFocus = FocusNode();
+  FocusNode certificationFocus = FocusNode();
+  FocusNode mobilityFocus = FocusNode();
+  FocusNode experienceFocus = FocusNode();
+  FocusNode handymanCommissionFocus = FocusNode();
 
   ValueNotifier _valueNotifier = ValueNotifier(true);
 
   Country selectedCountry = defaultCountry();
 
-  final List<String> languageList = [];
+  // Languages - changed to multi-select dropdown
+  final List<String> languageOptions = ['English', 'French', 'Chinese', 'Urdu', 'Spanish', 'German'];
+  List<String> selectedLanguages = [];
+  
+  // Skills, Certification, Mobility - changed to text inputs (keeping lists for backward compatibility during migration)
   final List<String> skills = [];
   final List<String> experiences = [];
   final List<String> availabilityList = [
-    'On Site',
-    'Remote',
-    'Hybrid',
+    'full_time', // Changed to match documentation
+    'part_time',
   ];
-  String selectedAvailability = 'On Site';
+  String selectedAvailability = 'full_time';
   final List<String> mobilityList = [];
   final List<String> certifications = [];
+  
+  // Profile image
+  File? profileImageFile;
+  
+  // Country/State/City dropdowns
+  List<CountryListResponse> countryList = [];
+  List<StateListResponse> stateList = [];
+  List<CityListResponse> cityList = [];
+  CountryListResponse? selectedCountryData;
+  StateListResponse? selectedState;
+  CityListResponse? selectedCity;
+  int? countryId;
+  int? stateId;
+  int? cityId;
+  
+  // Provider dropdown (for admin)
+  List<UserData> providerList = [];
+  UserData? selectedProvider;
+  int? providerId;
+  
+  // Status dropdown
+  String selectedStatus = '1'; // 1 = Active, 0 = Inactive
 
   List<AddressResponse> serviceAddressList = [];
   AddressResponse? selectedServiceAddress;
@@ -101,6 +152,69 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
       serviceAddressId = widget.data!.serviceAddressId.validate();
       commissionId = widget.data!.handymanCommissionId.validate();
       designationCont.text = widget.data!.designation.validate();
+      addressCont.text = parseHtmlString(widget.data!.address.validate());
+      
+      // Initialize new fields
+      companyNameCont.text = widget.data!.companyName.validate();
+      vatNumberCont.text = widget.data!.vatNumber.validate();
+      
+      // Handle skills - might be JSON array or plain text
+      if (widget.data!.skills != null && widget.data!.skills!.isNotEmpty) {
+        try {
+          if (widget.data!.skills!.isJson()) {
+            // If it's JSON, try to parse and join
+            List<String> skillsList = widget.data!.skillsArray;
+            skillsCont.text = skillsList.join(', ');
+          } else {
+            skillsCont.text = widget.data!.skills.validate();
+          }
+        } catch (e) {
+          skillsCont.text = widget.data!.skills.validate();
+        }
+      }
+      
+      experienceCont.text = parseHtmlString(widget.data!.experience.validate());
+      mobilityCont.text = widget.data!.mobility.validate();
+      certificationCont.text = widget.data!.certification.validate();
+      aboutMeCont.text = parseHtmlString(widget.data!.aboutMe.validate());
+      educationCont.text = parseHtmlString(widget.data!.education.validate()); // Use education field directly
+      
+      // Initialize availability
+      if (widget.data!.availability != null) {
+        selectedAvailability = widget.data!.availability.validate();
+      } else if (widget.data!.isHandymanAvailable != null) {
+        selectedAvailability = widget.data!.isHandymanAvailable == true ? 'full_time' : 'part_time';
+      }
+      
+      // Initialize status
+      selectedStatus = widget.data!.status == 1 ? '1' : '0';
+      
+      // Initialize languages - check both languagesArray and knownLanguagesArray
+      if (widget.data!.languagesArray != null && widget.data!.languagesArray!.isNotEmpty) {
+        selectedLanguages = List<String>.from(widget.data!.languagesArray!);
+      } else if (widget.data!.knownLanguages != null && widget.data!.knownLanguages!.isNotEmpty) {
+        try {
+          selectedLanguages = widget.data!.knownLanguagesArray;
+        } catch (e) {
+          selectedLanguages = [];
+        }
+      }
+      
+      // Initialize handyman commission
+      if (widget.data!.handymanCommission != null) {
+        handymanCommissionCont.text = widget.data!.handymanCommission.toString();
+      }
+      
+      // Initialize country, state, city
+      countryId = widget.data!.countryId;
+      stateId = widget.data!.stateId;
+      cityId = widget.data!.cityId;
+      
+      // Initialize provider (if admin)
+      if (_isAdminUser() && widget.data!.providerId != null) {
+        providerId = widget.data!.providerId;
+      }
+      
       selectedCountry = Country(
         phoneCode:
             widget.data!.contactNumber?.split("-").first.validate() ?? "",
@@ -114,7 +228,6 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
         displayNameNoCountryCode: "",
         e164Key: "",
       );
-      widget.data!.contactNumber?.split("-").first.validate();
     }
 
     init();
@@ -126,6 +239,103 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
   Future<void> init() async {
     getAddressList();
     getCommissionList();
+    getCountryList();
+    if (_isAdminUser()) {
+      loadProviderList();
+    }
+  }
+  
+  bool _isAdminUser() {
+    return appStore.userType == 'admin' || appStore.userType == 'demo_admin';
+  }
+  
+  Future<void> getCountryList() async {
+    appStore.setLoading(true);
+    await getUpdatedCountryList().then((value) {
+      countryList = value;
+      if (widget.data != null && widget.data!.countryId != null) {
+        selectedCountryData = value.firstWhere(
+          (e) => e.id == widget.data!.countryId,
+          orElse: () => value.first,
+        );
+        countryId = selectedCountryData?.id;
+        if (countryId != null) {
+          getStates(countryId!);
+        }
+      }
+      setState(() {});
+    }).catchError((e) {
+      toast(e.toString());
+    });
+    appStore.setLoading(false);
+  }
+  
+  Future<void> getStates(int countryId) async {
+    appStore.setLoading(true);
+    await getUpdatedStateList(countryId).then((value) {
+      stateList = value;
+      if (widget.data != null && widget.data!.stateId != null) {
+        if (value.isNotEmpty) {
+          selectedState = value.firstWhere(
+            (e) => e.id == widget.data!.stateId,
+            orElse: () => value.first,
+          );
+        }
+        stateId = selectedState?.id;
+        if (stateId != null) {
+          getCity(stateId!);
+        }
+      }
+      setState(() {});
+    }).catchError((e) {
+      toast(e.toString());
+    });
+    appStore.setLoading(false);
+  }
+  
+  Future<void> getCity(int stateId) async {
+    appStore.setLoading(true);
+    await getUpdatedCityList(stateId).then((value) {
+      cityList = value;
+      if (widget.data != null && widget.data!.cityId != null) {
+        if (value.isNotEmpty) {
+          selectedCity = value.firstWhere(
+            (e) => e.id == widget.data!.cityId,
+            orElse: () => value.first,
+          );
+        }
+        cityId = selectedCity?.id;
+      }
+      setState(() {});
+    }).catchError((e) {
+      toast(e.toString());
+    });
+    appStore.setLoading(false);
+  }
+  
+  Future<void> loadProviderList() async {
+    appStore.setLoading(true);
+    List<UserData> tempList = [];
+    await getProviderList(
+      perPage: 100,
+      page: 1,
+      keyword: '',
+      status: '',
+      list: tempList,
+    ).then((value) {
+      providerList = tempList;
+      if (widget.data != null && widget.data!.providerId != null) {
+        selectedProvider = providerList.firstWhere(
+          (e) => e.id == widget.data!.providerId,
+          orElse: () => providerList.isNotEmpty ? providerList.first : UserData(),
+        );
+        providerId = selectedProvider?.id;
+      }
+      setState(() {});
+    }).catchError((e) {
+      toast(e.toString());
+    });
+    appStore.setLoading(false);
   }
 
   Future<void> getAddressList() async {
@@ -174,48 +384,279 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
   /// Register the Handyman
   Future<void> register() async {
     if (formKey.currentState!.validate()) {
-      if (selectedHandymanCommission == null ||
-          selectedHandymanCommission!.id == -1) {
-        return toast(languages.pleaseSelectCommission);
-      }
+      // Commission selection is now optional - user can use manual handyman_commission field instead
       formKey.currentState!.save();
       hideKeyboard(context);
       String? type = widget.userType;
-      var request = {
-        if (isUpdate) CommonKeys.id: widget.data!.id,
-        UserKeys.firstName: fNameCont.text,
-        UserKeys.lastName: lNameCont.text,
-        UserKeys.userName: userNameCont.text,
-        UserKeys.userType: type,
-        UserKeys.providerId: appStore.userId,
-        UserKeys.status: USER_STATUS_CODE,
-        UserKeys.contactNumber: buildMobileNumber(),
-        UserKeys.designation: designationCont.text.validate(),
-        if (serviceAddressId != null && serviceAddressId != -1)
-          UserKeys.serviceAddressId: serviceAddressId.validate(),
-        UserKeys.email: emailCont.text,
-        UserKeys.address: addressCont.text,
-        UserKeys.handymanTypeId: selectedHandymanCommission?.id,
-        if (!isUpdate) UserKeys.password: passwordCont.text
-      };
-      appStore.setLoading(true);
-      if (isUpdate) {
-        await updateProfile(request).then((res) async {
-          toast(res.message.validate());
-          finish(context, widget.onUpdate!.call());
-        }).catchError((e) {
-          toast(e.toString());
-        });
+      
+      // Use multipart request ONLY if profile image file is present
+      // Otherwise use regular JSON request (backend accepts profile_image_url in JSON)
+      log('Checking profileImageFile: ${profileImageFile != null}, isUpdate: $isUpdate');
+      if (profileImageFile != null) {
+        log('Using multipart request with image file');
+        await registerWithImage(type);
       } else {
-        await registerUser(request).then((res) async {
-          toast(res.message.validate());
-          finish(context, widget.onUpdate!.call());
-        }).catchError((e) {
-          toast(e.toString());
-        });
+        log('Using regular JSON request ${isUpdate ? '(update without new image)' : '(new handyman)'}');
+        var request = {
+          if (isUpdate) CommonKeys.id: widget.data!.id,
+          UserKeys.firstName: fNameCont.text,
+          UserKeys.lastName: lNameCont.text,
+          UserKeys.userName: userNameCont.text,
+          UserKeys.userType: type,
+          UserKeys.providerId: _isAdminUser() && providerId != null ? providerId : appStore.userId,
+          UserKeys.status: selectedStatus,
+          UserKeys.contactNumber: buildMobileNumber(),
+          UserKeys.designation: designationCont.text.validate(),
+          if (serviceAddressId != null && serviceAddressId != -1)
+            UserKeys.serviceAddressId: serviceAddressId.validate(),
+          UserKeys.email: emailCont.text,
+          UserKeys.address: addressCont.text,
+          if (selectedHandymanCommission != null && selectedHandymanCommission!.id != -1)
+            UserKeys.handymanTypeId: selectedHandymanCommission?.id,
+          if (!isUpdate) UserKeys.password: passwordCont.text,
+          // Include existing profile image URL when updating without new image
+          if (isUpdate && widget.data != null && widget.data!.profileImage.validate().isNotEmpty)
+            'profile_image_url': widget.data!.profileImage.validate(),
+          // New fields from documentation (required fields)
+          'company_name': companyNameCont.text.trim(),
+          'vat_number': vatNumberCont.text.trim(),
+          if (skillsCont.text.trim().isNotEmpty) 'skills': skillsCont.text.trim(),
+          if (educationCont.text.trim().isNotEmpty) 'education': educationCont.text.trim(),
+          if (certificationCont.text.trim().isNotEmpty) 'certification': certificationCont.text.trim(),
+          if (mobilityCont.text.trim().isNotEmpty) 'mobility': mobilityCont.text.trim(),
+          if (experienceCont.text.trim().isNotEmpty) 'experience': experienceCont.text.trim(),
+          if (aboutMeCont.text.trim().isNotEmpty) 'about_me': aboutMeCont.text.trim(),
+          if (selectedAvailability.isNotEmpty) 'availability': selectedAvailability,
+          if (selectedLanguages.isNotEmpty) 'languages': jsonEncode(selectedLanguages),
+          if (selectedLanguages.isNotEmpty) 'known_languages': jsonEncode(selectedLanguages),
+          if (handymanCommissionCont.text.isNotEmpty)
+            'handyman_commission': handymanCommissionCont.text.validate(),
+          if (countryId != null) CommonKeys.countryId: countryId,
+          if (stateId != null) CommonKeys.stateId: stateId,
+          if (cityId != null) CommonKeys.cityId: cityId,
+        };
+        appStore.setLoading(true);
+        
+        // Debug: Log the request
+        log('Handyman Request: ${jsonEncode(request)}');
+        
+        if (isUpdate) {
+          await updateProfile(request).then((res) async {
+            appStore.setLoading(false);
+            toast(res.message.validate());
+            finish(context, widget.onUpdate!.call());
+          }).catchError((e) {
+            appStore.setLoading(false);
+            log('Update Profile Error: $e');
+            toast(e.toString());
+          });
+        } else {
+          await registerUser(request).then((res) async {
+            appStore.setLoading(false);
+            toast(res.message.validate());
+            finish(context, widget.onUpdate!.call());
+          }).catchError((e) {
+            appStore.setLoading(false);
+            log('Register User Error: $e');
+            toast(e.toString());
+          });
+        }
       }
-      appStore.setLoading(false);
     }
+  }
+  
+  Future<void> registerWithImage(String? type) async {
+    MultipartRequest multiPartRequest = await getMultiPartRequest(isUpdate ? 'update-profile' : 'register');
+    
+    log('Creating multipart request for ${isUpdate ? 'update-profile' : 'register'}');
+    log('profileImageFile is null: ${profileImageFile == null}');
+    
+    multiPartRequest.fields[UserKeys.firstName] = fNameCont.text;
+    multiPartRequest.fields[UserKeys.lastName] = lNameCont.text;
+    multiPartRequest.fields[UserKeys.userName] = userNameCont.text;
+    multiPartRequest.fields[UserKeys.userType] = type.validate();
+    multiPartRequest.fields[UserKeys.providerId] = (_isAdminUser() && providerId != null ? providerId : appStore.userId).toString();
+    multiPartRequest.fields[UserKeys.status] = selectedStatus;
+    multiPartRequest.fields[UserKeys.contactNumber] = buildMobileNumber();
+    multiPartRequest.fields[UserKeys.designation] = designationCont.text.validate();
+    if (serviceAddressId != null && serviceAddressId != -1)
+      multiPartRequest.fields[UserKeys.serviceAddressId] = serviceAddressId.toString();
+    multiPartRequest.fields[UserKeys.email] = emailCont.text;
+    multiPartRequest.fields[UserKeys.address] = addressCont.text.validate();
+    if (selectedHandymanCommission != null && selectedHandymanCommission!.id != -1)
+      multiPartRequest.fields[UserKeys.handymanTypeId] = selectedHandymanCommission!.id.toString();
+    if (!isUpdate) multiPartRequest.fields[UserKeys.password] = passwordCont.text;
+    if (isUpdate) multiPartRequest.fields[CommonKeys.id] = widget.data!.id.toString();
+    
+    // New fields from documentation (required fields)
+    multiPartRequest.fields['company_name'] = companyNameCont.text.trim();
+    multiPartRequest.fields['vat_number'] = vatNumberCont.text.trim();
+    if (skillsCont.text.trim().isNotEmpty) multiPartRequest.fields['skills'] = skillsCont.text.trim();
+    if (educationCont.text.trim().isNotEmpty) multiPartRequest.fields['education'] = educationCont.text.trim();
+    if (certificationCont.text.trim().isNotEmpty) multiPartRequest.fields['certification'] = certificationCont.text.trim();
+    if (mobilityCont.text.trim().isNotEmpty) multiPartRequest.fields['mobility'] = mobilityCont.text.trim();
+    if (experienceCont.text.trim().isNotEmpty) multiPartRequest.fields['experience'] = experienceCont.text.trim();
+    if (aboutMeCont.text.trim().isNotEmpty) multiPartRequest.fields['about_me'] = aboutMeCont.text.trim();
+    if (selectedAvailability.isNotEmpty) multiPartRequest.fields['availability'] = selectedAvailability;
+    if (selectedLanguages.isNotEmpty) {
+      multiPartRequest.fields['languages'] = jsonEncode(selectedLanguages);
+      multiPartRequest.fields['known_languages'] = jsonEncode(selectedLanguages);
+    }
+    if (handymanCommissionCont.text.isNotEmpty)
+      multiPartRequest.fields['handyman_commission'] = handymanCommissionCont.text.validate();
+    if (countryId != null) multiPartRequest.fields[CommonKeys.countryId] = countryId.toString();
+    if (stateId != null) multiPartRequest.fields[CommonKeys.stateId] = stateId.toString();
+    if (cityId != null) multiPartRequest.fields[CommonKeys.cityId] = cityId.toString();
+    
+    // Always add profile_image field, even if null (backend expects it)
+    // But only add file if profileImageFile is not null and is a valid local file
+    if (profileImageFile != null) {
+      try {
+        // Verify it's a local file, not a network URL
+        if (profileImageFile!.path.contains('http://') || profileImageFile!.path.contains('https://')) {
+          log('Error: profileImageFile is a network URL, not a local file: ${profileImageFile!.path}');
+          toast('Please select a new image file');
+          appStore.setLoading(false);
+          return;
+        }
+        
+        // Verify file exists
+        if (!await profileImageFile!.exists()) {
+          log('Error: profile image file does not exist: ${profileImageFile!.path}');
+          toast('Selected file does not exist');
+          appStore.setLoading(false);
+          return;
+        }
+        
+        // Get file info before adding
+        int fileSize = await profileImageFile!.length();
+        String fileName = profileImageFile!.path.split('/').last;
+        String fileExtension = fileName.split('.').last.toLowerCase();
+        log('Adding profile image file: ${profileImageFile!.path}');
+        log('File size: $fileSize bytes, File name: $fileName, Extension: $fileExtension');
+        
+        // Determine content type based on file extension (allow all image types)
+        String? contentType;
+        switch (fileExtension) {
+          case 'jpg':
+          case 'jpeg':
+            contentType = 'image/jpeg';
+            break;
+          case 'png':
+            contentType = 'image/png';
+            break;
+          case 'gif':
+            contentType = 'image/gif';
+            break;
+          case 'webp':
+            contentType = 'image/webp';
+            break;
+          case 'bmp':
+            contentType = 'image/bmp';
+            break;
+          case 'svg':
+            contentType = 'image/svg+xml';
+            break;
+          case 'tiff':
+          case 'tif':
+            contentType = 'image/tiff';
+            break;
+          case 'ico':
+            contentType = 'image/x-icon';
+            break;
+          case 'heic':
+          case 'heif':
+            contentType = 'image/heic';
+            break;
+          default:
+            // Default to image/jpeg for unknown extensions, or let it be auto-detected
+            contentType = null; // Let multipart auto-detect
+            log('Unknown image extension: $fileExtension, using auto-detect');
+        }
+        
+        // Create multipart file - allow all image types
+        MultipartFile multipartFile = await MultipartFile.fromPath(
+          'profile_image',
+          profileImageFile!.path,
+          filename: fileName,
+          contentType: contentType != null ? MediaType.parse(contentType) : null,
+        );
+        
+        log('MultipartFile created - field: ${multipartFile.field}, filename: ${multipartFile.filename}, length: ${multipartFile.length}, contentType: ${multipartFile.contentType}');
+        
+        multiPartRequest.files.add(multipartFile);
+        log('Profile image file added successfully. Files count: ${multiPartRequest.files.length}');
+      } catch (e) {
+        log('Error adding profile image: $e');
+        toast('Error adding profile image: $e');
+        appStore.setLoading(false);
+        return;
+      }
+    } else {
+      log('Warning: profileImageFile is null - no image will be uploaded');
+      // Don't add empty file - backend will skip image update if not present
+    }
+    
+    // Build headers but remove Content-Type (multipart will set it automatically)
+    Map<String, String> headers = buildHeaderTokens();
+    headers.remove('Content-Type'); // Let multipart set this automatically
+    multiPartRequest.headers.addAll(headers);
+    
+    // Debug: Log all files being sent
+    log('Total multipart files: ${multiPartRequest.files.length}');
+    if (multiPartRequest.files.isNotEmpty) {
+      for (var file in multiPartRequest.files) {
+        log('Multipart file - field: ${file.field}, filename: ${file.filename ?? 'no filename'}, length: ${file.length}, contentType: ${file.contentType}');
+      }
+    } else {
+      log('No files in multipart request');
+    }
+    
+    // Log complete payload structure
+    log('=== MULTIPART REQUEST PAYLOAD ===');
+    log('URL: ${multiPartRequest.url}');
+    log('Method: ${multiPartRequest.method}');
+    log('Headers: ${multiPartRequest.headers}');
+    log('Fields (${multiPartRequest.fields.length}):');
+    multiPartRequest.fields.forEach((key, value) {
+      log('  $key: ${value.length > 100 ? value.substring(0, 100) + "..." : value}');
+    });
+    log('Files (${multiPartRequest.files.length}):');
+    for (var file in multiPartRequest.files) {
+      log('  ${file.field}: ${file.filename ?? 'no filename'} (length: ${file.length}, contentType: ${file.contentType})');
+    }
+    log('=== END PAYLOAD ===');
+    
+    // Verify file is actually added before sending
+    if (profileImageFile != null && multiPartRequest.files.isEmpty) {
+      log('ERROR: profileImageFile is set but no files in multipart request!');
+      toast('Error: Image file not added to request');
+      appStore.setLoading(false);
+      return;
+    }
+    
+    appStore.setLoading(true);
+    
+    await sendMultiPartRequest(
+      multiPartRequest,
+      onSuccess: (data) async {
+        appStore.setLoading(false);
+        if (data != null) {
+          if ((data as String).isJson()) {
+            var res = jsonDecode(data);
+            toast(res['message']?.toString() ?? 'Success');
+            finish(context, widget.onUpdate!.call());
+          }
+        }
+      },
+      onError: (error) {
+        toast(error.toString(), print: true);
+        appStore.setLoading(false);
+      },
+    ).catchError((e) {
+      appStore.setLoading(false);
+      toast(e.toString());
+    });
   }
 
   /// Remove the Handyman
@@ -381,13 +822,67 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (isUpdate)
-                      CachedImageWidget(
-                        url: widget.data!.profileImage.validate(value: profile),
-                        height: 100,
-                        circle: true,
-                        fit: BoxFit.cover,
+                    Text('Profile', style: boldTextStyle(size: 16)),
+                    12.height,
+                    // Profile Image Preview and Upload
+                    // Show existing image only when no new file is selected
+                    if (isUpdate && widget.data!.profileImage.validate().isNotEmpty && profileImageFile == null)
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          CachedImageWidget(
+                            url: widget.data!.profileImage.validate(value: profile),
+                            height: 100,
+                            width: 100,
+                            circle: true,
+                            fit: BoxFit.cover,
+                          ),
+                        ],
+                      ),
+                    // Show preview of newly selected image
+                    if (profileImageFile != null)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: Image.file(
+                          profileImageFile!,
+                          height: 100,
+                          width: 100,
+                          fit: BoxFit.cover,
+                        ),
                       ).center(),
+                    if ((isUpdate && widget.data!.profileImage.validate().isNotEmpty && profileImageFile == null) || profileImageFile != null) 16.height,
+                    // Profile Image Picker - only pass local file path, not network URL
+                    CustomImagePicker(
+                      selectedImages: profileImageFile != null ? [profileImageFile!.path] : null,
+                      onFileSelected: (List<File> files) async {
+                        if (files.isNotEmpty) {
+                          File selectedFile = files.first;
+                          // Check if it's a valid local file (not a network URL)
+                          if (selectedFile.path.contains('http://') || selectedFile.path.contains('https://')) {
+                            log('Warning: Selected file is a network URL, not a local file: ${selectedFile.path}');
+                            toast('Please select a new image from gallery or camera');
+                            return;
+                          }
+                          // Check if file exists
+                          bool fileExists = await selectedFile.exists();
+                          if (!fileExists) {
+                            log('Error: Selected file does not exist: ${selectedFile.path}');
+                            toast('Selected file does not exist');
+                            return;
+                          }
+                          profileImageFile = selectedFile;
+                          log('Profile image file set successfully: ${profileImageFile!.path}, exists: ${await profileImageFile!.exists()}');
+                          setState(() {});
+                        } else {
+                          log('Warning: onFileSelected called with empty files list');
+                        }
+                      },
+                      onRemoveClick: (String value) {
+                        profileImageFile = null;
+                        setState(() {});
+                      },
+                      isMultipleImages: false,
+                    ),
                     30.height,
                     AppTextField(
                       textFieldType: TextFieldType.NAME,
@@ -453,6 +948,110 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       suffix: ic_message.iconImage(size: 10).paddingAll(14),
                     ),
                     16.height,
+                    Divider(),
+                    12.height,
+                    Text('Company Information', style: boldTextStyle(size: 16)),
+                    12.height,
+                    // Company Name - Required
+                    AppTextField(
+                      textFieldType: TextFieldType.NAME,
+                      controller: companyNameCont,
+                      focus: companyNameFocus,
+                      nextFocus: vatNumberFocus,
+                      enabled: true,
+                      isValidationRequired: true,
+                      decoration: inputDecoration(
+                        context,
+                        hint: 'Company Name',
+                        fillColor: context.scaffoldBackgroundColor,
+                      ),
+                    ),
+                    16.height,
+                    // VAT Number - Required
+                    AppTextField(
+                      textFieldType: TextFieldType.NAME,
+                      controller: vatNumberCont,
+                      focus: vatNumberFocus,
+                      nextFocus: skillsFocus,
+                      enabled: true,
+                      isValidationRequired: true,
+                      decoration: inputDecoration(
+                        context,
+                        hint: 'VAT Number',
+                        fillColor: context.scaffoldBackgroundColor,
+                      ),
+                    ),
+                    16.height,
+                    Divider(),
+                    12.height,
+                    Text('Professional Details', style: boldTextStyle(size: 16)),
+                    12.height,
+                    // Skills - Text Input (Required)
+                    AppTextField(
+                      textFieldType: TextFieldType.NAME,
+                      controller: skillsCont,
+                      focus: skillsFocus,
+                      nextFocus: experienceFocus,
+                      enabled: true,
+                      isValidationRequired: true,
+                      decoration: inputDecoration(
+                        context,
+                        hint: 'Skills',
+                        fillColor: context.scaffoldBackgroundColor,
+                      ),
+                    ),
+                    16.height,
+                    // Experience - Textarea (Optional)
+                    AppTextField(
+                      textFieldType: TextFieldType.MULTILINE,
+                      controller: experienceCont,
+                      focus: experienceFocus,
+                      nextFocus: mobilityFocus,
+                      enabled: true,
+                      isValidationRequired: false,
+                      minLines: 2,
+                      maxLines: 5,
+                      decoration: inputDecoration(
+                        context,
+                        hint: 'Experience',
+                        fillColor: context.scaffoldBackgroundColor,
+                      ),
+                    ),
+                    16.height,
+                    // Mobility - Text Input (Required)
+                    AppTextField(
+                      textFieldType: TextFieldType.NAME,
+                      controller: mobilityCont,
+                      focus: mobilityFocus,
+                      nextFocus: certificationFocus,
+                      enabled: true,
+                      isValidationRequired: true,
+                      decoration: inputDecoration(
+                        context,
+                        hint: 'Mobility',
+                        fillColor: context.scaffoldBackgroundColor,
+                      ),
+                    ),
+                    16.height,
+                    // Certification - Text Input (Required)
+                    AppTextField(
+                      textFieldType: TextFieldType.NAME,
+                      controller: certificationCont,
+                      focus: certificationFocus,
+                      nextFocus: mobileFocus,
+                      enabled: true,
+                      isValidationRequired: true,
+                      decoration: inputDecoration(
+                        context,
+                        hint: 'Certification',
+                        fillColor: context.scaffoldBackgroundColor,
+                      ),
+                    ),
+                    16.height,
+                    Divider(),
+                    12.height,
+                    Text('Contact & Address', style: boldTextStyle(size: 16)),
+                    12.height,
                     IgnorePointer(
                       ignoring: isUpdate
                           ? !rolesAndPermissionStore.handymanEdit
@@ -513,9 +1112,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       textFieldType: TextFieldType.NAME,
                       controller: designationCont,
                       isValidationRequired: false,
-                      enabled: isUpdate
-                          ? rolesAndPermissionStore.handymanEdit
-                          : true,
+                      enabled: true, // Always enabled
                       focus: designationFocus,
                       nextFocus: addressFocus,
                       decoration: inputDecoration(
@@ -525,52 +1122,41 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       ),
                     ),
                     16.height,
-                    // Select commission text field...
-                    IgnorePointer(
-                      ignoring: isUpdate
-                          ? !rolesAndPermissionStore.handymanEdit
-                          : false,
-                      child: DropdownButtonFormField<UserTypeData>(
-                        decoration: inputDecoration(
-                          context,
-                          hint: languages.lblSelectCommission,
-                          fillColor: context.scaffoldBackgroundColor,
-                        ),
-                        isExpanded: true,
-                        dropdownColor: context.cardColor,
-                        value: selectedHandymanCommission != null
-                            ? selectedHandymanCommission
-                            : null,
-                        items: commissionList.map((data) {
-                          return DropdownMenuItem<UserTypeData>(
-                            value: data,
-                            child: Row(
-                              children: [
-                                Text(data.name.toString(),
-                                    style: primaryTextStyle()),
-                                4.width,
-                                if (data.type == COMMISSION_TYPE_PERCENT)
-                                  Text(
-                                    '(${data.commission.toString()}%)',
-                                    style: primaryTextStyle(),
-                                  )
-                                else if (data.type == COMMISSION_TYPE_FIXED)
-                                  Text(
-                                      '(${data.commission.validate().toPriceFormat()})',
-                                      style: primaryTextStyle()),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (UserTypeData? value) async {
-                          selectedHandymanCommission = value;
-                          commissionId =
-                              selectedHandymanCommission!.id.validate();
-                          setState(() {});
-                        },
+                    Divider(),
+                    12.height,
+                    Text('Commission', style: boldTextStyle(size: 16)),
+                    12.height,
+                    // Handyman Commission - Number input (1-85)
+                    AppTextField(
+                      textFieldType: TextFieldType.PHONE,
+                      controller: handymanCommissionCont,
+                      focus: handymanCommissionFocus,
+                      nextFocus: companyNameFocus,
+                      enabled: true,
+                      isValidationRequired: false,
+                      decoration: inputDecoration(
+                        context,
+                        hint: 'Handyman Commission (1-85)',
+                        fillColor: context.scaffoldBackgroundColor,
                       ),
-                    ).visible(commissionList.isNotEmpty),
+                      validator: (value) {
+                        if (value != null && value.isNotEmpty) {
+                          double? commission = double.tryParse(value);
+                          if (commission == null) {
+                            return 'Please enter a valid number';
+                          }
+                          if (commission < 1 || commission > 85) {
+                            return 'Commission must be between 1 and 85';
+                          }
+                        }
+                        return null;
+                      },
+                    ),
                     16.height,
+                    Divider(),
+                    12.height,
+                    Text('Location', style: boldTextStyle(size: 16)),
+                    12.height,
                     IgnorePointer(
                       ignoring: isUpdate
                           ? !rolesAndPermissionStore.handymanEdit
@@ -604,13 +1190,144 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       ),
                     ).visible(serviceAddressList.isNotEmpty),
                     16.height,
+                    // Provider dropdown (for admin only)
+                    if (_isAdminUser())
+                      IgnorePointer(
+                        ignoring: isUpdate
+                            ? !rolesAndPermissionStore.handymanEdit
+                            : false,
+                        child: DropdownButtonFormField<UserData>(
+                          decoration: inputDecoration(
+                            context,
+                            hint: 'Select Provider',
+                            fillColor: context.scaffoldBackgroundColor,
+                          ),
+                          isExpanded: true,
+                          dropdownColor: context.cardColor,
+                          value: selectedProvider,
+                          items: providerList.map((data) {
+                            return DropdownMenuItem<UserData>(
+                              value: data,
+                              child: Text(
+                                data.displayName ?? '${data.firstName} ${data.lastName}',
+                                style: primaryTextStyle(),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (UserData? value) {
+                            selectedProvider = value;
+                            providerId = selectedProvider?.id;
+                            setState(() {});
+                          },
+                        ),
+                      ).visible(providerList.isNotEmpty),
+                    if (_isAdminUser()) 16.height,
+                    // Country dropdown - Required
+                    DropdownButtonFormField<CountryListResponse>(
+                      decoration: inputDecoration(
+                        context,
+                        hint: languages.selectCountry,
+                        fillColor: context.scaffoldBackgroundColor,
+                      ),
+                      isExpanded: true,
+                      menuMaxHeight: 300,
+                      value: selectedCountryData,
+                      dropdownColor: context.cardColor,
+                      items: countryList.map((e) {
+                        return DropdownMenuItem<CountryListResponse>(
+                          value: e,
+                          child: Text(
+                            e.name ?? '',
+                            style: primaryTextStyle(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (CountryListResponse? value) {
+                        selectedCountryData = value;
+                        countryId = value?.id;
+                        selectedState = null;
+                        selectedCity = null;
+                        stateList.clear();
+                        cityList.clear();
+                        setState(() {});
+                        if (countryId != null) {
+                          getStates(countryId!);
+                        }
+                      },
+                    ).visible(countryList.isNotEmpty),
+                    16.height.visible(countryList.isNotEmpty),
+                    // State dropdown - Required
+                    if (stateList.isNotEmpty)
+                      DropdownButtonFormField<StateListResponse>(
+                        decoration: inputDecoration(
+                          context,
+                          hint: 'Select State',
+                          fillColor: context.scaffoldBackgroundColor,
+                        ),
+                        isExpanded: true,
+                        menuMaxHeight: 300,
+                        value: selectedState,
+                        dropdownColor: context.cardColor,
+                        items: stateList.map((e) {
+                          return DropdownMenuItem<StateListResponse>(
+                            value: e,
+                            child: Text(
+                              e.name ?? '',
+                              style: primaryTextStyle(),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (StateListResponse? value) {
+                          selectedState = value;
+                          stateId = value?.id;
+                          selectedCity = null;
+                          cityList.clear();
+                          setState(() {});
+                          if (stateId != null) {
+                            getCity(stateId!);
+                          }
+                        },
+                      ),
+                    16.height.visible(stateList.isNotEmpty),
+                    // City dropdown - Required
+                    if (cityList.isNotEmpty)
+                      DropdownButtonFormField<CityListResponse>(
+                        decoration: inputDecoration(
+                          context,
+                          hint: 'Select City',
+                          fillColor: context.scaffoldBackgroundColor,
+                        ),
+                        isExpanded: true,
+                        menuMaxHeight: 300,
+                        value: selectedCity,
+                        dropdownColor: context.cardColor,
+                        items: cityList.map((e) {
+                          return DropdownMenuItem<CityListResponse>(
+                            value: e,
+                            child: Text(
+                              e.name ?? '',
+                              style: primaryTextStyle(),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (CityListResponse? value) {
+                          selectedCity = value;
+                          cityId = value?.id;
+                          setState(() {});
+                        },
+                      ),
+                    16.height.visible(cityList.isNotEmpty),
                     AppTextField(
                       textFieldType: TextFieldType.MULTILINE,
                       controller: addressCont,
                       isValidationRequired: false,
-                      enabled: isUpdate
-                          ? rolesAndPermissionStore.handymanEdit
-                          : true,
+                      enabled: true, // Always enabled
                       focus: addressFocus,
                       nextFocus: passwordFocus,
                       decoration: inputDecoration(
@@ -673,6 +1390,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                             ).paddingTop(8),
                         ],
                       ),
+                    // Availability dropdown - full_time/part_time
                     DropdownButtonFormField<String>(
                       decoration: inputDecoration(
                         context,
@@ -682,10 +1400,10 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       dropdownColor: context.cardColor,
                       value: selectedAvailability,
                       items: availabilityList.map((data) {
+                        String displayText = data == 'full_time' ? 'Full-time' : 'Part-time';
                         return DropdownMenuItem<String>(
                           value: data,
-                          child:
-                              Text(data.toString(), style: primaryTextStyle()),
+                          child: Text(displayText, style: primaryTextStyle()),
                         );
                       }).toList(),
                       onChanged: (String? value) async {
@@ -694,10 +1412,70 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       },
                     ),
                     16.height,
+                    // Status dropdown - Active/Inactive
+                    DropdownButtonFormField<String>(
+                      decoration: inputDecoration(
+                        context,
+                        hint: languages.lblStatus,
+                        fillColor: context.scaffoldBackgroundColor,
+                      ),
+                      dropdownColor: context.cardColor,
+                      value: selectedStatus,
+                      items: [
+                        DropdownMenuItem<String>(
+                          value: '1',
+                          child: Text('Active', style: primaryTextStyle()),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: '0',
+                          child: Text('Inactive', style: primaryTextStyle()),
+                        ),
+                      ],
+                      onChanged: (String? value) {
+                        selectedStatus = value.validate();
+                        setState(() {});
+                      },
+                    ),
+                    16.height,
+                    Divider(),
+                    12.height,
+                    Text('Languages', style: boldTextStyle(size: 16)),
+                    8.height,
                     Text(languages.knownLanguages, style: secondaryTextStyle()),
                     8.height,
+                    // Languages - Multi-select dropdown
+                    Container(
+                      decoration: BoxDecoration(
+                        color: context.scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: context.dividerColor),
+                      ),
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: languageOptions.map((lang) {
+                          bool isSelected = selectedLanguages.contains(lang);
+                          return FilterChip(
+                            label: Text(lang),
+                            selected: isSelected,
+                            onSelected: (selected) {
+                              if (selected) {
+                                selectedLanguages.add(lang);
+                              } else {
+                                selectedLanguages.remove(lang);
+                              }
+                              setState(() {});
+                            },
+                            selectedColor: primaryColor.withOpacity(0.2),
+                            checkmarkColor: primaryColor,
+                          );
+                        }).toList(),
+                      ).paddingAll(12),
+                    ),
+                    16.height,
+                    // Keep old language list display for backward compatibility
                     Wrap(
-                      children: languageList.map((e) {
+                      children: selectedLanguages.map((e) {
                         return Stack(
                           children: [
                             Container(
@@ -719,7 +1497,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                                 Icons.cancel,
                                 color: Colors.red,
                               ).onTap(() {
-                                languageList.remove(e);
+                                selectedLanguages.remove(e);
                                 setState(() {});
                               }),
                             ),
@@ -737,238 +1515,49 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                           },
                         );
 
-                        if (res != null) {
-                          languageList.add(res.trim());
+                        if (res != null && !selectedLanguages.contains(res.trim())) {
+                          selectedLanguages.add(res.trim());
                           setState(() {});
                         }
                       },
                       child: Text('Add Language',
                           style: primaryTextStyle(color: context.primaryColor)),
                     ),
-                    // 16.height,
-                    Text(languages.essentialSkills,
-                        style: secondaryTextStyle()),
-                    8.height,
-                    Wrap(
-                      children: skills.map((e) {
-                        return Stack(
-                          children: [
-                            Container(
-                              decoration: boxDecorationWithRoundedCorners(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(16)),
-                                backgroundColor: appStore.isDarkMode
-                                    ? cardDarkColor
-                                    : primaryColor.withValues(alpha: 0.1),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              margin: EdgeInsets.all(4),
-                              child: Text(e, style: primaryTextStyle()),
-                            ),
-                            Positioned(
-                              right: 1,
-                              child: Icon(
-                                Icons.cancel,
-                                color: Colors.red,
-                              ).onTap(() {
-                                skills.remove(e);
-                                setState(() {});
-                              }),
-                            ),
-                          ],
-                        );
-                      }).toList(),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        String? res = await showInDialog(
-                          context,
-                          contentPadding: EdgeInsets.zero,
-                          builder: (p0) {
-                            return AddReasonsComponent();
-                          },
-                        );
-
-                        if (res != null) {
-                          skills.add(res.trim());
-                          setState(() {});
-                        }
-                      },
-                      child: Text('Add Skill',
-                          style: primaryTextStyle(color: context.primaryColor)),
-                    ),
-                    // 16.height,
-                    Text(languages.lblExperience, style: secondaryTextStyle()),
-                    8.height,
-                    Wrap(
-                      children: experiences.map((e) {
-                        return Stack(
-                          children: [
-                            Container(
-                              decoration: boxDecorationWithRoundedCorners(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(16)),
-                                backgroundColor: appStore.isDarkMode
-                                    ? cardDarkColor
-                                    : primaryColor.withValues(alpha: 0.1),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              margin: EdgeInsets.all(4),
-                              child: Text(e, style: primaryTextStyle()),
-                            ),
-                            Positioned(
-                              right: 1,
-                              child: Icon(
-                                Icons.cancel,
-                                color: Colors.red,
-                              ).onTap(() {
-                                experiences.remove(e);
-                                setState(() {});
-                              }),
-                            ),
-                          ],
-                        );
-                      }).toList(),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        String? res = await showInDialog(
-                          context,
-                          contentPadding: EdgeInsets.zero,
-                          builder: (p0) {
-                            return AddReasonsComponent();
-                          },
-                        );
-
-                        if (res != null) {
-                          experiences.add(res.trim());
-                          setState(() {});
-                        }
-                      },
-                      child: Text('Add Experience',
-                          style: primaryTextStyle(color: context.primaryColor)),
-                    ),
-                    // 16.height,
-                    Text('Mobility', style: secondaryTextStyle()),
-                    8.height,
-                    Wrap(
-                      children: mobilityList.map((e) {
-                        return Stack(
-                          children: [
-                            Container(
-                              decoration: boxDecorationWithRoundedCorners(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(16)),
-                                backgroundColor: appStore.isDarkMode
-                                    ? cardDarkColor
-                                    : primaryColor.withValues(alpha: 0.1),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              margin: EdgeInsets.all(4),
-                              child: Text(e, style: primaryTextStyle()),
-                            ),
-                            Positioned(
-                              right: 1,
-                              child: Icon(
-                                Icons.cancel,
-                                color: Colors.red,
-                              ).onTap(() {
-                                mobilityList.remove(e);
-                                setState(() {});
-                              }),
-                            ),
-                          ],
-                        );
-                      }).toList(),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        String? res = await showInDialog(
-                          context,
-                          contentPadding: EdgeInsets.zero,
-                          builder: (p0) {
-                            return AddReasonsComponent();
-                          },
-                        );
-
-                        if (res != null) {
-                          mobilityList.add(res.trim());
-                          setState(() {});
-                        }
-                      },
-                      child: Text('Add Mobility',
-                          style: primaryTextStyle(color: context.primaryColor)),
-                    ),
-                    // 16.height,
-                    Text('Certification', style: secondaryTextStyle()),
-                    8.height,
-                    Wrap(
-                      children: certifications.map((e) {
-                        return Stack(
-                          children: [
-                            Container(
-                              decoration: boxDecorationWithRoundedCorners(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(16)),
-                                backgroundColor: appStore.isDarkMode
-                                    ? cardDarkColor
-                                    : primaryColor.withValues(alpha: 0.1),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              margin: EdgeInsets.all(4),
-                              child: Text(e, style: primaryTextStyle()),
-                            ),
-                            Positioned(
-                              right: 1,
-                              child: Icon(
-                                Icons.cancel,
-                                color: Colors.red,
-                              ).onTap(() {
-                                certifications.remove(e);
-                                setState(() {});
-                              }),
-                            ),
-                          ],
-                        );
-                      }).toList(),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        String? res = await showInDialog(
-                          context,
-                          contentPadding: EdgeInsets.zero,
-                          builder: (p0) {
-                            return AddReasonsComponent();
-                          },
-                        );
-
-                        if (res != null) {
-                          certifications.add(res.trim());
-                          setState(() {});
-                        }
-                      },
-                      child: Text('Add Certification',
-                          style: primaryTextStyle(color: context.primaryColor)),
-                    ),
-                    10.height,
+                    Divider(),
+                    12.height,
+                    Text('Education & Bio', style: boldTextStyle(size: 16)),
+                    12.height,
+                    // Education - Text Input (Required)
                     AppTextField(
-                      textFieldType: TextFieldType.OTHER,
+                      textFieldType: TextFieldType.NAME,
                       controller: educationCont,
                       focus: educationFocus,
+                      nextFocus: aboutMeFocus,
+                      enabled: true,
+                      isValidationRequired: true,
                       decoration: inputDecoration(
                         context,
                         hint: 'Education',
                         fillColor: context.scaffoldBackgroundColor,
                       ),
-                      enabled: isUpdate
-                          ? rolesAndPermissionStore.handymanEdit
-                          : true,
-                    ).visible(!isUpdate),
-                    10.height,
+                    ),
+                    16.height,
+                    // About Me - Textarea (Optional)
+                    AppTextField(
+                      textFieldType: TextFieldType.MULTILINE,
+                      controller: aboutMeCont,
+                      focus: aboutMeFocus,
+                      enabled: true,
+                      isValidationRequired: false,
+                      minLines: 2,
+                      maxLines: 5,
+                      decoration: inputDecoration(
+                        context,
+                        hint: 'About Me',
+                        fillColor: context.scaffoldBackgroundColor,
+                      ),
+                    ),
+                    16.height,
                     24.height,
                     Observer(
                       builder: (context) => AppButton(
@@ -982,13 +1571,20 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                             : () {
                                 ifNotTester(context, () {
                                   if (isUpdate) {
-                                    if (rolesAndPermissionStore.handymanEdit) {
+                                    // Allow admins to edit, or providers editing their own handymen, or check permission
+                                    bool isOwnHandyman = widget.data != null && widget.data!.providerId == appStore.userId;
+                                    if (_isAdminUser() || isOwnHandyman || rolesAndPermissionStore.handymanEdit) {
                                       register();
                                     } else {
                                       toast(languages.permissionDeniedUnableTo);
                                     }
                                   } else {
-                                    register();
+                                    // For new handyman, allow if admin or has add permission
+                                    if (_isAdminUser() || rolesAndPermissionStore.handymanAdd) {
+                                      register();
+                                    } else {
+                                      toast(languages.permissionDeniedUnableTo);
+                                    }
                                   }
                                 });
                               },

@@ -393,46 +393,46 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                     },
                   ),
                 // if (rolesAndPermissionStore.handymanTypeList)
-                SettingItemWidget(
-                  decoration: BoxDecoration(color: context.cardColor),
-                  leading: Image.asset(percent_line,
-                      height: 16,
-                      width: 16,
-                      color:
-                          appStore.isDarkMode ? white : appTextSecondaryColor),
-                  title: languages.handymanCommission,
-                  titleTextStyle: boldTextStyle(size: 12),
-                  trailing: Icon(Icons.chevron_right,
-                      color: appStore.isDarkMode
-                          ? white
-                          : gray.withValues(alpha: 0.8),
-                      size: 18),
-                  padding: EdgeInsets.only(top: 20, left: 16, right: 16),
-                  onTap: () {
-                    HandymanCommissionTypeListScreen().launch(context);
-                  },
-                ),
+                // SettingItemWidget(
+                //   decoration: BoxDecoration(color: context.cardColor),
+                //   leading: Image.asset(percent_line,
+                //       height: 16,
+                //       width: 16,
+                //       color:
+                //           appStore.isDarkMode ? white : appTextSecondaryColor),
+                //   title: languages.handymanCommission,
+                //   titleTextStyle: boldTextStyle(size: 12),
+                //   trailing: Icon(Icons.chevron_right,
+                //       color: appStore.isDarkMode
+                //           ? white
+                //           : gray.withValues(alpha: 0.8),
+                //       size: 18),
+                //   padding: EdgeInsets.only(top: 20, left: 16, right: 16),
+                //   onTap: () {
+                //     HandymanCommissionTypeListScreen().launch(context);
+                //   },
+                // ),
                 // if (appConfigurationStore.servicePackageStatus &&
                 //     rolesAndPermissionStore.servicePackageList)
-                SettingItemWidget(
-                  decoration: BoxDecoration(color: context.cardColor),
-                  leading: Image.asset(ic_packages,
-                      height: 16,
-                      width: 16,
-                      color:
-                          appStore.isDarkMode ? white : appTextSecondaryColor),
-                  title: languages.packages,
-                  titleTextStyle: boldTextStyle(size: 12),
-                  trailing: Icon(Icons.chevron_right,
-                      color: appStore.isDarkMode
-                          ? white
-                          : gray.withValues(alpha: 0.8),
-                      size: 18),
-                  padding: EdgeInsets.only(top: 20, left: 16, right: 16),
-                  onTap: () {
-                    PackageListScreen().launch(context);
-                  },
-                ),
+                // SettingItemWidget(
+                //   decoration: BoxDecoration(color: context.cardColor),
+                //   leading: Image.asset(ic_packages,
+                //       height: 16,
+                //       width: 16,
+                //       color:
+                //           appStore.isDarkMode ? white : appTextSecondaryColor),
+                //   title: languages.packages,
+                //   titleTextStyle: boldTextStyle(size: 12),
+                //   trailing: Icon(Icons.chevron_right,
+                //       color: appStore.isDarkMode
+                //           ? white
+                //           : gray.withValues(alpha: 0.8),
+                //       size: 18),
+                //   padding: EdgeInsets.only(top: 20, left: 16, right: 16),
+                //   onTap: () {
+                //     PackageListScreen().launch(context);
+                //   },
+                // ),
                 // if (appConfigurationStore.serviceAddonStatus &&
                 //     rolesAndPermissionStore.serviceAddOnList)
                 SettingItemWidget(

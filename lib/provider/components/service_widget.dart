@@ -18,10 +18,29 @@ class ServiceComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> address = (data.serviceAddressMapping??[]).isEmpty ? [''] :  (data
-        .serviceAddressMapping??[]).first.providerAddressMapping!.address
-        .validate()
-        .split(',');
+    // Build location as "City, Country" when available, otherwise fall back to parsed address
+    String locationText = '';
+    if ((data.serviceAddressMapping ?? []).isNotEmpty) {
+      final mapping = (data.serviceAddressMapping ?? []).first;
+      final String city = mapping.cityName.validate();
+      final String country = mapping.countryName.validate();
+      if (city.isNotEmpty || country.isNotEmpty) {
+        locationText = [city, country].where((e) => e.isNotEmpty).join(', ');
+      } else {
+        final String rawAddress = mapping.providerAddressMapping?.address.validate() ?? '';
+        if (rawAddress.isNotEmpty) {
+          final parts = rawAddress.split(',');
+          if (parts.isNotEmpty) {
+            final String first = parts.first.trim();
+            final String last = parts.length > 1 ? parts.last.trim() : '';
+            locationText = last.isNotEmpty ? '$first -$last' : first;
+          }
+        }
+      }
+    }
+    if (locationText.isEmpty) {
+      locationText = '';
+    }
     return AnimatedContainer(
       duration: 400.milliseconds,
       decoration: boxDecorationWithRoundedCorners(
@@ -119,13 +138,22 @@ class ServiceComponent extends StatelessWidget {
               ),
               5.height,
               Text(
-                '${address.first} -${address.last}',
+                locationText,
                 style: primaryTextStyle(size: 10),
               ).paddingSymmetric(horizontal: 16),
               5.height,
-              Text(
-                '${data.totalReview.validate()} Bookings',
-                style: primaryTextStyle(size: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '${data.totalBookingCount?.validate() ?? 0} Bookings',
+                    style: primaryTextStyle(size: 10),
+                  ),
+                  Text(
+                    'Views: ${data.views?.validate() ?? 0}',
+                    style: primaryTextStyle(size: 10),
+                  ),
+                ],
               ).paddingSymmetric(horizontal: 16),
               5.height,
               SocialIconsList(

@@ -41,6 +41,15 @@ class UserData {
   String? password;
   String? cityName;
   String? countryName;
+  String? companyName;
+  String? vatNumber;
+  String? experience;
+  String? mobility;
+  String? certification;
+  String? aboutMe;
+  String? availability;
+  String? education;
+  List<String>? languagesArray;
   num? providerServiceRating;
   String? providerType;
   bool? isHandymanAvailable;
@@ -210,6 +219,31 @@ class UserData {
     handymanCommission = json['handyman_commission'];
     isHandymanAvailable = json['isHandymanAvailable'] != null ? json['isHandymanAvailable'] == 1 : false;
     loginType = json['login_type'];
+    companyName = json['company_name'];
+    vatNumber = json['vat_number'];
+    experience = json['experience'];
+    mobility = json['mobility'];
+    certification = json['certification'];
+    aboutMe = json['about_me'];
+    availability = json['availability'];
+    education = json['education'];
+    
+    // Handle languages - can be array or JSON string
+    if (json['languages'] != null) {
+      if (json['languages'] is List) {
+        languagesArray = (json['languages'] as List).map((e) => e.toString()).toList();
+      } else if (json['languages'] is String && json['languages'].toString().isJson()) {
+        Iterable it = jsonDecode(json['languages']);
+        languagesArray = it.map((e) => e.toString()).toList();
+      }
+    }
+    // Fallback to known_languages if languages is not available
+    if (languagesArray == null && knownLanguages != null && knownLanguages!.isNotEmpty) {
+      if (knownLanguages!.isJson()) {
+        Iterable it = jsonDecode(knownLanguages!);
+        languagesArray = it.map((e) => e.toString()).toList();
+      }
+    }
     isEmailVerified = json['is_email_verified'];
     isVerifiedAccount = json['is_verify_provider'] is int ? json['is_verify_provider'] : 0;
     totalBooking= json['total_services_booked'];

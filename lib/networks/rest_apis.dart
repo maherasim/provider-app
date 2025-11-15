@@ -872,8 +872,16 @@ Future<List<ProviderSubscriptionModel>> getPricingPlanList() async {
   }
 }
 
-Future<ProviderSubscriptionModel> saveSubscription(Map request) async {
-  return ProviderSubscriptionModel.fromJson(await handleResponse(await buildHttpResponse('save-subscription', request: request, method: HttpMethodType.POST)));
+Future<Map<String, dynamic>> saveSubscription(Map request) async {
+  final raw = await handleResponse(
+    await buildHttpResponse('save-subscription', request: request, method: HttpMethodType.POST),
+  );
+  // API returns { message: string, data: { ...subscription... } }
+  final ProviderSubscriptionModel model = ProviderSubscriptionModel.fromJson(raw is Map && raw.containsKey('data') ? raw['data'] : raw);
+  return {
+    'message': (raw is Map && raw['message'] != null) ? raw['message'].toString() : '',
+    'data': model,
+  };
 }
 
 Future<BaseResponseModel> bankTransferSubscription(Map request) async {
@@ -938,7 +946,8 @@ Future<void> savePayment({
     log('Request : $planRequestModel');
 
     await saveSubscription(planRequestModel.toJson()).then((value) async {
-      toast("${data.title.validate()} ${languages.successfullyActivated}");
+      final String msg = (value['message']?.toString() ?? '').trim();
+      toast(msg.isNotEmpty ? msg : "${data.title.validate()} ${languages.successfullyActivated}");
       await setValue(LAST_APP_CONFIGURATION_SYNCED_TIME, 0);
       push(ProviderDashboardScreen(index: 0), isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
     }).catchError((e) {

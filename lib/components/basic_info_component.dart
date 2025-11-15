@@ -10,11 +10,9 @@ import 'package:handyman_provider_flutter/screens/chat/frobster_chat_thread_scre
 import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
-import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
 import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../models/booking_detail_response.dart';
 import '../utils/model_keys.dart';
@@ -222,24 +220,24 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
                               : textPrimaryColor),
                     ).expand(),
                     8.width,
-                    Text(
-                      widget.bookingDetail!.address.validate(),
-                      style: boldTextStyle(
-                          size: 12,
-                          color:
-                              appStore.isDarkMode ? white : textSecondaryColor,
-                          weight: FontWeight.w400),
-                      textAlign: TextAlign.left,
-                    ).expand(flex: 4),
+                    Builder(
+                      builder: (context) {
+                        final String city = userData.cityName.validate();
+                        final String country = userData.countryName.validate();
+                        final String locationText = [city, country].where((e) => e.isNotEmpty).join(' - ');
+                        return Text(
+                          locationText.isNotEmpty ? locationText : widget.bookingDetail!.address.validate(),
+                          style: boldTextStyle(
+                              size: 12,
+                              color: appStore.isDarkMode ? white : textSecondaryColor,
+                              weight: FontWeight.w400),
+                          textAlign: TextAlign.left,
+                        ).expand(flex: 4);
+                      },
+                    ),
                   ],
                 )
-                    .visible(
-                        widget.bookingDetail!.address.validate().isNotEmpty)
-                    .onTap(() {
-                  commonLaunchUrl(
-                      '$GOOGLE_MAP_PREFIX${Uri.encodeFull(widget.bookingDetail!.address.validate())}',
-                      launchMode: LaunchMode.externalApplication);
-                }),
+                    .visible(true),
                 8.height,
               ],
             ],

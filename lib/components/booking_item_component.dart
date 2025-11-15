@@ -268,16 +268,6 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                               widget.bookingData.type == SERVICE_TYPE_DAILY,
                           isFixesService: widget.bookingData.isFixedService,
                         ),
-                        if (widget.bookingData.isHourlyService)
-                          Row(
-                            children: [
-                              4.width,
-                              Text(
-                                '${widget.bookingData.amount.validate().toPriceFormat()}/${languages.lblHr}',
-                                style: secondaryTextStyle(),
-                              ),
-                            ],
-                          ),
                         if (widget.bookingData.discount.validate() != 0)
                           Text(
                             '(${widget.bookingData.discount.validate()}% ${languages.lblOff})',

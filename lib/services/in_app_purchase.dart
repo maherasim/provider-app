@@ -81,6 +81,8 @@ class InAppPurchaseService {
       },
     ).catchError((e) {
       log('Error while fetching customer information');
+      // Return an empty CustomerInfo by re-calling the SDK to avoid null
+      return Purchases.getCustomerInfo();
     });
   }
 
@@ -181,6 +183,8 @@ class InAppPurchaseService {
   Future<void> saveSubscriptionPurchase(PlanRequestModel planRequestModel) async {
     await saveSubscription(planRequestModel.toJson()).then((value) {
       appStore.setLoading(false);
+      final String msg = (value['message']?.toString() ?? '').trim();
+      if (msg.isNotEmpty) toast(msg);
       clearPendingSubscriptionData();
     }).catchError((e) {
       setValue(IS_RESTORE_PURCHASE_REQUIRED, true);

@@ -122,7 +122,8 @@ class _PricingPlanScreenState extends State<PricingPlanScreen> {
 
     await saveSubscription(planRequestModel.toJson()).then((value) {
       appStore.setLoading(false);
-      toast("${selectedPricingPlan!.title.validate()} ${languages.lblSuccessFullyActivated}");
+      final String msg = (value['message']?.toString() ?? '').trim();
+      toast(msg.isNotEmpty ? msg : "${selectedPricingPlan!.title.validate()} ${languages.lblSuccessFullyActivated}");
 
       push(ProviderDashboardScreen(index: 0), isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
     }).catchError((e) {

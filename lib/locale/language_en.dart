@@ -1167,7 +1167,7 @@ class LanguageEn extends Languages {
   String get lblStripeTestCredential => 'Testing Credential cannot pay more then 500';
 
   @override
-  String get lblSuccessFullyActivated => 'is successfully activated';
+  String get lblSuccessFullyActivated => 'Successfully Activated';
 
   @override
   String get lblNoTaxesFound => 'No Taxes Found';
@@ -1347,7 +1347,7 @@ class LanguageEn extends Languages {
   String get successfullyActivated => 'is successfully activated';
 
   @override
-  String get providerHome => 'Provider Home';
+  String get providerHome => 'Employeer Home';
 
   @override
   String get handymanHome => 'Handyman Home';

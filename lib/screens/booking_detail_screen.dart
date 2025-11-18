@@ -643,7 +643,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                         else
                           Text(
                             bookingResponse.bookingDetail!.serviceName
-                                .validate(),
+                                .validate(value: 'N/A'),
                             style: boldTextStyle(size: LABEL_TEXT_SIZE),
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
@@ -687,6 +687,34 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                                 ).paddingLeft(4).expand(),
                             ],
                           ),
+                        // City - Country (from booking_detail)
+                        Builder(
+                          builder: (context) {
+                            // 1) Prefer booking_detail city/country
+                            String city = bookingResponse.bookingDetail!.cityName.validate();
+                            String country = bookingResponse.bookingDetail!.countryName.validate();
+                            // 2) Fallback to service.city_name/country_name
+                            if (city.isEmpty || country.isEmpty) {
+                              city = city.isNotEmpty ? city : bookingResponse.service?.cityName.validate() ?? '';
+                              country = country.isNotEmpty ? country : bookingResponse.service?.countryName.validate() ?? '';
+                            }
+                            // 3) Fallback to first service_address_mapping
+                            if ((city.isEmpty || country.isEmpty) && bookingResponse.service?.serviceAddressMapping.validate().isNotEmpty == true) {
+                              final firstMap = bookingResponse.service!.serviceAddressMapping!.first;
+                              city = city.isNotEmpty ? city : firstMap.cityName.validate();
+                              country = country.isNotEmpty ? country : firstMap.countryName.validate();
+                            }
+                            final String locationText = [city, country].where((e) => e.isNotEmpty).join(' - ');
+                            final String text = locationText.isNotEmpty ? locationText : 'N/A';
+                            return Padding(
+                              padding: EdgeInsets.only(top: 6),
+                              child: Text(
+                                text,
+                                style: secondaryTextStyle(color: context.primaryColor),
+                              ),
+                            );
+                          },
+                        ),
                       ],
                     ).expand()
                   ],
@@ -1406,11 +1434,6 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
         },
       );
 
-      return Text(
-        res.bookingDetail!.statusLabel.validate(),
-        style: boldTextStyle(),
-      ).center();
-
     }
     return Offstage();
 
@@ -1786,27 +1809,21 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                                 ],
                               ),
                               16.height,
-                              if (res.data!.bookingDetail!.paymentMethod
-                                  .validate()
-                                  .isNotEmpty)
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(languages.lblMethod,
-                                        style: secondaryTextStyle(size: 14)),
-                                    Text(
-                                      (res.data!.bookingDetail!.paymentMethod !=
-                                                  null
-                                              ? res.data!.bookingDetail!
-                                                  .paymentMethod
-                                                  .toString()
-                                              : languages.notAvailable)
-                                          .capitalizeFirstLetter(),
-                                      style: boldTextStyle(),
-                                    ),
-                                  ],
-                                ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(languages.lblMethod,
+                                      style: secondaryTextStyle(size: 14)),
+                                  Text(
+                                    (() {
+                                      final String method = res.data!.bookingDetail!.paymentMethod.validate();
+                                      return method.isNotEmpty ? method.capitalizeFirstLetter() : 'N/A';
+                                    })(),
+                                    style: boldTextStyle(),
+                                  ),
+                                ],
+                              ),
                               16.height,
                               Row(
                                 mainAxisAlignment:
@@ -1815,18 +1832,17 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                                   Text(languages.lblStatus,
                                       style: secondaryTextStyle(size: 14)),
                                   Text(
-                                    buildPaymentStatusWithMethod(
-                                      res.data!.bookingDetail!.paymentStatus
-                                          .validate(),
-                                      res.data!.bookingDetail!.paymentMethod
-                                          .validate()
-                                          .capitalizeFirstLetter(),
-                                    ),
+                                    (() {
+                                      final String status = res.data!.bookingDetail!.paymentStatus.validate();
+                                      if (status.isEmpty) return 'N/A';
+                                      final String method = res.data!.bookingDetail!.paymentMethod.validate().capitalizeFirstLetter();
+                                      return buildPaymentStatusWithMethod(status, method);
+                                    })(),
                                     style: boldTextStyle(
-                                        color: res
-                                            .data!.bookingDetail!.paymentStatus
-                                            .validate()
-                                            .getPaymentStatusColor),
+                                        color: (() {
+                                          final String status = res.data!.bookingDetail!.paymentStatus.validate();
+                                          return status.isEmpty ? textSecondaryColor : status.getPaymentStatusColor;
+                                        })()),
                                   ),
                                 ],
                               ),

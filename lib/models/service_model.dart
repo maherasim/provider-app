@@ -34,7 +34,9 @@ class ServiceData {
   String? providerName;
   String? providerImage;
   int? countryId;
+  String? countryName;
   int? cityId;
+  String? cityName;
   int? stateId;
   String? categoryName;
   List<String>? imageAttachments;
@@ -170,8 +172,11 @@ class ServiceData {
     isFeatured = json['is_featured'];
     providerName = json['provider_name'];
     countryId = json['countryId'];
+    // Some APIs return human-readable names
+    countryName = json['country_name'];
     stateId = json['stateId'];
     cityId = json['city_id'];
+    cityName = json['city_name'];
     categoryName = json['category_name'];
     //image_attchments = json['attchments'];
     imageAttachments = json['attchments'] != null
@@ -248,6 +253,8 @@ class ServiceData {
     data['provider_image'] = this.providerImage;
     data['category_id'] = this.categoryId;
     data['provider_id'] = this.providerId;
+    if (this.cityName != null) data['city_name'] = this.cityName;
+    if (this.countryName != null) data['country_name'] = this.countryName;
     data['is_slot'] = this.isSlot;
     data['visit_type'] = this.visitType;
     data['price'] = this.price;

@@ -106,6 +106,9 @@ class BookingData {
   String? statusLabel;
   String? description;
   String? bookingSlot;
+  // Location (names are provided in booking-detail)
+  String? cityName;
+  String? countryName;
   String? providerName;
   String? customerName;
   String? serviceName;
@@ -211,6 +214,8 @@ class BookingData {
     this.taxes,
     this.serviceId,
     this.serviceName,
+    this.cityName,
+    this.countryName,
     this.status,
     this.bankTransferStatus,
     this.statusLabel,
@@ -282,6 +287,8 @@ class BookingData {
           : null,
       serviceId: json['service_id'],
       serviceName: json['service_name'],
+      cityName: json['city_name'],
+      countryName: json['country_name'],
       status: json['status'],
       bankTransferStatus: json['bank_transfer_status'],
       statusLabel: json['status_label'],
@@ -339,6 +346,8 @@ class BookingData {
     data['provider_name'] = this.providerName;
     data['service_id'] = this.serviceId;
     data['service_name'] = this.serviceName;
+    if (this.cityName != null) data['city_name'] = this.cityName;
+    if (this.countryName != null) data['country_name'] = this.countryName;
     data['status'] = this.status;
     data['status_label'] = this.statusLabel;
     data['type'] = this.type;

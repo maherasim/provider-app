@@ -149,9 +149,9 @@ class ServiceComponent extends StatelessWidget {
                     '${data.totalBookingCount?.validate() ?? 0} Bookings',
                     style: primaryTextStyle(size: 10),
                   ),
-                  Text(
+              Text(
                     'Views: ${data.views?.validate() ?? 0}',
-                    style: primaryTextStyle(size: 10),
+                style: primaryTextStyle(size: 10),
                   ),
                 ],
               ).paddingSymmetric(horizontal: 16),

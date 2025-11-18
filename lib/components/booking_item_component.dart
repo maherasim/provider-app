@@ -10,7 +10,6 @@ import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/extensions/color_extension.dart';
-import 'package:handyman_provider_flutter/utils/extensions/num_extenstions.dart';
 import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
@@ -283,12 +282,13 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                       style: boldTextStyle(size: 12, color: Colors.green),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
-                    ).paddingLeft(4),
+                    ).paddingLeft(4).visible(widget.bookingData.isAdvancePaymentDone),
                 ],
               ).expand(),
             ],
           ).paddingAll(8),
-          if (widget.showDescription)
+                  if (widget.showDescription)
+                  if (widget.showDescription)
             Container(
               decoration: boxDecorationWithRoundedCorners(
                 backgroundColor:
@@ -317,7 +317,7 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                           ),
                         ).expand(flex: 5),
                       ],
-                    ).paddingAll(8),
+                    ).paddingAll(8).visible(widget.bookingData.isAdvancePaymentDone),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

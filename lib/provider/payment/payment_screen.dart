@@ -62,7 +62,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
             paymentMethod: PAYMENT_METHOD_STRIPE,
             paymentStatus: BOOKING_STATUS_PAID,
             txnId: p0['transaction_id'],
-          );
+          ).then((_) {
+            appStore.setLoading(false);
+            toast(languages.lblSuccessFullyActivated);
+            push(ProviderDashboardScreen(index: 0), isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+          });
         },
       );
 
@@ -80,7 +84,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
             paymentMethod: PAYMENT_METHOD_RAZOR,
             paymentStatus: BOOKING_STATUS_PAID,
             txnId: p0['paymentId'],
-          );
+          ).then((_) {
+            appStore.setLoading(false);
+            toast(languages.lblSuccessFullyActivated);
+            push(ProviderDashboardScreen(index: 0), isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+          });
         },
       );
       razorPayServiceNew.razorPayCheckout().catchError((e) {
@@ -99,7 +107,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
             paymentMethod: PAYMENT_METHOD_FLUTTER_WAVE,
             paymentStatus: BOOKING_STATUS_PAID,
             txnId: p0['transaction_id'],
-          );
+          ).then((_) {
+            appStore.setLoading(false);
+            toast(languages.lblSuccessFullyActivated);
+            push(ProviderDashboardScreen(index: 0), isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+          });
         },
       );
     } else if (selectedPaymentSetting!.type == PAYMENT_METHOD_CINETPAY) {
@@ -123,7 +135,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
             paymentMethod: PAYMENT_METHOD_CINETPAY,
             paymentStatus: BOOKING_STATUS_PAID,
             txnId: p0['transaction_id'],
-          );
+          ).then((_) {
+            appStore.setLoading(false);
+            toast(languages.lblSuccessFullyActivated);
+            push(ProviderDashboardScreen(index: 0), isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+          });
         },
       );
 
@@ -141,7 +157,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
             paymentMethod: PAYMENT_METHOD_SADAD_PAYMENT,
             paymentStatus: BOOKING_STATUS_PAID,
             txnId: p0['transaction_id'],
-          );
+          ).then((_) {
+            appStore.setLoading(false);
+            toast(languages.lblSuccessFullyActivated);
+            push(ProviderDashboardScreen(index: 0), isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+          });
         },
       );
 
@@ -160,7 +180,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
             paymentMethod: PAYMENT_METHOD_PAYPAL,
             paymentStatus: BOOKING_STATUS_PAID,
             txnId: p0['transaction_id'],
-          );
+          ).then((_) {
+            appStore.setLoading(false);
+            toast(languages.lblSuccessFullyActivated);
+            push(ProviderDashboardScreen(index: 0), isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+          });
         },
       );
     } else if (selectedPaymentSetting!.type == PAYMENT_METHOD_AIRTEL) {
@@ -183,7 +207,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   paymentMethod: PAYMENT_METHOD_AIRTEL,
                   paymentStatus: BOOKING_STATUS_PAID,
                   txnId: res['transaction_id'],
-                );
+                ).then((_) {
+                  appStore.setLoading(false);
+                  toast(languages.lblSuccessFullyActivated);
+                  push(ProviderDashboardScreen(index: 0), isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+                });
               },
             ),
           );
@@ -207,7 +235,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
             paymentMethod: PAYMENT_METHOD_PAYSTACK,
             paymentStatus: BOOKING_STATUS_PAID,
             txnId: res['transaction_id'],
-          );
+          ).then((_) {
+            appStore.setLoading(false);
+            toast(languages.lblSuccessFullyActivated);
+            push(ProviderDashboardScreen(index: 0), isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+          });
         },
       );
       await Future.delayed(const Duration(seconds: 1));
@@ -232,7 +264,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
             paymentMethod: PAYMENT_METHOD_MIDTRANS,
             paymentStatus: BOOKING_STATUS_PAID,
             txnId: res["transaction_id"],
-          );
+          ).then((_) {
+            appStore.setLoading(false);
+            toast(languages.lblSuccessFullyActivated);
+            push(ProviderDashboardScreen(index: 0), isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+          });
         },
       );
       await Future.delayed(const Duration(seconds: 1));
@@ -252,7 +288,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
             paymentMethod: PAYMENT_METHOD_PHONEPE,
             paymentStatus: BOOKING_STATUS_PAID,
             txnId: res["transaction_id"],
-          );
+          ).then((_) {
+            appStore.setLoading(false);
+            toast(languages.lblSuccessFullyActivated);
+            push(ProviderDashboardScreen(index: 0), isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+          });
         },
       );
 
@@ -268,7 +308,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
         paymentMethod: PAYMENT_METHOD_FROM_WALLET,
         paymentStatus: BOOKING_STATUS_PAID,
         txnId: 'wallet_${DateTime.now().millisecondsSinceEpoch}',
-      ).catchError((e) {
+      ).then((_) {
+        appStore.setLoading(false);
+        toast(languages.lblSuccessFullyActivated);
+        push(ProviderDashboardScreen(index: 0), isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+      }).catchError((e) {
         appStore.setLoading(false);
         toast(e.toString());
       });

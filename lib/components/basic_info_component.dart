@@ -91,7 +91,8 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
       showContactWidgets =
           widget.bookingDetail!.status != BookingStatusKeys.complete &&
               widget.bookingDetail!.status != BookingStatusKeys.cancelled;
-      showChat = true;
+      // Show chat only after advance payment is completed
+      showChat = widget.bookingDetail?.isAdvancePaymentDone == true;
       showVerifiedBadge =
           widget.customerData!.isVerifiedAccount.validate().getBoolInt();
     } else if (widget.flag == 1) {
@@ -114,7 +115,9 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
               widget.handymanData!.id.validate();
       showVerifiedBadge =
           widget.handymanData!.isVerifiedAccount.validate().getBoolInt();
-      showChat = widget.bookingDetail!.status != BookingStatusKeys.complete &&
+      // Show chat only after advance payment is completed and booking is active
+      showChat = (widget.bookingDetail?.isAdvancePaymentDone == true) &&
+          widget.bookingDetail!.status != BookingStatusKeys.complete &&
           widget.bookingDetail!.status != BookingStatusKeys.cancelled;
     } else {
       profileId = widget.providerData!.id.validate();

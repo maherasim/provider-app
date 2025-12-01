@@ -7,8 +7,8 @@ import 'package:handyman_provider_flutter/models/provider_subscription_model.dar
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/provider/subscription/components/subscription_widget.dart';
 import 'package:handyman_provider_flutter/provider/subscription/shimmer/subscription_shimmer.dart';
-import 'package:handyman_provider_flutter/services/in_app_purchase.dart';
-import 'package:handyman_provider_flutter/utils/configs.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
+import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../../components/empty_error_state_widget.dart';
@@ -54,7 +54,16 @@ class _SubscriptionHistoryScreenState extends State<SubscriptionHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(languages.lblSubscriptionHistory, backWidget: BackWidget(), elevation: 0, color: primaryColor, textColor: Colors.white),
+      appBar: AppBar(
+        title: Text(
+          languages.lblSubscriptionHistory,
+          style: boldTextStyle(color: Colors.white, size: APP_BAR_TEXT_SIZE),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: BackWidget(color: Colors.white),
+        flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
+      ),
       body: Stack(
         children: [
           SnapHelperWidget<List<ProviderSubscriptionModel>>(

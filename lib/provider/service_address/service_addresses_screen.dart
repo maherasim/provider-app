@@ -15,6 +15,8 @@ import 'package:nb_utils/nb_utils.dart';
 import '../../components/app_widgets.dart';
 import '../../components/empty_error_state_widget.dart';
 import 'components/service_addresses_component.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
+import 'package:handyman_provider_flutter/utils/constant.dart';
 
 class ServiceAddressesScreen extends StatefulWidget {
   final bool? isFromService;
@@ -158,12 +160,12 @@ class ServiceAddressesScreenState extends State<ServiceAddressesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(
-        languages.lblServiceAddress,
-        textColor: white,
-        showBack: true,
-        backWidget: BackWidget(),
-        color: context.primaryColor,
+      appBar: AppBar(
+        title: Text(languages.lblServiceAddress, style: boldTextStyle(color: Colors.white, size: APP_BAR_TEXT_SIZE)),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: BackWidget(color: Colors.white),
+        flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
         actions: [
           IconButton(
             onPressed: () {

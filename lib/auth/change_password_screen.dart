@@ -10,6 +10,7 @@ import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
@@ -77,13 +78,12 @@ class ChangePasswordScreenState extends State<ChangePasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(
-        languages.changePassword,
-        backWidget: BackWidget(),
-        showBack: true,
-        textColor: white,
-        color: context.primaryColor,
+      appBar: AppBar(
+        title: Text(languages.changePassword, style: boldTextStyle(color: Colors.white, size: APP_BAR_TEXT_SIZE)),
         elevation: 0.0,
+        backgroundColor: Colors.transparent,
+        leading: BackWidget(color: Colors.white),
+        flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
       ),
       body: Stack(
         children: [

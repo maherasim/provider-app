@@ -10,6 +10,8 @@ import 'package:nb_utils/nb_utils.dart';
 import '../../components/empty_error_state_widget.dart';
 import 'components/job_item_widget.dart';
 import 'models/bidder_data.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
+import 'package:handyman_provider_flutter/utils/constant.dart';
 
 class BidListScreen extends StatefulWidget {
   @override
@@ -47,12 +49,12 @@ class _BidListScreenState extends State<BidListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(
-        languages.bidList,
-        textColor: white,
-        showBack: true,
-        backWidget: BackWidget(),
-        color: context.primaryColor,
+      appBar: AppBar(
+        title: Text(languages.bidList, style: boldTextStyle(color: Colors.white, size: APP_BAR_TEXT_SIZE)),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: BackWidget(color: Colors.white),
+        flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
       ),
       body: Stack(
         children: [

@@ -11,6 +11,8 @@ import 'package:handyman_provider_flutter/provider/blog/view/add_blog_screen.dar
 import 'package:nb_utils/nb_utils.dart';
 
 import '../../../components/empty_error_state_widget.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
+import 'package:handyman_provider_flutter/utils/constant.dart';
 
 class BlogListScreen extends StatefulWidget {
   const BlogListScreen({Key? key}) : super(key: key);
@@ -46,11 +48,15 @@ class _BlogListScreenState extends State<BlogListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(
-        languages.blogs,
-        color: context.primaryColor,
-        textColor: white,
-        backWidget: BackWidget(),
+      appBar: AppBar(
+        title: Text(
+          languages.blogs,
+          style: boldTextStyle(color: Colors.white, size: APP_BAR_TEXT_SIZE),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: BackWidget(color: Colors.white),
+        flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
         actions: [
           IconButton(
             icon: Icon(Icons.add, size: 28, color: white),

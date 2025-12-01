@@ -8,6 +8,8 @@ import 'package:handyman_provider_flutter/provider/timeSlots/models/slot_data.da
 import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
+import 'package:handyman_provider_flutter/components/back_widget.dart';
 
 class EditTimeSlotScreen extends StatefulWidget {
   final List<SlotData> slotData;
@@ -61,11 +63,13 @@ class EditTimeSlotScreenState extends State<EditTimeSlotScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(
-        languages.timeSlots,
-        center: true,
-        textColor: white,
-        color: context.primaryColor,
+      appBar: AppBar(
+        title: Text(languages.timeSlots, style: boldTextStyle(color: Colors.white, size: APP_BAR_TEXT_SIZE)),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: BackWidget(color: Colors.white),
+        flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
       ),
       body: Stack(
         children: [

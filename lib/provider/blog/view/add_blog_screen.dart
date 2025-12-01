@@ -17,6 +17,7 @@ import 'package:nb_utils/nb_utils.dart';
 import '../../../components/chat_gpt_loder.dart';
 import '../../../models/static_data_model.dart';
 import '../../../utils/constant.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 
 class AddBlogScreen extends StatefulWidget {
   final BlogData? data;
@@ -208,11 +209,15 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(
-        isUpdate ? languages.updateBlog : languages.addBlog,
-        color: context.primaryColor,
-        textColor: white,
-        backWidget: BackWidget(),
+      appBar: AppBar(
+        title: Text(
+          isUpdate ? languages.updateBlog : languages.addBlog,
+          style: boldTextStyle(color: Colors.white, size: APP_BAR_TEXT_SIZE),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: BackWidget(color: Colors.white),
+        flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
       ),
       body: Stack(
         children: [

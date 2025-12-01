@@ -69,12 +69,15 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(
-        languages.lblAllService,
-        textColor: white,
-        color: context.primaryColor,
-        backWidget: BackWidget(),
-        textSize: APP_BAR_TEXT_SIZE,
+      appBar: AppBar(
+        title: Text(
+          languages.lblAllService,
+          style: boldTextStyle(color: Colors.white, size: APP_BAR_TEXT_SIZE),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: BackWidget(color: Colors.white),
+        flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
         actions: [
           IconButton(
             onPressed: () {

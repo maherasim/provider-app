@@ -11,6 +11,8 @@ import 'package:nb_utils/nb_utils.dart';
 
 import '../../components/app_widgets.dart';
 import '../../components/empty_error_state_widget.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
+import 'package:handyman_provider_flutter/utils/constant.dart';
 
 class TaxesScreen extends StatefulWidget {
   @override
@@ -49,12 +51,12 @@ class _TaxesScreenState extends State<TaxesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: UniqueKey(),
-      appBar: appBarWidget(
-        languages.lblTaxes,
-        showBack: true,
-        backWidget: BackWidget(),
-        textColor: Colors.white,
-        color: context.primaryColor,
+      appBar: AppBar(
+        title: Text(languages.lblTaxes, style: boldTextStyle(color: Colors.white, size: APP_BAR_TEXT_SIZE)),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: BackWidget(color: Colors.white),
+        flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
       ),
       body: Stack(
         children: [

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:handyman_provider_flutter/components/back_widget.dart';
 import 'package:handyman_provider_flutter/main.dart';
-import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../utils/constant.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 
 class LanguagesScreen extends StatefulWidget {
   @override
@@ -46,12 +46,12 @@ class LanguagesScreenState extends State<LanguagesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(
-        languages.language,
-        textColor: white,
+      appBar: AppBar(
+        title: Text(languages.language, style: boldTextStyle(color: Colors.white, size: APP_BAR_TEXT_SIZE)),
         elevation: 0.0,
-        color: context.primaryColor,
-        backWidget: BackWidget(),
+        backgroundColor: Colors.transparent,
+        leading: BackWidget(color: Colors.white),
+        flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
       ),
       body: LanguageListWidget(
         widgetType: WidgetType.LIST,

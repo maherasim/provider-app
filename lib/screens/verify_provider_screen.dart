@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:handyman_provider_flutter/components/app_widgets.dart';
+import 'package:handyman_provider_flutter/components/back_widget.dart';
 import 'package:handyman_provider_flutter/components/cached_image_widget.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/models/document_list_response.dart';
@@ -19,6 +20,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../components/empty_error_state_widget.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
+import 'package:handyman_provider_flutter/utils/constant.dart';
 
 class VerifyProviderScreen extends StatefulWidget {
   @override
@@ -164,7 +167,16 @@ class _VerifyProviderScreenState extends State<VerifyProviderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(languages.btnVerifyId, textColor: white, color: context.primaryColor),
+      appBar: AppBar(
+        title: Text(
+          languages.btnVerifyId,
+          style: boldTextStyle(color: Colors.white, size: APP_BAR_TEXT_SIZE),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: BackWidget(color: Colors.white),
+        flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
+      ),
       body: Stack(
         children: [
           AnimatedScrollView(

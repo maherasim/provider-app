@@ -21,6 +21,19 @@ import 'package:handyman_provider_flutter/utils/extensions/num_extenstions.dart'
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
 import 'package:nb_utils/nb_utils.dart';
 
+Widget _gradientButton(BuildContext context, String text, VoidCallback onTap) {
+  return InkWell(
+    borderRadius: radius(12),
+    onTap: onTap,
+    child: Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.symmetric(vertical: 12),
+      decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(12)),
+      child: Text(text, style: boldTextStyle(color: white, size: 16)),
+    ),
+  );
+}
+
 class JobRequestDetailsScreen extends StatefulWidget {
   final num acceptedBidId;
   final VoidCallback? callback;
@@ -129,6 +142,109 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
   Widget _buildBody() {
     if (postJobDetail == null) return SizedBox.shrink();
 
+    int currentStep() {
+      final s = postJobDetail!.status;
+      if (s == RequestStatus.requested) return 0;
+      if (s == RequestStatus.accepted) return 1;
+      if (s == RequestStatus.pendingAdvance) return 2;
+      if (s == RequestStatus.advancePaid) return 3;
+      if (s == RequestStatus.inProcess) return 4;
+      if (s == RequestStatus.inProgress || s == RequestStatus.hold || s == RequestStatus.done || s == RequestStatus.confirmDone) return 5;
+      if (s == RequestStatus.completed || s == RequestStatus.remainingPaid) return 6;
+      return 0;
+    }
+
+    Widget _stepBar(int index, int activeTill) {
+      final bool active = index <= activeTill;
+      return Expanded(
+        child: Column(
+          children: [
+            Container(
+              height: 4,
+              decoration: BoxDecoration(
+                color: active ? context.primaryColor : context.primaryColor.withValues(alpha: 0.15),
+                borderRadius: radius(6),
+              ),
+            ),
+            6.height,
+          ],
+        ),
+      );
+    }
+
+    Widget _progressSteps() {
+      final activeTill = currentStep();
+      final labels = ['Accept', 'Advance', 'Advance P.', "Let's Start", 'Work'];
+      return Column(
+        children: [
+          Row(
+            children: [
+              _stepBar(1, activeTill),
+              8.width,
+              _stepBar(2, activeTill),
+              8.width,
+              _stepBar(3, activeTill),
+              8.width,
+              _stepBar(4, activeTill),
+              8.width,
+              _stepBar(5, activeTill),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: labels.map((e) => Text(e, style: secondaryTextStyle(size: 12))).toList(),
+          ),
+        ],
+      );
+    }
+
+    Widget _bidderSummary() {
+      final providerName = postJobDetail?.provider?.displayName.validate() ?? '';
+      final advancePct = (postJobDetail?.advancePercent ?? 0).toString();
+      return Container(
+        padding: EdgeInsets.all(12),
+        decoration: boxDecorationWithRoundedCorners(backgroundColor: context.cardColor, borderRadius: radius(12)),
+        child: Row(
+          children: [
+            // Simple initials circle
+            Container(
+              height: 44,
+              width: 44,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(color: context.primaryColor.withValues(alpha: 0.15), shape: BoxShape.circle),
+              child: Text(
+                providerName.isNotEmpty ? providerName.split(' ').map((w) => w.isNotEmpty ? w[0] : '').take(2).join().toUpperCase() : 'BG',
+                style: boldTextStyle(color: context.primaryColor),
+              ),
+            ),
+            12.width,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(providerName, style: boldTextStyle()),
+                4.height,
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 4,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text('${languages.bid}:', style: secondaryTextStyle()),
+                    PriceWidget(price: postJobDetail?.price ?? 0, color: textPrimaryColorGlobal, size: 14),
+                    Text('• ${languages.advancePercentage} $advancePct%', style: secondaryTextStyle()),
+                  ],
+                ),
+              ],
+            ).expand(),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(color: postJobDetail!.status.bgColor.withValues(alpha: 0.1), borderRadius: radius(20)),
+              child: Text(postJobDetail!.status.displayName, style: boldTextStyle(color: postJobDetail!.status.bgColor, size: 12)),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Column(
       children: [
         Expanded(
@@ -164,6 +280,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   ],
                 ),
               ),
+              24.height,
+              // Bidder summary (name, bid amount, advance %, status chip)
+              _bidderSummary(),
+              16.height,
+              // Step progress row with labels
+              _progressSteps(),
               24.height,
 
               // Job Details Grid
@@ -294,12 +416,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               if(postJobDetail!.status == RequestStatus.accepted) Row(
                 children: [
                   Expanded(
-                    child: AppButton(
-                      text: 'Split Payment',
-                      textStyle: boldTextStyle(color: white, size: 16),
-                      color: primaryColor,
-                      width: context.width(),
-                      onTap: () async {
+                    child: _gradientButton(context, 'Split Payment', () async {
                         bool? res = await showInDialog(
                             context,
                             contentPadding: EdgeInsets.zero,
@@ -312,8 +429,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                           init();
                           setState(() {});
                         }
-                      },
-                    ),
+                      }),
                   ),
                   16.width,
                   Expanded(
@@ -329,15 +445,10 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   ),
                 ],
               ).paddingOnly(bottom: 24),
-              if(postJobDetail!.status == RequestStatus.advancePaid) AppButton(
-                text: 'Start Work',
-                textStyle: boldTextStyle(color: white, size: 16),
-                color: startDriveButtonColor,
-                width: context.width(),
-                onTap: () async {
-                  confirmationRequestDialog(context,RequestStatus.inProcess);
-                },
-              ).paddingOnly(bottom: 24),
+              if(postJobDetail!.status == RequestStatus.advancePaid)
+                _gradientButton(context, 'Start Work', () async {
+                  confirmationRequestDialog(context, RequestStatus.inProcess);
+                }).paddingOnly(bottom: 24),
               if(postJobDetail!.status == RequestStatus.inProgress) Row(
                 children: [
                   Expanded(
@@ -363,39 +474,22 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   ),
                   16.width,
                   Expanded(
-                    child: AppButton(
-                      text: 'Done',
-                      textStyle: boldTextStyle(color: white, size: 16),
-                      color: primaryColor,
-                      width: context.width(),
-                      onTap: () async {
-                        confirmationRequestDialog(context,RequestStatus.done);
-                      },
-                    ),
+                    child: _gradientButton(context, 'Done', () async {
+                      confirmationRequestDialog(context, RequestStatus.done);
+                    }),
                   ),
                 ]
               ).paddingOnly(bottom: 24),
-              if(postJobDetail!.status == RequestStatus.hold) AppButton(
-                text: 'Resume Work',
-                textStyle: boldTextStyle(color: white, size: 16),
-                color: context.primaryColor,
-                width: context.width(),
-                onTap: () async {
-                  confirmationRequestDialog(context,RequestStatus.inProgress);
-                },
-              ).paddingOnly(bottom: 24),
+              if(postJobDetail!.status == RequestStatus.hold)
+                _gradientButton(context, 'Resume Work', () async {
+                  confirmationRequestDialog(context, RequestStatus.inProgress);
+                }).paddingOnly(bottom: 24),
               if(postJobDetail!.status == RequestStatus.confirmDone) Row(
                 children: [
                   Expanded(
-                    child: AppButton(
-                      text: 'Complete',
-                      textStyle: boldTextStyle(color: white, size: 16),
-                      color: context.primaryColor,
-                      width: context.width(),
-                      onTap: () async {
-                        confirmationRequestDialog(context,RequestStatus.completed);
-                      },
-                    ),
+                    child: _gradientButton(context, 'Complete', () async {
+                      confirmationRequestDialog(context, RequestStatus.completed);
+                    }),
                   ),
                   16.width,
                   Expanded(
@@ -424,12 +518,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               if([RequestStatus.advancePaid, RequestStatus.inProcess, RequestStatus.inProgress, RequestStatus.hold, RequestStatus.done, RequestStatus.confirmDone, RequestStatus.completed, RequestStatus.remainingPaid].contains(postJobDetail!.status)) Row(
                 children: [
                   Expanded(
-                    child: AppButton(
-                      text: 'Chat',
-                      textStyle: boldTextStyle(color: white, size: 16),
-                      color: context.primaryColor,
-                      width: context.width(),
-                      onTap: () async {
+                    child: _gradientButton(context, 'Chat', () async {
                         final customerId = postJobDetail?.customer?.id;
                         if (customerId == null) {
                           toast(languages.somethingWentWrong);
@@ -452,8 +541,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                           Fluttertoast.cancel();
                           toast(e.toString(), print: true);
                         }
-                      },
-                    ),
+                      }),
                   ),
                   if(postJobDetail!.status == RequestStatus.remainingPaid) 16.width,
                   if(postJobDetail!.status == RequestStatus.remainingPaid) Expanded(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../utils/constant.dart';
+import '../utils/colors.dart';
 import 'back_widget.dart';
 import 'base_scaffold_body.dart';
 
@@ -28,11 +29,10 @@ class AppScaffold extends StatelessWidget {
     return Scaffold(
       appBar: appBarTitle != null
           ? AppBar(
-              title: Text(appBarTitle.validate(),
-                  style: boldTextStyle(
-                      color: Colors.white, size: APP_BAR_TEXT_SIZE)),
+              title: Text(appBarTitle.validate(), style: boldTextStyle(color: Colors.white, size: APP_BAR_TEXT_SIZE)),
               elevation: 0.0,
-              backgroundColor: context.primaryColor,
+              backgroundColor: Colors.transparent,
+              flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
               leading: context.canPop ? BackWidget() : null,
               actions: actions,
             )

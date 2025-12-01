@@ -6,15 +6,14 @@ import 'package:handyman_provider_flutter/components/disabled_rating_bar_widget.
 import 'package:handyman_provider_flutter/components/price_widget.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/models/service_model.dart';
-import 'package:handyman_provider_flutter/models/user_data.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/components/bid_price_dialog.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/job_request_details_screen.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/models/post_job_detail_response.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
-import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../../components/base_scaffold_widget.dart';
@@ -537,41 +536,90 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
 
   String image = '';
 
-  jobImagesSection(List<String> images) {
-    if(images.isEmpty) return Offstage();
+  jobImagesSection(PostJobData data) {
+    final images = data.images;
+    if (images.isEmpty) return Offstage();
     image = images.first;
     return StatefulBuilder(
       builder: (context,set) {
         return Column(
           children: [
-            if(images.isNotEmpty) CachedImageWidget(
-              url: image,
-              fit: BoxFit.cover,
-              height: 250,
-              width: context.width(),
-              radius: defaultRadius,
-            ).paddingOnly(left: 16, right: 16, top: 16),
-            if(images.length > 1) SizedBox(
-              height: 60,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context,index) =>  GestureDetector(
-                  onTap: () {
-                    image = images[index];
-                    set(() {});
-                  },
-                  child: CachedImageWidget(
-                    url: images[index],
-                    fit: BoxFit.cover,
-                    height: 60,
-                    width: 60,
-                    radius: defaultRadius,
-                  ),
+            if (images.isNotEmpty)
+              ClipRRect(
+                borderRadius: radius(),
+                child: Stack(
+                  children: [
+                    CachedImageWidget(
+                      url: image,
+                      fit: BoxFit.cover,
+                      height: 250,
+                      width: context.width(),
+                      radius: 0,
+                    ),
+                    Positioned(
+                      top: 16,
+                      left: 16,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.45),
+                          borderRadius: radius(20),
+                        ),
+                        child: Text(
+                          data.status.displayName,
+                          style: boldTextStyle(color: Colors.white, size: 12),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      right: 16,
+                      bottom: 16,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(
+                          gradient: kAppPrimaryGradient,
+                          borderRadius: radius(24),
+                        ),
+                        child: Row(
+                          children: [
+                            PriceWidget(
+                              price: data.price.validate(),
+                              isHourlyService: data.priceType == PriceType.hourly,
+                              isDailyService: data.priceType == PriceType.daily,
+                              isFixesService: data.priceType == PriceType.fixed,
+                              color: Colors.white,
+                              hourlyTextColor: Colors.white,
+                              size: 14,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                separatorBuilder: (context,index) => 16.width,
-                itemCount: images.length,
-              ),
-            ).paddingOnly(left: 16, right: 16, top: 16),
+              ).paddingOnly(left: 16, right: 16, top: 16),
+            if (images.length > 1)
+              SizedBox(
+                height: 60,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) => GestureDetector(
+                    onTap: () {
+                      image = images[index];
+                      set(() {});
+                    },
+                    child: CachedImageWidget(
+                      url: images[index],
+                      fit: BoxFit.cover,
+                      height: 60,
+                      width: 60,
+                      radius: defaultRadius,
+                    ),
+                  ),
+                  separatorBuilder: (context, index) => 16.width,
+                  itemCount: images.length,
+                ),
+              ).paddingOnly(left: 16, right: 16, top: 16),
           ],
         );
       },
@@ -605,7 +653,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          jobImagesSection(data.postRequestDetail!.images),
+                          jobImagesSection(data.postRequestDetail!),
                           postJobDetailWidget(data: data.postRequestDetail!).paddingAll(16),
                           customerWidget(data.postRequestDetail!),
                           providerWidget(data.bidderData.validate()),
@@ -619,10 +667,8 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                     bottom: 16,
                     left: 16,
                     right: 16,
-                    child: AppButton(
-                      child: Text(data.postRequestDetail!.canBid.validate() ? languages.bid : "${languages.lblUpdate} ${languages.bid}", style: boldTextStyle(color: white)),
-                      color: context.primaryColor,
-                      width: context.width(),
+                    child: InkWell(
+                      borderRadius: radius(14),
                       onTap: () async {
                         bool? res = await showInDialog(
                           context,
@@ -649,6 +695,19 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                           setState(() {});
                         }
                       },
+                      child: Container(
+                        width: context.width(),
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          gradient: kAppPrimaryGradient,
+                          borderRadius: radius(14),
+                        ),
+                        child: Text(
+                          data.postRequestDetail!.canBid.validate() ? languages.bid : "${languages.lblUpdate} ${languages.bid}",
+                          style: boldTextStyle(color: white),
+                        ),
+                      ),
                     ),
                   ),
                 ],

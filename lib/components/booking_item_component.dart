@@ -266,7 +266,7 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                           isDailyService:
                               widget.bookingData.type == SERVICE_TYPE_DAILY,
                           isFixesService: widget.bookingData.isFixedService,
-                        ),
+                          ),
                         if (widget.bookingData.discount.validate() != 0)
                           Text(
                             '(${widget.bookingData.discount.validate()}% ${languages.lblOff})',
@@ -288,7 +288,7 @@ class BookingItemComponentState extends State<BookingItemComponent> {
             ],
           ).paddingAll(8),
                   if (widget.showDescription)
-                  if (widget.showDescription)
+          if (widget.showDescription)
             Container(
               decoration: boxDecorationWithRoundedCorners(
                 backgroundColor:

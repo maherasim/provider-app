@@ -51,4 +51,16 @@ const showRedForZeroRatingColor = Color(0xFFFA6565);
 
 const startDriveButtonColor = Color(0xff40c474);
 
+// App primary gradient
+const Color gradientRed = Color(0xFFE53935); // Red
+const Color gradientBlue = Color(0xFF1E88E5); // Blue
+
+const List<Color> kAppPrimaryGradientColors = [gradientRed, gradientBlue];
+
+const LinearGradient kAppPrimaryGradient = LinearGradient(
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+  colors: kAppPrimaryGradientColors,
+);
+
 const addExtraCharge = Color(0xFFFD6922);

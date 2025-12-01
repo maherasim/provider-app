@@ -714,7 +714,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                               ),
                             );
                           },
-                        ),
+                          ),
                       ],
                     ).expand()
                   ],
@@ -1809,21 +1809,21 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                                 ],
                               ),
                               16.height,
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(languages.lblMethod,
-                                      style: secondaryTextStyle(size: 14)),
-                                  Text(
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(languages.lblMethod,
+                                        style: secondaryTextStyle(size: 14)),
+                                    Text(
                                     (() {
                                       final String method = res.data!.bookingDetail!.paymentMethod.validate();
                                       return method.isNotEmpty ? method.capitalizeFirstLetter() : 'N/A';
                                     })(),
-                                    style: boldTextStyle(),
-                                  ),
-                                ],
-                              ),
+                                      style: boldTextStyle(),
+                                    ),
+                                  ],
+                                ),
                               16.height,
                               Row(
                                 mainAxisAlignment:

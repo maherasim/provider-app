@@ -107,21 +107,35 @@ class _HandymanDashboardScreenState extends State<HandymanDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Widget _gradientIcon(Widget icon) {
+      return ShaderMask(
+        shaderCallback: (Rect bounds) {
+          return kAppPrimaryGradient
+              .createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
+        },
+        blendMode: BlendMode.srcIn,
+        child: icon,
+      );
+    }
     return DoublePressBackWidget(
       message: languages.lblCloseAppMsg,
       child: Scaffold(
         body: fragmentList[currentIndex],
-        appBar: appBarWidget(
-          [
-            languages.handymanHome,
-            languages.lblBooking,
-            languages.lblChat,
-            languages.lblProfile,
-          ][currentIndex],
-          color: primaryColor,
+        appBar: AppBar(
+          title: Text(
+            [
+              languages.handymanHome,
+              languages.lblBooking,
+              languages.lblChat,
+              languages.lblProfile,
+            ][currentIndex],
+            style: boldTextStyle(color: Colors.white, size: APP_BAR_TEXT_SIZE),
+          ),
           elevation: 0.0,
-          textColor: Colors.white,
-          showBack: false,
+          backgroundColor: Colors.transparent,
+          automaticallyImplyLeading: false,
+          flexibleSpace:
+              Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
           actions: [
             IconButton(
               icon: ic_info.iconImage(color: Colors.white),
@@ -183,8 +197,8 @@ class _HandymanDashboardScreenState extends State<HandymanDashboardScreen> {
           borderRadius: radius(0),
           child: NavigationBarTheme(
             data: NavigationBarThemeData(
-              backgroundColor: context.primaryColor.withValues(alpha:0.02),
-              indicatorColor: context.primaryColor.withValues(alpha:0.1),
+              backgroundColor: context.scaffoldBackgroundColor,
+              indicatorColor: Colors.transparent,
               labelTextStyle: WidgetStateProperty.all(primaryTextStyle(size: 12)),
               surfaceTintColor: Colors.transparent,
               shadowColor: Colors.transparent,
@@ -194,23 +208,25 @@ class _HandymanDashboardScreenState extends State<HandymanDashboardScreen> {
               destinations: [
                 NavigationDestination(
                   icon: ic_home.iconImage(color: appTextSecondaryColor),
-                  selectedIcon: ic_fill_home.iconImage(color: context.primaryColor),
+                  selectedIcon: _gradientIcon(ic_fill_home.iconImage(color: Colors.white)),
                   label: languages.home,
                 ),
                 NavigationDestination(
                   icon: total_booking.iconImage(color: appTextSecondaryColor),
-                  selectedIcon: fill_ticket.iconImage(color: context.primaryColor),
+                  selectedIcon: _gradientIcon(fill_ticket.iconImage(color: Colors.white)),
                   label: languages.lblBooking,
                 ),
                 NavigationDestination(
                   icon: Image.asset(chat, height: 20, width: 20, color: appTextSecondaryColor),
-                  selectedIcon: Image.asset(ic_fill_textMsg, height: 26, width: 26),
+                  selectedIcon: _gradientIcon(Image.asset(ic_fill_textMsg, height: 26, width: 26, color: Colors.white)),
                   label: languages.lblChat,
                 ),
                 Observer(builder: (context) {
                   return NavigationDestination(
                     icon: (appStore.isLoggedIn && appStore.userProfileImage.isNotEmpty) ? IgnorePointer(ignoring: true, child: ImageBorder(src: appStore.userProfileImage, height: 26)) : profile.iconImage(color: appTextSecondaryColor),
-                    selectedIcon: (appStore.isLoggedIn && appStore.userProfileImage.isNotEmpty) ? IgnorePointer(ignoring: true, child: ImageBorder(src: appStore.userProfileImage, height: 26)) : ic_fill_profile.iconImage(color: context.primaryColor),
+                    selectedIcon: (appStore.isLoggedIn && appStore.userProfileImage.isNotEmpty)
+                        ? IgnorePointer(ignoring: true, child: ImageBorder(src: appStore.userProfileImage, height: 26))
+                        : _gradientIcon(ic_fill_profile.iconImage(color: Colors.white)),
                     label: languages.lblProfile,
                   );
                 }),

@@ -7,6 +7,7 @@ import 'package:handyman_provider_flutter/networks/frobster_chat_api.dart';
 import 'package:handyman_provider_flutter/screens/chat/frobster_chat_thread_screen.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 
 class FrobsterConversationListScreen extends StatefulWidget {
   const FrobsterConversationListScreen({super.key});
@@ -85,9 +86,9 @@ class _FrobsterConversationListScreenState extends State<FrobsterConversationLis
             ).center()
           : ListView.separated(
               controller: _controller,
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.all(12),
               itemCount: _items.length + (_page < _lastPage ? 1 : 0),
-              separatorBuilder: (_, __) => const Divider(height: 1),
+              separatorBuilder: (_, __) => 12.height,
               itemBuilder: (context, index) {
                 if (index >= _items.length) {
                   return Padding(
@@ -99,27 +100,8 @@ class _FrobsterConversationListScreenState extends State<FrobsterConversationLis
                 final name = item.otherUser.displayName;
                 final subtitle = item.lastMessage?.preview ?? '';
                 final time = item.lastMessage?.createdAt ?? '';
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: item.otherUser.avatarUrl.validate().isNotEmpty ? NetworkImage(item.otherUser.avatarUrl!) : null,
-                    child: item.otherUser.avatarUrl.validate().isNotEmpty ? null : Text(name.isNotEmpty ? name[0].toUpperCase() : '?'),
-                  ),
-                  title: Text(name, style: primaryTextStyle()),
-                  subtitle: Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: secondaryTextStyle()),
-                  trailing: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(time, style: secondaryTextStyle(size: 10)),
-                      if (item.unreadCount > 0)
-                        Container(
-                          margin: const EdgeInsets.only(top: 4),
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                          decoration: boxDecorationDefault(shape: BoxShape.rectangle, borderRadius: radius(12), color: context.primaryColor),
-                          child: Text('${item.unreadCount}', style: primaryTextStyle(color: white, size: 10)),
-                        ),
-                    ],
-                  ),
+                return InkWell(
+                  borderRadius: radius(16),
                   onTap: () {
                     FrobsterChatThreadScreen(
                       conversationId: item.id,
@@ -128,6 +110,54 @@ class _FrobsterConversationListScreenState extends State<FrobsterConversationLis
                       otherAvatarUrl: item.otherUser.avatarUrl,
                     ).launch(context);
                   },
+                  child: Container(
+                    decoration: boxDecorationWithRoundedCorners(
+                      backgroundColor: context.cardColor,
+                      borderRadius: radius(16),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: kAppPrimaryGradient,
+                          ),
+                          child: CircleAvatar(
+                            radius: 22,
+                            backgroundColor: context.cardColor,
+                            backgroundImage: item.otherUser.avatarUrl.validate().isNotEmpty ? NetworkImage(item.otherUser.avatarUrl!) : null,
+                            child: item.otherUser.avatarUrl.validate().isNotEmpty ? null : Text(name.isNotEmpty ? name[0].toUpperCase() : '?', style: boldTextStyle()),
+                          ),
+                        ),
+                        12.width,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(child: Text(name, style: boldTextStyle(), overflow: TextOverflow.ellipsis)),
+                                  8.width,
+                                  Text(time, style: secondaryTextStyle(size: 10)),
+                                ],
+                              ),
+                              4.height,
+                              Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: secondaryTextStyle()),
+                            ],
+                          ),
+                        ),
+                        if (item.unreadCount > 0)
+                          Container(
+                            margin: const EdgeInsets.only(left: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(12)),
+                            child: Text('${item.unreadCount}', style: primaryTextStyle(color: white, size: 10)),
+                          ),
+                      ],
+                    ),
+                  ),
                 );
               },
             ),

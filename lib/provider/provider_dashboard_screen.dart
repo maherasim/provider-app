@@ -12,7 +12,6 @@ import 'package:handyman_provider_flutter/screens/chat/frobster_conversation_lis
 import 'package:handyman_provider_flutter/networks/frobster_chat_api.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
-import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
@@ -107,22 +106,40 @@ class ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
     }
   }
 
+  Widget _gradientIcon(Widget icon) {
+    return ShaderMask(
+      shaderCallback: (Rect bounds) {
+        return const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: kAppPrimaryGradientColors,
+        ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
+      },
+      blendMode: BlendMode.srcIn,
+      child: icon,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return DoublePressBackWidget(
       message: languages.lblCloseAppMsg,
       child: Scaffold(
-        appBar: appBarWidget(
-          [
-            languages.providerHome,
-            languages.lblBooking,
-            languages.lblJob,
-            languages.lblChat,
-            languages.lblProfile,
-          ][currentIndex],
-          color: primaryColor,
-          textColor: Colors.white,
-          showBack: false,
+        appBar: AppBar(
+          title: Text(
+            [
+              languages.providerHome,
+              languages.lblBooking,
+              languages.lblJob,
+              languages.lblChat,
+              languages.lblProfile,
+            ][currentIndex],
+            style: boldTextStyle(color: Colors.white, size: APP_BAR_TEXT_SIZE),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          automaticallyImplyLeading: false,
+          flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
           actions: [
             IconButton(
               icon: Stack(
@@ -177,8 +194,8 @@ class ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
           borderRadius: radius(0),
           child: NavigationBarTheme(
             data: NavigationBarThemeData(
-              backgroundColor: context.primaryColor.withValues(alpha: 0.02),
-              indicatorColor: context.primaryColor.withValues(alpha: 0.1),
+              backgroundColor: context.scaffoldBackgroundColor,
+              indicatorColor: Colors.transparent,
               labelTextStyle:
                   WidgetStateProperty.all(primaryTextStyle(size: 12)),
               surfaceTintColor: Colors.transparent,
@@ -189,19 +206,17 @@ class ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
               destinations: [
                 NavigationDestination(
                   icon: ic_home.iconImage(color: appTextSecondaryColor),
-                  selectedIcon:
-                      ic_fill_home.iconImage(color: context.primaryColor),
+                  selectedIcon: _gradientIcon(ic_fill_home.iconImage(color: Colors.white)),
                   label: languages.home,
                 ),
                 NavigationDestination(
                   icon: total_booking.iconImage(color: appTextSecondaryColor),
-                  selectedIcon:
-                      fill_ticket.iconImage(color: context.primaryColor),
+                  selectedIcon: _gradientIcon(fill_ticket.iconImage(color: Colors.white)),
                   label: languages.lblBooking,
                 ),
                 NavigationDestination(
                   icon: rateUs.iconImage(color: appTextSecondaryColor),
-                  selectedIcon: ic_star_fill.iconImage(color: context.primaryColor),
+                  selectedIcon: _gradientIcon(ic_star_fill.iconImage(color: Colors.white)),
                   label: languages.lblJob,
                 ),
                 NavigationDestination(
@@ -227,7 +242,7 @@ class ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
                   selectedIcon: Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      Image.asset(ic_fill_textMsg, height: 26, width: 26),
+                      _gradientIcon(Image.asset(ic_fill_textMsg, height: 26, width: 26, color: Colors.white)),
                       if (_chatUnread > 0)
                         Positioned(
                           top: -6,
@@ -260,8 +275,7 @@ class ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
                             ignoring: true,
                             child: ImageBorder(
                                 src: appStore.userProfileImage, height: 26))
-                        : ic_fill_profile.iconImage(
-                            color: context.primaryColor),
+                        : _gradientIcon(ic_fill_profile.iconImage(color: Colors.white)),
                     label: languages.lblProfile,
                   );
                 }),

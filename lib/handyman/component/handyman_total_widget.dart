@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:handyman_provider_flutter/main.dart';
-import 'package:handyman_provider_flutter/utils/configs.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 class HandymanTotalWidget extends StatelessWidget {
@@ -15,7 +14,10 @@ class HandymanTotalWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-      decoration: boxDecorationDefault(color: context.primaryColor),
+      decoration: BoxDecoration(
+        gradient: kAppPrimaryGradient,
+        borderRadius: radius(),
+      ),
       //decoration: cardDecoration(context, showBorder: true,color: context.primaryColor),
       width: context.width() / 2 - 24,
       child: Row(
@@ -30,12 +32,18 @@ class HandymanTotalWidget extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-                    child: Image.asset(icon, width: 20, height: 20, color: primaryColor),
+                    child: ShaderMask(
+                      shaderCallback: (Rect bounds) {
+                        return kAppPrimaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
+                      },
+                      blendMode: BlendMode.srcIn,
+                      child: Image.asset(icon, width: 20, height: 20, color: Colors.white),
+                    ),
                   ),
                 ],
               ),
               8.height,
-              Text(title.validate(), style: secondaryTextStyle(color: appStore.isDarkMode ? Colors.white : context.cardColor)),
+              Text(title.validate(), style: secondaryTextStyle(color: Colors.white)),
             ],
           ).expand(),
         ],

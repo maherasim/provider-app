@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 const APP_NAME = 'Provider';
 const DEFAULT_LANGUAGE = 'en';
 
-const primaryColor = Color(0xFF5F60B9);
+// App primary base color (used where gradients aren't supported)
+// Align with red–blue gradient: use the red endpoint as the base
+const primaryColor = Color(0xFFE53935);
 
 const DOMAIN_URL = "https://frobster.com";
 
@@ -23,11 +25,11 @@ const INQUIRY_SUPPORT_EMAIL = 'hello@iqonic.design';
 /// You can add help line number here for contact. It's demo number
 const HELP_LINE_NUMBER = '+15265897485';
 
-//Airtel Money Payments
-///It Supports ["UGX", "NGN", "TZS", "KES", "RWF", "ZMW", "CFA", "XOF", "XAF", "CDF", "USD", "XAF", "SCR", "MGA", "MWK"]
+// Airtel Money Payments
+/// It Supports ["UGX", "NGN", "TZS", "KES", "RWF", "ZMW", "CFA", "XOF", "XAF", "CDF", "USD", "XAF", "SCR", "MGA", "MWK"]
 const AIRTEL_CURRENCY_CODE = "MWK";
 const AIRTEL_COUNTRY_CODE = "MW";
-const AIRTEL_TEST_BASE_URL = 'https://openapiuat.airtel.africa/'; //Test Url
+const AIRTEL_TEST_BASE_URL = 'https://openapiuat.airtel.africa/'; // Test Url
 const AIRTEL_LIVE_BASE_URL = 'https://openapi.airtel.africa/'; // Live Url
 
 /// PAYSTACK PAYMENT DETAIL
@@ -63,11 +65,23 @@ Country defaultCountry() {
   );
 }
 
-//Chat Module File Upload Configs
+// Chat Module File Upload Configs
 const chatFilesAllowedExtensions = [
   'jpg', 'jpeg', 'png', 'gif', 'webp', // Images
   'pdf', 'txt', // Documents
   'mkv', 'mp4', // Video
   'mp3', // Audio
 ];
-const max_acceptable_file_size = 5; //Size in Mb
+
+const max_acceptable_file_size = 5; // Size in Mb
+
+
+// 🔴🔵 RED → BLUE Gradient (Added)
+const redBlueGradient = LinearGradient(
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+  colors: [
+    Colors.red,
+    Colors.blue,
+  ],
+);

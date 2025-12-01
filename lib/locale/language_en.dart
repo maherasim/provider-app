@@ -5,22 +5,22 @@ class LanguageEn extends Languages {
   String planAboutToExpire(int days) => 'Your Plan Is About to Expire In $days Days';
 
   @override
-  String get appName => 'Provider';
+  String get appName => 'Employer';
 
   @override
-  String get provider => 'Provider';
+  String get provider => 'Employer';
 
   @override
-  String get lblShowingOnly4Handyman => 'Showing Only 4 Handyman';
+  String get lblShowingOnly4Handyman => 'Showing Only 4 Worker';
 
   @override
-  String get lblRecentlyOnlineHandyman => 'Recently Online Handyman';
+  String get lblRecentlyOnlineHandyman => 'Recently Online Worker';
 
   @override
   String get lblStartDrive => 'Start Work';
 
   @override
-  String get handyman => 'Handyman';
+  String get handyman => 'Worker';
 
   @override
   @override
@@ -183,7 +183,7 @@ class LanguageEn extends Languages {
   String get lblReason => 'Reason';
 
   @override
-  String get lblSelectHandyman => 'Please Select Handyman';
+  String get lblSelectHandyman => 'Please Select Worker';
 
   @override
   String get lblAssign => 'Assign';
@@ -192,7 +192,7 @@ class LanguageEn extends Languages {
   String get lblCall => 'Call';
 
   @override
-  String get lblAssignHandyman => 'Assign Handyman';
+  String get lblAssignHandyman => 'Assign Worker';
 
   @override
   String get lblAssigned => 'Assigned';
@@ -207,7 +207,7 @@ class LanguageEn extends Languages {
   String get lblRevenue => 'Revenue';
 
   @override
-  String get lblAddHandyman => "Add Handyman";
+  String get lblAddHandyman => "Add Worker";
 
   @override
   String get lblBooking => 'Bookings';
@@ -219,7 +219,7 @@ class LanguageEn extends Languages {
   String get lblTotalService => 'Total Service';
 
   @override
-  String get lblTotalHandyman => 'Total Handyman';
+  String get lblTotalHandyman => 'Total Worker';
 
   @override
   String get monthlyEarnings => 'Monthly Earnings';
@@ -279,7 +279,7 @@ class LanguageEn extends Languages {
   String get lblProfile => 'Profile';
 
   @override
-  String get lblAllHandyman => "Handyman List";
+  String get lblAllHandyman => "All Worker";
 
   @override
   String get lblTime => 'Time';
@@ -381,7 +381,7 @@ class LanguageEn extends Languages {
   String get lblAbout => "About";
 
   @override
-  String get lblProviderType => "Provider Type";
+  String get lblProviderType => "Employer Type";
 
   @override
   String get lblMyCommission => "My Commission";
@@ -429,7 +429,7 @@ class LanguageEn extends Languages {
   String get lblDate => "Date";
 
   @override
-  String get lblAboutHandyman => "About Handyman";
+  String get lblAboutHandyman => "About Worker";
 
   @override
   String get lblAboutCustomer => "About Customer";
@@ -645,7 +645,7 @@ class LanguageEn extends Languages {
   String get lblSubscriptionHistory => "Subscription History";
 
   @override
-  String get lblTrashHandyman => "Handyman has been Trash successfully";
+  String get lblTrashHandyman => "Worker has been Trash successfully";
 
   @override
   String get lblPlsSelectAddress => "Please Selected Address";
@@ -789,7 +789,7 @@ class LanguageEn extends Languages {
   String get lblFree => "Free";
 
   @override
-  String get lblMyProvider => "My Provider";
+  String get lblMyProvider => "My Employer";
 
   @override
   String get lblAvailableStatus => "Available Status";
@@ -861,13 +861,13 @@ class LanguageEn extends Languages {
   String get noNotificationSubTitle => "We'll notify you once we have something for you";
 
   @override
-  String get noHandymanAvailable => "Handyman Not Available";
+  String get noHandymanAvailable => "Worker Not Available";
 
   @override
-  String get noHandymanYet => "No Handyman Yet";
+  String get noHandymanYet => "No Worker Yet";
 
   @override
-  String get noHandymanSubTitle => "Please check and handyman status active first";
+  String get noHandymanSubTitle => "Please check and worker status active first";
 
   @override
   String get noServiceFound => "No Service Found";
@@ -939,7 +939,7 @@ class LanguageEn extends Languages {
   String get estimatedPrice => 'Estimated Price';
 
   @override
-  String get assignedProvider => 'Assigned Provider';
+  String get assignedProvider => 'Assigned Worker';
 
   @override
   String get giveYourEstimatePriceHere => 'Give your estimate price here';
@@ -969,7 +969,7 @@ class LanguageEn extends Languages {
   String get notes => 'Notes:';
 
   @override
-  String get timeSlotsNotes1 => 'Time Slots are only for Providers.';
+  String get timeSlotsNotes1 => 'Time Slots are only for Employer.';
 
   @override
   String get timeSlotsNotes2 => 'You can set Time Slot availability for each Service.';
@@ -1347,10 +1347,10 @@ class LanguageEn extends Languages {
   String get successfullyActivated => 'is successfully activated';
 
   @override
-  String get providerHome => 'Employeer Home';
+  String get providerHome => 'Employer Home';
 
   @override
-  String get handymanHome => 'Handyman Home';
+  String get handymanHome => 'Worker Home';
 
   @override
   String get home => 'Home';
@@ -1444,7 +1444,7 @@ class LanguageEn extends Languages {
   String get isAcceptedAsOn => "is Accepted as on";
 
   @override
-  String get sendCashToProvider => "Send Cash to Provider";
+  String get sendCashToProvider => "Send Cash to Employer";
 
   @override
   String get sendCashToAdmin => "Send Cash to Admin";
@@ -1453,16 +1453,16 @@ class LanguageEn extends Languages {
   String get cashPaymentApproval => "Cash Payment Approval";
 
   @override
-  String get approvedByHandyman => "Approved by Handyman";
+  String get approvedByHandyman => "Approved by Worker";
 
   @override
-  String get sentToProvider => "Sent to Provider";
+  String get sentToProvider => "Sent to Employer";
 
   @override
-  String get pendingByProvider => "Pending by Provider";
+  String get pendingByProvider => "Pending by Employer";
 
   @override
-  String get approvedByProvider => "Approved by Provider";
+  String get approvedByProvider => "Approved by Employer";
 
   @override
   String get pendingByAdmin => "Pending by Admin";
@@ -1489,19 +1489,19 @@ class LanguageEn extends Languages {
   String get bank => "Bank";
 
   @override
-  String get handymanApprovedTheRequest => "Handyman approved the request";
+  String get handymanApprovedTheRequest => "Worker approved the request";
 
   @override
-  String get requestSentToTheProvider => "Request sent to the provider";
+  String get requestSentToTheProvider => "Request sent to the Employer";
 
   @override
   String get requestSentToTheAdmin => "Request sent to the admin";
 
   @override
-  String get requestPendingWithTheProvider => "Request pending with the provider";
+  String get requestPendingWithTheProvider => "Request pending with the Employer";
 
   @override
-  String get providerApprovedTheRequest => "Provider approved the request";
+  String get providerApprovedTheRequest => "Employer approved the request";
 
   @override
   String get requestPendingWithTheAdmin => "Request pending with the admin";
@@ -1558,7 +1558,7 @@ class LanguageEn extends Languages {
   String get sendToAdmin => "Send To Admin";
 
   @override
-  String get sendToProvider => "Send to Provider";
+  String get sendToProvider => "Send to Employer";
 
   @override
   String get detailsOfTheBank => "Details of the bank";
@@ -2130,7 +2130,7 @@ class LanguageEn extends Languages {
   String get thisWeek => 'This Week';
 
   @override
-  String get providerList => 'Provider List';
+  String get providerList => 'Employer List';
 
   @override
   String get walletBalance => 'Wallet Balance';
@@ -2148,10 +2148,10 @@ class LanguageEn extends Languages {
   String get completedBookings => 'Completed Bookings';
 
   @override
-  String get pickAProviderYou => 'Pick A provider you wish to work with';
+  String get pickAProviderYou => 'Pick A Employer you wish to work with';
 
   @override
-  String get selectedProvider => 'Selected Provider';
+  String get selectedProvider => 'Selected Employer';
 
   @override
   String get youHavePermanentlyDenied => 'You have permanently denied location permission please allow for live location tracking from your settings';
@@ -2271,13 +2271,13 @@ class LanguageEn extends Languages {
   String get dateRange => 'Date Range';
 
   @override
-  String get providerNotFound => 'Provider Not Found';
+  String get providerNotFound => 'Employer Not Found';
 
   @override
   String get noPaymentMethodsFound => 'No Payment Methods Found';
 
   @override
-  String get handymanNotFound => 'Handyman Not Found';
+  String get handymanNotFound => 'Worker Not Found';
 
   @override
   String get selectStartDateEndDate => 'Select start date & end date';
@@ -2301,7 +2301,7 @@ class LanguageEn extends Languages {
   String get lblReassign => 'Reassign';
 
   @override
-  String get handymanPayoutList => 'Handyman Payout List';
+  String get handymanPayoutList => 'Worker Payout';
 
   @override
   String get earningDetails => 'Earning Details';
@@ -2310,7 +2310,7 @@ class LanguageEn extends Languages {
   String get adminEarning => 'Admin Earning';
 
   @override
-  String get handymanName => 'Handyman Name';
+  String get handymanName => 'Worker Name';
 
   @override
   String get totalEarning => 'Total Earning';
@@ -2319,34 +2319,34 @@ class LanguageEn extends Languages {
   String get myEarning => 'My Earning';
 
   @override
-  String get handymanPayDue => 'Handyman Pay Due';
+  String get handymanPayDue => 'Worker Pay Due';
 
   @override
-  String get handymanPaidAmount => 'Handyman Paid Amount';
+  String get handymanPaidAmount => 'Worker Paid Amount';
 
   @override
   String get payout => 'Payout';
 
   @override
-  String get addHandymanPayout => 'Add Handyman Payout';
+  String get addHandymanPayout => 'Add Worker Payout';
 
   @override
   String get selectMethod => 'Select Method';
 
   @override
-  String get handymanEarning => 'Handyman Earning';
+  String get handymanEarning => 'Worker Earning';
 
   @override
-  String get handymanEarnings => 'Handyman Earnings';
+  String get handymanEarnings => 'Worker Earnings';
 
   @override
   String get noPayoutFound => 'No Payout Found';
 
   @override
-  String get handymanEarningList => 'Handyman Earning List';
+  String get handymanEarningList => 'Worker Earning List';
 
   @override
-  String get permissionDeniedUnableTo => 'Permission denied! Unable to edit Handyman';
+  String get permissionDeniedUnableTo => 'Permission denied! Unable to edit Worker';
 
   @override
   String get passwordLengthShouldBe => 'Password length should be 8 to 12 characters.';
@@ -2371,7 +2371,7 @@ class LanguageEn extends Languages {
   String get waitingForCustomerToConfirm => "Waiting for customer to confirm 'Let's Start Work'";
   
   @override
-  String get workInProgressWaitingForProvider => "Work in progress — waiting for provider to update or mark done";
+  String get workInProgressWaitingForProvider => "Work in progress — waiting for Employer to update or mark done";
   
   @override
   String get jobCompletedWaitingForCustomer => "Job is completed — waiting for customer to pay remaining amount";
@@ -2426,7 +2426,7 @@ class LanguageEn extends Languages {
   String get waitingForCustomerToAcceptTheBid =>  'Waiting for customer to accept the bid';
 
   @override
-  String get waitingForProviderToSplitPayment => 'Waiting for provider to split payment';
+  String get waitingForProviderToSplitPayment => 'Waiting for Employer to split payment';
 
   @override
   String get waitingForCustomerToPayAdvancePercentage => 'Waiting for customer to pay advance percentage';
@@ -2435,13 +2435,13 @@ class LanguageEn extends Languages {
   String get waitingForCustomerToConfirmWorkDone => 'Waiting for customer to confirm work done';
   
   @override
-  String get waitingForProviderToStartWork => 'Waiting for provider to start work';
+  String get waitingForProviderToStartWork => 'Waiting for Employer to start work';
   
   @override
-  String get waitingForProviderToResumeWork => 'Waiting for provider to resume work';
+  String get waitingForProviderToResumeWork => 'Waiting for Employer to resume work';
   
   @override
-  String get waitingForProviderToMarkBidAsCompleted => 'Waiting for provider to mark the bid as completed';
+  String get waitingForProviderToMarkBidAsCompleted => 'Waiting for Employer to mark the bid as completed';
   
   @override
   String get invoice => 'Invoice';

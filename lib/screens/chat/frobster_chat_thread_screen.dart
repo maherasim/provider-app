@@ -8,6 +8,7 @@ import 'package:handyman_provider_flutter/networks/frobster_chat_api.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 
 class FrobsterChatThreadScreen extends StatefulWidget {
   final int conversationId;
@@ -160,21 +161,30 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
       appBar: AppBar(
         title: Row(
           children: [
-            CircleAvatar(
-              radius: 14,
-              backgroundImage: widget.otherAvatarUrl.validate().isNotEmpty ? NetworkImage(widget.otherAvatarUrl!) : null,
-              child: widget.otherAvatarUrl.validate().isNotEmpty
-                  ? null
-                  : Text(
-                      title.isNotEmpty ? title[0].toUpperCase() : '?',
-                      style: boldTextStyle(color: white, size: 12),
-                    ),
+            Container(
+              padding: const EdgeInsets.all(2),
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: kAppPrimaryGradient,
+              ),
+              child: CircleAvatar(
+                radius: 14,
+                backgroundColor: context.cardColor,
+                backgroundImage: widget.otherAvatarUrl.validate().isNotEmpty ? NetworkImage(widget.otherAvatarUrl!) : null,
+                child: widget.otherAvatarUrl.validate().isNotEmpty
+                    ? null
+                    : Text(
+                        title.isNotEmpty ? title[0].toUpperCase() : '?',
+                        style: boldTextStyle(color: white, size: 12),
+                      ),
+              ),
             ),
             8.width,
             Expanded(child: Text(title, style: boldTextStyle(size: 16, color: white), overflow: TextOverflow.ellipsis)),
           ],
         ),
-        backgroundColor: context.primaryColor,
+        backgroundColor: Colors.transparent,
+        flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
         iconTheme: const IconThemeData(color: white),
       ),
       body: Column(
@@ -193,14 +203,18 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
                           itemBuilder: (context, index) {
                             final m = _messages[index];
                             final isMe = m.senderId == appStore.userId;
-                            final bg = isMe ? context.primaryColor.withValues(alpha: 0.15) : context.cardColor;
+                            final isMeBg = isMe ? true : false;
                             final align = isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start;
                             final radius = isMe ? const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(2), bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12)) : const BorderRadius.only(topLeft: Radius.circular(2), topRight: Radius.circular(12), bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12));
                             return Column(
                               crossAxisAlignment: align,
                               children: [
                                 Container(
-                                  decoration: BoxDecoration(color: bg, borderRadius: radius),
+                                  decoration: BoxDecoration(
+                                    borderRadius: radius,
+                                    color: isMeBg ? null : context.cardColor,
+                                    gradient: isMeBg ? kAppPrimaryGradient : null,
+                                  ),
                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                                   child: Column(
                                     crossAxisAlignment: align,
@@ -211,11 +225,11 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
                                           style: secondaryTextStyle(color: Colors.red, size: 12),
                                         ),
                                       if (!m.hidden && (m.message?.isNotEmpty == true))
-                                        Text(m.message!, style: primaryTextStyle(size: 14)),
+                                        Text(m.message!, style: isMe ? primaryTextStyle(size: 14, color: white) : primaryTextStyle(size: 14)),
                                       if (!m.hidden && (m.attachment?.isNotEmpty == true))
-                                        Text('Attachment', style: secondaryTextStyle(size: 12, color: context.primaryColor)),
+                                        Text('Attachment', style: secondaryTextStyle(size: 12, color: white)),
                                       4.height,
-                                      Text(m.createdAt, style: secondaryTextStyle(size: 10)),
+                                      Text(m.createdAt, style: secondaryTextStyle(size: 10, color: isMe ? white : null)),
                                     ],
                                   ),
                                 ).paddingSymmetric(vertical: 4),
@@ -245,10 +259,15 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
                     ),
                   ),
                   8.width,
-                  IconButton(
-                    icon: Icon(Icons.send, color: context.primaryColor),
-                    onPressed: _send,
-                  )
+                  InkWell(
+                    borderRadius: radius(24),
+                    onTap: _send,
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(shape: BoxShape.circle, gradient: kAppPrimaryGradient),
+                      child: const Icon(Icons.send, color: white, size: 20),
+                    ),
+                  ),
                 ],
               ),
             ),

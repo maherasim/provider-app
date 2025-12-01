@@ -14,11 +14,9 @@ import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/provider/bank_details/bank_details.dart';
 import 'package:handyman_provider_flutter/provider/blog/view/blog_list_screen.dart';
 import 'package:handyman_provider_flutter/provider/components/commission_component.dart';
-import 'package:handyman_provider_flutter/provider/handyman_commission_list_screen.dart';
 import 'package:handyman_provider_flutter/provider/handyman_list_screen.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/bid_list_screen.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/job_list_screen.dart';
-import 'package:handyman_provider_flutter/provider/packages/package_list_screen.dart';
 import 'package:handyman_provider_flutter/provider/payment_history/payment_history_screen.dart';
 import 'package:handyman_provider_flutter/provider/service_address/service_addresses_screen.dart';
 import 'package:handyman_provider_flutter/provider/services/service_list_screen.dart';
@@ -107,19 +105,18 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                         Positioned(
                           child: Container(
                             alignment: Alignment.center,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 2),
-                            decoration: boxDecorationDefault(
-                              color: primaryColor,
-                              border: Border.all(
-                                  color: lightPrimaryColor, width: 2),
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                            decoration: BoxDecoration(
+                              gradient: kAppPrimaryGradient,
+                              border: Border.all(color: lightPrimaryColor, width: 2),
                               borderRadius: BorderRadius.circular(16),
                             ),
-                            child: Text(languages.lblEdit.toUpperCase(),
-                                style: secondaryTextStyle(color: whiteColor)),
+                            child: Text(
+                              languages.lblEdit.toUpperCase(),
+                              style: secondaryTextStyle(color: whiteColor),
+                            ),
                           ).onTap(() {
-                            EditProfileScreen().launch(context,
-                                pageRouteAnimation: PageRouteAnimation.Fade);
+                            EditProfileScreen().launch(context, pageRouteAnimation: PageRouteAnimation.Fade);
                           }),
                         ),
                       ],
@@ -129,10 +126,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(
-                        appStore.userFullName,
-                        style: boldTextStyle(color: primaryColor, size: 16),
-                      ),
+                      Text(appStore.userFullName, style: boldTextStyle(color: primaryColor, size: 18)),
                       4.height,
                       Text(appStore.userEmail, style: secondaryTextStyle()),
                     ],
@@ -201,8 +195,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
               16.height,
             ],
             SettingSection(
-              title: Text(languages.general,
-                  style: boldTextStyle(color: primaryColor)),
+              title: Text(languages.general, style: boldTextStyle(color: primaryColor, size: 14)),
               headingDecoration: BoxDecoration(
                 color: context.primaryColor.withValues(alpha: 0.1),
                 borderRadius:
@@ -215,7 +208,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                   decoration: BoxDecoration(color: context.cardColor),
                   leading: ic_un_fill_wallet.iconImage(size: 16),
                   title: languages.walletBalance,
-                  titleTextStyle: boldTextStyle(size: 12),
+                  titleTextStyle: boldTextStyle(size: 14),
                   padding: EdgeInsets.only(top: 16, left: 16, right: 16),
                   onTap: () {
                     if (appConfigurationStore.onlinePaymentStatus) {
@@ -231,7 +224,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                   decoration: BoxDecoration(color: context.cardColor),
                   leading: ic_un_fill_wallet.iconImage(size: 16),
                   title: languages.paymentHistory,
-                  titleTextStyle: boldTextStyle(size: 12),
+                  titleTextStyle: boldTextStyle(size: 14),
                   trailing: Icon(
                     Icons.chevron_right,
                     color: appStore.isDarkMode ? white : gray.withValues(alpha: 0.8),
@@ -251,7 +244,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                       color:
                           appStore.isDarkMode ? white : appTextSecondaryColor),
                   title: languages.lblSubscriptionHistory,
-                  titleTextStyle: boldTextStyle(size: 12),
+                  titleTextStyle: boldTextStyle(size: 14),
                   trailing: Icon(Icons.chevron_right,
                       color: appStore.isDarkMode
                           ? white
@@ -273,7 +266,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                       color:
                           appStore.isDarkMode ? white : appTextSecondaryColor),
                   title: languages.lblServices,
-                  titleTextStyle: boldTextStyle(size: 12),
+                  titleTextStyle: boldTextStyle(size: 14),
                   trailing: Icon(Icons.chevron_right,
                       color: appStore.isDarkMode
                           ? white
@@ -297,7 +290,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                             ? white
                             : appTextSecondaryColor),
                     title: languages.btnVerifyId,
-                    titleTextStyle: boldTextStyle(size: 12),
+                    titleTextStyle: boldTextStyle(size: 14),
                     trailing: Icon(Icons.chevron_right,
                         color: appStore.isDarkMode
                             ? white
@@ -321,7 +314,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                             ? white
                             : appTextSecondaryColor),
                     title: languages.blogs,
-                    titleTextStyle: boldTextStyle(size: 12),
+                    titleTextStyle: boldTextStyle(size: 14),
                     trailing: Icon(Icons.chevron_right,
                         color: appStore.isDarkMode
                             ? white
@@ -341,7 +334,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                       color:
                           appStore.isDarkMode ? white : appTextSecondaryColor),
                   title: languages.lblAllHandyman,
-                  titleTextStyle: boldTextStyle(size: 12),
+                  titleTextStyle: boldTextStyle(size: 14),
                   trailing: Icon(Icons.chevron_right,
                       color: appStore.isDarkMode
                           ? white
@@ -357,7 +350,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                   decoration: BoxDecoration(color: context.cardColor),
                   leading: ic_help_desk.iconImage(size: 16),
                   title: languages.helpDesk,
-                  titleTextStyle: boldTextStyle(size: 12),
+                  titleTextStyle: boldTextStyle(size: 14),
                   trailing: Icon(Icons.chevron_right,
                       color: appStore.isDarkMode
                           ? white
@@ -381,7 +374,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                             ? white
                             : gray.withValues(alpha: 0.8)),
                     title: languages.handymanEarningList,
-                    titleTextStyle: boldTextStyle(size: 12),
+                    titleTextStyle: boldTextStyle(size: 14),
                     trailing: Icon(Icons.chevron_right,
                         color: appStore.isDarkMode
                             ? white
@@ -606,8 +599,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
             ).paddingSymmetric(horizontal: 16),
             16.height,
             SettingSection(
-              title: Text(languages.other,
-                  style: boldTextStyle(color: primaryColor)),
+              title: Text(languages.other, style: boldTextStyle(color: primaryColor, size: 14)),
               headingDecoration: BoxDecoration(
                 color: context.primaryColor.withValues(alpha: 0.1),
                 borderRadius:
@@ -632,7 +624,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                         : gray.withValues(alpha: 0.8),
                   ),
                   title: languages.lblOptionalUpdateNotify,
-                  titleTextStyle: boldTextStyle(size: 12),
+                  titleTextStyle: boldTextStyle(size: 14),
                   padding:
                       EdgeInsets.only(bottom: 16, right: 16, left: 16, top: 20),
                   trailing: Transform.scale(
@@ -650,8 +642,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
             ).paddingSymmetric(horizontal: 16),
             16.height,
             SettingSection(
-              title: Text(languages.setting,
-                  style: boldTextStyle(color: primaryColor)),
+              title: Text(languages.setting, style: boldTextStyle(color: primaryColor, size: 14)),
               headingDecoration: BoxDecoration(
                 color: context.primaryColor.withValues(alpha: 0.1),
                 borderRadius:
@@ -668,7 +659,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                       color:
                           appStore.isDarkMode ? white : appTextSecondaryColor),
                   title: languages.appTheme,
-                  titleTextStyle: boldTextStyle(size: 12),
+                  titleTextStyle: boldTextStyle(size: 14),
                   trailing: Icon(Icons.chevron_right,
                       color: appStore.isDarkMode
                           ? white
@@ -691,7 +682,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                       color:
                           appStore.isDarkMode ? white : appTextSecondaryColor),
                   title: languages.language,
-                  titleTextStyle: boldTextStyle(size: 12),
+                  titleTextStyle: boldTextStyle(size: 14),
                   trailing: Icon(Icons.chevron_right,
                       color: appStore.isDarkMode
                           ? white
@@ -710,7 +701,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                       color:
                           appStore.isDarkMode ? white : appTextSecondaryColor),
                   title: languages.changePassword,
-                  titleTextStyle: boldTextStyle(size: 12),
+                  titleTextStyle: boldTextStyle(size: 14),
                   trailing: Icon(Icons.chevron_right,
                       color: appStore.isDarkMode
                           ? white
@@ -732,7 +723,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                       color:
                           appStore.isDarkMode ? white : appTextSecondaryColor),
                   title: languages.lblAbout,
-                  titleTextStyle: boldTextStyle(size: 12),
+                  titleTextStyle: boldTextStyle(size: 14),
                   trailing: Icon(Icons.chevron_right,
                       color: appStore.isDarkMode
                           ? white
@@ -807,14 +798,31 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
               ],
             ).paddingSymmetric(horizontal: 16),
             16.height,
-            TextButton(
-              child: Text(languages.logout,
-                  style: boldTextStyle(color: primaryColor, size: 16)),
-              onPressed: () {
-                appStore.setLoading(false);
-                logout(context);
-              },
-            ).center().visible(appStore.isLoggedIn),
+            // Logout as large outlined card-style button
+            if (appStore.isLoggedIn)
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 16),
+                decoration: boxDecorationDefault(
+                  color: context.scaffoldBackgroundColor,
+                  borderRadius: radius(16),
+                  border: Border.all(color: Colors.red),
+                ),
+                child: InkWell(
+                  borderRadius: radius(16),
+                  onTap: () {
+                    appStore.setLoading(false);
+                    logout(context);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 14),
+                    child: Text(
+                      languages.logout,
+                      style: boldTextStyle(color: Colors.red, size: 16),
+                      textAlign: TextAlign.center,
+                    ).center(),
+                  ),
+                ),
+              ),
             16.height,
           ],
         );

@@ -26,6 +26,7 @@ import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -437,12 +438,12 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     return Observer(
       builder: (_) => SafeArea(
         child: Scaffold(
-          appBar: appBarWidget(
-            languages.editProfile,
-            textColor: white,
-            color: context.primaryColor,
-            backWidget: BackWidget(),
-            showBack: true,
+          appBar: AppBar(
+            title: Text(languages.editProfile, style: boldTextStyle(color: white, size: APP_BAR_TEXT_SIZE)),
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            leading: BackWidget(),
+            flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
           ),
           body: Stack(
             children: [

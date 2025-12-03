@@ -552,7 +552,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
         children: [
           DecoratedBox(
             decoration: boxDecorationDefault(
-              color: primaryColor,
+              gradient: kAppPrimaryGradient,
               borderRadius:
                   radiusOnly(topLeft: defaultRadius, topRight: defaultRadius),
             ),
@@ -1250,13 +1250,18 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
       showBottomActionBar = true;
 
       if (res.handymanData.validate().isEmpty) {
-        return AppButton(
-          text: languages.lblAssignHandyman,
-          color: context.primaryColor,
-          onTap: () {
-            assignBookingDialog(context, res.bookingDetail!.id,
-                res.bookingDetail!.bookingAddressId);
-          },
+        return DecoratedBox(
+          decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+          child: AppButton(
+            text: languages.lblAssignHandyman,
+            color: Colors.transparent,
+            elevation: 0,
+            textStyle: boldTextStyle(color: white),
+            onTap: () {
+              assignBookingDialog(context, res.bookingDetail!.id,
+                  res.bookingDetail!.bookingAddressId);
+            },
+          ),
         );
       } else if (res.handymanData!.isNotEmpty) {
         return Column(
@@ -1265,14 +1270,19 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                     style: boldTextStyle())
                 .center(),
             16.height,
-            AppButton(
-              width: context.width(),
-              text: languages.lblReassign,
-              color: context.primaryColor,
-              onTap: () {
-                assignBookingDialog(context, res.bookingDetail!.id,
-                    res.bookingDetail!.bookingAddressId);
-              },
+            DecoratedBox(
+              decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+              child: AppButton(
+                width: context.width(),
+                text: languages.lblReassign,
+                color: Colors.transparent,
+                elevation: 0,
+                textStyle: boldTextStyle(color: white),
+                onTap: () {
+                  assignBookingDialog(context, res.bookingDetail!.id,
+                      res.bookingDetail!.bookingAddressId);
+                },
+              ),
             ),
           ],
         );
@@ -1399,26 +1409,36 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
 
       if (res.bookingDetail!.paymentMethod == PAYMENT_METHOD_COD && res.bookingDetail!.paymentStatus == PENDING) {
         showBottomActionBar = true;
-        return appStore.isLoading ? Offstage() : AppButton(
-          text: languages.lblConfirmPayment,
-          color: context.primaryColor,
-          onTap: () {
-            confirmationRequestDialog(context, BookingStatusKeys.complete, res);
-          },
+        return appStore.isLoading ? Offstage() : DecoratedBox(
+          decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+          child: AppButton(
+            text: languages.lblConfirmPayment,
+            color: Colors.transparent,
+            elevation: 0,
+            textStyle: boldTextStyle(color: white),
+            onTap: () {
+              confirmationRequestDialog(context, BookingStatusKeys.complete, res);
+            },
+          ),
         );
       }
       else if (res.bookingDetail!.paymentStatus == PAID || res.bookingDetail!.paymentStatus == PENDING_BY_ADMINS) {
         showBottomActionBar = true;
-        return AppButton(
-          text: languages.lblServiceProof,
-          color: context.primaryColor,
-          onTap: () {
-            ServiceProofScreen(bookingDetail: res)
-                .launch(context, pageRouteAnimation: PageRouteAnimation.Fade)
-                .then((value) {
-              init(flag: true);
-            });
-          },
+        return DecoratedBox(
+          decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+          child: AppButton(
+            text: languages.lblServiceProof,
+            color: Colors.transparent,
+            elevation: 0,
+            textStyle: boldTextStyle(color: white),
+            onTap: () {
+              ServiceProofScreen(bookingDetail: res)
+                  .launch(context, pageRouteAnimation: PageRouteAnimation.Fade)
+                  .then((value) {
+                init(flag: true);
+              });
+            },
+          ),
         );
       }
 
@@ -1426,12 +1446,17 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
     else if (res.bookingDetail!.status == BookingStatusKeys.inProgress) {
 
       showBottomActionBar = true;
-      return AppButton(
-        text: languages.done,
-        color: context.primaryColor,
-        onTap: () {
-          confirmationRequestDialog(context, BookingStatusKeys.doneByProvider, res);
-        },
+      return DecoratedBox(
+        decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+        child: AppButton(
+          text: languages.done,
+          color: Colors.transparent,
+          elevation: 0,
+          textStyle: boldTextStyle(color: white),
+          onTap: () {
+            confirmationRequestDialog(context, BookingStatusKeys.doneByProvider, res);
+          },
+        ),
       );
 
     }
@@ -1835,7 +1860,12 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                                     (() {
                                       final String status = res.data!.bookingDetail!.paymentStatus.validate();
                                       if (status.isEmpty) return 'N/A';
-                                      final String method = res.data!.bookingDetail!.paymentMethod.validate().capitalizeFirstLetter();
+                                      final String methodRaw = res.data!.bookingDetail!.paymentMethod.validate();
+                                      final String method = methodRaw.capitalizeFirstLetter();
+                                      final String? bank = res.data!.bookingDetail!.bankTransferStatus;
+                                      if (methodRaw.toLowerCase() == 'bank_transfer' && bank == '0') {
+                                        return languages.waitingForPaymentApproval;
+                                      }
                                       return buildPaymentStatusWithMethod(status, method);
                                     })(),
                                     style: boldTextStyle(

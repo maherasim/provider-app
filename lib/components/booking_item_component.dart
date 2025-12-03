@@ -368,20 +368,18 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                         8.width,
                         Marquee(
                           child: Text(
-                            buildPaymentStatusWithMethod(
-                              widget.bookingData.paymentStatus.validate(),
-                              widget.bookingData.paymentMethod
-                                  .validate()
-                                  .capitalizeFirstLetter(),
-                            ),
+                            (() {
+                              final String status = widget.bookingData.paymentStatus.validate();
+                              final String methodRaw = widget.bookingData.paymentMethod.validate();
+                              final String method = methodRaw.capitalizeFirstLetter();
+                              if (methodRaw.toLowerCase() == 'bank_transfer' && widget.bookingData.bankTransferStatus == '0') {
+                                return languages.waitingForPaymentApproval;
+                              }
+                              return buildPaymentStatusWithMethod(status, method);
+                            })(),
                             style: boldTextStyle(
                               size: 12,
-                              color: (widget.bookingData.paymentStatus
-                                              .validate() ==
-                                          PAID ||
-                                      widget.bookingData.paymentStatus
-                                              .validate() ==
-                                          PENDING_BY_ADMINS)
+                              color: (widget.bookingData.paymentStatus.validate() == PAID)
                                   ? Colors.green
                                   : Colors.red,
                             ),

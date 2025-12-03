@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -21,7 +20,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/provider_subscription_model.dart';
-import '../screens/cash_management/cash_constant.dart';
 import '../components/cached_image_widget.dart';
 import 'app_configuration.dart';
 import 'colors.dart';
@@ -72,12 +70,9 @@ Future<void> setSaveSubscription({
       .setPlanEndDate(subscription.endAt ?? getStringAsync(PLAN_END_DATE));
   await appStore.setPlanSubscribeStatus(isSubscribe.validate() == 1);
   if (appConfigurationStore.isInAppPurchaseEnable) {
-    await appStore.setProviderCurrentSubscriptionPlan(subscription ??
-        ProviderSubscriptionModel.fromJson(
-            jsonDecode(getStringAsync(ACTIVE_IN_APP_PURCHASE_IDENTIFIER))));
+    await appStore.setProviderCurrentSubscriptionPlan(subscription);
     await appStore.setActiveRevenueCatIdentifier(
-        subscription.activePlanRevenueCatIdentifier ??
-            getStringAsync(ACTIVE_IN_APP_PURCHASE_IDENTIFIER));
+        subscription.activePlanRevenueCatIdentifier);
   }
 }
 
@@ -469,8 +464,10 @@ Brightness getStatusBrightness({required bool val}) {
 String getPaymentStatusFilterText(String? status) {
   if (status!.isEmpty) {
     return languages.pending;
-  } else if (status == PAID || status == PENDING_BY_ADMIN) {
+  } else if (status == PAID) {
     return languages.paid;
+  } else if (status == PENDING_BY_ADMINS) {
+    return languages.pendingByAdmin;
   } else if (status == SERVICE_PAYMENT_STATUS_ADVANCE_PAID) {
     return languages.advancePaid;
   } else if (status == PENDING) {
@@ -485,8 +482,10 @@ String getPaymentStatusFilterText(String? status) {
 String getPaymentStatusText(String? status, String? method) {
   if (status!.isEmpty) {
     return languages.pending;
-  } else if (status == PAID || status == PENDING_BY_ADMINS) {
+  } else if (status == PAID) {
     return languages.paid;
+  } else if (status == PENDING_BY_ADMINS) {
+    return languages.pendingByAdmin;
   } else if (status == PAYMENT_STATUS_ADVANCE) {
     return languages.advancePaid;
   } else if (status == PENDING && method == PAYMENT_METHOD_COD) {
@@ -531,7 +530,8 @@ void checkIfLink(BuildContext context, String value, {String? title}) {
 }
 
 String buildPaymentStatusWithMethod(String status, String method) {
-  return '${getPaymentStatusText(status, method)}${(status == BOOKING_STATUS_PAID || status == PENDING_BY_ADMINS) ? ' ${languages.by} $method' : ''}';
+  final text = getPaymentStatusText(status, method);
+  return '$text${(status == BOOKING_STATUS_PAID) ? ' ${languages.by} $method' : ''}';
 }
 
 Color getRatingBarColor(int rating, {bool showRedForZeroRating = false}) {

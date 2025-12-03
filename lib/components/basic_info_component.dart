@@ -9,7 +9,7 @@ import 'package:handyman_provider_flutter/networks/frobster_chat_api.dart';
 import 'package:handyman_provider_flutter/screens/chat/frobster_chat_thread_screen.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
-import 'package:handyman_provider_flutter/utils/configs.dart';
+import 'package:handyman_provider_flutter/utils/configs.dart'; // ignore: unused_import
 import 'package:handyman_provider_flutter/utils/images.dart';
 import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -249,21 +249,24 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
           16.height,
           Row(
             children: [
-              AppButton(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(chat,
-                        color: Colors.white, height: 18, width: 18),
-                    16.width,
-                    Text(languages.lblChat,
-                        style: boldTextStyle(color: Colors.white)),
-                  ],
-                ),
-                width: context.width(),
-                elevation: 0,
-                color: primaryColor,
-                onTap: () async {
+              DecoratedBox(
+                decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                child: AppButton(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(chat,
+                          color: Colors.white, height: 18, width: 18),
+                      16.width,
+                      Text(languages.lblChat,
+                          style: boldTextStyle(color: Colors.white)),
+                    ],
+                  ),
+                  width: context.width(),
+                  elevation: 0,
+                  color: Colors.transparent,
+                  textStyle: boldTextStyle(color: white),
+                  onTap: () async {
                   final receiverId = userData.id;
                   if (receiverId == null) {
                     toast(languages.somethingWentWrong);
@@ -287,7 +290,8 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
                     Fluttertoast.cancel();
                     toast(e.toString(), print: true);
                   }
-                },
+                  },
+                ),
               ).expand(),
             ],
           ),

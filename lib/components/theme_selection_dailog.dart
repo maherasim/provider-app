@@ -3,6 +3,7 @@ import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 
 class ThemeSelectionDaiLog extends StatefulWidget {
   final BuildContext buildContext;
@@ -43,9 +44,9 @@ class ThemeSelectionDaiLogState extends State<ThemeSelectionDaiLog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            decoration: boxDecorationWithRoundedCorners(
+            decoration: BoxDecoration(
+              gradient: kAppPrimaryGradient,
               borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
-              backgroundColor: primaryColor,
             ),
             padding: EdgeInsets.only(left: 24, right: 8, bottom: 8, top: 8),
             child: Row(
@@ -70,7 +71,7 @@ class ThemeSelectionDaiLogState extends State<ThemeSelectionDaiLog> {
             itemBuilder: (BuildContext context, int index) {
               return RadioListTile(
                 value: index,
-                activeColor: primaryColor,
+                activeColor: kAppPrimaryGradient.colors.last,
                 controlAffinity: ListTileControlAffinity.trailing,
                 groupValue: currentIndex,
                 title: Text(themeModeList[index], style: primaryTextStyle()),

@@ -457,15 +457,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
         _buildTcAcceptWidget(),
         8.height,
         // Sign up button
-        AppButton(
-          text: languages.lblSignup,
-          height: 40,
-          color: primaryColor,
-          textStyle: boldTextStyle(color: white),
-          width: context.width() - context.navigationBarHeight,
-          onTap: () {
-            saveUser();
-          },
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: radius(12),
+            onTap: () {
+              saveUser();
+            },
+            child: Container(
+              height: 40,
+              width: context.width() - context.navigationBarHeight,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: const [Color(0xFFE53935), Color(0xFF1E88E5)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: radius(12),
+              ),
+              alignment: Alignment.center,
+              child: Text(languages.lblSignup, style: boldTextStyle(color: white)),
+            ),
+          ),
         ),
       ],
     );

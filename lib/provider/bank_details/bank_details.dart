@@ -11,6 +11,7 @@ import '../../models/bank_list_response.dart';
 import '../../utils/common.dart';
 import '../../utils/images.dart';
 import 'shimmer/bank_detail_shimmer.dart';
+import '../../utils/colors.dart';
 
 class BankDetails extends StatefulWidget {
   final BankHistory? bankHistory;
@@ -161,33 +162,68 @@ class _BankDetailsState extends State<BankDetails> {
             itemBuilder: (BuildContext context, index) {
               BankHistory data = snap[index];
               return Container(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                margin: EdgeInsets.all(8),
-                decoration: boxDecorationWithRoundedCorners(
-                  borderRadius: BorderRadius.circular(8),
-                  backgroundColor: context.cardColor,
-                ),
-                width: context.width(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Marquee(child: Text(data.bankName.validate(), style: primaryTextStyle(size: 14, weight: FontWeight.bold))).expand(),
-                        16.width,
-                        Container(
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                          decoration: BoxDecoration(color: primaryColor, borderRadius: BorderRadius.circular(50)),
-                          child: Text(languages.lbldefault, style: primaryTextStyle(size: 10, color: white)),
-                        ).visible(data.isDefault == 1),
-                      ],
+                margin: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: context.cardColor,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
                     ),
-                    8.height,
-                    Text(bankAccountWidget(data.accountNo.validate()), style: secondaryTextStyle()),
-                    8.height,
-                    OptionListWidget(optionList: optionList(bankHistory: data)),
                   ],
+                  border: Border.all(color: context.dividerColor),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              gradient: kAppPrimaryGradient,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.account_balance, color: white, size: 22),
+                          ),
+                          12.width,
+                          Marquee(
+                            child: Text(
+                              data.bankName.validate(),
+                              style: boldTextStyle(size: 16),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ).expand(),
+                          12.width,
+                          Container(
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              gradient: kAppPrimaryGradient,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(languages.lbldefault, style: boldTextStyle(size: 10, color: white)),
+                          ).visible(data.isDefault == 1),
+                        ],
+                      ),
+                      12.height,
+                      Row(
+                        children: [
+                          Icon(Icons.credit_card, size: 16, color: textSecondaryColorGlobal),
+                          8.width,
+                          Text(bankAccountWidget(data.accountNo.validate()), style: primaryTextStyle()),
+                        ],
+                      ),
+                      8.height,
+                      OptionListWidget(optionList: optionList(bankHistory: data)),
+                    ],
+                  ),
                 ),
               );
             },

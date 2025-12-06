@@ -143,32 +143,38 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
 
       return;
     }
-    showConfirmDialogCustom(
-      context,
-      title: languages.confirmationRequestTxt,
-      primaryColor: status == BookingStatusKeys.rejected
-          ? Colors.redAccent
-          : primaryColor,
-      positiveText: languages.lblYes,
-      negativeText: languages.lblNo,
-      onAccept: (context) async {
-        if (status == BookingStatusKeys.pending) {
-          appStore.setLoading(true);
-          updateBooking(res, '', BookingStatusKeys.accept);
-        } else if (status == BookingStatusKeys.doneByProvider) {
-          appStore.setLoading(true);
-          updateBooking(res, '', BookingStatusKeys.doneByProvider);
-        }
-        else if (status == BookingStatusKeys.rejected) {
+    if (status == BookingStatusKeys.rejected) {
+      await _showGradientConfirmDialog(
+        title: languages.confirmationRequestTxt,
+        positiveText: languages.lblYes,
+        negativeText: languages.lblNo,
+        onAccept: () async {
           appStore.setLoading(true);
           updateBooking(res, '', BookingStatusKeys.rejected);
-        } else if (status == BookingStatusKeys.complete) {
-          if (res.bookingDetail!.paymentMethod == PAYMENT_METHOD_COD) {
-            return;
+        },
+      );
+    } else {
+      showConfirmDialogCustom(
+        context,
+        title: languages.confirmationRequestTxt,
+        primaryColor: primaryColor,
+        positiveText: languages.lblYes,
+        negativeText: languages.lblNo,
+        onAccept: (context) async {
+          if (status == BookingStatusKeys.pending) {
+            appStore.setLoading(true);
+            updateBooking(res, '', BookingStatusKeys.accept);
+          } else if (status == BookingStatusKeys.doneByProvider) {
+            appStore.setLoading(true);
+            updateBooking(res, '', BookingStatusKeys.doneByProvider);
+          } else if (status == BookingStatusKeys.complete) {
+            if (res.bookingDetail!.paymentMethod == PAYMENT_METHOD_COD) {
+              return;
+            }
           }
-        }
-      },
-    );
+        },
+      );
+    }
   }
 
   Future<void> assignBookingDialog(
@@ -1179,61 +1185,66 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
       showBottomActionBar = true;
       return Row(
         children: [
-          AppButton(
-            text: languages.accept,
-            color: context.primaryColor,
-            onTap: () async {
-              /// If Auto Assign is enabled, Assign to current Provider it self
-              if (appConfigurationStore.autoAssignStatus) {
-                await showConfirmDialogCustom(
-                  context,
-                  title: languages.lblAreYouSureYouWantToAssignToYourself,
-                  primaryColor: context.primaryColor,
-                  positiveText: languages.lblYes,
-                  negativeText: languages.lblCancel,
-                  onAccept: (c) async {
-                    var request = {
-                      CommonKeys.id: widget.bookingId.validate(),
-                      CommonKeys.handymanId: [appStore.userId.validate()],
-                    };
-                    appStore.setLoading(true);
+          DecoratedBox(
+            decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+            child: AppButton(
+              text: languages.accept,
+              color: Colors.transparent,
+              elevation: 0,
+              textStyle: boldTextStyle(color: white),
+              onTap: () async {
+                /// If Auto Assign is enabled, Assign to current Provider it self
+                if (appConfigurationStore.autoAssignStatus) {
+                  await showConfirmDialogCustom(
+                    context,
+                    title: languages.lblAreYouSureYouWantToAssignToYourself,
+                    primaryColor: context.primaryColor,
+                    positiveText: languages.lblYes,
+                    negativeText: languages.lblCancel,
+                    onAccept: (c) async {
+                      var request = {
+                        CommonKeys.id: widget.bookingId.validate(),
+                        CommonKeys.handymanId: [appStore.userId.validate()],
+                      };
+                      appStore.setLoading(true);
 
-                    await assignBooking(request).then((res) async {
-                      LiveStream().emit(LIVESTREAM_UPDATE_BOOKINGS);
-                      init(flag: true);
-                    }).catchError((e) {
-                      toast(e.toString());
-                    });
-                  },
-                );
-              } else {
-                await showConfirmDialogCustom(
-                  context,
-                  title: languages.wouldYouLikeToAssignThisBooking,
-                  primaryColor: primaryColor,
-                  positiveText: languages.lblYes,
-                  negativeText: languages.lblNo,
-                  onAccept: (_) async {
-                    var request = {
-                      CommonKeys.id: res.bookingDetail!.id.validate(),
-                      BookingUpdateKeys.status: BookingStatusKeys.accept,
-                      BookingUpdateKeys.paymentStatus:
-                          res.bookingDetail!.isAdvancePaymentDone
-                              ? SERVICE_PAYMENT_STATUS_ADVANCE_PAID
-                              : res.bookingDetail!.paymentStatus.validate(),
-                    };
-                    appStore.setLoading(true);
+                      await assignBooking(request).then((res) async {
+                        LiveStream().emit(LIVESTREAM_UPDATE_BOOKINGS);
+                        init(flag: true);
+                      }).catchError((e) {
+                        toast(e.toString());
+                      });
+                    },
+                  );
+                } else {
+                  await showConfirmDialogCustom(
+                    context,
+                    title: languages.wouldYouLikeToAssignThisBooking,
+                    primaryColor: primaryColor,
+                    positiveText: languages.lblYes,
+                    negativeText: languages.lblNo,
+                    onAccept: (_) async {
+                      var request = {
+                        CommonKeys.id: res.bookingDetail!.id.validate(),
+                        BookingUpdateKeys.status: BookingStatusKeys.accept,
+                        BookingUpdateKeys.paymentStatus:
+                            res.bookingDetail!.isAdvancePaymentDone
+                                ? SERVICE_PAYMENT_STATUS_ADVANCE_PAID
+                                : res.bookingDetail!.paymentStatus.validate(),
+                      };
+                      appStore.setLoading(true);
 
-                    bookingUpdate(request).then((res) async {
-                      LiveStream().emit(LIVESTREAM_UPDATE_BOOKINGS);
-                      init(flag: true);
-                    }).catchError((e) {
-                      toast(e.toString());
-                    });
-                  },
-                );
-              }
-            },
+                      bookingUpdate(request).then((res) async {
+                        LiveStream().emit(LIVESTREAM_UPDATE_BOOKINGS);
+                        init(flag: true);
+                      }).catchError((e) {
+                        toast(e.toString());
+                      });
+                    },
+                  );
+                }
+              },
+            ),
           ).expand(),
           16.width,
           AppButton(
@@ -1331,16 +1342,14 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
               text: languages.decline,
               textColor: textPrimaryColorGlobal,
               onTap: () {
-                showConfirmDialogCustom(
-                  context,
+                _showGradientConfirmDialog(
                   title: languages.confirmationRequestTxt,
                   positiveText: languages.lblYes,
                   negativeText: languages.lblNo,
-                  onAccept: (val) {
+                  onAccept: () {
                     appStore.setLoading(true);
                     updateBooking(res, '', BookingStatusKeys.pending);
                   },
-                  primaryColor: context.primaryColor,
                 );
               },
             ).expand(),
@@ -1353,29 +1362,33 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
       return Container(
         child: Row(
           children: [
-            AppButton(
-              text: languages.lblCompleted,
-              textStyle: boldTextStyle(color: white),
-              color: context.primaryColor,
-              onTap: () {
-                bool isAnyServiceAddonUnCompleted = res
-                    .bookingDetail!.serviceaddon
-                    .validate()
-                    .any((element) => element.status.getBoolInt() == false);
-                showConfirmDialogCustom(
-                  context,
-                  onAccept: (_) {
-                    _handlePendingApproval(val: res, isAddExtraCharges: false);
-                  },
-                  primaryColor: context.primaryColor,
-                  positiveText: languages.lblYes,
-                  negativeText: languages.lblNo,
-                  subTitle: isAnyServiceAddonUnCompleted
-                      ? languages.pleaseNoteThatAllServiceMarkedCompleted
-                      : null,
-                  title: languages.confirmationRequestTxt,
-                );
-              },
+            DecoratedBox(
+              decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+              child: AppButton(
+                text: languages.lblCompleted,
+                textStyle: boldTextStyle(color: white),
+                color: Colors.transparent,
+                elevation: 0,
+                onTap: () {
+                  bool isAnyServiceAddonUnCompleted = res
+                      .bookingDetail!.serviceaddon
+                      .validate()
+                      .any((element) => element.status.getBoolInt() == false);
+                  showConfirmDialogCustom(
+                    context,
+                    onAccept: (_) {
+                      _handlePendingApproval(val: res, isAddExtraCharges: false);
+                    },
+                    primaryColor: context.primaryColor,
+                    positiveText: languages.lblYes,
+                    negativeText: languages.lblNo,
+                    subTitle: isAnyServiceAddonUnCompleted
+                        ? languages.pleaseNoteThatAllServiceMarkedCompleted
+                        : null,
+                    title: languages.confirmationRequestTxt,
+                  );
+                },
+              ),
             ).expand(),
             if (!res.bookingDetail!.isFreeService &&
                 res.bookingDetail!.bookingPackage == null)
@@ -1462,6 +1475,59 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
     }
     return Offstage();
 
+  }
+
+  Future<void> _showGradientConfirmDialog({
+    required String title,
+    required VoidCallback onAccept,
+    String? positiveText,
+    String? negativeText,
+  }) async {
+    await showInDialog(
+      context,
+      contentPadding: EdgeInsets.all(0),
+      builder: (_) {
+        return Container(
+          decoration: boxDecorationDefault(color: context.cardColor, borderRadius: radius(12)),
+          padding: EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: boldTextStyle()),
+              16.height,
+              Row(
+                children: [
+                  AppButton(
+                    text: negativeText ?? languages.lblNo,
+                    elevation: 0,
+                    color: appStore.isDarkMode ? context.scaffoldBackgroundColor : white,
+                    textColor: textPrimaryColorGlobal,
+                    onTap: () {
+                      finish(context);
+                    },
+                  ).expand(),
+                  16.width,
+                  DecoratedBox(
+                    decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                    child: AppButton(
+                      text: positiveText ?? languages.lblYes,
+                      elevation: 0,
+                      color: Colors.transparent,
+                      textStyle: boldTextStyle(color: white),
+                      onTap: () {
+                        finish(context);
+                        onAccept();
+                      },
+                    ),
+                  ).expand(),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget extraChargesWidget(

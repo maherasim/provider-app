@@ -18,6 +18,7 @@ import 'package:nb_utils/nb_utils.dart';
 import '../models/user_data.dart';
 import 'dotted_line.dart';
 import 'image_border_component.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 
 class BookingItemComponent extends StatefulWidget {
   final BookingData bookingData;
@@ -83,18 +84,28 @@ class BookingItemComponentState extends State<BookingItemComponent> {
 
   Future<void> confirmationRequestDialog(
       BuildContext context, int index, String status) async {
-    showConfirmDialogCustom(
-      context,
-      title: languages.confirmationRequestTxt,
-      positiveText: languages.lblYes,
-      negativeText: languages.lblNo,
-      primaryColor: status == BookingStatusKeys.rejected
-          ? Colors.redAccent
-          : primaryColor,
-      onAccept: (context) async {
-        updateBooking(widget.bookingData, status, index);
-      },
-    );
+    if (status == BookingStatusKeys.rejected) {
+      await _showGradientConfirmDialogItem(
+        context: context,
+        title: languages.confirmationRequestTxt,
+        positiveText: languages.lblYes,
+        negativeText: languages.lblNo,
+        onAccept: () async {
+          updateBooking(widget.bookingData, status, index);
+        },
+      );
+    } else {
+      showConfirmDialogCustom(
+        context,
+        title: languages.confirmationRequestTxt,
+        positiveText: languages.lblYes,
+        negativeText: languages.lblNo,
+        primaryColor: primaryColor,
+        onAccept: (context) async {
+          updateBooking(widget.bookingData, status, index);
+        },
+      );
+    }
   }
 
   @override
@@ -479,136 +490,79 @@ class BookingItemComponentState extends State<BookingItemComponent> {
             Row(
               children: [
                 if (isUserTypeProvider)
-                  AppButton(
-                    child: Text(languages.accept,
-                        style: boldTextStyle(color: white)),
-                    width: context.width(),
-                    color: primaryColor,
-                    elevation: 0,
-                    onTap: () async {
-                      /// If Auto Assign is enabled, Assign to current Provider it self
-                      if (appConfigurationStore.autoAssignStatus) {
-                        showConfirmDialogCustom(
-                          context,
-                          title: languages.lblAreYouSureYouWantToAssignToYourself,
-                          primaryColor: context.primaryColor,
-                          positiveText: languages.lblYes,
-                          negativeText: languages.lblCancel,
-                          onAccept: (c) async {
-                            var request = {
-                              CommonKeys.id: widget.bookingData.id.validate(),
-                              CommonKeys.handymanId: [
-                                appStore.userId.validate()
-                              ],
-                            };
+                  DecoratedBox(
+                    decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                    child: AppButton(
+                      child: Text(languages.accept, style: boldTextStyle(color: white)),
+                      width: context.width(),
+                      color: Colors.transparent,
+                      elevation: 0,
+                      onTap: () async {
+                        /// If Auto Assign is enabled, Assign to current Provider it self
+                        if (appConfigurationStore.autoAssignStatus) {
+                          showConfirmDialogCustom(
+                            context,
+                            title: languages.lblAreYouSureYouWantToAssignToYourself,
+                            primaryColor: context.primaryColor,
+                            positiveText: languages.lblYes,
+                            negativeText: languages.lblCancel,
+                            onAccept: (c) async {
+                              var request = {
+                                CommonKeys.id: widget.bookingData.id.validate(),
+                                CommonKeys.handymanId: [
+                                  appStore.userId.validate()
+                                ],
+                              };
 
-                            appStore.setLoading(true);
+                              appStore.setLoading(true);
 
-                            await assignBooking(request).then((res) async {
-                              appStore.setLoading(false);
+                              await assignBooking(request).then((res) async {
+                                appStore.setLoading(false);
 
-                              setState(() {});
-                              LiveStream().emit(LIVESTREAM_UPDATE_BOOKINGS);
+                                setState(() {});
+                                LiveStream().emit(LIVESTREAM_UPDATE_BOOKINGS);
 
-                              finish(context);
+                                finish(context);
 
-                              toast(res.message);
-                            }).catchError((e) {
-                              appStore.setLoading(false);
+                                toast(res.message);
+                              }).catchError((e) {
+                                appStore.setLoading(false);
 
-                              toast(e.toString());
-                            });
-                          },
-                        );
-                      } else {
-                        await showConfirmDialogCustom(
-                          context,
-                          title: languages.wouldYouLikeToAssignThisBooking,
-                          primaryColor: primaryColor,
-                          positiveText: languages.lblYes,
-                          negativeText: languages.lblNo,
-                          onAccept: (_) async {
-                            var request = {
-                              CommonKeys.id: widget.bookingData.id.validate(),
-                              BookingUpdateKeys.status:
-                                  BookingStatusKeys.accept,
-                              BookingUpdateKeys.paymentStatus: widget
-                                      .bookingData.isAdvancePaymentDone
-                                  ? SERVICE_PAYMENT_STATUS_ADVANCE_PAID
-                                  : widget.bookingData.paymentStatus.validate(),
-                            };
-                            appStore.setLoading(true);
+                                toast(e.toString());
+                              });
+                            },
+                          );
+                        } else {
+                          await showConfirmDialogCustom(
+                            context,
+                            title: languages.wouldYouLikeToAssignThisBooking,
+                            primaryColor: primaryColor,
+                            positiveText: languages.lblYes,
+                            negativeText: languages.lblNo,
+                            onAccept: (_) async {
+                              var request = {
+                                CommonKeys.id: widget.bookingData.id.validate(),
+                                BookingUpdateKeys.status:
+                                    BookingStatusKeys.accept,
+                                BookingUpdateKeys.paymentStatus: widget
+                                        .bookingData.isAdvancePaymentDone
+                                    ? SERVICE_PAYMENT_STATUS_ADVANCE_PAID
+                                    : widget.bookingData.paymentStatus.validate(),
+                              };
+                              appStore.setLoading(true);
 
-                            bookingUpdate(request).then((res) async {
-                              setState(() {});
-                              LiveStream().emit(LIVESTREAM_UPDATE_BOOKINGS);
-                            }).catchError((e) {
-                              appStore.setLoading(false);
-                              toast(e.toString());
-                            });
-
-                            /*var request = {
-                                    CommonKeys.id: widget.bookingData.id.validate(),
-                                    BookingUpdateKeys.status: BookingStatusKeys.accept,
-                                    BookingUpdateKeys.paymentStatus: widget.bookingData.isAdvancePaymentDone ? SERVICE_PAYMENT_STATUS_ADVANCE_PAID : widget.bookingData.paymentStatus.validate(),
-                                  };
-                                  appStore.setLoading(true);
-
-                                  bookingUpdate(request).then((res) async {
-                                    /// If Auto Assign Provider it self when Handyman List is Empty
-                                    if (appConfigurationStore.autoAssignStatus) {
-                                      if (appStore.totalHandyman >= 1) {
-                                        if (appStore.isLoading) return;
-
-                                        showConfirmDialogCustom(
-                                          context,
-                                          title: languages.lblAreYouSureYouWantToAssignToYourself,
-                                          primaryColor: context.primaryColor,
-                                          positiveText: languages.lblYes,
-                                          negativeText: languages.lblCancel,
-                                          onAccept: (c) async {
-                                            var request = {
-                                              CommonKeys.id: widget.bookingData.id.validate(),
-                                              CommonKeys.handymanId: [appStore.userId.validate()],
-                                            };
-
-                                            appStore.setLoading(true);
-
-                                            await assignBooking(request).then((res) async {
-                                              appStore.setLoading(false);
-
-                                              setState(() {});
-                                              LiveStream().emit(LIVESTREAM_UPDATE_BOOKINGS);
-
-                                              finish(context);
-
-                                              toast(res.message);
-                                            }).catchError((e) {
-                                              appStore.setLoading(false);
-
-                                              toast(e.toString());
-                                            });
-                                          },
-                                        );
-                                      } else {
-                                        appStore.setLoading(false);
-                                        finish(context, true);
-                                      }
-                                    } else {
-                                      appStore.setLoading(false);
-                                      finish(context, true);
-                                    }
-                                  }).catchError((e) {
-                                    if (mounted) {
-                                      finish(context);
-                                    }
-                                    appStore.setLoading(false);
-                                    toast(e.toString());
-                                  });*/
-                          },
-                        );
-                      }
-                    },
+                              bookingUpdate(request).then((res) async {
+                                setState(() {});
+                                LiveStream().emit(LIVESTREAM_UPDATE_BOOKINGS);
+                              }).catchError((e) {
+                                appStore.setLoading(false);
+                                toast(e.toString());
+                              });
+                            },
+                          );
+                        }
+                      },
+                    ),
                   ).expand(),
                 12.width,
                 AppButton(
@@ -634,26 +588,29 @@ class BookingItemComponentState extends State<BookingItemComponent> {
             Column(
               children: [
                 8.height,
-                AppButton(
-                  width: context.width(),
-                  child: Text(
-                    widget.bookingData.handyman!.isEmpty
-                        ? languages.lblAssign
-                        : languages.lblReassign,
-                    style: boldTextStyle(color: white),
+                DecoratedBox(
+                  decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                  child: AppButton(
+                    width: context.width(),
+                    child: Text(
+                      widget.bookingData.handyman!.isEmpty
+                          ? languages.lblAssign
+                          : languages.lblReassign,
+                      style: boldTextStyle(color: white),
+                    ),
+                    color: Colors.transparent,
+                    elevation: 0,
+                    onTap: () {
+                      AssignHandymanScreen(
+                        bookingId: widget.bookingData.id,
+                        serviceAddressId: widget.bookingData.bookingAddressId,
+                        onUpdate: () {
+                          setState(() {});
+                          LiveStream().emit(LIVESTREAM_UPDATE_BOOKINGS);
+                        },
+                      ).launch(context);
+                    },
                   ),
-                  color: primaryColor,
-                  elevation: 0,
-                  onTap: () {
-                    AssignHandymanScreen(
-                      bookingId: widget.bookingData.id,
-                      serviceAddressId: widget.bookingData.bookingAddressId,
-                      onUpdate: () {
-                        setState(() {});
-                        LiveStream().emit(LIVESTREAM_UPDATE_BOOKINGS);
-                      },
-                    ).launch(context);
-                  },
                 ),
               ],
             ).paddingAll(8),
@@ -667,6 +624,60 @@ class BookingItemComponentState extends State<BookingItemComponent> {
       hoverColor: Colors.transparent,
       highlightColor: Colors.transparent,
       splashColor: Colors.transparent,
+    );
+  }
+
+  Future<void> _showGradientConfirmDialogItem({
+    required BuildContext context,
+    required String title,
+    required VoidCallback onAccept,
+    String? positiveText,
+    String? negativeText,
+  }) async {
+    await showInDialog(
+      context,
+      contentPadding: EdgeInsets.all(0),
+      builder: (_) {
+        return Container(
+          decoration: boxDecorationDefault(color: context.cardColor, borderRadius: radius(12)),
+          padding: EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: boldTextStyle()),
+              16.height,
+              Row(
+                children: [
+                  AppButton(
+                    text: negativeText ?? languages.lblNo,
+                    elevation: 0,
+                    color: appStore.isDarkMode ? context.scaffoldBackgroundColor : white,
+                    textColor: textPrimaryColorGlobal,
+                    onTap: () {
+                      finish(context);
+                    },
+                  ).expand(),
+                  16.width,
+                  DecoratedBox(
+                    decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                    child: AppButton(
+                      text: positiveText ?? languages.lblYes,
+                      elevation: 0,
+                      color: Colors.transparent,
+                      textStyle: boldTextStyle(color: white),
+                      onTap: () {
+                        finish(context);
+                        onAccept();
+                      },
+                    ),
+                  ).expand(),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

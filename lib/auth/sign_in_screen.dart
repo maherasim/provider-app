@@ -43,6 +43,12 @@ class _SignInScreenState extends State<SignInScreen> {
 
   bool isRemember = getBoolAsync(IS_REMEMBERED);
 
+  LinearGradient get _redBlueGradient => LinearGradient(
+        colors: const [Color(0xFFE53935), Color(0xFF1E88E5)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      );
+
   @override
   void initState() {
     super.initState();
@@ -240,15 +246,24 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget _buildButtonWidget() {
     return Column(
       children: [
-        AppButton(
-          text: languages.signIn,
-          height: 40,
-          color: primaryColor,
-          textStyle: boldTextStyle(color: white),
-          width: context.width() - context.navigationBarHeight,
-          onTap: () {
-            _handleLogin();
-          },
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: radius(12),
+            onTap: () {
+              _handleLogin();
+            },
+            child: Container(
+              height: 40,
+              width: context.width() - context.navigationBarHeight,
+              decoration: BoxDecoration(
+                gradient: _redBlueGradient,
+                borderRadius: radius(12),
+              ),
+              alignment: Alignment.center,
+              child: Text(languages.signIn, style: boldTextStyle(color: white)),
+            ),
+          ),
         ),
         16.height,
         Row(

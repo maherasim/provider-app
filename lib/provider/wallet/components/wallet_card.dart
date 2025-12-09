@@ -5,6 +5,7 @@ import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/provider/withdraw/withdraw_request/withdraw_request.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../../../components/cached_image_widget.dart';
@@ -26,7 +27,7 @@ class _WalletCardState extends State<WalletCard> {
       height: 130,
       width: context.width(),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10), color: primaryColor),
+          borderRadius: BorderRadius.circular(10), gradient: kAppPrimaryGradient),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -45,7 +46,7 @@ class _WalletCardState extends State<WalletCard> {
                     child: PriceWidget(
                         price: widget.availableBalance.validate(),
                         size: 26,
-                        color: context.primaryColor,
+                        color: gradientBlue,
                         isBoldText: true),
                   )
                 ],

@@ -162,7 +162,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
             Container(
               height: 4,
               decoration: BoxDecoration(
-                color: active ? context.primaryColor : context.primaryColor.withValues(alpha: 0.15),
+                color: active ? gradientBlue : gradientBlue.withValues(alpha: 0.15),
                 borderRadius: radius(6),
               ),
             ),
@@ -202,43 +202,47 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
       final providerName = postJobDetail?.provider?.displayName.validate() ?? '';
       final advancePct = (postJobDetail?.advancePercent ?? 0).toString();
       return Container(
-        padding: EdgeInsets.all(12),
+        padding: EdgeInsets.all(10),
         decoration: boxDecorationWithRoundedCorners(backgroundColor: context.cardColor, borderRadius: radius(12)),
         child: Row(
           children: [
             // Simple initials circle
             Container(
-              height: 44,
-              width: 44,
+              height: 40,
+              width: 40,
               alignment: Alignment.center,
-              decoration: BoxDecoration(color: context.primaryColor.withValues(alpha: 0.15), shape: BoxShape.circle),
+              decoration: BoxDecoration(color: gradientBlue.withValues(alpha: 0.15), shape: BoxShape.circle),
               child: Text(
                 providerName.isNotEmpty ? providerName.split(' ').map((w) => w.isNotEmpty ? w[0] : '').take(2).join().toUpperCase() : 'BG',
-                style: boldTextStyle(color: context.primaryColor),
+                style: boldTextStyle(color: gradientBlue, size: 12),
               ),
             ),
-            12.width,
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(providerName, style: boldTextStyle()),
-                4.height,
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 4,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Text('${languages.bid}:', style: secondaryTextStyle()),
-                    PriceWidget(price: postJobDetail?.price ?? 0, color: textPrimaryColorGlobal, size: 14),
-                    Text('• ${languages.advancePercentage} $advancePct%', style: secondaryTextStyle()),
-                  ],
-                ),
-              ],
-            ).expand(),
+            10.width,
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(providerName, style: boldTextStyle(size: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  4.height,
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 4,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Text('${languages.bid}:', style: secondaryTextStyle(size: 11)),
+                      PriceWidget(price: postJobDetail?.price ?? 0, color: textPrimaryColorGlobal, size: 12),
+                      Text('• ${languages.advancePercentage} $advancePct%', style: secondaryTextStyle(size: 11)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            8.width,
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
               decoration: BoxDecoration(color: postJobDetail!.status.bgColor.withValues(alpha: 0.1), borderRadius: radius(20)),
-              child: Text(postJobDetail!.status.displayName, style: boldTextStyle(color: postJobDetail!.status.bgColor, size: 12)),
+              child: Text(postJobDetail!.status.displayName, style: boldTextStyle(color: postJobDetail!.status.bgColor, size: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
             ),
           ],
         ),
@@ -262,19 +266,21 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
             children: [
               // Status Info Card
               if(getStatusInfo(postJobDetail!).isNotEmpty) Container(
-                padding: EdgeInsets.all(12),
+                padding: EdgeInsets.all(10),
                 decoration: boxDecorationWithRoundedCorners(
-                  backgroundColor: context.primaryColor.withValues(alpha: 0.1),
+                  backgroundColor: gradientBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.info_outline, color: context.primaryColor, size: 20),
+                    Icon(Icons.info_outline, color: gradientBlue, size: 18),
                     8.width,
                     Expanded(
                       child: Text(
                         getStatusInfo(postJobDetail!),
-                        style: secondaryTextStyle(color: context.primaryColor, size: 14),
+                        style: secondaryTextStyle(color: gradientBlue, size: 12),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -293,13 +299,13 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                 crossAxisCount: 2,
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                childAspectRatio: 1.2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
+                childAspectRatio: 1.4,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
                 children: [
                   _buildInfoCard(
                     icon: Icons.h_mobiledata,
-                    iconColor: context.primaryColor,
+                    iconColor: gradientBlue,
                     title: 'Title',
                     value: postJobDetail!.postRequest?.title?.validate() ?? '',
                   ),
@@ -365,7 +371,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
 
               // Status Card - Full Width
               Container(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.all(12),
                 width: double.infinity,
                 decoration: boxDecorationWithRoundedCorners(
                   backgroundColor: context.cardColor,
@@ -373,16 +379,17 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.flag, color: context.primaryColor, size: 32),
-                    8.height,
+                    Icon(Icons.flag, color: gradientBlue, size: 24),
+                    6.height,
                     Text(
                       'Status',
-                      style: secondaryTextStyle(size: 12),
+                      style: secondaryTextStyle(size: 11),
                     ),
                     4.height,
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
                         color: postJobDetail!.status.bgColor.withValues(alpha: 0.1),
                         borderRadius: radius(8),
@@ -391,8 +398,10 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                         postJobDetail!.status.displayName,
                         style: boldTextStyle(
                           color: postJobDetail!.status.bgColor,
-                          size: 14,
+                          size: 12,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -643,7 +652,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
         Text('Price Details', style: boldTextStyle(size: LABEL_TEXT_SIZE)),
         16.height,
         Container(
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.all(12),
           width: context.width(),
           decoration: boxDecorationDefault(color: context.cardColor),
           child: Column(
@@ -859,30 +868,35 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
     bool isDate = false,
   }) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(10),
       decoration: boxDecorationWithRoundedCorners(
         backgroundColor: context.cardColor,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: iconColor, size: 32),
-          8.height,
+          Icon(icon, color: iconColor, size: 24),
+          6.height,
           Text(
             title,
-            style: secondaryTextStyle(size: 12),
+            style: secondaryTextStyle(size: 11),
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           4.height,
-          Text(
-            value,
-            style: boldTextStyle(
-              size: isDate ? 10 : 14,
+          Flexible(
+            child: Text(
+              value,
+              style: boldTextStyle(
+                size: isDate ? 9 : 12,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

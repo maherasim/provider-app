@@ -8,6 +8,7 @@ import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/provider/bank_details/add_bank_screen.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/extensions/num_extenstions.dart';
 import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
@@ -123,7 +124,7 @@ class _WithdrawRequestState extends State<WithdrawRequest> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(languages.availableBalance, style: secondaryTextStyle(size: 12)),
-                    PriceWidget(price: widget.availableBalance.validate(), color: context.primaryColor, isBoldText: true),
+                    PriceWidget(price: widget.availableBalance.validate(), color: gradientBlue, isBoldText: true),
                   ],
                 ),
                 24.height,
@@ -161,7 +162,7 @@ class _WithdrawRequestState extends State<WithdrawRequest> {
                           }
                         });
                       },
-                      child: Text(languages.addBank, style: boldTextStyle(size: 12, color: primaryColor)),
+                      child: Text(languages.addBank, style: boldTextStyle(size: 12, color: gradientBlue)),
                     ),
                   ],
                 ),
@@ -193,18 +194,22 @@ class _WithdrawRequestState extends State<WithdrawRequest> {
                   },
                 ),
                 40.height,
-                AppButton(
-                  text: languages.withdraw,
-                  height: 40,
-                  color: primaryColor,
-                  textStyle: boldTextStyle(color: white),
-                  width: context.width() - context.navigationBarHeight,
-                  onTap: () {
-                    if (formKey.currentState!.validate()) {
-                      hideKeyboard(context);
-                      withdrawMoney();
-                    }
-                  },
+                DecoratedBox(
+                  decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                  child: AppButton(
+                    text: languages.withdraw,
+                    height: 40,
+                    color: Colors.transparent,
+                    elevation: 0,
+                    textStyle: boldTextStyle(color: white),
+                    width: context.width() - context.navigationBarHeight,
+                    onTap: () {
+                      if (formKey.currentState!.validate()) {
+                        hideKeyboard(context);
+                        withdrawMoney();
+                      }
+                    },
+                  ),
                 ),
               ],
             ).paddingSymmetric(horizontal: 16, vertical: 16),

@@ -19,6 +19,7 @@ import 'package:handyman_provider_flutter/networks/network_utils.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
@@ -215,9 +216,14 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
         providerId = widget.data!.providerId;
       }
       
+      // Initialize country code from contact number
+      String? phoneCodeFromContact = "";
+      if (widget.data!.contactNumber != null && widget.data!.contactNumber!.contains("-")) {
+        phoneCodeFromContact = widget.data!.contactNumber!.split("-").first.trim();
+      }
+      
       selectedCountry = Country(
-        phoneCode:
-            widget.data!.contactNumber?.split("-").first.validate() ?? "",
+        phoneCode: phoneCodeFromContact.isNotEmpty ? phoneCodeFromContact : defaultCountry().phoneCode,
         countryCode: "",
         e164Sc: 0,
         geographic: true,
@@ -378,7 +384,32 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
 
   // Build mobile number with phone code and number
   String buildMobileNumber() {
-    return '${selectedCountry.phoneCode}-${mobileCont.text.trim()}';
+    String phoneCode = selectedCountry.phoneCode.validate().trim();
+    String phoneNumber = mobileCont.text.trim();
+    
+    // If phone code is empty, try to get it from the original data
+    if (phoneCode.isEmpty && isUpdate && widget.data != null) {
+      String? originalContact = widget.data!.contactNumber;
+      if (originalContact != null && originalContact.contains('-')) {
+        phoneCode = originalContact.split('-').first.trim();
+      }
+    }
+    
+    // If still empty, use default country code
+    if (phoneCode.isEmpty) {
+      phoneCode = defaultCountry().phoneCode;
+    }
+    
+    // Remove any non-digit characters from phone number (except if it already has country code)
+    phoneNumber = phoneNumber.replaceAll(RegExp(r'[^\d]'), '');
+    
+    // Ensure phone number is not empty
+    if (phoneNumber.isEmpty) {
+      throw Exception('Phone number cannot be empty');
+    }
+    
+    // Return in format: phoneCode-phoneNumber
+    return '$phoneCode-$phoneNumber';
   }
 
   /// Register the Handyman
@@ -405,7 +436,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
           UserKeys.userType: type,
           UserKeys.providerId: _isAdminUser() && providerId != null ? providerId : appStore.userId,
           UserKeys.status: selectedStatus,
-          UserKeys.contactNumber: buildMobileNumber(),
+          UserKeys.contactNumber: buildMobileNumber().validate(),
           UserKeys.designation: designationCont.text.validate(),
           if (serviceAddressId != null && serviceAddressId != -1)
             UserKeys.serviceAddressId: serviceAddressId.validate(),
@@ -477,7 +508,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
     multiPartRequest.fields[UserKeys.userType] = type.validate();
     multiPartRequest.fields[UserKeys.providerId] = (_isAdminUser() && providerId != null ? providerId : appStore.userId).toString();
     multiPartRequest.fields[UserKeys.status] = selectedStatus;
-    multiPartRequest.fields[UserKeys.contactNumber] = buildMobileNumber();
+    multiPartRequest.fields[UserKeys.contactNumber] = buildMobileNumber().validate();
     multiPartRequest.fields[UserKeys.designation] = designationCont.text.validate();
     if (serviceAddressId != null && serviceAddressId != -1)
       multiPartRequest.fields[UserKeys.serviceAddressId] = serviceAddressId.toString();
@@ -722,12 +753,15 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: context.cardColor,
-        appBar: appBarWidget(
-          isUpdate ? languages.lblUpdate : languages.lblAddHandyman,
-          textColor: white,
-          color: context.primaryColor,
-          backWidget: BackWidget(),
-          showBack: true,
+        appBar: AppBar(
+          title: Text(
+            isUpdate ? languages.lblUpdate : languages.lblAddHandyman,
+            style: boldTextStyle(color: white, size: APP_BAR_TEXT_SIZE),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          leading: BackWidget(color: white),
+          flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
           actions: [
             IconButton(
               onPressed: () {
@@ -888,9 +922,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       textFieldType: TextFieldType.NAME,
                       controller: fNameCont,
                       focus: fNameFocus,
-                      enabled: isUpdate
-                          ? rolesAndPermissionStore.handymanEdit
-                          : true,
+                      enabled: true,
                       nextFocus: lNameFocus,
                       decoration: inputDecoration(
                         context,
@@ -904,9 +936,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       textFieldType: TextFieldType.NAME,
                       controller: lNameCont,
                       focus: lNameFocus,
-                      enabled: isUpdate
-                          ? rolesAndPermissionStore.handymanEdit
-                          : true,
+                      enabled: true,
                       nextFocus: userNameFocus,
                       decoration: inputDecoration(
                         context,
@@ -921,9 +951,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       controller: userNameCont,
                       focus: userNameFocus,
                       nextFocus: emailFocus,
-                      enabled: isUpdate
-                          ? rolesAndPermissionStore.handymanEdit
-                          : true,
+                      enabled: true,
                       decoration: inputDecoration(
                         context,
                         hint: languages.hintUserNameTxt,
@@ -937,9 +965,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       controller: emailCont,
                       focus: emailFocus,
                       nextFocus: mobileFocus,
-                      enabled: isUpdate
-                          ? rolesAndPermissionStore.handymanEdit
-                          : true,
+                      enabled: true,
                       decoration: inputDecoration(
                         context,
                         hint: languages.hintEmailAddressTxt,
@@ -1052,60 +1078,57 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     12.height,
                     Text('Contact & Address', style: boldTextStyle(size: 16)),
                     12.height,
-                    IgnorePointer(
-                      ignoring: isUpdate
-                          ? !rolesAndPermissionStore.handymanEdit
-                          : false,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            height: 48.0,
-                            decoration: BoxDecoration(
-                              color: context.scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            child: Center(
-                              child: ValueListenableBuilder(
-                                valueListenable: _valueNotifier,
-                                builder: (context, value, child) => Row(
-                                  children: [
-                                    Text(
-                                      "+${selectedCountry.phoneCode}",
-                                      style: primaryTextStyle(size: 12),
-                                    ).paddingOnly(left: 8),
-                                    Icon(Icons.arrow_drop_down)
-                                  ],
-                                ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 48.0,
+                          decoration: BoxDecoration(
+                            color: context.scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Center(
+                            child: ValueListenableBuilder(
+                              valueListenable: _valueNotifier,
+                              builder: (context, value, child) => Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    "+${selectedCountry.phoneCode}",
+                                    style: primaryTextStyle(size: 12),
+                                  ).paddingOnly(left: 8),
+                                  Icon(Icons.arrow_drop_down)
+                                ],
                               ),
-                            ),
-                          )
-                              .onTap(
-                                () => changeCountry(),
-                              )
-                              .paddingOnly(right: 10.0),
-                          Expanded(
-                            child: AppTextField(
-                              textFieldType: TextFieldType.PHONE,
-                              controller: mobileCont,
-                              focus: mobileFocus,
-                              nextFocus: designationFocus,
-                              decoration: inputDecoration(
-                                context,
-                                hint: languages.hintContactNumberTxt,
-                                fillColor: context.scaffoldBackgroundColor,
-                              ),
-                              suffix:
-                                  calling.iconImage(size: 10).paddingAll(14),
-                              validator: (mobileCont) {
-                                if (mobileCont!.isEmpty)
-                                  return languages.lblPleaseEnterMobileNumber;
-                                return null;
-                              },
                             ),
                           ),
-                        ],
-                      ),
+                        )
+                            .onTap(
+                              () => changeCountry(),
+                            )
+                            .paddingOnly(right: 10.0),
+                        Expanded(
+                          child: AppTextField(
+                            textFieldType: TextFieldType.PHONE,
+                            controller: mobileCont,
+                            focus: mobileFocus,
+                            nextFocus: designationFocus,
+                            enabled: true,
+                            decoration: inputDecoration(
+                              context,
+                              hint: languages.hintContactNumberTxt,
+                              fillColor: context.scaffoldBackgroundColor,
+                            ),
+                            suffix:
+                                calling.iconImage(size: 10).paddingAll(14),
+                            validator: (mobileCont) {
+                              if (mobileCont!.isEmpty)
+                                return languages.lblPleaseEnterMobileNumber;
+                              return null;
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                     16.height,
                     AppTextField(
@@ -1157,11 +1180,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     12.height,
                     Text('Location', style: boldTextStyle(size: 16)),
                     12.height,
-                    IgnorePointer(
-                      ignoring: isUpdate
-                          ? !rolesAndPermissionStore.handymanEdit
-                          : false,
-                      child: DropdownButtonFormField<AddressResponse>(
+                    DropdownButtonFormField<AddressResponse>(
                         decoration: inputDecoration(
                           context,
                           hint:  '${languages.lblService} ${languages.lblAddress}',
@@ -1187,16 +1206,11 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                               selectedServiceAddress!.id.validate();
                           setState(() {});
                         },
-                      ),
-                    ).visible(serviceAddressList.isNotEmpty),
+                      ).visible(serviceAddressList.isNotEmpty),
                     16.height,
                     // Provider dropdown (for admin only)
                     if (_isAdminUser())
-                      IgnorePointer(
-                        ignoring: isUpdate
-                            ? !rolesAndPermissionStore.handymanEdit
-                            : false,
-                        child: DropdownButtonFormField<UserData>(
+                      DropdownButtonFormField<UserData>(
                           decoration: inputDecoration(
                             context,
                             hint: 'Select Provider',
@@ -1219,8 +1233,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                             providerId = selectedProvider?.id;
                             setState(() {});
                           },
-                        ),
-                      ).visible(providerList.isNotEmpty),
+                        ).visible(providerList.isNotEmpty),
                     if (_isAdminUser()) 16.height,
                     // Country dropdown - Required
                     DropdownButtonFormField<CountryListResponse>(
@@ -1341,9 +1354,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       textFieldType: TextFieldType.PASSWORD,
                       controller: passwordCont,
                       focus: passwordFocus,
-                      enabled: isUpdate
-                          ? rolesAndPermissionStore.handymanEdit
-                          : true,
+                      enabled: true,
                       obscureText: true,
                       decoration: inputDecoration(
                         context,
@@ -1466,8 +1477,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                               }
                               setState(() {});
                             },
-                            selectedColor: primaryColor.withOpacity(0.2),
-                            checkmarkColor: primaryColor,
+                            selectedColor: gradientBlue.withOpacity(0.2),
+                            checkmarkColor: gradientBlue,
                           );
                         }).toList(),
                       ).paddingAll(12),
@@ -1484,7 +1495,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                                     BorderRadius.all(Radius.circular(16)),
                                 backgroundColor: appStore.isDarkMode
                                     ? cardDarkColor
-                                    : primaryColor.withValues(alpha: 0.1),
+                                    : gradientBlue.withValues(alpha: 0.1),
                               ),
                               padding: EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 8),
@@ -1521,7 +1532,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                         }
                       },
                       child: Text('Add Language',
-                          style: primaryTextStyle(color: context.primaryColor)),
+                          style: primaryTextStyle(color: gradientBlue)),
                     ),
                     Divider(),
                     12.height,
@@ -1560,34 +1571,23 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     16.height,
                     24.height,
                     Observer(
-                      builder: (context) => AppButton(
-                        text: languages.btnSave,
-                        height: 40,
-                        color: primaryColor,
-                        textColor: white,
-                        width: context.width() - context.navigationBarHeight,
-                        onTap: appStore.isLoading
-                            ? null
-                            : () {
-                                ifNotTester(context, () {
-                                  if (isUpdate) {
-                                    // Allow admins to edit, or providers editing their own handymen, or check permission
-                                    bool isOwnHandyman = widget.data != null && widget.data!.providerId == appStore.userId;
-                                    if (_isAdminUser() || isOwnHandyman || rolesAndPermissionStore.handymanEdit) {
-                                      register();
-                                    } else {
-                                      toast(languages.permissionDeniedUnableTo);
-                                    }
-                                  } else {
-                                    // For new handyman, allow if admin or has add permission
-                                    if (_isAdminUser() || rolesAndPermissionStore.handymanAdd) {
-                                      register();
-                                    } else {
-                                      toast(languages.permissionDeniedUnableTo);
-                                    }
-                                  }
-                                });
-                              },
+                      builder: (context) => DecoratedBox(
+                        decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                        child: AppButton(
+                          text: languages.btnSave,
+                          height: 40,
+                          color: Colors.transparent,
+                          elevation: 0,
+                          textColor: white,
+                          width: context.width() - context.navigationBarHeight,
+                          onTap: appStore.isLoading
+                              ? null
+                              : () {
+                                  ifNotTester(context, () {
+                                    register();
+                                  });
+                                },
+                        ),
                       ),
                     )
                   ],
@@ -1624,7 +1624,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
           true, // optional. Shows phone code before the country name.
       onSelect: (Country country) {
         selectedCountry = country;
-        _valueNotifier.notifyListeners();
+        _valueNotifier.value = !_valueNotifier.value;
       },
     );
   }

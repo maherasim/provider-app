@@ -58,7 +58,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
         Text(
           title.validate(),
           textAlign: isLeftAlign ? TextAlign.left : TextAlign.right,
-          style: secondaryTextStyle(),
+          style: secondaryTextStyle(size: 12),
         ),
         8.height,
         if(detailWidget != null) detailWidget
@@ -66,7 +66,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
           ReadMoreText(
             detail,
             style: detailTextStyle,
-            colorClickableText: context.primaryColor,
+            colorClickableText: gradientBlue,
           )
         else
           Text(
@@ -92,7 +92,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
           titleWidget(
             title: languages.postJobTitle,
             detail: data.title.validate(),
-            detailTextStyle: boldTextStyle(),
+            detailTextStyle: boldTextStyle(size: 14),
           ),
           Row(
             children: [
@@ -100,7 +100,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                 child: titleWidget(
                   title: "Location",
                   detail: "${data.cityName ?? ''}${data.countryName.validate().isEmpty ? "" : "${data.cityName.validate().isEmpty ? "" :  " - "}${data.countryName}"}",
-                  detailTextStyle: boldTextStyle(),
+                  detailTextStyle: boldTextStyle(size: 14),
                 ),
               ),
               Expanded(
@@ -108,7 +108,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                   title: "Job Type",
                   isLeftAlign: false,
                   detail: data.type?.displayName ?? '',
-                  detailTextStyle: boldTextStyle(),
+                  detailTextStyle: boldTextStyle(size: 14),
                 ),
               ),
             ],
@@ -119,7 +119,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                 child: titleWidget(
                   title: languages.startDate,
                   detail: formatDate( data.startDate.validate()),
-                  detailTextStyle: boldTextStyle(),
+                  detailTextStyle: boldTextStyle(size: 14),
                 ),
               ),
               Expanded(
@@ -127,7 +127,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                   title: languages.endDate,
                   isLeftAlign: false,
                   detail:formatDate( data.endDate.validate()),
-                  detailTextStyle: boldTextStyle(),
+                  detailTextStyle: boldTextStyle(size: 14),
                 ),
               ),
             ],
@@ -143,9 +143,9 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                     isHourlyService: data.priceType == PriceType.hourly,
                     isDailyService: data.priceType == PriceType.daily,
                     isFixesService: data.priceType == PriceType.fixed,
-                    hourlyTextStyle: boldTextStyle(),
+                    hourlyTextStyle: boldTextStyle(size: 14),
                   ),
-                  detailTextStyle: boldTextStyle(),
+                  detailTextStyle: boldTextStyle(size: 14),
                 ),
               ),
               Expanded(
@@ -156,8 +156,9 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                   detailWidget: PriceWidget(
                     price: data.totalBudget.validate(),
                     color: textPrimaryColorGlobal,
+                    size: 14,
                   ),
-                  detailTextStyle: boldTextStyle(),
+                  detailTextStyle: boldTextStyle(size: 14),
                 ),
               ),
             ],
@@ -168,7 +169,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                 child: titleWidget(
                   title: "Total Days",
                   detail: data.totalDays?.toString() ?? '',
-                  detailTextStyle: boldTextStyle(),
+                  detailTextStyle: boldTextStyle(size: 14),
                 ),
               ),
               Expanded(
@@ -176,7 +177,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                   title: "Total Hours",
                   isLeftAlign: false,
                   detail: data.totalHours?.toString() ?? '',
-                  detailTextStyle: boldTextStyle(),
+                  detailTextStyle: boldTextStyle(size: 14),
                 ),
               ),
             ],
@@ -187,7 +188,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                 child: titleWidget(
                   title: "Remote Work Level",
                   detail: data.remoteWorkLevel?.displayName ?? '',
-                  detailTextStyle: boldTextStyle(),
+                  detailTextStyle: boldTextStyle(size: 14),
                 ),
               ),
               Expanded(
@@ -195,7 +196,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                   title: "Travel Required",
                   isLeftAlign: false,
                   detail: data.travelRequired?.displayName ?? '',
-                  detailTextStyle: boldTextStyle(),
+                  detailTextStyle: boldTextStyle(size: 14),
                 ),
               ),
             ],
@@ -206,7 +207,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                 child: titleWidget(
                   title: "Career Level",
                   detail: data.careerLevel?.displayName ?? '',
-                  detailTextStyle: boldTextStyle(),
+                  detailTextStyle: boldTextStyle(size: 14),
                 ),
               ),
               Expanded(
@@ -214,7 +215,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                   title: "Education Level",
                   isLeftAlign: false,
                   detail: data.educationLevel?.displayName ?? '',
-                  detailTextStyle: boldTextStyle(),
+                  detailTextStyle: boldTextStyle(size: 14),
                 ),
               ),
             ],
@@ -223,28 +224,28 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
             titleWidget(
               title: languages.postJobDescription,
               detail: data.description.validate(),
-              detailTextStyle: primaryTextStyle(),
+              detailTextStyle: primaryTextStyle(size: 14),
               isReadMore: true,
             ),
           if (data.requirement.validate().isNotEmpty)
             titleWidget(
               title: "Skills & Requirement",
               detail: data.requirement.validate(),
-              detailTextStyle: primaryTextStyle(),
+              detailTextStyle: primaryTextStyle(size: 14),
               isReadMore: true,
             ),
           if (data.duties.validate().isNotEmpty)
             titleWidget(
               title: "Duties & Responsibilities",
               detail: data.duties.validate(),
-              detailTextStyle: primaryTextStyle(),
+              detailTextStyle: primaryTextStyle(size: 14),
               isReadMore: true,
             ),
           if (data.benefits.validate().isNotEmpty)
             titleWidget(
               title: "Benefits",
               detail: data.benefits.validate(),
-              detailTextStyle: primaryTextStyle(),
+              detailTextStyle: primaryTextStyle(size: 14),
               isReadMore: true,
             ),
         ],
@@ -288,7 +289,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                   ),
                   16.width,
                   Text(data.name.validate(),
-                          style: primaryTextStyle(),
+                          style: primaryTextStyle(size: 14),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis)
                       .expand(),
@@ -376,7 +377,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                         directionMarguee: DirectionMarguee.oneDirection,
                         child: Text(
                           bidderData.provider!.displayName.validate(),
-                          style: boldTextStyle(),
+                          style: boldTextStyle(size: 14),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -385,11 +386,11 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                         Marquee(
                           directionMarguee: DirectionMarguee.oneDirection,
                           child: Text(bidderData.provider!.designation.validate(),
-                              style: primaryTextStyle(size: 12)),
+                              style: primaryTextStyle(size: 14)),
                         ),
                       if(bidderData.provider!.cityName.validate().isNotEmpty || bidderData.provider!.countryName.validate().isNotEmpty) Text(
                         "${bidderData.provider!.cityName ?? ''}${bidderData.provider!.countryName.validate().isEmpty ? "" : "${bidderData.provider!.cityName.validate().isEmpty ? "" :  " - "}${bidderData.provider!.countryName}"}",
-                        style: secondaryTextStyle(),
+                        style: secondaryTextStyle(size: 12),
                       ),
                       DisabledRatingBarWidget(
                         rating: bidderData.provider!.providerServiceRating.validate(),
@@ -399,13 +400,14 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                         directionMarguee: DirectionMarguee.oneDirection,
                         child: Row(
                           children: [
-                            Text('Bid Price: ', style: secondaryTextStyle()),
+                            Text('Bid Price: ', style: secondaryTextStyle(size: 12)),
                             PriceWidget(
                               price: bidderData.price.validate(),
                               isHourlyService: bidderData.postJobData?.priceType == PriceType.hourly,
                               isDailyService: bidderData.postJobData?.priceType == PriceType.daily,
                               isFixesService: bidderData.postJobData?.priceType == PriceType.fixed,
-                              hourlyTextColor: context.primaryColor,
+                              hourlyTextColor: gradientBlue,
+                              size: 14,
                             ),
                           ],
                         ),
@@ -420,52 +422,60 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                 spacing: 16,
                 children: [
                   Expanded(
-                    child: AppButton(
-                      padding: EdgeInsets.zero,
-                      child: Text(
-                        'View Job',
-                        style: boldTextStyle(color: white, size: 12),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                      child: AppButton(
+                        padding: EdgeInsets.zero,
+                        child: Text(
+                          'View Job',
+                          style: boldTextStyle(color: white, size: 12),
+                        ),
+                        color: Colors.transparent,
+                        elevation: 0,
+                        onTap: () {
+                          JobRequestDetailsScreen(
+                            acceptedBidId: bidderData.id!,
+                          ).launch(context);
+                        },
                       ),
-                      color: context.primaryColor,
-                      onTap: () {
-                        JobRequestDetailsScreen(
-                          acceptedBidId: bidderData.id!,
-                        ).launch(context);
-                      },
                     ),
                   ),
                   Expanded(
-                    child: AppButton(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Text(
-                        languages.whyChooseMe,
-                        style: boldTextStyle(color: white, size: 12),
-                      ),
-                      color: context.primaryColor,
-                      onTap: () {
-                        showInDialog(
-                          context,
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                languages.whyChooseMe,
-                                style: primaryTextStyle(),
-                              ),
-                              GestureDetector(
-                                onTap: () => finish(context),
-                                child: Icon(
-                                  Icons.close
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                      child: AppButton(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Text(
+                          languages.whyChooseMe,
+                          style: boldTextStyle(color: white, size: 12),
+                        ),
+                        color: Colors.transparent,
+                        elevation: 0,
+                        onTap: () {
+                          showInDialog(
+                            context,
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  languages.whyChooseMe,
+                                  style: primaryTextStyle(),
                                 ),
-                              )
-                            ],
-                          ),
-                          builder: (context) => Text(
-                             bidderData.whyChooseMe.validate(),
-                            style: secondaryTextStyle(size: 12,color: textPrimaryColorGlobal),
-                          ),
-                        );
-                      },
+                                GestureDetector(
+                                  onTap: () => finish(context),
+                                  child: Icon(
+                                    Icons.close
+                                  ),
+                                )
+                              ],
+                            ),
+                            builder: (context) => Text(
+                               bidderData.whyChooseMe.validate(),
+                              style: secondaryTextStyle(size: 12,color: textPrimaryColorGlobal),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ],
@@ -505,20 +515,20 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Marquee(
-                    directionMarguee: DirectionMarguee.oneDirection,
-                    child: Text(
-                      data.customerName.validate(),
-                      style: boldTextStyle(),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  4.height,
-                  Text(
-                    "${data.cityName ?? ''}${data.countryName.validate().isEmpty ? "" : "${data.cityName.validate().isEmpty ? "" :  " - "}${data.countryName}"}",
-                    style: secondaryTextStyle(),
-                  ),
+                      Marquee(
+                        directionMarguee: DirectionMarguee.oneDirection,
+                        child: Text(
+                          data.customerName.validate(),
+                          style: boldTextStyle(size: 14),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      4.height,
+                      Text(
+                        "${data.cityName ?? ''}${data.countryName.validate().isEmpty ? "" : "${data.cityName.validate().isEmpty ? "" :  " - "}${data.countryName}"}",
+                        style: secondaryTextStyle(size: 12),
+                      ),
                 ],
               ).expand(),
             ],

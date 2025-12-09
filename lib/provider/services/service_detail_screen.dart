@@ -12,6 +12,7 @@ import 'package:handyman_provider_flutter/provider/services/components/service_d
 import 'package:handyman_provider_flutter/provider/services/components/service_faq_widget.dart';
 import 'package:handyman_provider_flutter/screens/rating_view_all_screen.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:nb_utils/nb_utils.dart';
 import '../../components/back_widget.dart';
 import '../../components/empty_error_state_widget.dart';
@@ -116,10 +117,13 @@ class ServiceDetailScreenState extends State<ServiceDetailScreen> {
 
                 return Container(
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  decoration: boxDecorationDefault(color: context.cardColor),
+                  decoration: BoxDecoration(
+                    gradient: kAppPrimaryGradient,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   child: Text(
                     '${value.providerAddressMapping!.address.validate()}',
-                    style: boldTextStyle(color: textPrimaryColorGlobal),
+                    style: boldTextStyle(color: white),
                   ),
                 );
               },

@@ -6,6 +6,7 @@ import 'package:nb_utils/nb_utils.dart';
 
 import '../main.dart';
 import '../utils/configs.dart';
+import '../utils/colors.dart';
 
 class SuccessDialog extends StatelessWidget {
   final String title, description, buttonText;
@@ -62,16 +63,20 @@ class SuccessDialog extends StatelessWidget {
                     style: secondaryTextStyle(size: 14, color: Colors.grey),
                   ),
                   32.height,
-                  AppButton(
-                    text: languages.done,
-                    height: 40,
-                    color: primaryColor,
-                    textStyle: boldTextStyle(color: white),
-                    width: context.width() * 0.4,
-                    onTap: () {
-                      finish(context, true);
-                      finish(context, true);
-                    },
+                  DecoratedBox(
+                    decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                    child: AppButton(
+                      text: languages.done,
+                      height: 40,
+                      color: Colors.transparent,
+                      elevation: 0,
+                      textStyle: boldTextStyle(color: white),
+                      width: context.width() * 0.4,
+                      onTap: () {
+                        finish(context, true);
+                        finish(context, true);
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -80,7 +85,7 @@ class SuccessDialog extends StatelessWidget {
               left: 0,
               right: 0,
               child: DottedBorder(
-                color: primaryColor,
+                color: gradientBlue,
                 strokeWidth: 2,
                 dashPattern: [8, 9],
                 borderType: BorderType.Circle,
@@ -92,7 +97,7 @@ class SuccessDialog extends StatelessWidget {
                     padding: EdgeInsets.all(19),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: primaryColor,
+                      gradient: kAppPrimaryGradient,
                     ),
                     child: CachedImageWidget(
                       url: ic_right,

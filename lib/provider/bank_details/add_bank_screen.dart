@@ -6,6 +6,7 @@ import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/networks/network_utils.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
@@ -237,17 +238,21 @@ class _AddBankScreenState extends State<AddBankScreen> {
             bottom: 16,
             left: 16,
             right: 16,
-            child: AppButton(
-              text: languages.btnSave,
-              color: primaryColor,
-              textStyle: boldTextStyle(color: white),
-              width: context.width(),
-              onTap: () {
-                if (formKey.currentState!.validate()) {
-                  hideKeyboard(context);
-                  update();
-                }
-              },
+            child: DecoratedBox(
+              decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+              child: AppButton(
+                text: languages.btnSave,
+                color: Colors.transparent,
+                elevation: 0,
+                textStyle: boldTextStyle(color: white),
+                width: context.width(),
+                onTap: () {
+                  if (formKey.currentState!.validate()) {
+                    hideKeyboard(context);
+                    update();
+                  }
+                },
+              ),
             ),
           ),
         ],

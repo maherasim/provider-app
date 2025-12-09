@@ -6,6 +6,7 @@ import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/extensions/context_ext.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../models/post_job_data.dart';
@@ -162,10 +163,15 @@ class _BidPriceDialogState extends State<BidPriceDialog> {
                         textColor: context.iconColor,
                       ).expand(),
                       16.width,
-                      AppButton(
-                        onTap: _handleSubmitClick,
-                        color: context.primaryColor,
-                        text: languages.confirm,
+                      DecoratedBox(
+                        decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                        child: AppButton(
+                          onTap: _handleSubmitClick,
+                          color: Colors.transparent,
+                          elevation: 0,
+                          text: languages.confirm,
+                          textStyle: boldTextStyle(color: white),
+                        ),
                       ).expand(),
                     ],
                   ),

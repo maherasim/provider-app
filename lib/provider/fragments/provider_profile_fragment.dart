@@ -522,25 +522,25 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                   },
                 ),
                 // if (rolesAndPermissionStore.taxList)
-                SettingItemWidget(
-                  decoration: BoxDecoration(color: context.cardColor),
-                  leading: Image.asset(ic_tax,
-                      height: 16,
-                      width: 14,
-                      color:
-                          appStore.isDarkMode ? white : appTextSecondaryColor),
-                  title: languages.lblTaxes,
-                  titleTextStyle: boldTextStyle(size: 12),
-                  trailing: Icon(Icons.chevron_right,
-                      color: appStore.isDarkMode
-                          ? white
-                          : gray.withValues(alpha: 0.8),
-                      size: 18),
-                  padding: EdgeInsets.only(top: 20, left: 16, right: 16),
-                  onTap: () {
-                    TaxesScreen().launch(context);
-                  },
-                ),
+                // SettingItemWidget(
+                //   decoration: BoxDecoration(color: context.cardColor),
+                //   leading: Image.asset(ic_tax,
+                //       height: 16,
+                //       width: 14,
+                //       color:
+                //           appStore.isDarkMode ? white : appTextSecondaryColor),
+                //   title: languages.lblTaxes,
+                //   titleTextStyle: boldTextStyle(size: 12),
+                //   trailing: Icon(Icons.chevron_right,
+                //       color: appStore.isDarkMode
+                //           ? white
+                //           : gray.withValues(alpha: 0.8),
+                //       size: 18),
+                //   padding: EdgeInsets.only(top: 20, left: 16, right: 16),
+                //   onTap: () {
+                //     TaxesScreen().launch(context);
+                //   },
+                // ),
                 // if (appStore.earningTypeCommission)
                 SettingItemWidget(
                   decoration: BoxDecoration(color: context.cardColor),

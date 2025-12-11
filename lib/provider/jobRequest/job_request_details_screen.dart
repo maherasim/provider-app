@@ -223,16 +223,16 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(providerName, style: boldTextStyle(size: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  Text(providerName, style: boldTextStyle(size: 14), maxLines: 1, overflow: TextOverflow.ellipsis),
                   4.height,
                   Wrap(
                     spacing: 6,
                     runSpacing: 4,
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
-                      Text('${languages.bid}:', style: secondaryTextStyle(size: 11)),
-                      PriceWidget(price: postJobDetail?.price ?? 0, color: textPrimaryColorGlobal, size: 12),
-                      Text('• ${languages.advancePercentage} $advancePct%', style: secondaryTextStyle(size: 11)),
+                      Text('${languages.bid}:', style: secondaryTextStyle(size: 12)),
+                      PriceWidget(price: postJobDetail?.price ?? 0, color: textPrimaryColorGlobal, size: 14),
+                      Text('• ${languages.advancePercentage} $advancePct%', style: secondaryTextStyle(size: 12)),
                     ],
                   ),
                 ],
@@ -242,7 +242,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
               decoration: BoxDecoration(color: postJobDetail!.status.bgColor.withValues(alpha: 0.1), borderRadius: radius(20)),
-              child: Text(postJobDetail!.status.displayName, style: boldTextStyle(color: postJobDetail!.status.bgColor, size: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
+              child: Text(postJobDetail!.status.displayName, style: boldTextStyle(color: postJobDetail!.status.bgColor, size: 12), maxLines: 1, overflow: TextOverflow.ellipsis),
             ),
           ],
         ),
@@ -662,12 +662,13 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text('Rate (Unit Price)', style: secondaryTextStyle(size: 14)).expand(),
+                  Text('Rate (Unit Price)', style: secondaryTextStyle(size: 12)).expand(),
                   16.width,
                   PriceWidget(
                     price: data.price?.validate() ?? 0,
                     color: textPrimaryColorGlobal,
                     isBoldText: true,
+                    size: 14,
                   ),
                 ],
               ),
@@ -677,9 +678,9 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Quantity', style: secondaryTextStyle(size: 14)).flexible(fit: FlexFit.loose),
+                  Text('Quantity', style: secondaryTextStyle(size: 12)).flexible(fit: FlexFit.loose),
                   16.width,
-                  Text(quantity.toString(), style: boldTextStyle(size: 16)),
+                  Text(quantity.toString(), style: boldTextStyle(size: 14)),
                 ],
               ),
               16.height,
@@ -687,11 +688,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               // Total calculation row
               Row(
                 children: [
-                  Text('Total Amount', style: secondaryTextStyle(size: 14)).expand(),
+                  Text('Total Amount', style: secondaryTextStyle(size: 12)).expand(),
                   16.width,
                   PriceWidget(
                     price: totalAmount,
                     color: textPrimaryColorGlobal,
+                    size: 14,
                   ),
                 ],
               ),
@@ -701,11 +703,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               if (extraCharges > 0)
                 Row(
                   children: [
-                    Text('Extra Charges', style: secondaryTextStyle(size: 14)).expand(),
+                    Text('Extra Charges', style: secondaryTextStyle(size: 12)).expand(),
                     16.width,
                     PriceWidget(
                       price: extraCharges,
                       color: textPrimaryColorGlobal,
+                      size: 14,
                     ),
                   ],
                 ),
@@ -715,11 +718,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Subtotal', style: boldTextStyle(size: 14)).flexible(fit: FlexFit.loose),
+                  Text('Subtotal', style: secondaryTextStyle(size: 12)).flexible(fit: FlexFit.loose),
                   PriceWidget(
                     price: subTotal,
                     color: textPrimaryColorGlobal,
                     isBoldText: true,
+                    size: 14,
                   ),
                 ],
               ),
@@ -731,14 +735,15 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Net Amount', style: boldTextStyle(size: 14)),
-                      Text('(Subtotal - Tax)', style: secondaryTextStyle(size: 12)),
+                      Text('Net Amount', style: secondaryTextStyle(size: 12)),
+                      Text('(Subtotal - Tax)', style: secondaryTextStyle(size: 11)),
                     ],
                   ).flexible(fit: FlexFit.loose),
                   PriceWidget(
                     price: netAmount,
                     color: textPrimaryColorGlobal,
                     isBoldText: true,
+                    size: 14,
                   ),
                 ],
               ),
@@ -752,8 +757,8 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                       children: [
                         Row(
                           children: [
-                            Text('Tax', style: secondaryTextStyle(size: 14)),
-                            Text(' ($taxPercent%)', style: boldTextStyle(color: primaryColor, size: 14)).expand()
+                            Text('Tax', style: secondaryTextStyle(size: 12)),
+                            Text(' ($taxPercent%)', style: boldTextStyle(color: gradientBlue, size: 12)).expand()
                           ],
                         ).expand(),
                         16.width,
@@ -761,6 +766,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                           price: tax,
                           color: Colors.red,
                           isBoldText: true,
+                          size: 14,
                         ),
                       ],
                     ),
@@ -773,12 +779,13 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                      'Grand Total Amount', style: boldTextStyle(size: 14)
+                      'Grand Total Amount', style: secondaryTextStyle(size: 12)
                   ),
                   16.width,
                   PriceWidget(
                     price: subTotal,
-                    color: primaryColor,
+                    color: gradientBlue,
+                    size: 14,
                   ).flexible(flex: 3),
                 ],
               ),
@@ -789,11 +796,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                 children: [
                   Row(
                     children: [
-                      Text('Advance Payment(${postJobDetail?.advancePercent ?? 0}%)', style: secondaryTextStyle(size: 14)).expand(),
+                      Text('Advance Payment(${postJobDetail?.advancePercent ?? 0}%)', style: secondaryTextStyle(size: 12)).expand(),
                       16.width,
                       PriceWidget(
                         price: advance,
                         color: textPrimaryColorGlobal,
+                        size: 14,
                       ),
                     ],
                   ),
@@ -802,11 +810,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               ),
               Row(
                 children: [
-                  Text('Remaining Amount', style: boldTextStyle(size: 14)).expand(),
+                  Text('Remaining Amount', style: secondaryTextStyle(size: 12)).expand(),
                   16.width,
                   PriceWidget(
                     price: remaining,
                     color: textPrimaryColorGlobal,
+                    size: 14,
                   ),
                 ],
               ),
@@ -846,10 +855,10 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
       padding: EdgeInsets.only(bottom: 8),
       child: Row(
         children: [
-          Text(charge.title ?? '', style: secondaryTextStyle(size: 14)).expand(),
-          Text('${charge.amount} × ', style: secondaryTextStyle(size: 14)),
-          Text('${charge.quantity}', style: secondaryTextStyle(size: 14)),
-          Text(' = ', style: secondaryTextStyle(size: 14)),
+          Text(charge.title ?? '', style: secondaryTextStyle(size: 12)).expand(),
+          Text('${charge.amount} × ', style: secondaryTextStyle(size: 12)),
+          Text('${charge.quantity}', style: secondaryTextStyle(size: 12)),
+          Text(' = ', style: secondaryTextStyle(size: 12)),
           PriceWidget(
             price: (charge.amount ?? 0) * (charge.quantity ?? 0),
             color: textPrimaryColorGlobal,

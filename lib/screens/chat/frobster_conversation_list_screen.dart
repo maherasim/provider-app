@@ -22,15 +22,23 @@ class _FrobsterConversationListScreenState extends State<FrobsterConversationLis
   int _lastPage = 1;
   bool _loading = false;
   bool _initial = true;
+  bool _hasError = false;
+  String? _errorMessage;
   final ScrollController _controller = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _fetch(page: 1);
+    log('FrobsterConversationListScreen initState called');
     _controller.addListener(_onScroll);
     LiveStream().on(LIVESTREAM_UPDATE_CHAT_UNREAD, (p0) {
+      log('LIVESTREAM_UPDATE_CHAT_UNREAD received, refreshing chat list');
       if (mounted) _fetch(page: 1, refresh: true);
+    });
+    // Call fetch immediately and also after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      log('FrobsterConversationListScreen postFrameCallback, calling _fetch');
+      if (mounted) _fetch(page: 1);
     });
   }
 
@@ -50,23 +58,56 @@ class _FrobsterConversationListScreenState extends State<FrobsterConversationLis
   }
 
   Future<void> _fetch({required int page, bool refresh = false}) async {
-    if (_loading) return;
-    setState(() {
-      _loading = true;
-    });
+    if (_loading) {
+      log('Chat fetch already in progress, skipping...');
+      return;
+    }
+    if (!mounted) {
+      log('Widget not mounted, skipping fetch');
+      return;
+    }
+    log('Fetching conversations page: $page');
+    if (mounted) {
+      setState(() {
+        _loading = true;
+        _hasError = false;
+        _errorMessage = null;
+      });
+    }
     try {
+      log('Calling FrobsterChatApi.listConversations with page: $page');
       final res = await FrobsterChatApi.listConversations(page: page);
+      if (!mounted) return;
+      log('Received ${res.data.length} conversations');
       if (refresh || page == 1) _items.clear();
       _items.addAll(res.data);
       _page = res.pagination?.currentPage ?? page;
       _lastPage = res.pagination?.lastPage ?? _lastPage;
-    } catch (e) {
-      toast(e.toString(), print: true);
+      log('Updated items count: ${_items.length}, current page: $_page, last page: $_lastPage');
+      if (mounted) {
+        setState(() {
+          _hasError = false;
+          _errorMessage = null;
+        });
+      }
+    } catch (e, stackTrace) {
+      log('Error fetching conversations: $e');
+      log('Stack trace: $stackTrace');
+      final errorMsg = e.toString();
+      if (mounted) {
+        toast(errorMsg, print: true);
+        setState(() {
+          _hasError = true;
+          _errorMessage = errorMsg;
+        });
+      }
     } finally {
-      setState(() {
-        _loading = false;
-        _initial = false;
-      });
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _initial = false;
+        });
+      }
     }
   }
 
@@ -76,14 +117,46 @@ class _FrobsterConversationListScreenState extends State<FrobsterConversationLis
 
   @override
   Widget build(BuildContext context) {
-    if (_initial) return LoaderWidget();
+    // Ensure fetch is called if not already called
+    if (_initial && !_loading && mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _initial && !_loading) {
+          log('FrobsterConversationListScreen build - triggering initial fetch');
+          _fetch(page: 1);
+        }
+      });
+    }
+    
+    if (_initial && _loading) return LoaderWidget();
+    
+    if (_hasError && _items.isEmpty) {
+      return RefreshIndicator(
+        onRefresh: _onRefresh,
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: NoDataWidget(
+            title: _errorMessage ?? languages.somethingWentWrong,
+            imageWidget: ErrorStateWidget(),
+            retryText: languages.reload,
+            onRetry: () {
+              _fetch(page: 1, refresh: true);
+            },
+          ).paddingAll(16).center().withHeight(context.height() - 100),
+        ),
+      );
+    }
+    
     return RefreshIndicator(
       onRefresh: _onRefresh,
-      child: _items.isEmpty
-          ? NoDataWidget(
-              title: languages.noConversation,
-              imageWidget: EmptyStateWidget(),
-            ).center()
+      child: _items.isEmpty && !_loading
+          ? SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: NoDataWidget(
+                title: languages.noConversation,
+                subTitle: languages.noConversationSubTitle,
+                imageWidget: EmptyStateWidget(),
+              ).paddingAll(16).center().withHeight(context.height() - 100),
+            )
           : ListView.separated(
               controller: _controller,
               padding: const EdgeInsets.all(12),

@@ -44,212 +44,285 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
         {PostJob.postRequestId: widget.postJobData.id.validate()});
   }
 
-  Widget titleWidget({
+  Widget _buildDetailCard({
+    required IconData icon,
+    required Color iconColor,
     required String title,
-    required String detail,
-    Widget? detailWidget,
-    bool isReadMore = false,
-    bool isLeftAlign = true,
-    required TextStyle detailTextStyle,
+    String? value,
+    Widget? valueWidget,
   }) {
-    return Column(
-      crossAxisAlignment: isLeftAlign ? CrossAxisAlignment.start : CrossAxisAlignment.end,
-      children: [
-        Text(
-          title.validate(),
-          textAlign: isLeftAlign ? TextAlign.left : TextAlign.right,
-          style: secondaryTextStyle(size: 12),
-        ),
-        8.height,
-        if(detailWidget != null) detailWidget
-        else if (isReadMore)
-          ReadMoreText(
-            detail,
-            style: detailTextStyle,
-            colorClickableText: gradientBlue,
-          )
-        else
-          Text(
-            detail.validate(),
-            textAlign: isLeftAlign ? TextAlign.left : TextAlign.right,
-            style: detailTextStyle,
+    return Container(
+      padding: EdgeInsets.all(12),
+      decoration: boxDecorationWithRoundedCorners(
+        backgroundColor: context.cardColor,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: iconColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: iconColor, size: 24),
           ),
-        16.height,
-      ],
+          16.width,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(title, style: secondaryTextStyle(size: 12)),
+                4.height,
+                if (valueWidget != null)
+                  valueWidget
+                else
+                  Text(
+                    value ?? '',
+                    style: boldTextStyle(size: 14),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionCard({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String content,
+  }) {
+    return Container(
+      padding: EdgeInsets.all(12),
+      decoration: boxDecorationWithRoundedCorners(
+        backgroundColor: context.cardColor,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: iconColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: iconColor, size: 24),
+          ),
+          16.width,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: boldTextStyle(size: 14)),
+                8.height,
+                ReadMoreText(
+                  parseHtmlString(content),
+                  style: primaryTextStyle(size: 14),
+                  colorClickableText: gradientBlue,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget postJobDetailWidget({required PostJobData data}) {
-    return Container(
-      padding: EdgeInsets.only(left: 16, right: 16, top: 16),
-      width: context.width(),
-      decoration: boxDecorationWithRoundedCorners(
-          backgroundColor: context.cardColor,
-          borderRadius: BorderRadius.all(Radius.circular(16))),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          titleWidget(
-            title: languages.postJobTitle,
-            detail: data.title.validate(),
-            detailTextStyle: boldTextStyle(size: 14),
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: titleWidget(
-                  title: "Location",
-                  detail: "${data.cityName ?? ''}${data.countryName.validate().isEmpty ? "" : "${data.cityName.validate().isEmpty ? "" :  " - "}${data.countryName}"}",
-                  detailTextStyle: boldTextStyle(size: 14),
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Job Title
+        _buildDetailCard(
+          icon: Icons.work_outline,
+          iconColor: gradientBlue,
+          title: languages.postJobTitle,
+          value: data.title.validate(),
+        ),
+        16.height,
+
+        // Location and Job Type Row
+        Row(
+          children: [
+            Expanded(
+              child: _buildDetailCard(
+                icon: Icons.location_on,
+                iconColor: Colors.green,
+                title: "Location",
+                value: "${data.cityName ?? ''}${data.countryName.validate().isEmpty ? "" : "${data.cityName.validate().isEmpty ? "" :  " - "}${data.countryName}"}",
               ),
-              Expanded(
-                child: titleWidget(
-                  title: "Job Type",
-                  isLeftAlign: false,
-                  detail: data.type?.displayName ?? '',
-                  detailTextStyle: boldTextStyle(size: 14),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: titleWidget(
-                  title: languages.startDate,
-                  detail: formatDate( data.startDate.validate()),
-                  detailTextStyle: boldTextStyle(size: 14),
-                ),
-              ),
-              Expanded(
-                child: titleWidget(
-                  title: languages.endDate,
-                  isLeftAlign: false,
-                  detail:formatDate( data.endDate.validate()),
-                  detailTextStyle: boldTextStyle(size: 14),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: titleWidget(
-                  title: "Budget/Price",
-                  detail: formatDate( data.startDate.validate()),
-                  detailWidget: PriceWidget(
-                    price: data.price.validate(),
-                    isHourlyService: data.priceType == PriceType.hourly,
-                    isDailyService: data.priceType == PriceType.daily,
-                    isFixesService: data.priceType == PriceType.fixed,
-                    hourlyTextStyle: boldTextStyle(size: 14),
-                  ),
-                  detailTextStyle: boldTextStyle(size: 14),
-                ),
-              ),
-              Expanded(
-                child:  titleWidget(
-                  title: "Total Budget",
-                  isLeftAlign: false,
-                  detail: formatDate( data.startDate.validate()),
-                  detailWidget: PriceWidget(
-                    price: data.totalBudget.validate(),
-                    color: textPrimaryColorGlobal,
-                    size: 14,
-                  ),
-                  detailTextStyle: boldTextStyle(size: 14),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: titleWidget(
-                  title: "Total Days",
-                  detail: data.totalDays?.toString() ?? '',
-                  detailTextStyle: boldTextStyle(size: 14),
-                ),
-              ),
-              Expanded(
-                child: titleWidget(
-                  title: "Total Hours",
-                  isLeftAlign: false,
-                  detail: data.totalHours?.toString() ?? '',
-                  detailTextStyle: boldTextStyle(size: 14),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: titleWidget(
-                  title: "Remote Work Level",
-                  detail: data.remoteWorkLevel?.displayName ?? '',
-                  detailTextStyle: boldTextStyle(size: 14),
-                ),
-              ),
-              Expanded(
-                child: titleWidget(
-                  title: "Travel Required",
-                  isLeftAlign: false,
-                  detail: data.travelRequired?.displayName ?? '',
-                  detailTextStyle: boldTextStyle(size: 14),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: titleWidget(
-                  title: "Career Level",
-                  detail: data.careerLevel?.displayName ?? '',
-                  detailTextStyle: boldTextStyle(size: 14),
-                ),
-              ),
-              Expanded(
-                child: titleWidget(
-                  title: "Education Level",
-                  isLeftAlign: false,
-                  detail: data.educationLevel?.displayName ?? '',
-                  detailTextStyle: boldTextStyle(size: 14),
-                ),
-              ),
-            ],
-          ),
-          if (data.description.validate().isNotEmpty)
-            titleWidget(
-              title: languages.postJobDescription,
-              detail: data.description.validate(),
-              detailTextStyle: primaryTextStyle(size: 14),
-              isReadMore: true,
             ),
-          if (data.requirement.validate().isNotEmpty)
-            titleWidget(
-              title: "Skills & Requirement",
-              detail: data.requirement.validate(),
-              detailTextStyle: primaryTextStyle(size: 14),
-              isReadMore: true,
+            12.width,
+            Expanded(
+              child: _buildDetailCard(
+                icon: Icons.business_center,
+                iconColor: Colors.orange,
+                title: "Job Type",
+                value: data.type?.displayName ?? '',
+              ),
             ),
-          if (data.duties.validate().isNotEmpty)
-            titleWidget(
-              title: "Duties & Responsibilities",
-              detail: data.duties.validate(),
-              detailTextStyle: primaryTextStyle(size: 14),
-              isReadMore: true,
+          ],
+        ),
+        16.height,
+
+        // Start Date and End Date Row
+        Row(
+          children: [
+            Expanded(
+              child: _buildDetailCard(
+                icon: Icons.event_available,
+                iconColor: Colors.orange,
+                title: languages.startDate,
+                value: formatDate(data.startDate.validate()),
+              ),
             ),
-          if (data.benefits.validate().isNotEmpty)
-            titleWidget(
-              title: "Benefits",
-              detail: data.benefits.validate(),
-              detailTextStyle: primaryTextStyle(size: 14),
-              isReadMore: true,
+            12.width,
+            Expanded(
+              child: _buildDetailCard(
+                icon: Icons.event_busy,
+                iconColor: Colors.purple,
+                title: languages.endDate,
+                value: formatDate(data.endDate.validate()),
+              ),
             ),
+          ],
+        ),
+        24.height,
+
+        // Budget & Duration Section
+        Text('Budget & Duration', style: boldTextStyle(size: LABEL_TEXT_SIZE)),
+        16.height,
+        _buildDetailCard(
+          icon: Icons.attach_money,
+          iconColor: Colors.green,
+          title: "Budget/Price",
+          valueWidget: PriceWidget(
+            price: data.price.validate(),
+            isHourlyService: data.priceType == PriceType.hourly,
+            isDailyService: data.priceType == PriceType.daily,
+            isFixesService: data.priceType == PriceType.fixed,
+            hourlyTextStyle: boldTextStyle(size: 14),
+          ),
+        ),
+        12.height,
+        _buildDetailCard(
+          icon: Icons.account_balance_wallet,
+          iconColor: Colors.green,
+          title: "Total Budget",
+          valueWidget: PriceWidget(
+            price: data.totalBudget.validate(),
+            color: textPrimaryColorGlobal,
+            size: 14,
+          ),
+        ),
+        12.height,
+        Row(
+          children: [
+            Expanded(
+              child: _buildDetailCard(
+                icon: Icons.calendar_view_week,
+                iconColor: Colors.blue,
+                title: "Total Days",
+                value: data.totalDays?.toString() ?? '0',
+              ),
+            ),
+            12.width,
+            Expanded(
+              child: _buildDetailCard(
+                icon: Icons.access_time,
+                iconColor: Colors.blue,
+                title: "Total Hours",
+                value: data.totalHours?.toString() ?? '0',
+              ),
+            ),
+          ],
+        ),
+        24.height,
+
+        // Work Details Section
+        Text('Work Details', style: boldTextStyle(size: LABEL_TEXT_SIZE)),
+        16.height,
+        _buildDetailCard(
+          icon: Icons.home_work,
+          iconColor: Colors.orange,
+          title: "Remote Work Level",
+          value: data.remoteWorkLevel?.displayName ?? '',
+        ),
+        12.height,
+        _buildDetailCard(
+          icon: Icons.flight,
+          iconColor: Colors.grey,
+          title: "Travel Required",
+          value: data.travelRequired?.displayName ?? '',
+        ),
+        12.height,
+        Row(
+          children: [
+            Expanded(
+              child: _buildDetailCard(
+                icon: Icons.trending_up,
+                iconColor: Colors.indigo,
+                title: "Career Level",
+                value: data.careerLevel?.displayName ?? '',
+              ),
+            ),
+            12.width,
+            Expanded(
+              child: _buildDetailCard(
+                icon: Icons.school,
+                iconColor: Colors.green,
+                title: "Education Level",
+                value: data.educationLevel?.displayName ?? '',
+              ),
+            ),
+          ],
+        ),
+        24.height,
+
+        // Description, Requirements, Duties, Benefits
+        if (data.description.validate().isNotEmpty) ...[
+          _buildSectionCard(
+            icon: Icons.description,
+            iconColor: Colors.blue,
+            title: languages.postJobDescription,
+            content: data.description.validate(),
+          ),
+          16.height,
         ],
-      ),
+        if (data.requirement.validate().isNotEmpty) ...[
+          _buildSectionCard(
+            icon: Icons.star,
+            iconColor: Colors.orange,
+            title: "Skills & Requirement",
+            content: data.requirement.validate(),
+          ),
+          16.height,
+        ],
+        if (data.duties.validate().isNotEmpty) ...[
+          _buildSectionCard(
+            icon: Icons.checklist,
+            iconColor: Colors.purple,
+            title: "Duties & Responsibilities",
+            content: data.duties.validate(),
+          ),
+          16.height,
+        ],
+        if (data.benefits.validate().isNotEmpty) ...[
+          _buildSectionCard(
+            icon: Icons.card_giftcard,
+            iconColor: Colors.green,
+            title: "Benefits",
+            content: data.benefits.validate(),
+          ),
+        ],
+      ],
     );
   }
 
@@ -470,7 +543,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                               ],
                             ),
                             builder: (context) => Text(
-                               bidderData.whyChooseMe.validate(),
+                               parseHtmlString(bidderData.whyChooseMe.validate()),
                               style: secondaryTextStyle(size: 12,color: textPrimaryColorGlobal),
                             ),
                           );
@@ -664,7 +737,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           jobImagesSection(data.postRequestDetail!),
-                          postJobDetailWidget(data: data.postRequestDetail!).paddingAll(16),
+                          postJobDetailWidget(data: data.postRequestDetail!).paddingSymmetric(horizontal: 16),
                           customerWidget(data.postRequestDetail!),
                           providerWidget(data.bidderData.validate()),
                           // postJobServiceWidget(serviceList: data.postRequestDetail!.service.validate()),

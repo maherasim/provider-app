@@ -59,25 +59,91 @@ Future<void> initFirebaseMessaging() async {
 Future<void> registerNotificationListeners() async {
   FirebaseMessaging.instance.setAutoInitEnabled(true).then((value) {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      log('=== FOREGROUND MESSAGE RECEIVED ===');
+      log('Message ID: ${message.messageId}');
+      log('Notification Title: ${message.notification?.title}');
+      log('Notification Body: ${message.notification?.body}');
+      log('Notification Data: ${message.data}');
+      log('Message Type: ${message.data['type']}');
+      log('Is Chat: ${message.data['is_chat']}');
+      log('Has Conversation ID: ${message.data.containsKey('conversation_id')}');
+      
+      // Check if this is a chat message - be more flexible with detection
+      final isChatMessage = message.data['is_chat'] == '1' || 
+                           message.data['is_chat'] == 1 ||
+                           message.data.containsKey('conversation_id') ||
+                           message.data.containsKey('conversationId') ||
+                           (message.notification?.title?.contains('message') ?? false) ||
+                           (message.notification?.title?.contains('Message') ?? false);
+      
+      log('Detected as Chat Message: $isChatMessage');
+      
       if (message.notification != null && message.notification!.title.validate().isNotEmpty && message.notification!.body.validate().isNotEmpty) {
-        showNotification(currentTimeStamp(), message.notification!.title.validate(), parseHtmlString(message.notification!.body.validate()), message);
+        // Show notification with sound and vibration for chat messages
+        await showNotification(
+          currentTimeStamp(), 
+          message.notification!.title.validate(), 
+          parseHtmlString(message.notification!.body.validate()), 
+          message,
+          isChatMessage: isChatMessage,
+        );
       } else {
         // Data-only push - build a basic notification
         final data = message.data;
-        final title = data['title']?.toString().validate().isNotEmpty == true ? data['title'].toString() : 'New message';
-        final body = data['preview']?.toString().validate().isNotEmpty == true ? data['preview'].toString() : 'You have a new message';
-        showNotification(currentTimeStamp(), title, body, message);
+        String title = 'New message';
+        String body = 'You have a new message';
+        
+        if (isChatMessage) {
+          // For chat messages, try to get sender name from data (Laravel format)
+          // Laravel sends: sender_name, or first_name/last_name
+          final senderName = data['sender_name']?.toString() ?? '';
+          final firstName = data['first_name']?.toString() ?? '';
+          final lastName = data['last_name']?.toString() ?? '';
+          
+          if (senderName.isNotEmpty) {
+            title = senderName;
+          } else if (firstName.isNotEmpty || lastName.isNotEmpty) {
+            title = '$firstName $lastName'.trim();
+          }
+          
+          // Get message body from Laravel format: 'message' field
+          body = data['message']?.toString().validate().isNotEmpty == true
+              ? data['message'].toString()
+              : (data['preview']?.toString().validate().isNotEmpty == true 
+                  ? data['preview'].toString() 
+                  : (message.notification?.body ?? 'You have a new message'));
+        } else {
+          title = data['title']?.toString().validate().isNotEmpty == true ? data['title'].toString() : 'New message';
+          body = data['preview']?.toString().validate().isNotEmpty == true ? data['preview'].toString() : 'You have a new message';
+        }
+        
+        log('Data-only notification - Title: $title, Body: $body');
+        await showNotification(currentTimeStamp(), title, body, message, isChatMessage: isChatMessage);
       }
-      // Foreground chat handling (optional lightweight)
+      
+      // Foreground chat handling - Update chat unread count immediately
       try {
         final data = message.data;
-        if (data['type'] == 'chat' && data['conversation_id'] != null) {
+        final isChat = data['type'] == 'chat' || 
+                      data['is_chat'] == '1' || 
+                      data['is_chat'] == 1 ||
+                      data.containsKey('conversation_id') ||
+                      data.containsKey('conversationId') ||
+                      data.containsKey('sender_id') || // Laravel format
+                      data.containsKey('sender_name') || // Laravel format
+                      isChatMessage;
+        
+        if (isChat) {
+          log('Processing chat notification - emitting LIVESTREAM_UPDATE_CHAT_UNREAD');
+          // Emit immediately to update chat badge
           LiveStream().emit(LIVESTREAM_UPDATE_CHAT_UNREAD);
-          // Increment top bell badge like WhatsApp (in-app counter)
+          
+          // Also increment top bell badge like WhatsApp (in-app counter)
           try {
             final current = appStore.notificationCount;
             final next = (current > 0) ? current + 1 : 1;
             await appStore.setNotificationCount(next);
+            log('Updated notification count to: $next');
           } catch (e) {
             log('increment notificationCount error: $e');
           }
@@ -85,6 +151,8 @@ Future<void> registerNotificationListeners() async {
       } catch (e) {
         log('onMessage chat parse error: $e');
       }
+      
+      log('=== END FOREGROUND MESSAGE PROCESSING ===');
     }, onError: (e) {
       log("setAutoInitEnabled error $e");
     });
@@ -112,6 +180,10 @@ Future<void> registerNotificationListeners() async {
 Future<bool> subscribeToFirebaseTopic() async {
   bool result = appStore.isSubscribedForPushNotification;
   if (appStore.isLoggedIn) {
+    log('=== SUBSCRIBING TO FIREBASE TOPICS ===');
+    log('User ID: ${appStore.userId}');
+    log('User Type: ${appStore.userType}');
+    
     await initFirebaseMessaging();
 
     if (Platform.isIOS) {
@@ -120,21 +192,47 @@ Future<bool> subscribeToFirebaseTopic() async {
         await 3.seconds.delay;
         apnsToken = await FirebaseMessaging.instance.getAPNSToken();
       }
-
-      log('Apn Token=========${apnsToken}');
+      log('APNS Token: $apnsToken');
     }
 
-    await FirebaseMessaging.instance.subscribeToTopic('user_${appStore.userId}').then((value) {
-      result = true;
-      log("topic-----subscribed----> user_${appStore.userId}");
-    });
+    // Get FCM token
+    try {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      log('FCM Token: $fcmToken');
+    } catch (e) {
+      log('Error getting FCM token: $e');
+    }
+
+    // Subscribe to user-specific topic
+    try {
+      await FirebaseMessaging.instance.subscribeToTopic('user_${appStore.userId}').then((value) {
+        result = true;
+        log("✓ Successfully subscribed to topic: user_${appStore.userId}");
+      }).catchError((e) {
+        log("✗ Error subscribing to user topic: $e");
+      });
+    } catch (e) {
+      log("✗ Exception subscribing to user topic: $e");
+    }
+    
+    // Subscribe to app-specific topic
     final topicTag = isUserTypeHandyman ? HANDYMAN_APP_TAG : PROVIDER_APP_TAG;
-    await FirebaseMessaging.instance.subscribeToTopic(topicTag).then((value) {
-      result = true;
-      log("topic-----subscribed----> $topicTag");
-    });
+    try {
+      await FirebaseMessaging.instance.subscribeToTopic(topicTag).then((value) {
+        result = true;
+        log("✓ Successfully subscribed to topic: $topicTag");
+      }).catchError((e) {
+        log("✗ Error subscribing to app topic: $e");
+      });
+    } catch (e) {
+      log("✗ Exception subscribing to app topic: $e");
+    }
 
     await appStore.setPushNotificationSubscriptionStatus(result);
+    log('Subscription status saved: $result');
+    log('=== END SUBSCRIPTION ===');
+  } else {
+    log('User not logged in, skipping subscription');
   }
   return result;
 }
@@ -156,11 +254,39 @@ Future<bool> unsubscribeFirebaseTopic(int userId) async {
 }
 
 void handleNotificationClick(RemoteMessage message) {
-  if ((message.data['type'] == 'chat' || message.data.containsKey('conversation_id'))) {
-    final cidRaw = message.data['conversation_id']?.toString();
-    final cid = int.tryParse(cidRaw ?? '');
+  log('=== NOTIFICATION CLICKED ===');
+  log('Notification data: ${message.data}');
+  
+  // Try multiple ways to detect chat notification (Laravel format)
+  final conversationId = message.data['conversation_id'] ?? 
+                        message.data['conversationId'] ?? 
+                        message.data['conversation_id'];
+  final isChat = message.data['type'] == 'chat' || 
+                message.data['is_chat'] == '1' || 
+                message.data['is_chat'] == 1 ||
+                message.data.containsKey('sender_id') || // Laravel sends sender_id
+                message.data.containsKey('sender_name') || // Laravel sends sender_name
+                conversationId != null;
+  
+  log('Is Chat: $isChat, Conversation ID: $conversationId');
+  
+  if (isChat && conversationId != null) {
+    final cidRaw = conversationId.toString();
+    final cid = int.tryParse(cidRaw);
+    log('Parsed Conversation ID: $cid');
     if (cid != null && cid > 0) {
-      navigatorKey.currentState!.push(MaterialPageRoute(builder: (context) => FrobsterChatThreadScreen(conversationId: cid)));
+      log('Navigating to chat thread: $cid');
+      // Get sender info for better navigation (Laravel format)
+      final senderName = message.data['sender_name']?.toString() ?? 'User';
+      final senderAvatar = message.data['sender_avatar_url']?.toString();
+      navigatorKey.currentState!.push(MaterialPageRoute(
+        builder: (context) => FrobsterChatThreadScreen(
+          conversationId: cid,
+          title: senderName,
+          otherDisplayName: senderName,
+          otherAvatarUrl: senderAvatar,
+        )
+      ));
       return;
     }
   } else if (message.data.containsKey('additional_data')) {
@@ -181,7 +307,8 @@ void handleNotificationClick(RemoteMessage message) {
   }
 }
 
-void showNotification(int id, String title, String message, RemoteMessage remoteMessage) async {
+Future<void> showNotification(int id, String title, String message, RemoteMessage remoteMessage, {bool isChatMessage = false}) async {
+  log('showNotification called - id: $id, title: $title, isChatMessage: $isChatMessage');
   if (remoteMessage.notification != null) {
     log('Notification : ${remoteMessage.notification!.toMap()}');
   }
@@ -191,13 +318,21 @@ void showNotification(int id, String title, String message, RemoteMessage remote
   }
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  //code for background notification channel
+  // Create separate channel for chat messages (like WhatsApp)
+  final channelId = isChatMessage ? 'chat_messages' : 'notification';
+  final channelName = isChatMessage ? 'Chat Messages' : 'Notification';
+  final channelDescription = isChatMessage ? 'Notifications for chat messages' : 'General notifications';
+  
   AndroidNotificationChannel channel = AndroidNotificationChannel(
-    'notification',
-    'Notification',
+    channelId,
+    channelName,
+    description: channelDescription,
     importance: Importance.high,
     enableLights: true,
+    enableVibration: true,
     playSound: true,
+    showBadge: true,
+    sound: isChatMessage ? RawResourceAndroidNotificationSound('notification') : null,
   );
 
   await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(channel);
@@ -235,17 +370,55 @@ void showNotification(int id, String title, String message, RemoteMessage remote
       : null;
   // endregion
 
+  // For chat messages, use messaging style like WhatsApp
+  StyleInformation? styleInformation;
+  if (isChatMessage && !remoteMessage.data.containsKey("image_url")) {
+    // Use BigTextStyle for chat messages to show full message preview
+    styleInformation = BigTextStyleInformation(
+      message,
+      contentTitle: title,
+      summaryText: isChatMessage ? 'New message' : null,
+    );
+  } else if (remoteMessage.data.containsKey("image_url")) {
+    styleInformation = bigPictureStyleInformation;
+  }
+
+  // Download profile image for chat messages if available (Laravel sends sender_avatar_url)
+  String? profileImagePath;
+  if (isChatMessage && !remoteMessage.data.containsKey("image_url")) {
+    final avatarUrl = remoteMessage.data["sender_avatar_url"]?.toString() ?? 
+                     remoteMessage.data["profile_image"]?.toString() ?? '';
+    if (avatarUrl.isNotEmpty) {
+      try {
+        profileImagePath = await _downloadAndSaveFile(avatarUrl, 'profileIcon');
+        log('Downloaded profile image: $profileImagePath');
+      } catch (e) {
+        log('Error downloading profile image: $e');
+      }
+    }
+  }
+
   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-    'notification',
-    'Notification',
+    channelId,
+    channelName,
+    channelDescription: channelDescription,
     importance: Importance.high,
     visibility: NotificationVisibility.public,
     autoCancel: true,
-    playSound: true,
+    playSound: true, // Always play sound for notifications
+    enableVibration: true,
     priority: Priority.high,
     icon: '@drawable/ic_stat_ic_notification',
-    largeIcon: remoteMessage.data.containsKey("image_url") ? FilePathAndroidBitmap(await _downloadAndSaveFile(remoteMessage.data["image_url"], 'largeIcon')) : null,
-    styleInformation: remoteMessage.data.containsKey("image_url") ? bigPictureStyleInformation : null,
+    largeIcon: remoteMessage.data.containsKey("image_url") 
+        ? FilePathAndroidBitmap(await _downloadAndSaveFile(remoteMessage.data["image_url"], 'largeIcon'))
+        : (profileImagePath != null
+            ? FilePathAndroidBitmap(profileImagePath)
+            : null),
+    styleInformation: styleInformation,
+    ticker: isChatMessage ? message : null,
+    category: isChatMessage ? AndroidNotificationCategory.message : AndroidNotificationCategory.status,
+    // Ensure sound plays for chat messages
+    sound: isChatMessage ? const RawResourceAndroidNotificationSound('notification') : null,
   );
 
   var darwinPlatformChannelSpecifics = const DarwinNotificationDetails();

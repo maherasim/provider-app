@@ -43,13 +43,24 @@ class _SwitchPushNotificationSubscriptionComponentState extends State<SwitchPush
             onChanged: (v) async {
               if (appStore.isLoading) return;
               appStore.setLoading(true);
-              if (v) {
-                await subscribeToFirebaseTopic();
-              } else {
-                await unsubscribeFirebaseTopic(appStore.userId);
+              try {
+                if (v) {
+                  final result = await subscribeToFirebaseTopic();
+                  if (result) {
+                    toast(languages.pushNotification + " " + languages.enabled);
+                  } else {
+                    toast(languages.somethingWentWrong);
+                  }
+                } else {
+                  await unsubscribeFirebaseTopic(appStore.userId);
+                  toast(languages.pushNotification + " " + languages.disabled);
+                }
+              } catch (e) {
+                toast(e.toString());
+              } finally {
+                appStore.setLoading(false);
+                setState(() {});
               }
-              appStore.setLoading(false);
-              setState(() {});
             },
           ).withHeight(18);
         }),

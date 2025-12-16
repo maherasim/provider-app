@@ -12,7 +12,7 @@ import '../../models/user_data.dart';
 class NotificationService {
   Future<void> sendPushNotifications(String title, String content, {String? image, required UserData receiverUser, required UserData senderUserData}) async {
     await getFirebaseTokenAndId().then((value) async {
-      if (value.data != null) {
+      if (value.data != null && value.data!.firebaseToken.validate().isNotEmpty && value.data!.projectId.validate().isNotEmpty) {
         Map<String, dynamic> data = {
           "created_at": senderUserData.createdAt,
           "email": senderUserData.email,
@@ -39,7 +39,8 @@ class NotificationService {
           }
         };
 
-        log(req);
+        log('FCM Request - Project ID: ${value.data!.projectId}');
+        log('FCM Request - Topic: user_${receiverUser.id.validate()}');
         var header = {
           HttpHeaders.authorizationHeader: 'Bearer ${value.data!.firebaseToken}',
           HttpHeaders.contentTypeHeader: 'application/json',
@@ -51,14 +52,39 @@ class NotificationService {
           headers: header,
         );
 
-        log(res.statusCode);
-        log(res.body);
+        log('FCM Response Status: ${res.statusCode}');
+        log('FCM Response Body: ${res.body}');
 
         if (res.statusCode.isSuccessful()) {
+          log('Push notification sent successfully');
         } else {
-          throw errorSomethingWentWrong;
+          // Check for specific error codes
+          final responseBody = res.body;
+          if (res.statusCode == 401 || res.statusCode == 403) {
+            log('FCM Authentication Error: Token may be expired or invalid. Status: ${res.statusCode}');
+            log('Response: $responseBody');
+            throw 'Firebase credentials expired or invalid. Please contact support to update Firebase credentials.';
+          } else if (res.statusCode == 404) {
+            log('FCM Project Not Found: Project ID may be incorrect. Status: ${res.statusCode}');
+            throw 'Firebase project not found. Please check Firebase configuration.';
+          } else {
+            log('FCM Error: ${res.statusCode} - $responseBody');
+            throw errorSomethingWentWrong;
+          }
         }
+      } else {
+        log('Firebase credentials missing or invalid');
+        log('Status: ${value.status}, Message: ${value.message}');
+        log('Has Data: ${value.data != null}');
+        if (value.data != null) {
+          log('Has Token: ${value.data!.firebaseToken.validate().isNotEmpty}');
+          log('Has Project ID: ${value.data!.projectId.validate().isNotEmpty}');
+        }
+        throw 'Firebase credentials not available. Please contact support.';
       }
+    }).catchError((e) {
+      log('Error getting Firebase credentials: $e');
+      throw e;
     });
   }
 

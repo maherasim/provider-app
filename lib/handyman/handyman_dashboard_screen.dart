@@ -8,7 +8,8 @@ import 'package:handyman_provider_flutter/fragments/notification_fragment.dart';
 import 'package:handyman_provider_flutter/handyman/screen/fragments/handyman_fragment.dart';
 import 'package:handyman_provider_flutter/handyman/screen/fragments/handyman_profile_fragment.dart';
 import 'package:handyman_provider_flutter/main.dart';
-import 'package:handyman_provider_flutter/screens/chat/user_chat_list_screen.dart';
+import 'package:handyman_provider_flutter/screens/chat/frobster_conversation_list_screen.dart';
+import 'package:handyman_provider_flutter/networks/frobster_chat_api.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
@@ -32,11 +33,12 @@ class HandymanDashboardScreen extends StatefulWidget {
 
 class _HandymanDashboardScreenState extends State<HandymanDashboardScreen> {
   int currentIndex = 0;
+  int _chatUnread = 0;
 
   List<Widget> fragmentList = [
     HandymanHomeFragment(),
     BookingFragment(),
-    ChatListScreen(),
+    FrobsterConversationListScreen(),
     HandymanProfileFragment(),
   ];
 
@@ -44,6 +46,23 @@ class _HandymanDashboardScreenState extends State<HandymanDashboardScreen> {
   void initState() {
     super.initState();
     init();
+  }
+
+  Future<void> _refreshChatUnread() async {
+    try {
+      log('Refreshing chat unread count...');
+      final res = await FrobsterChatApi.getUnreadSummary();
+      final total = res.totalUnread;
+      log('Chat unread count: $total');
+      if (mounted) {
+        setState(() {
+          _chatUnread = total;
+        });
+        log('Updated _chatUnread to: $_chatUnread');
+      }
+    } catch (e) {
+      log('Error refreshing chat unread count: $e');
+    }
   }
 
   void init() async {
@@ -59,6 +78,18 @@ class _HandymanDashboardScreenState extends State<HandymanDashboardScreen> {
           appStore.setDarkMode(context.platformBrightness() == Brightness.light);
         }
       };
+
+      // Initial chat unread fetch
+      _refreshChatUnread();
+
+      // Refresh chat unread on push or other events (with delay to ensure API is ready)
+      LiveStream().on(LIVESTREAM_UPDATE_CHAT_UNREAD, (p0) {
+        log('LIVESTREAM_UPDATE_CHAT_UNREAD received in handyman dashboard');
+        // Add small delay to ensure backend has updated the count
+        500.milliseconds.delay.then((_) {
+          if (mounted) _refreshChatUnread();
+        });
+      });
     });
 
     LiveStream().on(LIVESTREAM_CHANGE_HANDYMAN_TAB, (data) {
@@ -101,12 +132,21 @@ class _HandymanDashboardScreenState extends State<HandymanDashboardScreen> {
   void dispose() {
     super.dispose();
     LiveStream().dispose(LIVESTREAM_CHANGE_HANDYMAN_TAB);
+    LiveStream().dispose(LIVESTREAM_UPDATE_CHAT_UNREAD);
     // LiveStream().dispose(LIVESTREAM_HANDY_BOARD);
     // LiveStream().dispose(LIVESTREAM_HANDYMAN_ALL_BOOKING);
   }
 
   @override
   Widget build(BuildContext context) {
+    // Refresh chat unread count when building (especially when returning from chat)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        // Always refresh to ensure count is up to date
+        _refreshChatUnread();
+      }
+    });
+    
     Widget _gradientIcon(Widget icon) {
       return ShaderMask(
         shaderCallback: (Rect bounds) {
@@ -217,8 +257,56 @@ class _HandymanDashboardScreenState extends State<HandymanDashboardScreen> {
                   label: languages.lblBooking,
                 ),
                 NavigationDestination(
-                  icon: Image.asset(chat, height: 20, width: 20, color: appTextSecondaryColor),
-                  selectedIcon: _gradientIcon(Image.asset(ic_fill_textMsg, height: 26, width: 26, color: Colors.white)),
+                  icon: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Image.asset(chat, height: 20, width: 20, color: appTextSecondaryColor),
+                      if (_chatUnread > 0)
+                        Positioned(
+                          top: -6,
+                          right: -8,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: _chatUnread > 9 ? 5 : 6, vertical: 2),
+                            constraints: BoxConstraints(minWidth: 18),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 1.5),
+                            ),
+                            child: Text(
+                              _chatUnread > 99 ? '99+' : _chatUnread.toString(),
+                              style: boldTextStyle(size: 10, color: Colors.white),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  selectedIcon: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      _gradientIcon(Image.asset(ic_fill_textMsg, height: 26, width: 26, color: Colors.white)),
+                      if (_chatUnread > 0)
+                        Positioned(
+                          top: -4,
+                          right: -6,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: _chatUnread > 9 ? 5 : 6, vertical: 2),
+                            constraints: BoxConstraints(minWidth: 18),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 1.5),
+                            ),
+                            child: Text(
+                              _chatUnread > 99 ? '99+' : _chatUnread.toString(),
+                              style: boldTextStyle(size: 10, color: Colors.white),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                   label: languages.lblChat,
                 ),
                 Observer(builder: (context) {
@@ -234,6 +322,10 @@ class _HandymanDashboardScreenState extends State<HandymanDashboardScreen> {
               onDestinationSelected: (index) {
                 currentIndex = index;
                 setState(() {});
+                // Refresh chat unread count when switching to chat tab
+                if (index == 2) {
+                  _refreshChatUnread();
+                }
               },
             ),
           ),

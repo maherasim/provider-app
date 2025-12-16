@@ -1641,6 +1641,48 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                   /// Booking & Service Details
                   _serviceDetailWidget(bookingResponse: res.data!),
 
+                  /// Working Address - Show after advance is paid
+                  if(res.data!.bookingDetail!.isAdvancePaymentDone) ...[
+                    if((res.data!.bookingDetail!.address.validate().isNotEmpty) || 
+                       (res.data!.postRequestDetail?.workingAddress.validate().isNotEmpty ?? false)) ...[
+                      16.height,
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 16),
+                        padding: EdgeInsets.all(12),
+                        width: double.infinity,
+                        decoration: boxDecorationWithRoundedCorners(
+                          backgroundColor: context.cardColor,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.location_on, color: gradientBlue, size: 20),
+                                8.width,
+                                Text(
+                                  'Working Address',
+                                  style: secondaryTextStyle(size: 12),
+                                ),
+                              ],
+                            ),
+                            8.height,
+                            Text(
+                              res.data!.postRequestDetail?.workingAddress.validate().isNotEmpty ?? false
+                                  ? res.data!.postRequestDetail!.workingAddress.validate()
+                                  : res.data!.bookingDetail!.address.validate(),
+                              style: boldTextStyle(size: 14),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
+
                   /// Total Service Time
                   _buildCounterWidget(value: res.data!),
 

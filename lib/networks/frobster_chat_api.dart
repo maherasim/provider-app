@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:handyman_provider_flutter/models/frobster_chat_models.dart';
 import 'package:handyman_provider_flutter/networks/network_utils.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 class FrobsterChatApi {
   static Future<OpenChatResponse> openWithUser({
@@ -76,9 +77,21 @@ class FrobsterChatApi {
   }
 
   static Future<ConversationListResponse> listConversations({required int page}) async {
-    final res = await handleResponse(await buildHttpResponse('chat/conversations?page=$page'));
-    return ConversationListResponse.fromJson(Map<String, dynamic>.from(res));
+    log('FrobsterChatApi.listConversations called with page: $page');
+    try {
+      final response = await buildHttpResponse('chat/conversations?page=$page');
+      log('FrobsterChatApi.listConversations - HTTP response received');
+      final res = await handleResponse(response);
+      log('FrobsterChatApi.listConversations - Response handled, parsing JSON');
+      final parsed = ConversationListResponse.fromJson(Map<String, dynamic>.from(res));
+      log('FrobsterChatApi.listConversations - Parsed ${parsed.data.length} conversations');
+      return parsed;
+    } catch (e, stackTrace) {
+      log('FrobsterChatApi.listConversations ERROR: $e');
+      log('Stack trace: $stackTrace');
+      rethrow;
     }
+  }
 
   static Future<UnreadSummaryResponse> getUnreadSummary() async {
     final res = await handleResponse(await buildHttpResponse('chat/unread'));

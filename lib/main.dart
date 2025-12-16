@@ -46,15 +46,66 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 //region Handle Background Firebase Message
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  log('Message Data : ${message.data}');
+  log('=== BACKGROUND MESSAGE RECEIVED ===');
+  log('Message Data: ${message.data}');
+  log('Notification Title: ${message.notification?.title}');
+  log('Notification Body: ${message.notification?.body}');
   Firebase.initializeApp();
   try {
-    final title = message.notification?.title ?? 'New message';
-    final body = message.notification?.body ?? (message.data['preview']?.toString() ?? 'You have a new message');
-    showNotification(currentTimeStamp(), title, body, message);
-  } catch (e) {
+    // More flexible chat detection (Laravel format)
+    final isChatMessage = message.data['is_chat'] == '1' || 
+                        message.data['is_chat'] == 1 ||
+                        message.data.containsKey('conversation_id') ||
+                        message.data.containsKey('conversationId') ||
+                        message.data.containsKey('sender_id') || // Laravel sends this
+                        message.data.containsKey('sender_name') || // Laravel sends this
+                        message.data['type'] == 'chat';
+    log('Detected as Chat Message (Background): $isChatMessage');
+    
+    String title = 'New message';
+    String body = 'You have a new message';
+    
+    if (isChatMessage) {
+      // Laravel format: sender_name or first_name/last_name
+      final senderName = message.data['sender_name']?.toString() ?? '';
+      final firstName = message.data['first_name']?.toString() ?? '';
+      final lastName = message.data['last_name']?.toString() ?? '';
+      
+      if (senderName.isNotEmpty) {
+        title = senderName;
+      } else if (firstName.isNotEmpty || lastName.isNotEmpty) {
+        title = '$firstName $lastName'.trim();
+      }
+      
+      // Laravel sends 'message' field
+      body = message.data['message']?.toString() ?? 
+            message.data['preview']?.toString() ?? 
+            message.notification?.body ?? 
+            'You have a new message';
+    } else {
+      title = message.notification?.title ?? 
+             message.data['title']?.toString() ?? 
+             'New message';
+      body = message.notification?.body ?? 
+            message.data['preview']?.toString() ?? 
+            message.data['body']?.toString() ??
+            'You have a new message';
+    }
+    
+    log('Showing notification - Title: $title, Body: $body');
+    await showNotification(currentTimeStamp(), title, body, message, isChatMessage: isChatMessage);
+    log('Background notification shown successfully');
+    
+    // Update chat unread count if it's a chat message
+    if (isChatMessage) {
+      log('Emitting LIVESTREAM_UPDATE_CHAT_UNREAD from background handler');
+      LiveStream().emit(LIVESTREAM_UPDATE_CHAT_UNREAD);
+    }
+  } catch (e, stackTrace) {
     log('Background showNotification error: $e');
+    log('Stack trace: $stackTrace');
   }
+  log('=== END BACKGROUND MESSAGE PROCESSING ===');
 }
 //endregion
 

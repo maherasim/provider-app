@@ -53,11 +53,13 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
   }) {
     return Container(
       padding: EdgeInsets.all(12),
+      width: double.infinity,
       decoration: boxDecorationWithRoundedCorners(
         backgroundColor: context.cardColor,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: EdgeInsets.all(8),
@@ -100,6 +102,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
   }) {
     return Container(
       padding: EdgeInsets.all(12),
+      width: double.infinity,
       decoration: boxDecorationWithRoundedCorners(
         backgroundColor: context.cardColor,
         borderRadius: BorderRadius.circular(16),
@@ -139,7 +142,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Job Title
+        // Job Title - Full Width
         _buildDetailCard(
           icon: Icons.work_outline,
           iconColor: gradientBlue,
@@ -172,7 +175,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
         ),
         16.height,
 
-        // Start Date and End Date Row
+        // Start Date and End Date Row - Prominent Cards
         Row(
           children: [
             Expanded(
@@ -286,7 +289,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
         ),
         24.height,
 
-        // Description, Requirements, Duties, Benefits
+        // Description, Requirements, Duties, Benefits - Full Width Cards with Read More
         if (data.description.validate().isNotEmpty) ...[
           _buildSectionCard(
             icon: Icons.description,

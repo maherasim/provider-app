@@ -1,4 +1,4 @@
-package com.iqonic.provider
+package com.frobster.provider
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

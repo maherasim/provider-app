@@ -297,11 +297,21 @@ class UnreadSummaryResponse {
   });
 
   factory UnreadSummaryResponse.fromJson(Map<String, dynamic> json) {
+    // Backend may return either:
+    // 1) { status, total_unread, by_conversation: [...] }
+    // 2) { status, count, latest: {...} }
     final List list = (json['by_conversation'] as List?) ?? const [];
+
+    final dynamic rawTotal =
+        json.containsKey('total_unread') ? json['total_unread'] : json['count'];
+    final int parsedTotal =
+        (rawTotal ?? 0) is int ? rawTotal : int.tryParse('$rawTotal') ?? 0;
+
     return UnreadSummaryResponse(
       status: json['status'] == true,
-      totalUnread: (json['total_unread'] ?? 0) is int ? json['total_unread'] : int.tryParse('${json['total_unread']}') ?? 0,
-      byConversation: list.map((e) => UnreadByConversation.fromJson(Map<String, dynamic>.from(e))).toList(),
+      totalUnread: parsedTotal,
+      byConversation:
+          list.map((e) => UnreadByConversation.fromJson(Map<String, dynamic>.from(e))).toList(),
     );
   }
 }

@@ -35,6 +35,7 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
   int _lastMessageId = 0;
   bool _loading = false;
   bool _loadingMore = false;
+  bool _sending = false;
   Timer? _pollTimer;
 
   void _safeSetState(VoidCallback fn) {
@@ -128,20 +129,47 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
   Future<void> _send() async {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
-    if (appStore.isLoading) return;
-    appStore.setLoading(true);
+    if (_sending) return;
+
+    _sending = true;
+
+    // Optimistically add the message to the list so UI feels instant
+    final tempId = (_messages.isNotEmpty ? _messages.last.id + 1 : 1) * -1;
+    final nowString = DateTime.now().toString();
+    final provisional = FrobsterMessage(
+      id: tempId,
+      senderId: appStore.userId.validate(),
+      senderName: appStore.userName.validate(),
+      senderAvatarUrl: appStore.userProfileImage.validate().isNotEmpty ? appStore.userProfileImage : null,
+      message: text,
+      createdAt: nowString,
+      read: false,
+      attachment: null,
+      policyViolation: false,
+      hidden: false,
+      piiTypes: const [],
+    );
+
+    _messages.add(provisional);
+    _safeSetState(() {});
+    _scrollToBottom();
+    _messageController.clear();
+
     try {
       final res = await FrobsterChatApi.sendMessage(conversationId: widget.conversationId, message: text);
-      _messageController.clear();
       if (res.flagged) {
         final types = res.piiTypes.join(', ');
         toast('Message hidden due to policy (${types.isEmpty ? 'policy' : types})');
       }
+      // Refresh from server so IDs and flags are correct
       await _fetchNew();
     } catch (e) {
+      // On error, remove the provisional message
+      _messages.removeWhere((m) => m.id == tempId);
+      _safeSetState(() {});
       toast(e.toString(), print: true);
     } finally {
-      appStore.setLoading(false);
+      _sending = false;
     }
   }
 

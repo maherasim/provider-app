@@ -10,7 +10,7 @@ plugins {
 
 
 android {
-    namespace = "com.iqonic.provider"
+    namespace = "com.frobster.provider"
     compileSdk = 36
     ndkVersion = "28.2.13676358"
 
@@ -25,7 +25,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.iqonic.provider"
+        applicationId = "com.frobster.provider"
         minSdk = flutter.minSdkVersion
         targetSdk = 36
         versionCode = 91

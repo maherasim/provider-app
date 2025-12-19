@@ -99,10 +99,28 @@ class ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
   Future<void> _refreshChatUnread() async {
     try {
       final res = await FrobsterChatApi.getUnreadSummary();
-      final total = res.totalUnread;
-      if (mounted) setState(() => _chatUnread = total);
+      log('ProviderDashboard: getUnreadSummary -> total_unread=${res.totalUnread}, by_conversation=${res.byConversation.length}, appStore.notificationCount=${appStore.notificationCount}');
+
+      // Start with backend total_unread
+      int total = res.totalUnread;
+
+      // If backend didn't aggregate but per-conversation data exists, sum it
+      if (total == 0 && res.byConversation.isNotEmpty) {
+        total = res.byConversation.fold<int>(0, (sum, e) => sum + e.unread);
+      }
+
+      // As a final fallback, use the global notificationCount (kept in sync by push)
+      if (total == 0 && appStore.notificationCount > 0) {
+        total = appStore.notificationCount.toInt();
+      }
+
+      if (mounted) {
+        _chatUnread = total;
+        log('ProviderDashboard: _chatUnread updated to $_chatUnread');
+        setState(() {});
+      }
     } catch (e) {
-      // ignore errors
+      // ignore errors – we just keep the old value
     }
   }
 
@@ -122,6 +140,10 @@ class ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Keep chat badge in sync when returning to dashboard
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _refreshChatUnread();
+    });
     return DoublePressBackWidget(
       message: languages.lblCloseAppMsg,
       child: Scaffold(

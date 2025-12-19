@@ -2136,6 +2136,15 @@ class LanguageEn extends Languages {
   String get walletBalance => 'Wallet Balance';
 
   @override
+  String get servicePayment => 'Service Payment';
+
+  @override
+  String get handymanRatings => 'Handyman Ratings';
+
+  @override
+  String get yourComment => 'Your Comment';
+
+  @override
   String get remainingPayout => 'Remaining Payout';
 
   @override

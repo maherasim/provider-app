@@ -1429,6 +1429,12 @@ abstract class Languages {
 
   String get walletBalance;
 
+  String get servicePayment;
+
+  String get handymanRatings;
+
+  String get yourComment;
+
   String get remainingPayout;
 
   String get totalRevenue;

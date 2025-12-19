@@ -17,7 +17,6 @@ import 'package:handyman_provider_flutter/screens/about_us_screen.dart';
 import 'package:handyman_provider_flutter/screens/languages_screen.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
-import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/extensions/num_extenstions.dart';
 import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart';
@@ -28,6 +27,8 @@ import '../../../components/base_scaffold_widget.dart';
 import '../../../components/switch_push_notification_subscription_component.dart';
 import '../../../helpDesk/help_desk_list_screen.dart';
 import '../../../provider/wallet/wallet_history_screen.dart';
+import '../handyman_service_payment_screen.dart';
+import '../handyman_ratings_screen.dart';
 
 class HandymanProfileFragment extends StatefulWidget {
   @override
@@ -46,11 +47,25 @@ class _HandymanProfileFragmentState extends State<HandymanProfileFragment> {
   }
 
   void init() async {
-    setStatusBarColor(primaryColor);
+    setStatusBarColor(gradientRed);
     isAvailable = appStore.handymanAvailability == 1 ? true : false;
 
     /// get wallet balance api call
     appStore.setUserWalletAmount();
+  }
+
+  Widget _gradientText(Widget text) {
+    return ShaderMask(
+      shaderCallback: (Rect bounds) {
+        return const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: kAppPrimaryGradientColors,
+        ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
+      },
+      blendMode: BlendMode.srcIn,
+      child: text,
+    );
   }
 
   @override
@@ -80,7 +95,7 @@ class _HandymanProfileFragmentState extends State<HandymanProfileFragment> {
                 clipBehavior: Clip.none,
                 children: [
                   Container(
-                    color: primaryColor,
+                    decoration: BoxDecoration(gradient: kAppPrimaryGradient),
                     height: 280,
                     width: context.width(),
                     child: Column(
@@ -93,7 +108,7 @@ class _HandymanProfileFragmentState extends State<HandymanProfileFragment> {
                               Container(
                                 decoration: boxDecorationDefault(
                                   border:
-                                      Border.all(color: primaryColor, width: 2),
+                                      Border.all(color: gradientRed, width: 2),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Container(
@@ -112,9 +127,9 @@ class _HandymanProfileFragmentState extends State<HandymanProfileFragment> {
                                 child: Container(
                                   alignment: Alignment.center,
                                   padding: EdgeInsets.all(6),
-                                  decoration: boxDecorationDefault(
+                                  decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: primaryColor,
+                                    gradient: kAppPrimaryGradient,
                                     border: Border.all(width: 2, color: white),
                                   ),
                                   child: Icon(AntDesign.edit,
@@ -158,10 +173,11 @@ class _HandymanProfileFragmentState extends State<HandymanProfileFragment> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Observer(
-                                builder: (context) => Text(
-                                  "${appStore.completedBooking.validate().toString()}",
-                                  style: boldTextStyle(
-                                      color: primaryColor, size: 16),
+                                builder: (context) => _gradientText(
+                                  Text(
+                                    "${appStore.completedBooking.validate().toString()}",
+                                    style: boldTextStyle(size: 16),
+                                  ),
                                 ),
                               ),
                               8.height,
@@ -264,14 +280,52 @@ class _HandymanProfileFragmentState extends State<HandymanProfileFragment> {
                   style: boldTextStyle(color: Colors.green),
                 ),
               ),
-              if (appStore.isLoggedIn && rolesAndPermissionStore.helpDeskList)
+              Divider(
+                  height: 0,
+                  thickness: 1,
+                  indent: 15.0,
+                  endIndent: 15.0,
+                  color: context.dividerColor),
+              SettingItemWidget(
+                leading: Icon(Icons.payment, size: 18, color: context.iconColor),
+                title: languages.servicePayment,
+                titleTextStyle: primaryTextStyle(),
+                trailing: Icon(Icons.chevron_right,
+                    color: appStore.isDarkMode
+                        ? white
+                        : gray.withValues(alpha: 0.8),
+                    size: 24),
+                onTap: () {
+                  HandymanServicePaymentScreen().launch(context);
+                },
+              ),
+              Divider(
+                  height: 0,
+                  thickness: 1,
+                  indent: 15.0,
+                  endIndent: 15.0,
+                  color: context.dividerColor),
+              SettingItemWidget(
+                leading: Icon(Icons.star, size: 18, color: context.iconColor),
+                title: languages.handymanRatings,
+                titleTextStyle: primaryTextStyle(),
+                trailing: Icon(Icons.chevron_right,
+                    color: appStore.isDarkMode
+                        ? white
+                        : gray.withValues(alpha: 0.8),
+                    size: 24),
+                onTap: () {
+                  HandymanRatingsScreen().launch(context);
+                },
+              ),
+              if (appStore.isLoggedIn)
                 Divider(
                     height: 0,
                     thickness: 1,
                     indent: 15.0,
                     endIndent: 15.0,
                     color: context.dividerColor),
-              if (appStore.isLoggedIn && rolesAndPermissionStore.helpDeskList)
+              if (appStore.isLoggedIn)
                 SettingItemWidget(
                   leading: ic_help_desk.iconImage(size: 18),
                   title: languages.helpDesk,
@@ -462,8 +516,9 @@ class _HandymanProfileFragmentState extends State<HandymanProfileFragment> {
               ),
               20.height,
               TextButton(
-                child: Text(languages.logout,
-                    style: boldTextStyle(color: primaryColor)),
+                child: _gradientText(
+                  Text(languages.logout, style: boldTextStyle()),
+                ),
                 onPressed: () {
                   appStore.setLoading(false);
                   logout(context);

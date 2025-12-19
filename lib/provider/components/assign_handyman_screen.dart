@@ -14,6 +14,7 @@ import '../../components/base_scaffold_widget.dart';
 import '../../components/empty_error_state_widget.dart';
 import '../../components/handyman_add_update_screen.dart';
 import '../../utils/constant.dart';
+import '../../utils/colors.dart';
 
 class AssignHandymanScreen extends StatefulWidget {
   final int? bookingId;
@@ -57,33 +58,68 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
   Future<void> _handleAssignHandyman() async {
     if (appStore.isLoading) return;
 
-    showConfirmDialogCustom(
+    await showInDialog(
       context,
-      title: '${languages.lblAreYouSureYouWantToAssignThisServiceTo(userListData!.firstName.validate())}',
-      positiveText: languages.lblYes,
-      negativeText: languages.lblNo,
-      primaryColor: context.primaryColor,
-      onAccept: (c) async {
-        var request = {
-          CommonKeys.id: widget.bookingId,
-          CommonKeys.handymanId: [userListData!.id.validate()],
-        };
+      contentPadding: EdgeInsets.all(0),
+      builder: (_) {
+        return Container(
+          decoration: boxDecorationDefault(color: context.cardColor, borderRadius: radius(12)),
+          padding: EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('${languages.lblAreYouSureYouWantToAssignThisServiceTo(userListData!.firstName.validate())}', style: boldTextStyle()),
+              16.height,
+              Row(
+                children: [
+                  AppButton(
+                    text: languages.lblNo,
+                    elevation: 0,
+                    color: appStore.isDarkMode ? context.scaffoldBackgroundColor : white,
+                    textColor: textPrimaryColorGlobal,
+                    onTap: () {
+                      finish(context);
+                    },
+                  ).expand(),
+                  16.width,
+                  DecoratedBox(
+                    decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                    child: AppButton(
+                      text: languages.lblYes,
+                      elevation: 0,
+                      color: Colors.transparent,
+                      textStyle: boldTextStyle(color: white),
+                      onTap: () async {
+                        finish(context);
+                        var request = {
+                          CommonKeys.id: widget.bookingId,
+                          CommonKeys.handymanId: [userListData!.id.validate()],
+                        };
 
-        appStore.setLoading(true);
+                        appStore.setLoading(true);
 
-        await assignBooking(request).then((res) async {
-          appStore.setLoading(false);
+                        await assignBooking(request).then((res) async {
+                          appStore.setLoading(false);
 
-          widget.onUpdate?.call();
+                          widget.onUpdate?.call();
 
-          finish(context);
+                          finish(context);
 
-          toast(res.message);
-        }).catchError((e) {
-          appStore.setLoading(false);
+                          toast(res.message);
+                        }).catchError((e) {
+                          appStore.setLoading(false);
 
-          toast(e.toString());
-        });
+                          toast(e.toString());
+                        });
+                      },
+                    ),
+                  ).expand(),
+                ],
+              ),
+            ],
+          ),
+        );
       },
     );
   }
@@ -91,33 +127,68 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
   Future<void> _handleAssignToMyself() async {
     if (appStore.isLoading) return;
 
-    showConfirmDialogCustom(
+    await showInDialog(
       context,
-      title: languages.lblAreYouSureYouWantToAssignToYourself,
-      primaryColor: context.primaryColor,
-      positiveText: languages.lblYes,
-      negativeText: languages.lblCancel,
-      onAccept: (c) async {
-        var request = {
-          CommonKeys.id: widget.bookingId,
-          CommonKeys.handymanId: [appStore.userId.validate()],
-        };
+      contentPadding: EdgeInsets.all(0),
+      builder: (_) {
+        return Container(
+          decoration: boxDecorationDefault(color: context.cardColor, borderRadius: radius(12)),
+          padding: EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(languages.lblAreYouSureYouWantToAssignToYourself, style: boldTextStyle()),
+              16.height,
+              Row(
+                children: [
+                  AppButton(
+                    text: languages.lblCancel,
+                    elevation: 0,
+                    color: appStore.isDarkMode ? context.scaffoldBackgroundColor : white,
+                    textColor: textPrimaryColorGlobal,
+                    onTap: () {
+                      finish(context);
+                    },
+                  ).expand(),
+                  16.width,
+                  DecoratedBox(
+                    decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                    child: AppButton(
+                      text: languages.lblYes,
+                      elevation: 0,
+                      color: Colors.transparent,
+                      textStyle: boldTextStyle(color: white),
+                      onTap: () async {
+                        finish(context);
+                        var request = {
+                          CommonKeys.id: widget.bookingId,
+                          CommonKeys.handymanId: [appStore.userId.validate()],
+                        };
 
-        appStore.setLoading(true);
+                        appStore.setLoading(true);
 
-        await assignBooking(request).then((res) async {
-          appStore.setLoading(false);
+                        await assignBooking(request).then((res) async {
+                          appStore.setLoading(false);
 
-          widget.onUpdate!.call();
+                          widget.onUpdate!.call();
 
-          finish(context);
+                          finish(context);
 
-          toast(res.message);
-        }).catchError((e) {
-          appStore.setLoading(false);
+                          toast(res.message);
+                        }).catchError((e) {
+                          appStore.setLoading(false);
 
-          toast(e.toString());
-        });
+                          toast(e.toString());
+                        });
+                      },
+                    ),
+                  ).expand(),
+                ],
+              ),
+            ],
+          ),
+        );
       },
     );
   }
@@ -189,20 +260,53 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
     if(!userData.isHandymanAvailable.validate()){
       return buildHandymanItem(userData: userData).paddingSymmetric(vertical: 13, horizontal: 16);
     }
-    return RadioListTile<UserData>(
-      value: userData,
+    final isSelected = userListData == userData;
+    return ListTile(
       contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-      controlAffinity: ListTileControlAffinity.trailing,
-      groupValue: userListData,
       title: buildHandymanItem(userData: userData),
-      toggleable: false,
-      onChanged: (value) {
+      trailing: GestureDetector(
+        onTap: () {
+          if (userData.isHandymanAvailable.validate()) {
+            if (userListData == userData) {
+              userListData = null;
+              setState(() {});
+            } else {
+              userListData = userData;
+              setState(() {});
+            }
+          } else {
+            Fluttertoast.cancel();
+            toast(languages.lblHandymanIsOffline);
+          }
+        },
+        child: Container(
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: isSelected ? Colors.transparent : (appStore.isDarkMode ? Colors.white70 : Colors.black54),
+              width: 2,
+            ),
+          ),
+          child: isSelected
+              ? Container(
+                  margin: EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: kAppPrimaryGradient,
+                  ),
+                )
+              : null,
+        ),
+      ),
+      onTap: () {
         if (userData.isHandymanAvailable.validate()) {
-          if (userListData == value) {
+          if (userListData == userData) {
             userListData = null;
             setState(() {});
           } else {
-            userListData = value;
+            userListData = userData;
             setState(() {});
           }
         } else {
@@ -210,8 +314,6 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
           toast(languages.lblHandymanIsOffline);
         }
       },
-      activeColor: primaryColor,
-      selected: true,
     );
   }
 
@@ -321,17 +423,22 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
                 // ).expand(),
                 // if (userListData != null) 16.width,
                 if (userListData != null)
-                  AppButton(
-                    onTap: () {
-                      if (userListData != null) {
-                        _handleAssignHandyman();
-                      } else {
-                        toast(languages.lblSelectHandyman);
-                      }
-                    },
-                    color: primaryColor,
-                    width: context.width(),
-                    text: languages.lblAssign,
+                  DecoratedBox(
+                    decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                    child: AppButton(
+                      onTap: () {
+                        if (userListData != null) {
+                          _handleAssignHandyman();
+                        } else {
+                          toast(languages.lblSelectHandyman);
+                        }
+                      },
+                      color: Colors.transparent,
+                      width: context.width(),
+                      text: languages.lblAssign,
+                      textStyle: boldTextStyle(color: white),
+                      elevation: 0,
+                    ),
                   ).expand(),
               ],
             ),

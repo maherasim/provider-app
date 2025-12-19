@@ -436,7 +436,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                       color:
                           appStore.isDarkMode ? white : appTextSecondaryColor),
                   title: languages.addonServices,
-                  titleTextStyle: boldTextStyle(size: 12),
+                  titleTextStyle: boldTextStyle(size: 14),
                   trailing: Icon(Icons.chevron_right,
                       color: appStore.isDarkMode
                           ? white
@@ -456,7 +456,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                       color:
                           appStore.isDarkMode ? white : appTextSecondaryColor),
                   title: languages.timeSlots,
-                  titleTextStyle: boldTextStyle(size: 12),
+                  titleTextStyle: boldTextStyle(size: 14),
                   trailing: Icon(Icons.chevron_right,
                       color: appStore.isDarkMode
                           ? white
@@ -475,7 +475,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                       color:
                           appStore.isDarkMode ? white : appTextSecondaryColor),
                   title: languages.lblServiceAddress,
-                  titleTextStyle: boldTextStyle(size: 12),
+                  titleTextStyle: boldTextStyle(size: 14),
                   trailing: Icon(Icons.chevron_right,
                       color: appStore.isDarkMode
                           ? white
@@ -491,7 +491,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                   decoration: BoxDecoration(color: context.cardColor),
                   leading: list.iconImage(size: 16),
                   title: languages.jobRequestList,
-                  titleTextStyle: boldTextStyle(size: 12),
+                  titleTextStyle: boldTextStyle(size: 14),
                   trailing: Icon(
                     Icons.chevron_right,
                     color: appStore.isDarkMode ? white : gray.withValues(alpha: 0.8),
@@ -510,7 +510,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                       color:
                       appStore.isDarkMode ? white : appTextSecondaryColor),
                   title: languages.bidList,
-                  titleTextStyle: boldTextStyle(size: 12),
+                  titleTextStyle: boldTextStyle(size: 14),
                   trailing: Icon(Icons.chevron_right,
                       color: appStore.isDarkMode
                           ? white
@@ -550,7 +550,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                       color:
                           appStore.isDarkMode ? white : appTextSecondaryColor),
                   title: languages.lblWalletHistory,
-                  titleTextStyle: boldTextStyle(size: 12),
+                  titleTextStyle: boldTextStyle(size: 14),
                   trailing: Icon(Icons.chevron_right,
                       color: appStore.isDarkMode
                           ? white
@@ -570,7 +570,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                       color:
                           appStore.isDarkMode ? white : appTextSecondaryColor),
                   title: languages.lblBankDetails,
-                  titleTextStyle: boldTextStyle(size: 12),
+                  titleTextStyle: boldTextStyle(size: 14),
                   trailing: Icon(Icons.chevron_right,
                       color: appStore.isDarkMode
                           ? white
@@ -761,7 +761,7 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                           appStore.isDarkMode ? white : appTextSecondaryColor),
                   paddingBeforeTrailing: 4,
                   title: languages.lblDeleteAccount,
-                  titleTextStyle: boldTextStyle(size: 12),
+                  titleTextStyle: boldTextStyle(size: 14),
                   padding:
                       EdgeInsets.only(bottom: 16, right: 16, left: 16, top: 20),
                   onTap: () {

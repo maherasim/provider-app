@@ -2141,6 +2141,15 @@ class LanguageFr extends Languages {
   String get walletBalance => 'Solde du portefeuille';
 
   @override
+  String get servicePayment => 'Paiement de service';
+
+  @override
+  String get handymanRatings => 'Évaluations du bricoleur';
+
+  @override
+  String get yourComment => 'Votre commentaire';
+
+  @override
   String get remainingPayout => 'Paiement restant';
 
   @override

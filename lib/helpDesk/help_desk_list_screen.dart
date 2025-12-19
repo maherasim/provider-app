@@ -116,20 +116,29 @@ class _HelpDeskListScreenState extends State<HelpDeskListScreen> {
                           FilterChip(
                             shape: RoundedRectangleBorder(
                               borderRadius: radius(18),
-                              side: BorderSide(color: selectedTab.status == filterStatus.status ? primaryColor : Colors.transparent),
+                              side: BorderSide(color: selectedTab.status == filterStatus.status ? gradientRed : Colors.transparent),
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 10),
-                            label: Text(
-                              filterStatus.name,
-                              style: boldTextStyle(
-                                size: 12,
-                                color: selectedTab.status == filterStatus.status
-                                    ? primaryColor
-                                    : appStore.isDarkMode
-                                        ? Colors.white
-                                        : appTextPrimaryColor,
-                              ),
-                            ),
+                            label: selectedTab.status == filterStatus.status
+                                ? ShaderMask(
+                                    shaderCallback: (Rect bounds) {
+                                      return kAppPrimaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
+                                    },
+                                    blendMode: BlendMode.srcIn,
+                                    child: Text(
+                                      filterStatus.name,
+                                      style: boldTextStyle(size: 12),
+                                    ),
+                                  )
+                                : Text(
+                                    filterStatus.name,
+                                    style: boldTextStyle(
+                                      size: 12,
+                                      color: appStore.isDarkMode
+                                          ? Colors.white
+                                          : appTextPrimaryColor,
+                                    ),
+                                  ),
                             selected: false,
                             backgroundColor: selectedTab.status == filterStatus.status ? lightPrimaryColor : context.cardColor,
                             onSelected: (bool selected) {

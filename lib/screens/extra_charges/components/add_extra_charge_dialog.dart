@@ -6,6 +6,7 @@ import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../../../models/extra_charges_model.dart';
+import '../../../utils/colors.dart';
 
 class AddExtraChargesDialog extends StatefulWidget {
   final ExtraChargesModel? data;
@@ -82,9 +83,9 @@ class _AddExtraChargesDialogState extends State<AddExtraChargesDialog> {
             children: [
               Container(
                 width: context.width(),
-                decoration: boxDecorationWithRoundedCorners(
+                decoration: BoxDecoration(
+                  gradient: kAppPrimaryGradient,
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
-                  backgroundColor: primaryColor,
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(
@@ -166,14 +167,18 @@ class _AddExtraChargesDialogState extends State<AddExtraChargesDialog> {
                         ],
                       ),
                       24.height,
-                      AppButton(
-                        text: isEdit ? languages.saveChanges : languages.hintAdd,
-                        color: primaryColor,
-                        textStyle: boldTextStyle(color: white),
-                        width: context.width() - context.navigationBarHeight,
-                        onTap: () {
-                          addCharges();
-                        },
+                      DecoratedBox(
+                        decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                        child: AppButton(
+                          text: isEdit ? languages.saveChanges : languages.hintAdd,
+                          color: Color(0x00000000),
+                          textStyle: boldTextStyle(color: white),
+                          width: context.width() - context.navigationBarHeight,
+                          elevation: 0,
+                          onTap: () {
+                            addCharges();
+                          },
+                        ),
                       ),
                       8.height,
                     ],

@@ -8,6 +8,7 @@ import 'package:handyman_provider_flutter/provider/payment_history/shimmer/payme
 import 'package:nb_utils/nb_utils.dart';
 
 import '../../utils/common.dart';
+import '../../utils/colors.dart';
 
 class PaymentHistoryScreen extends StatefulWidget {
   @override
@@ -33,6 +34,17 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
     });
   }
 
+  Widget _buildHeaderCell(String text, double width) {
+    return Container(
+      width: width,
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      child: Text(
+        text,
+        style: boldTextStyle(color: Colors.white),
+      ),
+    );
+  }
+
   @override
   void setState(fn) {
     if (mounted) super.setState(fn);
@@ -56,42 +68,73 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                   scrollDirection: Axis.horizontal,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: DataTable(
-                      headingTextStyle: boldTextStyle(),
-                      dataTextStyle: primaryTextStyle(),
-                      headingRowColor: WidgetStatePropertyAll(context.primaryColor),
-                      dividerThickness: 0,
-                      columns: [
-                        DataColumn(label: Text("ID")),
-                        DataColumn(label: Text("Service")),
-                        DataColumn(label: Text("Users")),
-                        DataColumn(label: Text("Payment Type")),
-                        DataColumn(label: Text("Status")),
-                        DataColumn(label: Text("Date & Time")),
-                        DataColumn(label: Text("Amount")),
-                      ],
-                      rows: list.map((payment) {
-
-                        return DataRow(
-                          color: (list.indexOf(payment) % 2) != 0 ? WidgetStatePropertyAll(context.cardColor) : null,
-                          cells: [
-                            DataCell(Text(payment.txnId ?? '')),
-                            DataCell(Text(payment.booking?.service?.name ?? '')),
-                            DataCell(Text('${payment.customer?.firstName ?? ' '} ${payment.customer?.lastName ?? ' '}')),
-                            DataCell(Text(payment.paymentType ?? '')),
-                            DataCell(Container(
-                              decoration: BoxDecoration(
-                                color: context.primaryColor,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              child: Text(payment.paymentStatus ?? ''),
-                            )),
-                            DataCell(Text( payment.dateTime == null ? '' : formatDate(payment.dateTime?.toIso8601String(), showDateWithTime: true))),
-                            DataCell(Text("\$${payment.totalAmount}")),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Custom gradient header row
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: kAppPrimaryGradient,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              _buildHeaderCell("ID", 80),
+                              _buildHeaderCell("Service", 120),
+                              _buildHeaderCell("Users", 120),
+                              _buildHeaderCell("Payment Type", 120),
+                              _buildHeaderCell("Status", 100),
+                              _buildHeaderCell("Date & Time", 150),
+                              _buildHeaderCell("Amount", 100),
+                            ],
+                          ),
+                        ),
+                        // DataTable without header
+                        DataTable(
+                          headingRowHeight: 0,
+                          headingTextStyle: boldTextStyle(),
+                          dataTextStyle: primaryTextStyle(),
+                          dividerThickness: 0,
+                          columns: [
+                            DataColumn(label: SizedBox(width: 80)),
+                            DataColumn(label: SizedBox(width: 120)),
+                            DataColumn(label: SizedBox(width: 120)),
+                            DataColumn(label: SizedBox(width: 120)),
+                            DataColumn(label: SizedBox(width: 100)),
+                            DataColumn(label: SizedBox(width: 150)),
+                            DataColumn(label: SizedBox(width: 100)),
                           ],
-                        );
-                      }).toList(),
+                          rows: list.map((payment) {
+                            return DataRow(
+                              color: (list.indexOf(payment) % 2) != 0 ? WidgetStatePropertyAll(context.cardColor) : null,
+                              cells: [
+                                DataCell(Text(payment.txnId ?? '')),
+                                DataCell(Text(payment.booking?.service?.name ?? '')),
+                                DataCell(Text('${payment.customer?.firstName ?? ' '} ${payment.customer?.lastName ?? ' '}')),
+                                DataCell(Text(payment.paymentType ?? '')),
+                                DataCell(DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    gradient: kAppPrimaryGradient,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    child: Text(
+                                      payment.paymentStatus ?? '',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                )),
+                                DataCell(Text( payment.dateTime == null ? '' : formatDate(payment.dateTime?.toIso8601String(), showDateWithTime: true))),
+                                DataCell(Text("\$${payment.totalAmount}")),
+                              ],
+                            );
+                          }).toList(),
+                        ),
+                      ],
                     ),
                   ),
                 )

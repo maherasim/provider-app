@@ -6,6 +6,7 @@ import 'package:handyman_provider_flutter/models/extra_charges_model.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/models/post_job_detail_response.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 class ExtraChargesDialog extends StatefulWidget {
@@ -94,6 +95,16 @@ class _ExtraChargesDialogState extends State<ExtraChargesDialog> {
     if (mounted) super.setState(fn);
   }
 
+  Widget _gradientText(Widget text) {
+    return ShaderMask(
+      shaderCallback: (Rect bounds) {
+        return kAppPrimaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
+      },
+      blendMode: BlendMode.srcIn,
+      child: text,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -125,11 +136,11 @@ class _ExtraChargesDialogState extends State<ExtraChargesDialog> {
                   width: double.infinity,
                   child: OutlinedButton.icon(
                     onPressed: addRow,
-                    icon: Icon(Icons.add, size: 20),
-                    label: Text(languages.addMore),
+                    icon: _gradientText(Icon(Icons.add, size: 20)),
+                    label: _gradientText(Text(languages.addMore)),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: context.primaryColor,
-                      side: BorderSide(color: context.primaryColor),
+                      foregroundColor: gradientRed,
+                      side: BorderSide(color: gradientRed),
                       padding: EdgeInsets.symmetric(vertical: 12),
                     ),
                   ),
@@ -161,10 +172,15 @@ class _ExtraChargesDialogState extends State<ExtraChargesDialog> {
                       textColor: context.iconColor,
                     ).expand(),
                     16.width,
-                    AppButton(
-                      onTap: _handleSubmitClick,
-                      color: context.primaryColor,
-                      text: languages.save,
+                    DecoratedBox(
+                      decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                      child: AppButton(
+                        onTap: _handleSubmitClick,
+                        color: Color(0x00000000),
+                        text: languages.save,
+                        textStyle: boldTextStyle(color: white),
+                        elevation: 0,
+                      ),
                     ).expand(),
                   ],
                 ).paddingSymmetric(vertical: 8,horizontal: 16),
@@ -196,9 +212,11 @@ class _ExtraChargesDialogState extends State<ExtraChargesDialog> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '${languages.charge} ${index + 1}',
-                style: boldTextStyle(size: 14, color: context.primaryColor),
+              _gradientText(
+                Text(
+                  '${languages.charge} ${index + 1}',
+                  style: boldTextStyle(size: 14),
+                ),
               ),
               if (chargeRows.length > 1)
                 IconButton(

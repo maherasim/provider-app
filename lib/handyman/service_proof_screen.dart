@@ -154,19 +154,23 @@ class ServiceProofScreenState extends State<ServiceProofScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(
-        languages.lblServiceProof,
-        color: context.primaryColor,
-        textColor: white,
-        backWidget: BackWidget(),
+      appBar: AppBar(
+        title: Text(
+          languages.lblServiceProof,
+          style: boldTextStyle(color: white, size: APP_BAR_TEXT_SIZE),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: BackWidget(),
+        flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
       ),
       body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: EdgeInsets.all(16),
-            child: Form(
-              key: formKey,
-              child: Column(
+          children: [
+            SingleChildScrollView(
+              padding: EdgeInsets.all(16),
+              child: Form(
+                key: formKey,
+                child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -229,7 +233,7 @@ class ServiceProofScreenState extends State<ServiceProofScreen> {
                     child: Column(
                       children: [
                         DottedBorderWidget(
-                          color: primaryColor.withValues(alpha:0.6),
+                          color: gradientRed.withValues(alpha:0.6),
                           strokeWidth: 1,
                           padding: EdgeInsets.all(16),
                           radius: defaultRadius,
@@ -258,11 +262,16 @@ class ServiceProofScreenState extends State<ServiceProofScreen> {
                           alignment: Alignment.topRight,
                           children: [
                             Image.file(File(imageFiles[i].path), width: 90, height: 90, fit: BoxFit.cover).cornerRadiusWithClipRRect(defaultRadius),
-                            Container(
-                              decoration: boxDecorationWithRoundedCorners(boxShape: BoxShape.circle, backgroundColor: primaryColor),
-                              margin: EdgeInsets.only(right: 8, top: 8),
-                              padding: EdgeInsets.all(4),
-                              child: Icon(Icons.close, size: 16, color: white),
+                            DecoratedBox(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: kAppPrimaryGradient,
+                              ),
+                              child: Container(
+                                margin: EdgeInsets.only(right: 8, top: 8),
+                                padding: EdgeInsets.all(4),
+                                child: Icon(Icons.close, size: 16, color: white),
+                              ),
                             ).onTap(() {
                               imageFiles.removeAt(i);
                               setState(() {});
@@ -274,21 +283,25 @@ class ServiceProofScreenState extends State<ServiceProofScreen> {
               ),
             ),
           ),
-          Observer(
-            builder: (context) => LoaderWidget().visible(appStore.isLoading),
-          )
-        ],
-      ),
-      bottomNavigationBar: AppButton(
-        text: languages.lblSubmit,
-        textColor: Colors.white,
-        color: primaryColor,
-        onTap: () {
-          if (formKey.currentState!.validate()) {
-            formKey.currentState!.save();
-            submit();
-          }
-        },
+            Observer(
+              builder: (context) => LoaderWidget().visible(appStore.isLoading),
+            ),
+          ],
+        ),
+      bottomNavigationBar: DecoratedBox(
+        decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+        child: AppButton(
+          text: languages.lblSubmit,
+          textColor: Colors.white,
+          color: Colors.transparent,
+          elevation: 0,
+          onTap: () {
+            if (formKey.currentState!.validate()) {
+              formKey.currentState!.save();
+              submit();
+            }
+          },
+        ),
       ).paddingAll(16),
     );
   }

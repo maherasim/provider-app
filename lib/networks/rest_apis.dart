@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:handyman_provider_flutter/auth/sign_in_screen.dart';
 import 'package:handyman_provider_flutter/components/app_widgets.dart';
@@ -19,6 +20,8 @@ import 'package:handyman_provider_flutter/models/country_list_response.dart';
 import 'package:handyman_provider_flutter/models/dashboard_response.dart';
 import 'package:handyman_provider_flutter/models/document_list_response.dart';
 import 'package:handyman_provider_flutter/models/handyman_dashboard_response.dart';
+import 'package:handyman_provider_flutter/models/handyman_service_payment_model.dart';
+import 'package:handyman_provider_flutter/models/handyman_rating_model.dart';
 import 'package:handyman_provider_flutter/models/login_response.dart';
 import 'package:handyman_provider_flutter/models/notification_list_response.dart';
 import 'package:handyman_provider_flutter/models/payment_history_response.dart';
@@ -52,6 +55,7 @@ import 'package:handyman_provider_flutter/provider/jobRequest/models/post_job_de
 import 'package:handyman_provider_flutter/provider/jobRequest/models/post_job_response.dart';
 import 'package:handyman_provider_flutter/provider/provider_dashboard_screen.dart';
 import 'package:handyman_provider_flutter/provider/timeSlots/models/slot_data.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
@@ -104,35 +108,38 @@ Future<void> logout(BuildContext context) async {
                     },
                   ).expand(),
                   16.width,
-                  AppButton(
-                    child: Text(languages.lblYes, style: boldTextStyle(color: white)),
-                    color: primaryColor,
-                    elevation: 0,
-                    onTap: () async {
-                      if (await isNetworkAvailable()) {
-                        appStore.setLoading(true);
-                        // Unregister FCM token from backend first (best-effort)
-                        try {
-                          final token = await FirebaseMessaging.instance.getToken();
-                          if (token != null) {
-                            await PushApi.unregister(token: token);
+                  DecoratedBox(
+                    decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                    child: AppButton(
+                      child: Text(languages.lblYes, style: boldTextStyle(color: white)),
+                      color: Color(0x00000000),
+                      elevation: 0,
+                      onTap: () async {
+                        if (await isNetworkAvailable()) {
+                          appStore.setLoading(true);
+                          // Unregister FCM token from backend first (best-effort)
+                          try {
+                            final token = await FirebaseMessaging.instance.getToken();
+                            if (token != null) {
+                              await PushApi.unregister(token: token);
+                            }
+                          } catch (e) {
+                            log('Push unregister error: $e');
                           }
-                        } catch (e) {
-                          log('Push unregister error: $e');
+                          logoutApi().then((value) async {}).catchError((e) {
+                            toast(e.toString());
+                          });
+                          await clearPreferences();
+                          await inAppPurchaseService.logoutToRevenueCate();
+
+                          appStore.setLoading(false);
+
+                          SignInScreen().launch(context, isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+                        } else {
+                          toast(errorInternetNotAvailable);
                         }
-                        logoutApi().then((value) async {}).catchError((e) {
-                          toast(e.toString());
-                        });
-                        await clearPreferences();
-                        await inAppPurchaseService.logoutToRevenueCate();
-
-                        appStore.setLoading(false);
-
-                        SignInScreen().launch(context, isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
-                      } else {
-                        toast(errorInternetNotAvailable);
-                      }
-                    },
+                      },
+                    ),
                   ).expand(),
                 ],
               ),
@@ -1480,6 +1487,70 @@ Future<BaseResponseModel> saveServiceSlot(Map request) async {
   return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('save-service-slot', request: request, method: HttpMethodType.POST)));
 }
 
+//endregion
+
+//region Handyman Service Payment API
+Future<List<HandymanServicePaymentModel>> getHandymanServicePaymentList({
+  int page = 1,
+  List<HandymanServicePaymentModel> payments = const [],
+  Function(bool)? callback,
+  var perPage = PER_PAGE_ITEM,
+}) async {
+  try {
+    var response = await handleResponse(
+      await buildHttpResponse(
+        'handyman-earnings-list?page=$page&per_page=$perPage',
+        method: HttpMethodType.GET,
+      ),
+    );
+
+    var res = HandymanServicePaymentResponse.fromJson(response);
+
+    if (page == 1) payments.clear();
+    payments.addAll(res.data.validate());
+    appStore.setLoading(false);
+
+    callback?.call(res.data.validate().length != perPage);
+  } catch (e) {
+    appStore.setLoading(false);
+    log(e);
+    throw errorSomethingWentWrong;
+  }
+
+  return payments;
+}
+//endregion
+
+//region Handyman Ratings API
+Future<List<HandymanRatingModel>> getHandymanRatingsList({
+  int page = 1,
+  List<HandymanRatingModel> ratings = const [],
+  Function(bool)? callback,
+  var perPage = PER_PAGE_ITEM,
+}) async {
+  try {
+    var response = await handleResponse(
+      await buildHttpResponse(
+        'booking-ratings-list?page=$page&per_page=$perPage',
+        method: HttpMethodType.GET,
+      ),
+    );
+
+    var res = HandymanRatingResponse.fromJson(response);
+
+    if (page == 1) ratings.clear();
+    ratings.addAll(res.data.validate());
+    appStore.setLoading(false);
+
+    callback?.call(res.data.validate().length != perPage);
+  } catch (e) {
+    appStore.setLoading(false);
+    log(e);
+    throw errorSomethingWentWrong;
+  }
+
+  return ratings;
+}
 //endregion
 
 //region CommonFunctions

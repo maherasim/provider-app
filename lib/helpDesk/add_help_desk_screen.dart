@@ -9,6 +9,7 @@ import 'package:nb_utils/nb_utils.dart';
 import '../../utils/common.dart';
 import '../../utils/constant.dart';
 import '../../utils/images.dart';
+import '../../utils/colors.dart';
 import '../components/app_widgets.dart';
 import '../components/base_scaffold_widget.dart';
 import '../components/chat_gpt_loder.dart';
@@ -156,18 +157,25 @@ class _AddHelpDeskScreenState extends State<AddHelpDeskScreen> {
                 ),
               ),
               Observer(
-                builder: (_) => AppButton(
-                  margin: EdgeInsets.only(left: 16, bottom: 16, right: 16),
-                  text: languages.lblSubmit,
-                  height: 40,
-                  color: appStore.isLoading ? primaryColor.withValues(alpha:0.5) : primaryColor,
-                  textStyle: boldTextStyle(color: white),
-                  width: context.width() - context.navigationBarHeight,
-                  onTap: appStore.isLoading
-                      ? () {}
-                      : () {
-                          checkValidation();
-                        },
+                builder: (_) => DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: appStore.isLoading ? LinearGradient(colors: kAppPrimaryGradientColors.map((c) => c.withValues(alpha: 0.5)).toList()) : kAppPrimaryGradient,
+                    borderRadius: radius(8),
+                  ),
+                  child: AppButton(
+                    margin: EdgeInsets.only(left: 16, bottom: 16, right: 16),
+                    text: languages.lblSubmit,
+                    height: 40,
+                    color: Colors.transparent,
+                    textStyle: boldTextStyle(color: white),
+                    width: context.width() - context.navigationBarHeight,
+                    elevation: 0,
+                    onTap: appStore.isLoading
+                        ? () {}
+                        : () {
+                            checkValidation();
+                          },
+                  ),
                 ),
               ),
             ],

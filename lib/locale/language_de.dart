@@ -2140,6 +2140,15 @@ class LanguageDe extends Languages {
   String get walletBalance => 'Wallet-Guthaben';
 
   @override
+  String get servicePayment => 'Service-Zahlung';
+
+  @override
+  String get handymanRatings => 'Handwerker-Bewertungen';
+
+  @override
+  String get yourComment => 'Ihr Kommentar';
+
+  @override
   String get remainingPayout => 'Verbleibende Auszahlung';
 
   @override

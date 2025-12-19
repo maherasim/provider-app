@@ -2141,6 +2141,15 @@ class LanguageAr extends Languages {
   String get walletBalance => 'رصيد المحفظة';
 
   @override
+  String get servicePayment => 'دفع الخدمة';
+
+  @override
+  String get handymanRatings => 'تقييمات الحرفي';
+
+  @override
+  String get yourComment => 'تعليقك';
+
+  @override
   String get remainingPayout => 'الدفع المتبقي';
 
   @override

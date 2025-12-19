@@ -2141,6 +2141,15 @@ class LanguageHi extends Languages {
   String get walletBalance => 'वॉलेट बैलेंस';
 
   @override
+  String get servicePayment => 'सेवा भुगतान';
+
+  @override
+  String get handymanRatings => 'हैंडीमैन रेटिंग';
+
+  @override
+  String get yourComment => 'आपकी टिप्पणी';
+
+  @override
   String get remainingPayout => 'शेष भुगतान';
 
   @override

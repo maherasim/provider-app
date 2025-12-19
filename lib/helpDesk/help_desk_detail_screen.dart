@@ -131,7 +131,13 @@ class _HelpDeskDetailScreenState extends State<HelpDeskDetailScreen> {
               return await 2.seconds.delay;
             },
             children: [
-              Text('#${widget.helpDeskData.id}', style: boldTextStyle(color: primaryColor)),
+              ShaderMask(
+                shaderCallback: (Rect bounds) {
+                  return kAppPrimaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
+                },
+                blendMode: BlendMode.srcIn,
+                child: Text('#${widget.helpDeskData.id}', style: boldTextStyle()),
+              ),
               8.height,
               Text(
                 formatBookingDate(widget.helpDeskData.createdAt.validate(), format: DATE_FORMAT_11),
@@ -293,16 +299,23 @@ class _HelpDeskDetailScreenState extends State<HelpDeskDetailScreen> {
                                                 textStyle: boldTextStyle(),
                                               ),
                                               16.width,
-                                              AppButton(
-                                                text: languages.lblSubmit,
-                                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                                color: appStore.isLoading ? primaryColor.withValues(alpha:0.5) : primaryColor,
-                                                textStyle: boldTextStyle(color: white),
-                                                onTap: appStore.isLoading
-                                                    ? () {}
-                                                    : () {
-                                                        checkValidation();
-                                                      },
+                                              DecoratedBox(
+                                                decoration: BoxDecoration(
+                                                  gradient: appStore.isLoading ? LinearGradient(colors: kAppPrimaryGradientColors.map((c) => c.withValues(alpha: 0.5)).toList()) : kAppPrimaryGradient,
+                                                  borderRadius: radius(8),
+                                                ),
+                                                child: AppButton(
+                                                  text: languages.lblSubmit,
+                                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                                  color: Colors.transparent,
+                                                  textStyle: boldTextStyle(color: white),
+                                                  elevation: 0,
+                                                  onTap: appStore.isLoading
+                                                      ? () {}
+                                                      : () {
+                                                          checkValidation();
+                                                        },
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -324,7 +337,7 @@ class _HelpDeskDetailScreenState extends State<HelpDeskDetailScreen> {
                                         positiveText: languages.closed.capitalizeFirstLetter(),
                                         negativeText: languages.lblNo,
                                         dialogType: DialogType.CONFIRMATION,
-                                        primaryColor: primaryColor,
+                                        primaryColor: gradientRed,
                                         onAccept: (p0) async {
                                           appStore.setLoading(true);
                                           helpDeskClosed(id: widget.helpDeskData.id.validate(), status: widget.helpDeskData.status.validate());
@@ -335,17 +348,24 @@ class _HelpDeskDetailScreenState extends State<HelpDeskDetailScreen> {
                                     textStyle: boldTextStyle(),
                                   ).expand(),
                                   16.width,
-                                  AppButton(
-                                    text: languages.reply,
-                                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                    color: appStore.isLoading ? primaryColor.withValues(alpha:0.5) : primaryColor,
-                                    textStyle: boldTextStyle(color: white),
-                                    onTap: () {
-                                      isReplyBtnClick = true;
-                                      imageFiles.clear();
-                                      descriptionCont.clear();
-                                      setState(() {});
-                                    },
+                                  DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      gradient: appStore.isLoading ? LinearGradient(colors: kAppPrimaryGradientColors.map((c) => c.withValues(alpha: 0.5)).toList()) : kAppPrimaryGradient,
+                                      borderRadius: radius(8),
+                                    ),
+                                    child: AppButton(
+                                      text: languages.reply,
+                                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                      color: Colors.transparent,
+                                      textStyle: boldTextStyle(color: white),
+                                      elevation: 0,
+                                      onTap: () {
+                                        isReplyBtnClick = true;
+                                        imageFiles.clear();
+                                        descriptionCont.clear();
+                                        setState(() {});
+                                      },
+                                    ),
                                   ).expand(),
                                 ],
                               ).paddingOnly(top: 25),

@@ -4,6 +4,7 @@ import 'package:nb_utils/nb_utils.dart';
 import '../main.dart';
 import '../utils/common.dart';
 import '../utils/configs.dart';
+import '../utils/colors.dart';
 
 class AddSkillComponent extends StatefulWidget {
   const AddSkillComponent({Key? key}) : super(key: key);
@@ -40,9 +41,9 @@ class _AddSkillComponentState extends State<AddSkillComponent> {
         children: [
           Container(
             width: context.width(),
-            decoration: boxDecorationWithRoundedCorners(
+            decoration: BoxDecoration(
+              gradient: kAppPrimaryGradient,
               borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
-              backgroundColor: primaryColor,
             ),
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
@@ -59,18 +60,22 @@ class _AddSkillComponentState extends State<AddSkillComponent> {
             decoration: inputDecoration(context, hint: languages.essentialSkills,fillColor: Colors.black),
           ).paddingAll(16),
           16.height,
-          AppButton(
-            text: languages.btnSave,
-            color: primaryColor,
-            textStyle: boldTextStyle(color: white),
-            width: context.width() - context.navigationBarHeight,
-            onTap: () {
-              if (skillsCont.text.isNotEmpty) {
-                finish(context, skillsCont.text);
-              } else {
-                toast(languages.pleaseAddEssentialSkill);
-              }
-            },
+          DecoratedBox(
+            decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+            child: AppButton(
+              text: languages.btnSave,
+              color: Colors.transparent,
+              elevation: 0,
+              textStyle: boldTextStyle(color: white),
+              width: context.width() - context.navigationBarHeight,
+              onTap: () {
+                if (skillsCont.text.isNotEmpty) {
+                  finish(context, skillsCont.text);
+                } else {
+                  toast(languages.pleaseAddEssentialSkill);
+                }
+              },
+            ),
           ).paddingAll(16),
         ],
       ),

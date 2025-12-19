@@ -515,15 +515,44 @@ class _HandymanProfileFragmentState extends State<HandymanProfileFragment> {
                 ],
               ),
               20.height,
-              TextButton(
-                child: _gradientText(
-                  Text(languages.logout, style: boldTextStyle()),
+              if (appStore.isLoggedIn)
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: context.cardColor,
+                    borderRadius: radius(16),
+                    border: Border.all(color: Colors.red.withValues(alpha: 0.3), width: 1.5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: InkWell(
+                    borderRadius: radius(16),
+                    onTap: () {
+                      appStore.setLoading(false);
+                      logout(context);
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.logout, color: Colors.red, size: 20),
+                          12.width,
+                          Text(
+                            languages.logout,
+                            style: boldTextStyle(color: Colors.red, size: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-                onPressed: () {
-                  appStore.setLoading(false);
-                  logout(context);
-                },
-              ).center().visible(appStore.isLoggedIn),
+              16.height,
             ],
           );
         },

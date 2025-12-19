@@ -4,6 +4,7 @@ import 'package:nb_utils/nb_utils.dart';
 import '../main.dart';
 import '../utils/common.dart';
 import '../utils/configs.dart';
+import '../utils/colors.dart';
 
 class AddKnownLanguagesComponent extends StatefulWidget {
   const AddKnownLanguagesComponent({Key? key}) : super(key: key);
@@ -40,9 +41,9 @@ class _AddKnownLanguagesComponentState extends State<AddKnownLanguagesComponent>
         children: [
           Container(
             width: context.width(),
-            decoration: boxDecorationWithRoundedCorners(
+            decoration: BoxDecoration(
+              gradient: kAppPrimaryGradient,
               borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
-              backgroundColor: primaryColor,
             ),
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
@@ -58,18 +59,22 @@ class _AddKnownLanguagesComponentState extends State<AddKnownLanguagesComponent>
             controller: knownLangCont,
             decoration: inputDecoration(context, hint: languages.knownLanguages,fillColor: Colors.black),
           ).paddingAll(16),
-          AppButton(
-            text: languages.btnSave,
-            color: primaryColor,
-            textStyle: boldTextStyle(color: white),
-            width: context.width() - context.navigationBarHeight,
-            onTap: () {
-              if (knownLangCont.text.isNotEmpty) {
-                finish(context, knownLangCont.text);
-              } else {
-                toast(languages.pleaseAddKnownLanguage);
-              }
-            },
+          DecoratedBox(
+            decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+            child: AppButton(
+              text: languages.btnSave,
+              color: Colors.transparent,
+              elevation: 0,
+              textStyle: boldTextStyle(color: white),
+              width: context.width() - context.navigationBarHeight,
+              onTap: () {
+                if (knownLangCont.text.isNotEmpty) {
+                  finish(context, knownLangCont.text);
+                } else {
+                  toast(languages.pleaseAddKnownLanguage);
+                }
+              },
+            ),
           ).paddingAll(16),
         ],
       ),

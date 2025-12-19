@@ -4,6 +4,7 @@ import 'package:nb_utils/nb_utils.dart';
 import '../main.dart';
 import '../utils/common.dart';
 import '../utils/configs.dart';
+import '../utils/colors.dart';
 
 class AddReasonsComponent extends StatefulWidget {
   const AddReasonsComponent({Key? key}) : super(key: key);
@@ -40,9 +41,9 @@ class _AddReasonsComponentState extends State<AddReasonsComponent> {
         children: [
           Container(
             width: context.width(),
-            decoration: boxDecorationWithRoundedCorners(
+            decoration: BoxDecoration(
+              gradient: kAppPrimaryGradient,
               borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
-              backgroundColor: primaryColor,
             ),
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
@@ -58,18 +59,22 @@ class _AddReasonsComponentState extends State<AddReasonsComponent> {
             controller: reasonsCont,
             decoration: inputDecoration(context, hint: languages.writeReason,fillColor: Colors.black),
           ).paddingAll(16),
-          AppButton(
-            text: languages.btnSave,
-            color: primaryColor,
-            textStyle: boldTextStyle(color: white),
-            width: context.width() - context.navigationBarHeight,
-            onTap: () {
-              if (reasonsCont.text.isNotEmpty) {
-                finish(context, reasonsCont.text);
-              } else {
-                toast(languages.pleaseAddReason);
-              }
-            },
+          DecoratedBox(
+            decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+            child: AppButton(
+              text: languages.btnSave,
+              color: Colors.transparent,
+              elevation: 0,
+              textStyle: boldTextStyle(color: white),
+              width: context.width() - context.navigationBarHeight,
+              onTap: () {
+                if (reasonsCont.text.isNotEmpty) {
+                  finish(context, reasonsCont.text);
+                } else {
+                  toast(languages.pleaseAddReason);
+                }
+              },
+            ),
           ).paddingAll(16),
         ],
       ),

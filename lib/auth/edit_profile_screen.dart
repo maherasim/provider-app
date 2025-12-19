@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:handyman_provider_flutter/components/add_known_languages_component.dart';
 import 'package:handyman_provider_flutter/components/app_widgets.dart';
 import 'package:handyman_provider_flutter/components/back_widget.dart';
 import 'package:handyman_provider_flutter/components/cached_image_widget.dart';
@@ -32,7 +31,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../components/add_reasons_component.dart';
-import '../components/add_skill_component.dart';
 import '../components/chat_gpt_loder.dart';
 import '../models/user_update_response.dart';
 
@@ -50,6 +48,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   List<CountryListResponse> countryList = [];
   List<StateListResponse> stateList = [];
   List<CityListResponse> cityList = [];
+  // Converted to simple text fields - keeping lists for backward compatibility during migration
   List<String> knownLanguages = [];
   List<String> mobility = [];
   List<String> experiences = [];
@@ -81,6 +80,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   TextEditingController cNameCont = TextEditingController();
   TextEditingController vatNumCont = TextEditingController();
   TextEditingController educationCont = TextEditingController();
+  TextEditingController experienceCont = TextEditingController();
+  TextEditingController mobilityCont = TextEditingController();
+  TextEditingController certificationCont = TextEditingController();
 
   FocusNode fNameFocus = FocusNode();
   FocusNode lNameFocus = FocusNode();
@@ -96,6 +98,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   FocusNode cNameFocus = FocusNode();
   FocusNode vatNumFocus = FocusNode();
   FocusNode educationFocus = FocusNode();
+  FocusNode experienceFocus = FocusNode();
+  FocusNode mobilityFocus = FocusNode();
+  FocusNode certificationFocus = FocusNode();
 
   ValueNotifier _valueNotifier = ValueNotifier(true);
 
@@ -171,9 +176,20 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       isEmailVerified = value.data!.isEmailVerified.validate().getBoolInt();
       await setValue(IS_EMAIL_VERIFIED, isEmailVerified);
 
-      if (tempLanguages.isNotEmpty && tempLanguages.isJson()) {
-        Iterable it = jsonDecode(tempLanguages);
-        knownLanguages.addAll(it.map((e) => e.toString()).toList());
+      // Load known languages - handle both JSON array and plain text
+      if (tempLanguages.isNotEmpty) {
+        if (tempLanguages.isJson()) {
+          try {
+            Iterable it = jsonDecode(tempLanguages);
+            knownLangCont.text = it.map((e) => e.toString()).join(', ');
+            // Keep list for backward compatibility
+            knownLanguages.addAll(it.map((e) => e.toString()).toList());
+          } catch (e) {
+            knownLangCont.text = tempLanguages;
+          }
+        } else {
+          knownLangCont.text = tempLanguages;
+        }
       }
 
       if (value.data != null) {
@@ -182,12 +198,26 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         whyChooseMeCont.text = value.data!.whyChooseMeObj.title;
       }
 
+      // Load skills - handle both JSON array and plain text
       String tempSkills = value.data!.skills.validate();
-
-      if (tempSkills.isNotEmpty && tempSkills.isJson()) {
-        Iterable it = jsonDecode(tempSkills);
-        skills.addAll(it.map((e) => e.toString()).toList());
+      if (tempSkills.isNotEmpty) {
+        if (tempSkills.isJson()) {
+          try {
+            Iterable it = jsonDecode(tempSkills);
+            skillsCont.text = it.map((e) => e.toString()).join(', ');
+          } catch (e) {
+            skillsCont.text = tempSkills;
+          }
+        } else {
+          skillsCont.text = tempSkills;
+        }
       }
+      
+      // Load experience, mobility, certification as strings
+      experienceCont.text = value.data!.experience?.validate() ?? '';
+      mobilityCont.text = value.data!.mobility?.validate() ?? '';
+      certificationCont.text = value.data!.certification?.validate() ?? '';
+      
       descriptionCont.text = value.data!.description.validate();
       addressCont.text = value.data!.address.validate();
 
@@ -285,9 +315,36 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     multiPartRequest.fields[CommonKeys.address] = addressCont.text.validate();
     multiPartRequest.fields[UserKeys.designation] =
         designationCont.text.validate();
-    multiPartRequest.fields[UserKeys.knownLanguages] =
-        jsonEncode(knownLanguages);
-    multiPartRequest.fields[UserKeys.skills] = jsonEncode(skills);
+    // Send languages - parse comma-separated text and send as JSON array
+    if (knownLangCont.text.trim().isNotEmpty) {
+      List<String> langList = knownLangCont.text
+          .split(',')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
+      if (langList.isNotEmpty) {
+        multiPartRequest.fields[UserKeys.knownLanguages] = jsonEncode(langList);
+      }
+    } else if (knownLanguages.isNotEmpty) {
+      // Fallback to list if text field is empty but list has items
+      multiPartRequest.fields[UserKeys.knownLanguages] = jsonEncode(knownLanguages);
+    }
+    
+    // Send skills as string (comma-separated or plain text)
+    if (skillsCont.text.trim().isNotEmpty) {
+      multiPartRequest.fields[UserKeys.skills] = skillsCont.text.trim();
+    }
+    
+    // Send experience, mobility, certification as strings
+    if (experienceCont.text.trim().isNotEmpty) {
+      multiPartRequest.fields['experience'] = experienceCont.text.trim();
+    }
+    if (mobilityCont.text.trim().isNotEmpty) {
+      multiPartRequest.fields['mobility'] = mobilityCont.text.trim();
+    }
+    if (certificationCont.text.trim().isNotEmpty) {
+      multiPartRequest.fields['certification'] = certificationCont.text.trim();
+    }
     multiPartRequest.fields[UserKeys.whyChooseReason] =
         jsonEncode(whyChooseMeReasons);
     multiPartRequest.fields[UserKeys.whyChooseTitle] =
@@ -809,218 +866,46 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               hint: languages.hintAddress),
                         ),
                         16.height,
-                        Text(languages.knownLanguages,
-                            style: secondaryTextStyle()),
-                        8.height,
-                        Wrap(
-                          children: knownLanguages.map((e) {
-                            return Stack(
-                              children: [
-                                Container(
-                                  decoration: boxDecorationWithRoundedCorners(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(16)),
-                                    backgroundColor: appStore.isDarkMode
-                                        ? cardDarkColor
-                                        : primaryColor.withValues(alpha: 0.1),
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
-                                  margin: EdgeInsets.all(4),
-                                  child: Text(e, style: primaryTextStyle()),
-                                ),
-                                Positioned(
-                                  right: 1,
-                                  child: Icon(
-                                    Icons.cancel,
-                                    color: Colors.red,
-                                  ).onTap(() {
-                                    knownLanguages.remove(e);
-                                    setState(() {});
-                                  }),
-                                ),
-                              ],
-                            );
-                          }).toList(),
-                        ),
-                        TextButton(
-                          onPressed: () async {
-                            String? res = await showInDialog(
-                              context,
-                              contentPadding: EdgeInsets.zero,
-                              builder: (p0) {
-                                return AddKnownLanguagesComponent();
-                              },
-                            );
-
-                            if (res != null) {
-                              knownLanguages.add(res.trim());
-                              setState(() {});
-                            }
-                          },
-                          child: Text(languages.addKnownLanguage,
-                              style: primaryTextStyle(
-                                  color: context.primaryColor)),
+                        AppTextField(
+                          textFieldType: TextFieldType.NAME,
+                          controller: knownLangCont,
+                          focus: knownLangFocus,
+                          nextFocus: skillsFocus,
+                          decoration: inputDecoration(context,
+                              hint: languages.knownLanguages + ' (comma-separated)'),
+                          suffix: Icon(Icons.language, size: 18, color: context.iconColor).paddingAll(14),
                         ),
                         16.height,
-                        Text(languages.essentialSkills,
-                            style: secondaryTextStyle()),
-                        8.height,
-                        Wrap(
-                          children: skills.map((e) {
-                            return Stack(
-                              children: [
-                                Container(
-                                  decoration: boxDecorationWithRoundedCorners(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(16)),
-                                    backgroundColor: appStore.isDarkMode
-                                        ? cardDarkColor
-                                        : primaryColor.withValues(alpha: 0.1),
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
-                                  margin: EdgeInsets.all(4),
-                                  child: Text(e, style: primaryTextStyle()),
-                                ),
-                                Positioned(
-                                  right: 1,
-                                  child: Icon(
-                                    Icons.cancel,
-                                    color: Colors.red,
-                                  ).onTap(() {
-                                    skills.remove(e);
-                                    setState(() {});
-                                  }),
-                                ),
-                              ],
-                            );
-                          }).toList(),
-                        ),
-                        TextButton(
-                          onPressed: () async {
-                            String? res = await showInDialog(
-                              context,
-                              contentPadding: EdgeInsets.all(0),
-                              builder: (p0) {
-                                return AddSkillComponent();
-                              },
-                            );
-
-                            if (res != null) {
-                              skills.add(res.trim());
-                              setState(() {});
-                            }
-                          },
-                          child: Text(languages.addEssentialSkill,
-                              style: primaryTextStyle(
-                                  color: context.primaryColor)),
+                        AppTextField(
+                          textFieldType: TextFieldType.NAME,
+                          controller: skillsCont,
+                          focus: skillsFocus,
+                          nextFocus: experienceFocus,
+                          decoration: inputDecoration(context,
+                              hint: languages.essentialSkills + ' (comma-separated)'),
+                          suffix: Icon(Icons.work, size: 18, color: context.iconColor).paddingAll(14),
                         ),
                         16.height,
-                        Text('Mobility', style: secondaryTextStyle()),
-                        8.height,
-                        Wrap(
-                          children: mobility.map((e) {
-                            return Stack(
-                              children: [
-                                Container(
-                                  decoration: boxDecorationWithRoundedCorners(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(16)),
-                                    backgroundColor: appStore.isDarkMode
-                                        ? cardDarkColor
-                                        : primaryColor.withValues(alpha: 0.1),
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
-                                  margin: EdgeInsets.all(4),
-                                  child: Text(e, style: primaryTextStyle()),
-                                ),
-                                Positioned(
-                                  right: 1,
-                                  child: Icon(
-                                    Icons.cancel,
-                                    color: Colors.red,
-                                  ).onTap(() {
-                                    mobility.remove(e);
-                                    setState(() {});
-                                  }),
-                                ),
-                              ],
-                            );
-                          }).toList(),
-                        ),
-                        TextButton(
-                          onPressed: () async {
-                            String? res = await showInDialog(
-                              context,
-                              contentPadding: EdgeInsets.zero,
-                              builder: (p0) {
-                                return AddKnownLanguagesComponent();
-                              },
-                            );
-
-                            if (res != null) {
-                              mobility.add(res.trim());
-                              setState(() {});
-                            }
-                          },
-                          child: Text('Add Mobility',
-                              style: primaryTextStyle(
-                                  color: context.primaryColor)),
+                        AppTextField(
+                          textFieldType: TextFieldType.NAME,
+                          controller: mobilityCont,
+                          focus: mobilityFocus,
+                          nextFocus: certificationFocus,
+                          decoration: inputDecoration(context,
+                              hint: 'Mobility (e.g., Car, Bike, Public Transport)'),
+                          suffix: Icon(Icons.directions_car, size: 18, color: context.iconColor).paddingAll(14),
                         ),
                         16.height,
-                        Text('Experience', style: secondaryTextStyle()),
-                        8.height,
-                        Wrap(
-                          children: experiences.map((e) {
-                            return Stack(
-                              children: [
-                                Container(
-                                  decoration: boxDecorationWithRoundedCorners(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(16)),
-                                    backgroundColor: appStore.isDarkMode
-                                        ? cardDarkColor
-                                        : primaryColor.withValues(alpha: 0.1),
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
-                                  margin: EdgeInsets.all(4),
-                                  child: Text(e, style: primaryTextStyle()),
-                                ),
-                                Positioned(
-                                  right: 1,
-                                  child: Icon(
-                                    Icons.cancel,
-                                    color: Colors.red,
-                                  ).onTap(() {
-                                    experiences.remove(e);
-                                    setState(() {});
-                                  }),
-                                ),
-                              ],
-                            );
-                          }).toList(),
-                        ),
-                        TextButton(
-                          onPressed: () async {
-                            String? res = await showInDialog(
-                              context,
-                              contentPadding: EdgeInsets.zero,
-                              builder: (p0) {
-                                return AddKnownLanguagesComponent();
-                              },
-                            );
-
-                            if (res != null) {
-                              experiences.add(res.trim());
-                              setState(() {});
-                            }
-                          },
-                          child: Text('Add Experience',
-                              style: primaryTextStyle(
-                                  color: context.primaryColor)),
+                        AppTextField(
+                          textFieldType: TextFieldType.MULTILINE,
+                          controller: experienceCont,
+                          focus: experienceFocus,
+                          nextFocus: educationFocus,
+                          minLines: 3,
+                          maxLines: 5,
+                          decoration: inputDecoration(context,
+                              hint: 'Experience (describe your work experience)'),
+                          suffix: Icon(Icons.business_center, size: 18, color: context.iconColor).paddingAll(14),
                         ),
                         16.height,
                         AppTextField(
@@ -1031,57 +916,14 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               inputDecoration(context, hint: 'Education'),
                         ),
                         16.height,
-                        Text('Certification', style: secondaryTextStyle()),
-                        8.height,
-                        Wrap(
-                          children: certification.map((e) {
-                            return Stack(
-                              children: [
-                                Container(
-                                  decoration: boxDecorationWithRoundedCorners(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(16)),
-                                    backgroundColor: appStore.isDarkMode
-                                        ? cardDarkColor
-                                        : primaryColor.withValues(alpha: 0.1),
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
-                                  margin: EdgeInsets.all(4),
-                                  child: Text(e, style: primaryTextStyle()),
-                                ),
-                                Positioned(
-                                  right: 1,
-                                  child: Icon(
-                                    Icons.cancel,
-                                    color: Colors.red,
-                                  ).onTap(() {
-                                    certification.remove(e);
-                                    setState(() {});
-                                  }),
-                                ),
-                              ],
-                            );
-                          }).toList(),
-                        ),
-                        TextButton(
-                          onPressed: () async {
-                            String? res = await showInDialog(
-                              context,
-                              contentPadding: EdgeInsets.zero,
-                              builder: (p0) {
-                                return AddKnownLanguagesComponent();
-                              },
-                            );
-
-                            if (res != null) {
-                              certification.add(res.trim());
-                              setState(() {});
-                            }
-                          },
-                          child: Text('Add Certification',
-                              style: primaryTextStyle(
-                                  color: context.primaryColor)),
+                        AppTextField(
+                          textFieldType: TextFieldType.NAME,
+                          controller: certificationCont,
+                          focus: certificationFocus,
+                          nextFocus: descriptionFocus,
+                          decoration: inputDecoration(context,
+                              hint: 'Certification (comma-separated)'),
+                          suffix: Icon(Icons.verified, size: 18, color: context.iconColor).paddingAll(14),
                         ),
                         16.height,
                         AppTextField(
@@ -1182,17 +1024,23 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                   color: context.primaryColor)),
                         ),
                         28.height,
-                        AppButton(
-                          text: languages.saveChanges,
-                          height: 40,
-                          color: primaryColor,
-                          textStyle: boldTextStyle(color: white),
-                          width: context.width() - context.navigationBarHeight,
-                          onTap: () {
-                            ifNotTester(context, () {
-                              update();
-                            });
-                          },
+                        Observer(
+                          builder: (context) => DecoratedBox(
+                            decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                            child: AppButton(
+                              text: languages.saveChanges,
+                              height: 40,
+                              color: Colors.transparent,
+                              elevation: 0,
+                              textStyle: boldTextStyle(color: white),
+                              width: context.width() - context.navigationBarHeight,
+                              onTap: appStore.isLoading ? null : () {
+                                ifNotTester(context, () {
+                                  update();
+                                });
+                              },
+                            ),
+                          ),
                         ),
                         24.height,
                       ],
@@ -1230,7 +1078,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
           true, // optional. Shows phone code before the country name.
       onSelect: (Country country) {
         selectedCountryPicker = country;
-        _valueNotifier.notifyListeners();
+        _valueNotifier.value = !_valueNotifier.value;
       },
     );
   }

@@ -172,6 +172,23 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
                           style: secondaryTextStyle(weight: FontWeight.bold)),
                     ],
                   ),
+                if (widget.flag == 1) ...[
+                  Builder(
+                    builder: (context) {
+                      final String city = userData.cityName.validate();
+                      final String country = userData.countryName.validate();
+                      final String locationText = [city, country].where((e) => e.isNotEmpty).join(' - ');
+                      if (locationText.isEmpty) return SizedBox.shrink();
+                      return Padding(
+                        padding: EdgeInsets.only(top: 4),
+                        child: Text(
+                          locationText,
+                          style: secondaryTextStyle(size: 12, color: textSecondaryColorGlobal),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ],
             ).expand(),
             // Removed WhatsApp quick action

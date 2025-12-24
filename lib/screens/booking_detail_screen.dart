@@ -200,10 +200,11 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
       String? currentDateTime = DateFormat(BOOKING_SAVE_FORMAT).format(now);
       startDateTime = bookDetail.bookingDetail!.startAt.validate();
       endDateTime = currentDateTime;
-      var diff = DateTime.parse(currentDateTime)
-          .difference(
-              DateTime.parse(bookDetail.bookingDetail!.startAt.validate()))
-          .inMinutes;
+      final startAtParsed = DateTime.tryParse(bookDetail.bookingDetail!.startAt.validate());
+      final currentParsed = DateTime.tryParse(currentDateTime);
+      var diff = (startAtParsed != null && currentParsed != null)
+          ? currentParsed.difference(startAtParsed).inMinutes
+          : 0;
       num count =
           int.parse(bookDetail.bookingDetail!.durationDiff.validate()) + diff;
       timeInterval = count.toString();
@@ -231,10 +232,11 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
       } else {
         endDateTime = DateFormat(BOOKING_SAVE_FORMAT).format(now);
         startDateTime = bookDetail.bookingDetail!.startAt.validate();
-        var diff = DateTime.parse(endDateTime.validate())
-            .difference(
-                DateTime.parse(bookDetail.bookingDetail!.startAt.validate()))
-            .inMinutes;
+        final endAtParsed = DateTime.tryParse(endDateTime.validate());
+        final startAtParsed = DateTime.tryParse(bookDetail.bookingDetail!.startAt.validate());
+        var diff = (endAtParsed != null && startAtParsed != null)
+            ? endAtParsed.difference(startAtParsed).inMinutes
+            : 0;
         num count =
             int.parse(bookDetail.bookingDetail!.durationDiff.validate()) + diff;
         timeInterval = count.toString();
@@ -256,7 +258,13 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
       //
     }
     else {
-      final date = bookDetail.bookingDetail?.startAt == null ? now : DateTime.parse(bookDetail.bookingDetail!.startAt!);
+      DateTime date = now;
+      if (bookDetail.bookingDetail?.startAt != null) {
+        final parsed = DateTime.tryParse(bookDetail.bookingDetail!.startAt!);
+        if (parsed != null) {
+          date = parsed;
+        }
+      }
       startDateTime = DateFormat(BOOKING_SAVE_FORMAT).format(date);
       paymentStatus = bookDetail.bookingDetail!.isAdvancePaymentDone
           ? SERVICE_PAYMENT_STATUS_ADVANCE_PAID
@@ -311,8 +319,9 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
     await updateLocation(widget.bookingId, latitude ?? "", longitude ?? "")
         .then((value) async {
       handymanLocation = value;
-      locationTime =
-          "${DateTime.parse(value.data.datetime.toString()).timeAgo}";
+      final datetimeStr = value.data.datetime.toString();
+      final parsed = DateTime.tryParse(datetimeStr);
+      locationTime = parsed != null ? "${parsed.timeAgo}" : "";
       locationTimer();
       setState(() {});
     }).catchError((error) {
@@ -325,8 +334,13 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
     locationTimers = Timer.periodic(
         Duration(seconds: handymanUpdateLocationRefreshPeriodInSeconds),
         (Timer timer) {
-      locationTime =
-          "${DateTime.parse(handymanLocation?.data.datetime.toString() ?? DateTime.now().toString()).timeAgo}";
+      final datetimeStr = handymanLocation?.data.datetime.toString();
+      if (datetimeStr != null && datetimeStr.isNotEmpty) {
+        final parsed = DateTime.tryParse(datetimeStr);
+        locationTime = parsed != null ? "${parsed.timeAgo}" : "";
+      } else {
+        locationTime = "${DateTime.now().timeAgo}";
+      }
       setState(() {});
     });
   }
@@ -417,8 +431,9 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
           value.data.longitude != null) {
         setState(() {
           if (isFirstTime) {
-            locationTime =
-                DateTime.parse(value.data.datetime.toString()).timeAgo;
+            final datetimeStr = value.data.datetime.toString();
+            final parsed = DateTime.tryParse(datetimeStr);
+            locationTime = parsed != null ? parsed.timeAgo : "";
           }
           _currentPosition = LatLng(
             double.parse(value.data.latitude.toString()),
@@ -534,12 +549,34 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
   }
 
   String getDateTimeText(BookingData bookingDetail) {
-    String dateTimeText =
-        formatDate(bookingDetail.date.validate(), format: DATE_FORMAT_2);
-    if (bookingDetail.bookingSlot == null) {
-      return '${dateTimeText} at ${formatDate(bookingDetail.date.validate(), isTime: true)}';
-    } else
-      return '${dateTimeText} at ${formatDate(getSlotWithDate(date: bookingDetail.date.validate(), slotTime: bookingDetail.bookingSlot.validate()), isTime: true)}';
+    try {
+      final dateStr = bookingDetail.date.validate();
+      if (dateStr.isEmpty) return 'N/A';
+      
+      String dateTimeText = formatDate(dateStr, format: DATE_FORMAT_2);
+      if (bookingDetail.bookingSlot == null) {
+        final timeText = formatDate(dateStr, isTime: true);
+        return '${dateTimeText} at ${timeText}';
+      } else {
+        try {
+          final slotDate = getSlotWithDate(
+            date: dateStr, 
+            slotTime: bookingDetail.bookingSlot.validate()
+          );
+          final timeText = formatDate(slotDate, isTime: true);
+          return '${dateTimeText} at ${timeText}';
+        } catch (e) {
+          // If slot date parsing fails, fallback to regular date
+          final timeText = formatDate(dateStr, isTime: true);
+          return '${dateTimeText} at ${timeText}';
+        }
+      }
+    } catch (e) {
+      // If date parsing fails completely, return a safe fallback
+      return bookingDetail.date.validate().isNotEmpty 
+          ? bookingDetail.date.validate() 
+          : 'N/A';
+    }
   }
 
   //endregion
@@ -913,7 +950,14 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
             Text("${languages.lastUpdatedAt} ",
                 style: secondaryTextStyle(size: 10)),
             Text(
-              "${DateTime.parse(handymanLocation?.data.datetime.toString() ?? DateTime.now().toString()).timeAgo}",
+              () {
+                final datetimeStr = handymanLocation?.data.datetime.toString();
+                if (datetimeStr != null && datetimeStr.isNotEmpty) {
+                  final parsed = DateTime.tryParse(datetimeStr);
+                  return parsed != null ? "${parsed.timeAgo}" : "";
+                }
+                return "${DateTime.now().timeAgo}";
+              }(),
               style: primaryTextStyle(size: 10),
             ),
           ],
@@ -1940,8 +1984,14 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                                         text: languages.lastUpdatedAt,
                                         style: secondaryTextStyle(size: 12)),
                                     TextSpan(
-                                        text:
-                                            " ${DateTime.parse(handymanLocation?.data.datetime.toString() ?? DateTime.now().toString()).timeAgo}",
+                                        text: () {
+                                          final datetimeStr = handymanLocation?.data.datetime.toString();
+                                          if (datetimeStr != null && datetimeStr.isNotEmpty) {
+                                            final parsed = DateTime.tryParse(datetimeStr);
+                                            return parsed != null ? " ${parsed.timeAgo}" : "";
+                                          }
+                                          return " ${DateTime.now().timeAgo}";
+                                        }(),
                                         style: secondaryTextStyle(size: 12)),
                                   ],
                                 ),
@@ -2020,25 +2070,29 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                               boxDecorationDefault(color: context.cardColor),
                           padding: EdgeInsets.all(16),
                           child: Column(
-                            children: res.data!.handymanData!.map(
-                              (e) {
-                                return BasicInfoComponent(
-                                  1,
-                                  handymanData: e,
-                                  service: res.data!.service,
-                                  bookingDetail: res.data!.bookingDetail!,
-                                  bookingInfo: res.data!,
-                                ).onTap(() {
-                                  if (res.data!.bookingDetail!
-                                          .canCustomerContact &&
-                                      e.id != appStore.userId) {
-                                    HandymanInfoScreen(
-                                            handymanId: e.id,
-                                            service: res.data!.service)
-                                        .launch(context)
-                                        .then((value) => null);
-                                  }
-                                });
+                            children: res.data!.handymanData!.asMap().entries.map(
+                              (entry) {
+                                final e = entry.value;
+                                return Container(
+                                  key: ValueKey('handyman_${e.id}_${entry.key}'),
+                                  child: BasicInfoComponent(
+                                    1,
+                                    handymanData: e,
+                                    service: res.data!.service,
+                                    bookingDetail: res.data!.bookingDetail!,
+                                    bookingInfo: res.data!,
+                                  ).onTap(() {
+                                    if (res.data!.bookingDetail!
+                                            .canCustomerContact &&
+                                        e.id != appStore.userId) {
+                                      HandymanInfoScreen(
+                                              handymanId: e.id,
+                                              service: res.data!.service)
+                                          .launch(context)
+                                          .then((value) => null);
+                                    }
+                                  }),
+                                );
                               },
                             ).toList(),
                           ),

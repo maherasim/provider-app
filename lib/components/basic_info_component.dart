@@ -137,10 +137,39 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
     if (mounted) super.setState(fn);
   }
 
+  Widget _buildHandymanLocation() {
+    // Use widget.handymanData directly to avoid async initialization issues
+    final UserData? data = widget.handymanData ?? userData;
+    final String city = data?.cityName.validate() ?? '';
+    final String country = data?.countryName.validate() ?? '';
+    final String locationText = [city, country].where((e) => e.isNotEmpty).join(' - ');
+    
+    // Always return the same widget structure to maintain stable tree
+    return Padding(
+      padding: EdgeInsets.only(top: 4),
+      child: Text(
+        locationText.isNotEmpty ? locationText : '',
+        style: secondaryTextStyle(size: 12, color: textSecondaryColorGlobal),
+      ),
+    ).visible(locationText.isNotEmpty);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final String memberSince = DateFormat('yyyy-MM-dd')
-        .format(DateTime.parse(userData.createdAt.validate()));
+    String memberSince = '';
+    if (userData.id != null) {
+      try {
+        final String? createdAt = userData.createdAt;
+        if (createdAt != null && createdAt.isNotEmpty) {
+          final DateTime? parsedDate = DateTime.tryParse(createdAt);
+          if (parsedDate != null) {
+            memberSince = DateFormat('yyyy-MM-dd').format(parsedDate);
+          }
+        }
+      } catch (e) {
+        memberSince = '';
+      }
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,23 +201,8 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
                           style: secondaryTextStyle(weight: FontWeight.bold)),
                     ],
                   ),
-                if (widget.flag == 1) ...[
-                  Builder(
-                    builder: (context) {
-                      final String city = userData.cityName.validate();
-                      final String country = userData.countryName.validate();
-                      final String locationText = [city, country].where((e) => e.isNotEmpty).join(' - ');
-                      if (locationText.isEmpty) return SizedBox.shrink();
-                      return Padding(
-                        padding: EdgeInsets.only(top: 4),
-                        child: Text(
-                          locationText,
-                          style: secondaryTextStyle(size: 12, color: textSecondaryColorGlobal),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                if (widget.flag == 1)
+                  _buildHandymanLocation(),
               ],
             ).expand(),
             // Removed WhatsApp quick action
@@ -198,7 +212,7 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
           Column(
             children: [
               16.height,
-              if (userData.createdAt.validate().isNotEmpty)
+              if (memberSince.isNotEmpty)
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

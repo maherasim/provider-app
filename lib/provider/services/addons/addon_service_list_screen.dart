@@ -11,6 +11,7 @@ import '../../../main.dart';
 import '../../../models/booking_detail_response.dart';
 import '../../../networks/rest_apis.dart';
 import '../../../utils/common.dart';
+import '../../../utils/colors.dart';
 import 'add_addon_service_screen.dart';
 
 class AddonServiceListScreen extends StatefulWidget {
@@ -62,19 +63,56 @@ class _AddonServiceListScreenState extends State<AddonServiceListScreen> {
 
   Future<void> confirmationDialog(
       {required ServiceAddon addonServiceData}) async {
-    showConfirmDialogCustom(
+    await showInDialog(
       context,
-      title:
-          '${languages.areYouSureWantToDeleteThe} ${addonServiceData.name.validate()} ${languages.addOns}?',
-      primaryColor: context.primaryColor,
-      positiveText: languages.lblYes,
-      negativeText: languages.lblNo,
-      onAccept: (context) async {
-        ifNotTester(context, () {
-          appStore.setLoading(true);
-          removeAddonService(addonId: addonServiceData.id.validate());
-          setState(() {});
-        });
+      contentPadding: EdgeInsets.all(0),
+      builder: (_) {
+        return Container(
+          decoration: boxDecorationDefault(color: context.cardColor, borderRadius: radius(12)),
+          padding: EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${languages.areYouSureWantToDeleteThe} ${addonServiceData.name.validate()} ${languages.addOns}?',
+                style: boldTextStyle(),
+              ),
+              16.height,
+              Row(
+                children: [
+                  AppButton(
+                    text: languages.lblNo,
+                    elevation: 0,
+                    color: appStore.isDarkMode ? context.scaffoldBackgroundColor : white,
+                    textColor: textPrimaryColorGlobal,
+                    onTap: () {
+                      finish(context);
+                    },
+                  ).expand(),
+                  16.width,
+                  DecoratedBox(
+                    decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                    child: AppButton(
+                      text: languages.lblYes,
+                      elevation: 0,
+                      color: Colors.transparent,
+                      textStyle: boldTextStyle(color: white),
+                      onTap: () {
+                        finish(context);
+                        ifNotTester(context, () {
+                          appStore.setLoading(true);
+                          removeAddonService(addonId: addonServiceData.id.validate());
+                          setState(() {});
+                        });
+                      },
+                    ),
+                  ).expand(),
+                ],
+              ),
+            ],
+          ),
+        );
       },
     );
   }

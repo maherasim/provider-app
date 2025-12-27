@@ -5,7 +5,6 @@ import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/provider/timeSlots/components/available_slots_component.dart';
 import 'package:handyman_provider_flutter/provider/timeSlots/components/days_component.dart';
 import 'package:handyman_provider_flutter/provider/timeSlots/models/slot_data.dart';
-import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
@@ -141,11 +140,17 @@ class EditTimeSlotScreenState extends State<EditTimeSlotScreen> {
           Observer(builder: (_) => LoaderWidget().visible(appStore.isLoading)),
         ],
       ),
-      bottomNavigationBar: AppButton(
-        width: context.width(),
-        color: primaryColor,
-        text: languages.lblUpdate,
-        onTap: () {
+      bottomNavigationBar: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: kAppPrimaryGradient,
+          borderRadius: radius(),
+        ),
+        child: AppButton(
+          width: context.width(),
+          color: Colors.transparent,
+          text: languages.lblUpdate,
+          textStyle: boldTextStyle(color: white),
+          onTap: () {
           // Remove existing slot for the selected day
           widget.slotData.removeWhere((element) => 
             element.date?.year == selectedDay.year && 
@@ -184,6 +189,7 @@ class EditTimeSlotScreenState extends State<EditTimeSlotScreen> {
           widget.onSave.call(widget.slotData);
           setState((){});
         },
+        ),
       ).paddingAll(24),
     );
   }

@@ -1435,6 +1435,8 @@ abstract class Languages {
 
   String get yourComment;
 
+  String get rateYourExperience;
+
   String get remainingPayout;
 
   String get totalRevenue;

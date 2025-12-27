@@ -11,8 +11,8 @@ import '../../../../models/booking_detail_response.dart';
 import '../../../../models/service_model.dart';
 import '../../../../networks/rest_apis.dart';
 import '../../../../utils/common.dart';
-import '../../../../utils/configs.dart';
 import '../../../../utils/constant.dart';
+import '../../../../utils/colors.dart';
 
 class SelectAddonServiceComponent extends StatefulWidget {
   final bool isUpdate;
@@ -106,7 +106,9 @@ class _SelectAddonServiceComponentState extends State<SelectAddonServiceComponen
         appBar: appBarWidget(
           languages.selectService,
           textColor: white,
-          color: context.primaryColor,
+          color: Colors.transparent,
+          elevation: 0.0,
+          flexibleSpace: Container(decoration: BoxDecoration(gradient: kAppPrimaryGradient)),
         ),
         body: Stack(
           children: [
@@ -180,11 +182,25 @@ class _SelectAddonServiceComponentState extends State<SelectAddonServiceComponen
                               ],
                             ).expand(),
                             16.width,
-                            Icon(
-                              ((appStore.selectedServiceData.id == data.id) || selectedIndex == i) ? Icons.check_circle : Icons.radio_button_unchecked,
-                              size: 28,
-                              color: ((appStore.selectedServiceData.id == data.id) || selectedIndex == i) ? primaryColor : context.iconColor,
-                            ),
+                            ((appStore.selectedServiceData.id == data.id) || selectedIndex == i)
+                                ? Container(
+                                    width: 28,
+                                    height: 28,
+                                    decoration: BoxDecoration(
+                                      gradient: kAppPrimaryGradient,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.check_circle,
+                                      size: 28,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : Icon(
+                                    Icons.radio_button_unchecked,
+                                    size: 28,
+                                    color: context.iconColor,
+                                  ),
                             8.width,
                           ],
                         ).onTap(() {
@@ -230,12 +246,19 @@ class _SelectAddonServiceComponentState extends State<SelectAddonServiceComponen
           ],
         ),
         floatingActionButton: appStore.selectedServiceData.id != null
-            ? FloatingActionButton(
-                child: Icon(Icons.check, color: Colors.white),
-                backgroundColor: context.primaryColor,
-                onPressed: () {
-                  finish(context, appStore.selectedServiceData.id);
-                },
+            ? Container(
+                decoration: BoxDecoration(
+                  gradient: kAppPrimaryGradient,
+                  shape: BoxShape.circle,
+                ),
+                child: FloatingActionButton(
+                  child: Icon(Icons.check, color: Colors.white),
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  onPressed: () {
+                    finish(context, appStore.selectedServiceData.id);
+                  },
+                ),
               )
             : Offstage());
   }

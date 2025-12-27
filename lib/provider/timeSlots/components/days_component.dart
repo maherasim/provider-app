@@ -153,11 +153,11 @@ class DaysComponentState extends State<DaysComponent> {
                           width: 36,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: context.primaryColor,
+                            gradient: kAppPrimaryGradient,
                             borderRadius: BorderRadius.circular(8),
                             boxShadow: [
                               BoxShadow(
-                                color: context.primaryColor.withOpacity(0.3),
+                                color: gradientRed.withOpacity(0.3),
                                 blurRadius: 4,
                                 offset: Offset(0, 2),
                               ),
@@ -182,11 +182,11 @@ class DaysComponentState extends State<DaysComponent> {
                         width: 36,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: context.primaryColor,
+                          gradient: kAppPrimaryGradient,
                           borderRadius: BorderRadius.circular(8),
                           boxShadow: [
                             BoxShadow(
-                              color: context.primaryColor.withOpacity(0.3),
+                              color: gradientRed.withOpacity(0.3),
                               blurRadius: 4,
                               offset: Offset(0, 2),
                             ),
@@ -223,14 +223,17 @@ class DaysComponentState extends State<DaysComponent> {
                 height: 60,
                 width: 50,
                 alignment: Alignment.center,
-                decoration: boxDecorationWithRoundedCorners(
-                  backgroundColor: isSelected
-                      ? primaryColor
-                      : appStore.isDarkMode
-                      ? scaffoldDarkColor
-                      : Colors.white,
-                  borderRadius: BorderRadius.circular(defaultRadius),
-                ),
+                decoration: isSelected
+                    ? BoxDecoration(
+                        gradient: kAppPrimaryGradient,
+                        borderRadius: BorderRadius.circular(defaultRadius),
+                      )
+                    : boxDecorationWithRoundedCorners(
+                        backgroundColor: appStore.isDarkMode
+                            ? scaffoldDarkColor
+                            : Colors.white,
+                        borderRadius: BorderRadius.circular(defaultRadius),
+                      ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [

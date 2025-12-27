@@ -9,6 +9,8 @@ class CommonKeys {
   static String bookingId = 'booking_id';
   static String handymanId = 'handyman_id';
   static String userId = 'user_id';
+  static String rating = 'rating';
+  static String review = 'review';
   static String type = 'type';
   static String countryId = 'country_id';
   static String stateId = 'state_id';

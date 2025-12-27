@@ -23,6 +23,7 @@ import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:nb_utils/nb_utils.dart';
 import '../../components/chat_gpt_loder.dart';
 import '../../models/multi_language_request_model.dart';
@@ -1386,7 +1387,9 @@ class _AddServicesState extends State<AddServices> {
       appBar: appBarWidget(
         isUpdate ? languages.lblEditService : languages.hintAddService,
         textColor: white,
-        color: context.primaryColor,
+        color: Colors.transparent,
+        elevation: 0.0,
+        flexibleSpace: Container(decoration: BoxDecoration(gradient: kAppPrimaryGradient)),
         backWidget: BackWidget(),
       ),
       body: Stack(
@@ -1464,22 +1467,32 @@ class _AddServicesState extends State<AddServices> {
                 ),
               ),
               Observer(
-                builder: (_) => AppButton(
-                  margin: EdgeInsets.only(bottom: 12),
-                  text: languages.btnSave,
-                  height: 40,
-                  color: appStore.isLoading
-                      ? primaryColor.withValues(alpha: 0.5)
-                      : primaryColor,
-                  textStyle: boldTextStyle(color: white),
-                  width: context.width() - context.navigationBarHeight,
-                  onTap: appStore.isLoading
-                      ? () {}
-                      : () {
-                          checkValidation(isSave: true);
-                        },
+                builder: (_) => DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: appStore.isLoading
+                        ? LinearGradient(
+                            begin: kAppPrimaryGradient.begin,
+                            end: kAppPrimaryGradient.end,
+                            colors: kAppPrimaryGradientColors.map((c) => c.withValues(alpha: 0.5)).toList(),
+                          )
+                        : kAppPrimaryGradient,
+                    borderRadius: radius(),
+                  ),
+                  child: AppButton(
+                    margin: EdgeInsets.zero,
+                    text: languages.btnSave,
+                    height: 40,
+                    color: Colors.transparent,
+                    textStyle: boldTextStyle(color: white),
+                    width: context.width() - context.navigationBarHeight,
+                    onTap: appStore.isLoading
+                        ? () {}
+                        : () {
+                            checkValidation(isSave: true);
+                          },
+                  ),
                 ),
-              ).paddingOnly(left: 16.0, right: 16.0),
+              ).paddingSymmetric(horizontal: 16.0, vertical: 16.0),
             ],
           ),
           Observer(

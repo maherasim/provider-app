@@ -353,20 +353,23 @@ class FullCalendarComponentState extends State<FullCalendarComponent> {
         child: Container(
           height: 48,
           margin: EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? primaryColor
-                : hasSlot && isCurrentMonth && !isPast
-                    ? Colors.green
-                    : Colors.transparent,
-            shape: BoxShape.circle,
-            border: isToday && !isSelected && !hasSlot
-                ? Border.all(
-                    color: primaryColor.withOpacity(0.5),
-                    width: 1.5,
-                  )
-                : null,
-          ),
+          decoration: isSelected
+              ? BoxDecoration(
+                  gradient: kAppPrimaryGradient,
+                  shape: BoxShape.circle,
+                )
+              : BoxDecoration(
+                  color: hasSlot && isCurrentMonth && !isPast
+                      ? Colors.green
+                      : Colors.transparent,
+                  shape: BoxShape.circle,
+                  border: isToday && !isSelected && !hasSlot
+                      ? Border.all(
+                          color: gradientRed.withOpacity(0.5),
+                          width: 1.5,
+                        )
+                      : null,
+                ),
           child: Center(
             child: Text(
               '${date.day}',

@@ -20,6 +20,8 @@ import '../../../networks/rest_apis.dart';
 import '../../../utils/common.dart';
 import '../../../utils/configs.dart';
 import '../../../utils/constant.dart';
+import '../../../utils/colors.dart';
+import '../../../utils/colors.dart';
 import '../../../utils/images.dart';
 import '../../../utils/model_keys.dart';
 import 'component/select_addon_service_component.dart';
@@ -175,7 +177,10 @@ class _AddAddonServiceScreenState extends State<AddAddonServiceScreen> {
                                       decoration: boxDecorationDefault(shape: BoxShape.circle, color: Colors.white),
                                       child: Container(
                                         padding: const EdgeInsets.all(5),
-                                        decoration: boxDecorationDefault(shape: BoxShape.circle, color: primaryColor),
+                                        decoration: BoxDecoration(
+                                          gradient: kAppPrimaryGradient,
+                                          shape: BoxShape.circle,
+                                        ),
                                         child: const Icon(Icons.edit, size: 16, color: Colors.white),
                                       ),
                                     ),
@@ -216,25 +221,37 @@ class _AddAddonServiceScreenState extends State<AddAddonServiceScreen> {
                     buildFormWidget(),
                     50.height,
                     Observer(
-                      builder: (context) => AppButton(
-                        text: context.translate.btnSave,
-                        height: 40,
-                        color: context.primaryColor,
-                        textStyle: boldTextStyle(color: white),
-                        width: context.width() - context.navigationBarHeight,
-                        onTap: appStore.isLoading
-                            ? null
-                            : () {
-                                ifNotTester(context, () {
-                                  if ((imageFile != null && imageFile!.path.isNotEmpty)) {
-                                    checkValidation(isSave: true);
-                                  } else {
-                                    toast(languages.pleaseSelectImages);
-                                    hideKeyboard(context);
-                                    _showBottomSheet(context);
-                                  }
-                                });
-                              },
+                      builder: (context) => DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: appStore.isLoading
+                              ? LinearGradient(
+                                  begin: kAppPrimaryGradient.begin,
+                                  end: kAppPrimaryGradient.end,
+                                  colors: kAppPrimaryGradientColors.map((c) => c.withValues(alpha: 0.5)).toList(),
+                                )
+                              : kAppPrimaryGradient,
+                          borderRadius: radius(),
+                        ),
+                        child: AppButton(
+                          text: context.translate.btnSave,
+                          height: 40,
+                          color: Colors.transparent,
+                          textStyle: boldTextStyle(color: white),
+                          width: context.width() - context.navigationBarHeight,
+                          onTap: appStore.isLoading
+                              ? null
+                              : () {
+                                  ifNotTester(context, () {
+                                    if ((imageFile != null && imageFile!.path.isNotEmpty)) {
+                                      checkValidation(isSave: true);
+                                    } else {
+                                      toast(languages.pleaseSelectImages);
+                                      hideKeyboard(context);
+                                      _showBottomSheet(context);
+                                    }
+                                  });
+                                },
+                        ),
                       ),
                     ),
                   ],

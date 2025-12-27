@@ -74,9 +74,10 @@ class ServiceComponent extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2),
                     constraints:
                         BoxConstraints(maxWidth: context.width() * 0.3),
-                    decoration: boxDecorationWithShadow(
-                      backgroundColor: context.cardColor.withValues(alpha: 0.9),
+                    decoration: BoxDecoration(
+                      gradient: kAppPrimaryGradient,
                       borderRadius: radius(24),
+                      boxShadow: defaultBoxShadow(),
                     ),
                     child: Marquee(
                       directionMarguee: DirectionMarguee.oneDirection,
@@ -84,7 +85,7 @@ class ServiceComponent extends StatelessWidget {
                         "${data.subCategoryName.validate().isNotEmpty ? data.subCategoryName.validate() : data.categoryName.validate()}"
                             .toUpperCase(),
                         style: boldTextStyle(
-                            color: appStore.isDarkMode ? white : primaryColor,
+                            color: Colors.white,
                             size: 12),
                       ).paddingSymmetric(horizontal: 8, vertical: 4),
                     ),
@@ -101,10 +102,11 @@ class ServiceComponent extends StatelessWidget {
                   right: 8,
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: boxDecorationWithShadow(
-                      backgroundColor: primaryColor,
+                    decoration: BoxDecoration(
+                      gradient: kAppPrimaryGradient,
                       borderRadius: radius(24),
                       border: Border.all(color: context.cardColor, width: 2),
+                      boxShadow: defaultBoxShadow(),
                     ),
                     child: PriceWidget(
                       price: data.price.validate(),

@@ -17,6 +17,7 @@ import 'package:handyman_provider_flutter/components/cached_image_widget.dart';
 import 'package:handyman_provider_flutter/components/countdown_widget.dart';
 import 'package:handyman_provider_flutter/components/price_common_widget.dart';
 import 'package:handyman_provider_flutter/components/price_widget.dart';
+import 'package:handyman_provider_flutter/components/provider_rating_dialog.dart';
 import 'package:handyman_provider_flutter/components/review_list_view_component.dart';
 import 'package:handyman_provider_flutter/components/view_all_label_component.dart';
 import 'package:handyman_provider_flutter/handyman/component/service_proof_list_widget.dart';
@@ -406,6 +407,25 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
     await bookingUpdate(req).then((res) async {
       //
       init(flag: true);
+      
+      // Show rating dialog after booking completion
+      if (val.customer != null && val.bookingDetail != null) {
+        await Future.delayed(Duration(milliseconds: 500));
+        if (mounted) {
+          await showInDialog(
+            context,
+            contentPadding: EdgeInsets.all(0),
+            builder: (_) {
+              return ProviderRatingDialog(
+                bookingId: val.bookingDetail!.id.validate(),
+                customerId: val.customer!.id.validate(),
+                customerName: val.customer!.firstName.validate() + ' ' + val.customer!.lastName.validate(),
+                customerImage: val.customer!.profileImage.validate(),
+              );
+            },
+          );
+        }
+      }
     }).catchError((e) {
       toast(e.toString(), print: true);
     });
@@ -554,7 +574,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
       if (dateStr.isEmpty) return 'N/A';
       
       String dateTimeText = formatDate(dateStr, format: DATE_FORMAT_2);
-      if (bookingDetail.bookingSlot == null) {
+    if (bookingDetail.bookingSlot == null) {
         final timeText = formatDate(dateStr, isTime: true);
         return '${dateTimeText} at ${timeText}';
       } else {
@@ -2076,21 +2096,21 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                                 return Container(
                                   key: ValueKey('handyman_${e.id}_${entry.key}'),
                                   child: BasicInfoComponent(
-                                    1,
-                                    handymanData: e,
-                                    service: res.data!.service,
-                                    bookingDetail: res.data!.bookingDetail!,
-                                    bookingInfo: res.data!,
-                                  ).onTap(() {
-                                    if (res.data!.bookingDetail!
-                                            .canCustomerContact &&
-                                        e.id != appStore.userId) {
-                                      HandymanInfoScreen(
-                                              handymanId: e.id,
-                                              service: res.data!.service)
-                                          .launch(context)
-                                          .then((value) => null);
-                                    }
+                                  1,
+                                  handymanData: e,
+                                  service: res.data!.service,
+                                  bookingDetail: res.data!.bookingDetail!,
+                                  bookingInfo: res.data!,
+                                ).onTap(() {
+                                  if (res.data!.bookingDetail!
+                                          .canCustomerContact &&
+                                      e.id != appStore.userId) {
+                                    HandymanInfoScreen(
+                                            handymanId: e.id,
+                                            service: res.data!.service)
+                                        .launch(context)
+                                        .then((value) => null);
+                                  }
                                   }),
                                 );
                               },

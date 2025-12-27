@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 class SlotWidget extends StatelessWidget {
@@ -23,13 +24,21 @@ class SlotWidget extends StatelessWidget {
     required this.onTap,
   });
 
-  Color _getBackgroundColor(BuildContext context) {
-    if (isAvailable && isSelected) {
-      return activeColor;
-    } else if (isSelected) {
-      return activeColor;
+  Decoration _getDecoration(BuildContext context) {
+    if (isAvailable && isSelected || isSelected) {
+      return BoxDecoration(
+        gradient: kAppPrimaryGradient,
+        boxShadow: defaultBoxShadow(blurRadius: 0, spreadRadius: 0),
+        border: Border.all(color: transparentColor),
+        borderRadius: radius(),
+      );
     } else {
-      return isWhiteBackground ?? context.cardColor;
+      return BoxDecoration(
+        boxShadow: defaultBoxShadow(blurRadius: 0, spreadRadius: 0),
+        border: Border.all(color: isAvailable ? activeColor : transparentColor),
+        color: isWhiteBackground ?? context.cardColor,
+        borderRadius: radius(),
+      );
     }
   }
 
@@ -49,11 +58,7 @@ class SlotWidget extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: width ?? context.width() / 3 - 22,
-        decoration: boxDecorationDefault(
-          boxShadow: defaultBoxShadow(blurRadius: 0, spreadRadius: 0),
-          border: Border.all(color: isAvailable ? activeColor : transparentColor),
-          color: _getBackgroundColor(context),
-        ),
+        decoration: _getDecoration(context),
         padding: EdgeInsets.all(12),
         child: Observer(
           builder: (context) => Text(

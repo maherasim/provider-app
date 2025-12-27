@@ -2145,6 +2145,9 @@ class LanguageEn extends Languages {
   String get yourComment => 'Your Comment';
 
   @override
+  String get rateYourExperience => 'Rate Your Experience';
+
+  @override
   String get remainingPayout => 'Remaining Payout';
 
   @override

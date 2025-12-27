@@ -1551,6 +1551,10 @@ Future<List<HandymanRatingModel>> getHandymanRatingsList({
 
   return ratings;
 }
+
+Future<BaseResponseModel> saveProviderRating(Map request) async {
+  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('save-customer-rating', request: request, method: HttpMethodType.POST)));
+}
 //endregion
 
 //region CommonFunctions

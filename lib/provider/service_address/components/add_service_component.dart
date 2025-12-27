@@ -6,8 +6,8 @@ import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/models/service_address_response.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
-import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 class AddServiceComponent extends StatefulWidget {
@@ -112,9 +112,9 @@ class _AddServiceComponentState extends State<AddServiceComponent> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          decoration: boxDecorationWithRoundedCorners(
+          decoration: BoxDecoration(
+            gradient: kAppPrimaryGradient,
             borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
-            backgroundColor: primaryColor,
           ),
           padding: EdgeInsets.only(left: 24, right: 8, bottom: 8, top: 8),
           child: Row(
@@ -147,19 +147,30 @@ class _AddServiceComponentState extends State<AddServiceComponent> {
                       decoration: inputDecoration(context, hint: languages.hintAddress),
                     ),
                     24.height,
-                    AppButton(
-                      text: isUpdate ? languages.lblUpdate : languages.hintAdd,
-                      height: 40,
-                      color: primaryColor,
-                      enabled: isUpdate ? isTextChangedFromPrevious : true,
-                      disabledColor: context.primaryColor.withValues(alpha:0.5),
-                      textStyle: boldTextStyle(color: white),
-                      width: context.width() - context.navigationBarHeight,
-                      onTap: () async {
-                        ifNotTester(context, () {
-                          addUpdateAddress();
-                        });
-                      },
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: (isUpdate ? isTextChangedFromPrevious : true)
+                            ? kAppPrimaryGradient
+                            : LinearGradient(
+                                begin: kAppPrimaryGradient.begin,
+                                end: kAppPrimaryGradient.end,
+                                colors: kAppPrimaryGradientColors.map((c) => c.withValues(alpha: 0.5)).toList(),
+                              ),
+                        borderRadius: radius(),
+                      ),
+                      child: AppButton(
+                        text: isUpdate ? languages.lblUpdate : languages.hintAdd,
+                        height: 40,
+                        color: Colors.transparent,
+                        enabled: isUpdate ? isTextChangedFromPrevious : true,
+                        textStyle: boldTextStyle(color: white),
+                        width: context.width() - context.navigationBarHeight,
+                        onTap: () async {
+                          ifNotTester(context, () {
+                            addUpdateAddress();
+                          });
+                        },
+                      ),
                     ),
                   ],
                 ).paddingSymmetric(horizontal: 16, vertical: 24),

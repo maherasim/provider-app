@@ -2149,6 +2149,9 @@ class LanguageDe extends Languages {
   String get yourComment => 'Ihr Kommentar';
 
   @override
+  String get rateYourExperience => 'Bewerten Sie Ihre Erfahrung';
+
+  @override
   String get remainingPayout => 'Verbleibende Auszahlung';
 
   @override

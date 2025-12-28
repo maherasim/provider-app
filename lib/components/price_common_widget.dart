@@ -490,22 +490,6 @@ class PriceCommonWidget extends StatelessWidget {
                   ],
                 ),
 
-                /// Hourly completed service
-                if (bookingDetail.isHourlyService &&
-                    bookingDetail.status == BookingStatusKeys.complete)
-                  Align(
-                    alignment: Alignment.center,
-                    child: Column(
-                      children: [
-                        16.height,
-                        Text(
-                          "${languages.lblOnBasisOf} ${calculateTimer(bookingDetail.durationDiff.validate().toInt())} ${getMinHour(durationDiff: bookingDetail.durationDiff.validate())}",
-                          style: secondaryTextStyle(),
-                          textAlign: TextAlign.right,
-                        ),
-                      ],
-                    ),
-                  ),
               ],
             ),
           )

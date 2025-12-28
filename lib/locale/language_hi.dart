@@ -2150,6 +2150,9 @@ class LanguageHi extends Languages {
   String get yourComment => 'आपकी टिप्पणी';
 
   @override
+  String get rateYourExperience => 'अपने अनुभव को रेट करें';
+
+  @override
   String get remainingPayout => 'शेष भुगतान';
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:handyman_provider_flutter/components/cached_image_widget.dart';
+import 'package:handyman_provider_flutter/components/disabled_rating_bar_widget.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
@@ -13,12 +14,20 @@ class ProviderRatingDialog extends StatefulWidget {
   final int customerId;
   final String? customerName;
   final String? customerImage;
+  final String? customerCity;
+  final String? customerCountry;
+  final num? customerRating;
+  final int? customerTotalRatings;
 
   ProviderRatingDialog({
     required this.bookingId,
     required this.customerId,
     this.customerName,
     this.customerImage,
+    this.customerCity,
+    this.customerCountry,
+    this.customerRating,
+    this.customerTotalRatings,
   });
 
   @override
@@ -101,6 +110,33 @@ class _ProviderRatingDialogState extends State<ProviderRatingDialog> {
                         'With ${widget.customerName.validate()}',
                         style: secondaryTextStyle(),
                       ),
+                    if (widget.customerCity.validate().isNotEmpty || widget.customerCountry.validate().isNotEmpty) ...[
+                      2.height,
+                      Text(
+                        [
+                          widget.customerCity.validate(),
+                          widget.customerCountry.validate(),
+                        ].where((e) => e.isNotEmpty).join(', '),
+                        style: secondaryTextStyle(size: 12),
+                      ),
+                    ],
+                    if (widget.customerRating != null && widget.customerRating! > 0) ...[
+                      4.height,
+                      Row(
+                        children: [
+                          DisabledRatingBarWidget(
+                            rating: widget.customerRating!,
+                            size: 14,
+                          ),
+                          4.width,
+                          if (widget.customerTotalRatings != null && widget.customerTotalRatings! > 0)
+                            Text(
+                              '(${widget.customerTotalRatings})',
+                              style: secondaryTextStyle(size: 12),
+                            ),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
               ),

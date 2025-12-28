@@ -421,6 +421,10 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                 customerId: val.customer!.id.validate(),
                 customerName: val.customer!.firstName.validate() + ' ' + val.customer!.lastName.validate(),
                 customerImage: val.customer!.profileImage.validate(),
+                customerCity: val.customer!.cityName.validate(),
+                customerCountry: val.customer!.countryName.validate(),
+                customerRating: val.customer!.customerRating,
+                customerTotalRatings: val.customer!.customerTotalRatings,
               );
             },
           );
@@ -1230,11 +1234,8 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
   Widget _action({required BookingDetailResponse res}) {
     showBottomActionBar = false;
     if (isUserTypeProvider) {
-      if (res.isMe.validate()) {
-        return handleHandyman(res: res);
-      } else {
-        return handleProvider(res: res);
-      }
+      // Providers should always see provider view, even if they're also assigned as handyman
+      return handleProvider(res: res);
     } else if (isUserTypeHandyman) {
       return handleHandyman(res: res);
     }
@@ -1431,6 +1432,162 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
         );
       }
     }
+    else if (res.bookingDetail!.status == BookingStatusKeys.complete) {
+      showBottomActionBar = true;
+      
+      // Helper function to show rate customer dialog
+      void showRateCustomerDialog() {
+        if (res.customer != null) {
+          showInDialog(
+            context,
+            contentPadding: EdgeInsets.all(0),
+            builder: (_) {
+              return ProviderRatingDialog(
+                bookingId: res.bookingDetail!.id.validate(),
+                customerId: res.customer!.id.validate(),
+                customerName: res.customer!.firstName.validate() + ' ' + res.customer!.lastName.validate(),
+                customerImage: res.customer!.profileImage.validate(),
+                customerCity: res.customer!.cityName.validate(),
+                customerCountry: res.customer!.countryName.validate(),
+                customerRating: res.customer!.customerRating,
+                customerTotalRatings: res.customer!.customerTotalRatings,
+              );
+            },
+          ).then((value) {
+            if (value == true) {
+              init(flag: true);
+            }
+          });
+        }
+      }
+
+      if (res.bookingDetail!.paymentMethod == PAYMENT_METHOD_COD && res.bookingDetail!.paymentStatus == PENDING) {
+        return appStore.isLoading ? Offstage() : Row(
+          children: [
+            DecoratedBox(
+              decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+              child: AppButton(
+                text: languages.lblConfirmPayment,
+                color: Colors.transparent,
+                elevation: 0,
+                textStyle: boldTextStyle(color: white),
+                onTap: () {
+                  confirmationRequestDialog(context, BookingStatusKeys.complete, res);
+                },
+              ),
+            ).expand(),
+            if (res.customer != null) ...[
+              16.width,
+              AppButton(
+                text: 'Rate Customer',
+                color: Colors.yellow,
+                elevation: 0,
+                textStyle: boldTextStyle(color: Colors.black),
+                onTap: showRateCustomerDialog,
+              ).expand(),
+            ],
+          ],
+        );
+      }
+      else if (res.bookingDetail!.paymentStatus == PAID || res.bookingDetail!.paymentStatus == PENDING_BY_ADMINS) {
+        return Row(
+          children: [
+            DecoratedBox(
+              decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+              child: AppButton(
+                text: languages.lblServiceProof,
+                color: Colors.transparent,
+                elevation: 0,
+                textStyle: boldTextStyle(color: white),
+                onTap: () {
+                  ServiceProofScreen(bookingDetail: res)
+                      .launch(context, pageRouteAnimation: PageRouteAnimation.Fade)
+                      .then((value) {
+                    init(flag: true);
+                  });
+                },
+              ),
+            ).expand(),
+            if (res.customer != null) ...[
+              16.width,
+              AppButton(
+                text: 'Rate Customer',
+                color: Colors.yellow,
+                elevation: 0,
+                textStyle: boldTextStyle(color: Colors.black),
+                onTap: showRateCustomerDialog,
+              ).expand(),
+            ],
+          ],
+        );
+      }
+      else {
+        // Booking is complete, show rate customer button
+        if (res.customer != null) {
+          return AppButton(
+            text: 'Rate Customer',
+            color: Colors.yellow,
+            elevation: 0,
+            textStyle: boldTextStyle(color: Colors.black),
+            onTap: showRateCustomerDialog,
+          );
+        }
+      }
+    }
+    else if (res.bookingDetail!.status == BookingStatusKeys.inProgress) {
+      showBottomActionBar = true;
+      return Container(
+        child: Row(
+          children: [
+            AppButton(
+              text: languages.hold,
+              color: hold,
+              elevation: 0,
+              textStyle: boldTextStyle(color: white),
+              onTap: () {
+                _showHoldReasonDialog(res);
+              },
+            ).expand(),
+            16.width,
+            DecoratedBox(
+              decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+              child: AppButton(
+                text: languages.done,
+                color: Color(0x00000000),
+                elevation: 0,
+                textStyle: boldTextStyle(color: white),
+                onTap: () {
+                  confirmationRequestDialog(context, BookingStatusKeys.doneByProvider, res);
+                },
+              ),
+            ).expand(),
+          ],
+        ),
+      );
+    }
+    else if (res.bookingDetail!.status == BookingStatusKeys.hold) {
+      showBottomActionBar = true;
+      return DecoratedBox(
+        decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+        child: AppButton(
+          text: 'Resume Work',
+          color: Color(0x00000000),
+          elevation: 0,
+          textStyle: boldTextStyle(color: white),
+          onTap: () {
+            _showGradientConfirmDialog(
+              title: languages.confirmationRequestTxt,
+              positiveText: languages.lblYes,
+              negativeText: languages.lblNo,
+              onAccept: () {
+                appStore.setLoading(true);
+                updateBooking(res, '', BookingStatusKeys.inProgress);
+              },
+            );
+          },
+        ),
+      );
+    }
 
     return Offstage();
   }
@@ -1548,103 +1705,9 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
       return Text(languages.lblWaitingForResponse, style: boldTextStyle())
           .center();
     }
-    else if (res.bookingDetail!.status == BookingStatusKeys.complete) {
-
-      if (res.bookingDetail!.paymentMethod == PAYMENT_METHOD_COD && res.bookingDetail!.paymentStatus == PENDING) {
-        showBottomActionBar = true;
-        return appStore.isLoading ? Offstage() : DecoratedBox(
-          decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
-          child: AppButton(
-            text: languages.lblConfirmPayment,
-            color: Colors.transparent,
-            elevation: 0,
-            textStyle: boldTextStyle(color: white),
-            onTap: () {
-              confirmationRequestDialog(context, BookingStatusKeys.complete, res);
-            },
-          ),
-        );
-      }
-      else if (res.bookingDetail!.paymentStatus == PAID || res.bookingDetail!.paymentStatus == PENDING_BY_ADMINS) {
-        showBottomActionBar = true;
-        return DecoratedBox(
-          decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
-          child: AppButton(
-            text: languages.lblServiceProof,
-            color: Colors.transparent,
-            elevation: 0,
-            textStyle: boldTextStyle(color: white),
-            onTap: () {
-              ServiceProofScreen(bookingDetail: res)
-                  .launch(context, pageRouteAnimation: PageRouteAnimation.Fade)
-                  .then((value) {
-                init(flag: true);
-              });
-            },
-          ),
-        );
-      }
-
-    }
-    else if (res.bookingDetail!.status == BookingStatusKeys.inProgress) {
-
-      showBottomActionBar = true;
-      return Container(
-        child: Row(
-          children: [
-            AppButton(
-              text: languages.hold,
-              color: hold,
-              elevation: 0,
-              textStyle: boldTextStyle(color: white),
-              onTap: () {
-                _showHoldReasonDialog(res);
-              },
-            ).expand(),
-            16.width,
-            DecoratedBox(
-              decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
-              child: AppButton(
-                text: languages.done,
-                color: Color(0x00000000),
-                elevation: 0,
-                textStyle: boldTextStyle(color: white),
-                onTap: () {
-                  confirmationRequestDialog(context, BookingStatusKeys.doneByProvider, res);
-                },
-              ),
-            ).expand(),
-          ],
-        ),
-      );
-
-    }
-    else if (res.bookingDetail!.status == BookingStatusKeys.hold) {
-      showBottomActionBar = true;
-      return DecoratedBox(
-        decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
-        child: AppButton(
-          text: 'Resume Work',
-          color: Color(0x00000000),
-          elevation: 0,
-          textStyle: boldTextStyle(color: white),
-          onTap: () {
-            _showGradientConfirmDialog(
-              title: languages.confirmationRequestTxt,
-              positiveText: languages.lblYes,
-              negativeText: languages.lblNo,
-              onAccept: () {
-                appStore.setLoading(true);
-                updateBooking(res, '', BookingStatusKeys.inProgress);
-              },
-            );
-          },
-        ),
-      );
-    }
     return Offstage();
-
   }
+
 
   Future<void> _showGradientConfirmDialog({
     required String title,

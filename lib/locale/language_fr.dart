@@ -2150,6 +2150,9 @@ class LanguageFr extends Languages {
   String get yourComment => 'Votre commentaire';
 
   @override
+  String get rateYourExperience => 'Évaluez votre expérience';
+
+  @override
   String get remainingPayout => 'Paiement restant';
 
   @override

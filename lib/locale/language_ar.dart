@@ -2150,6 +2150,9 @@ class LanguageAr extends Languages {
   String get yourComment => 'تعليقك';
 
   @override
+  String get rateYourExperience => 'قيم تجربتك';
+
+  @override
   String get remainingPayout => 'الدفع المتبقي';
 
   @override

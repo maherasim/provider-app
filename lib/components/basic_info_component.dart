@@ -7,6 +7,7 @@ import 'package:handyman_provider_flutter/models/service_model.dart';
 import 'package:handyman_provider_flutter/models/user_data.dart';
 import 'package:handyman_provider_flutter/networks/frobster_chat_api.dart';
 import 'package:handyman_provider_flutter/screens/chat/frobster_chat_thread_screen.dart';
+import 'package:handyman_provider_flutter/components/disabled_rating_bar_widget.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart'; // ignore: unused_import
@@ -154,6 +155,52 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
     ).visible(locationText.isNotEmpty);
   }
 
+  Widget _buildCustomerLocation() {
+    // Use widget.customerData directly to get city/country
+    final UserData? data = widget.customerData ?? userData;
+    final String city = data?.cityName.validate() ?? '';
+    final String country = data?.countryName.validate() ?? '';
+    final String locationText = [city, country].where((e) => e.isNotEmpty).join(' - ');
+    
+    return Padding(
+      padding: EdgeInsets.only(top: 4),
+      child: Text(
+        locationText.isNotEmpty ? locationText : '',
+        style: secondaryTextStyle(size: 12, color: textSecondaryColorGlobal),
+      ),
+    ).visible(locationText.isNotEmpty);
+  }
+
+  Widget _buildCustomerRating() {
+    // Use widget.customerData directly to get rating
+    final UserData? data = widget.customerData ?? userData;
+    final num? rating = data?.customerRating;
+    final int? totalRatings = data?.customerTotalRatings;
+    
+    // Check if rating exists and is greater than 0
+    if (rating == null || (rating is num && rating <= 0)) {
+      return SizedBox.shrink();
+    }
+    
+    return Padding(
+      padding: EdgeInsets.only(top: 4),
+      child: Row(
+        children: [
+          DisabledRatingBarWidget(
+            rating: rating.toDouble(),
+            size: 14,
+          ),
+          4.width,
+          if (totalRatings != null && totalRatings > 0)
+            Text(
+              '($totalRatings)',
+              style: secondaryTextStyle(size: 12),
+            ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     String memberSince = '';
@@ -203,6 +250,10 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
                   ),
                 if (widget.flag == 1)
                   _buildHandymanLocation(),
+                if (widget.flag == 0)
+                  _buildCustomerLocation(),
+                if (widget.flag == 0)
+                  _buildCustomerRating(),
               ],
             ).expand(),
             // Removed WhatsApp quick action
@@ -256,8 +307,10 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
                     8.width,
                     Builder(
                       builder: (context) {
-                        final String city = userData.cityName.validate();
-                        final String country = userData.countryName.validate();
+                        // Use widget.customerData directly to ensure we get the latest data
+                        final UserData? customerData = widget.customerData ?? userData;
+                        final String city = customerData?.cityName.validate() ?? '';
+                        final String country = customerData?.countryName.validate() ?? '';
                         final String locationText = [city, country].where((e) => e.isNotEmpty).join(' - ');
                         return Text(
                           locationText.isNotEmpty ? locationText : widget.bookingDetail!.address.validate(),

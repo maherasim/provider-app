@@ -51,6 +51,8 @@ class UserData {
   String? education;
   List<String>? languagesArray;
   num? providerServiceRating;
+  num? customerRating;
+  int? customerTotalRatings;
   String? providerType;
   bool? isHandymanAvailable;
   String? loginType;
@@ -129,6 +131,8 @@ class UserData {
     this.contactNumber,
     this.countryId,
     this.providerServiceRating,
+    this.customerRating,
+    this.customerTotalRatings,
     this.stateId,
     this.cityId,
     this.address,
@@ -213,6 +217,8 @@ class UserData {
     designation = json['designation'];
     cityName = json['city_name'] ?? json["city"];
     countryName = json['country_name'] ?? json["country"];
+    customerRating = json['customer_rating'];
+    customerTotalRatings = json['customer_total_ratings'];
     providerType = json['providertype'];
     handymanCommissionId = json['handymantype_id'];
     handymanType = json['handyman_type'];

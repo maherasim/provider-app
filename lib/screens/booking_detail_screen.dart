@@ -1534,60 +1534,6 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
         }
       }
     }
-    else if (res.bookingDetail!.status == BookingStatusKeys.inProgress) {
-      showBottomActionBar = true;
-      return Container(
-        child: Row(
-          children: [
-            AppButton(
-              text: languages.hold,
-              color: hold,
-              elevation: 0,
-              textStyle: boldTextStyle(color: white),
-              onTap: () {
-                _showHoldReasonDialog(res);
-              },
-            ).expand(),
-            16.width,
-            DecoratedBox(
-              decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
-              child: AppButton(
-                text: languages.done,
-                color: Color(0x00000000),
-                elevation: 0,
-                textStyle: boldTextStyle(color: white),
-                onTap: () {
-                  confirmationRequestDialog(context, BookingStatusKeys.doneByProvider, res);
-                },
-              ),
-            ).expand(),
-          ],
-        ),
-      );
-    }
-    else if (res.bookingDetail!.status == BookingStatusKeys.hold) {
-      showBottomActionBar = true;
-      return DecoratedBox(
-        decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
-        child: AppButton(
-          text: 'Resume Work',
-          color: Color(0x00000000),
-          elevation: 0,
-          textStyle: boldTextStyle(color: white),
-          onTap: () {
-            _showGradientConfirmDialog(
-              title: languages.confirmationRequestTxt,
-              positiveText: languages.lblYes,
-              negativeText: languages.lblNo,
-              onAccept: () {
-                appStore.setLoading(true);
-                updateBooking(res, '', BookingStatusKeys.inProgress);
-              },
-            );
-          },
-        ),
-      );
-    }
 
     return Offstage();
   }
@@ -1704,6 +1650,60 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
 
       return Text(languages.lblWaitingForResponse, style: boldTextStyle())
           .center();
+    }
+    else if (res.bookingDetail!.status == BookingStatusKeys.inProgress) {
+      showBottomActionBar = true;
+      return Container(
+        child: Row(
+          children: [
+            AppButton(
+              text: languages.hold,
+              color: hold,
+              elevation: 0,
+              textStyle: boldTextStyle(color: white),
+              onTap: () {
+                _showHoldReasonDialog(res);
+              },
+            ).expand(),
+            16.width,
+            DecoratedBox(
+              decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+              child: AppButton(
+                text: languages.done,
+                color: Color(0x00000000),
+                elevation: 0,
+                textStyle: boldTextStyle(color: white),
+                onTap: () {
+                  confirmationRequestDialog(context, BookingStatusKeys.doneByProvider, res);
+                },
+              ),
+            ).expand(),
+          ],
+        ),
+      );
+    }
+    else if (res.bookingDetail!.status == BookingStatusKeys.hold) {
+      showBottomActionBar = true;
+      return DecoratedBox(
+        decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+        child: AppButton(
+          text: 'Resume Work',
+          color: Color(0x00000000),
+          elevation: 0,
+          textStyle: boldTextStyle(color: white),
+          onTap: () {
+            _showGradientConfirmDialog(
+              title: languages.confirmationRequestTxt,
+              positiveText: languages.lblYes,
+              negativeText: languages.lblNo,
+              onAccept: () {
+                appStore.setLoading(true);
+                updateBooking(res, '', BookingStatusKeys.inProgress);
+              },
+            );
+          },
+        ),
+      );
     }
     return Offstage();
   }
@@ -1971,46 +1971,75 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                   /// Booking & Service Details
                   _serviceDetailWidget(bookingResponse: res.data!),
 
-                  /// Working Address - Show after advance is paid
-                  if(res.data!.bookingDetail!.isAdvancePaymentDone) ...[
-                    if((res.data!.bookingDetail!.address.validate().isNotEmpty) || 
-                       (res.data!.postRequestDetail?.workingAddress.validate().isNotEmpty ?? false)) ...[
-                      16.height,
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 16),
-                        padding: EdgeInsets.all(12),
-                        width: double.infinity,
-                        decoration: boxDecorationWithRoundedCorners(
-                          backgroundColor: context.cardColor,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(Icons.location_on, color: gradientBlue, size: 20),
-                                8.width,
-                                Text(
-                                  'Working Address',
-                                  style: secondaryTextStyle(size: 12),
-                                ),
-                              ],
-                            ),
-                            8.height,
-                            Text(
-                              res.data!.postRequestDetail?.workingAddress.validate().isNotEmpty ?? false
-                                  ? res.data!.postRequestDetail!.workingAddress.validate()
-                                  : res.data!.bookingDetail!.address.validate(),
-                              style: boldTextStyle(size: 14),
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
+                  /// Working Address - Always show after advance payment is done
+                  if(res.data!.bookingDetail!.isAdvancePaymentDone || 
+                     (res.data!.bookingDetail!.address.validate().isNotEmpty) || 
+                     (res.data!.postRequestDetail?.workingAddress.validate().isNotEmpty ?? false)) ...[
+                    16.height,
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 16),
+                      padding: EdgeInsets.all(12),
+                      width: double.infinity,
+                      decoration: boxDecorationWithRoundedCorners(
+                        backgroundColor: context.cardColor,
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                    ],
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.location_on, color: gradientBlue, size: 20),
+                              8.width,
+                              Text(
+                                'Working Address',
+                                style: secondaryTextStyle(size: 12),
+                              ),
+                            ],
+                          ),
+                          8.height,
+                          Builder(
+                            builder: (context) {
+                              // Try to get address from multiple sources
+                              String address = '';
+                              
+                              // 1. Try postRequestDetail workingAddress
+                              if (res.data!.postRequestDetail?.workingAddress.validate().isNotEmpty ?? false) {
+                                address = res.data!.postRequestDetail!.workingAddress.validate();
+                              }
+                              // 2. Try bookingDetail address
+                              else if (res.data!.bookingDetail!.address.validate().isNotEmpty) {
+                                address = res.data!.bookingDetail!.address.validate();
+                              }
+                              // 3. Try to build from city and country
+                              else if (res.data!.bookingDetail!.cityName.validate().isNotEmpty || 
+                                       res.data!.bookingDetail!.countryName.validate().isNotEmpty) {
+                                List<String> locationParts = [];
+                                if (res.data!.bookingDetail!.cityName.validate().isNotEmpty) {
+                                  locationParts.add(res.data!.bookingDetail!.cityName.validate());
+                                }
+                                if (res.data!.bookingDetail!.countryName.validate().isNotEmpty) {
+                                  locationParts.add(res.data!.bookingDetail!.countryName.validate());
+                                }
+                                address = locationParts.join(', ');
+                              }
+                              // 4. Fallback message
+                              else {
+                                address = 'Address not available';
+                              }
+                              
+                              return Text(
+                                address,
+                                style: boldTextStyle(size: 14),
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
 
                   /// Total Service Time

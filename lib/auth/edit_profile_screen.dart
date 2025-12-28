@@ -170,56 +170,103 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
+  // Helper function to safely convert API values to string (handles both String and List)
+  String _safeStringFromValue(dynamic value) {
+    if (value == null) return '';
+    if (value is String) return value;
+    if (value is List) {
+      return value.map((e) => e.toString()).join(', ');
+    }
+    return value.toString();
+  }
+
   Future<void> userDetailAPI() async {
     await getUserDetail(appStore.userId).then((value) async {
-      String tempLanguages = value.data!.knownLanguages.validate();
       isEmailVerified = value.data!.isEmailVerified.validate().getBoolInt();
       await setValue(IS_EMAIL_VERIFIED, isEmailVerified);
 
-      // Load known languages - handle both JSON array and plain text
-      if (tempLanguages.isNotEmpty) {
-        if (tempLanguages.isJson()) {
+      // Load known languages - handle JSON string (from model) or plain string
+      String? knownLanguagesStr = value.data!.knownLanguages;
+      if (knownLanguagesStr != null && knownLanguagesStr.isNotEmpty) {
+        if (knownLanguagesStr.isJson()) {
           try {
-            Iterable it = jsonDecode(tempLanguages);
+            Iterable it = jsonDecode(knownLanguagesStr);
             knownLangCont.text = it.map((e) => e.toString()).join(', ');
-            // Keep list for backward compatibility
+            knownLanguages.clear();
             knownLanguages.addAll(it.map((e) => e.toString()).toList());
           } catch (e) {
-            knownLangCont.text = tempLanguages;
+            knownLangCont.text = knownLanguagesStr;
           }
         } else {
-          knownLangCont.text = tempLanguages;
+          knownLangCont.text = knownLanguagesStr;
         }
       }
 
-      if (value.data != null) {
-        whyChooseMeReasons.clear();
-        whyChooseMeReasons.addAll(value.data!.whyChooseMeObj.reason);
-        whyChooseMeCont.text = value.data!.whyChooseMeObj.title;
-      }
-
-      // Load skills - handle both JSON array and plain text
-      String tempSkills = value.data!.skills.validate();
-      if (tempSkills.isNotEmpty) {
-        if (tempSkills.isJson()) {
+      // Load skills - handle JSON string (from model) or plain string
+      String? skillsStr = value.data!.skills;
+      if (skillsStr != null && skillsStr.isNotEmpty) {
+        if (skillsStr.isJson()) {
           try {
-            Iterable it = jsonDecode(tempSkills);
+            Iterable it = jsonDecode(skillsStr);
             skillsCont.text = it.map((e) => e.toString()).join(', ');
           } catch (e) {
-            skillsCont.text = tempSkills;
+            skillsCont.text = skillsStr;
           }
         } else {
-          skillsCont.text = tempSkills;
+          skillsCont.text = skillsStr;
         }
       }
       
-      // Load experience, mobility, certification as strings
-      experienceCont.text = value.data!.experience?.validate() ?? '';
-      mobilityCont.text = value.data!.mobility?.validate() ?? '';
-      certificationCont.text = value.data!.certification?.validate() ?? '';
+      // Load experience, mobility, certification, education as strings
+      // Handle both String and List types from API
+      experienceCont.text = _safeStringFromValue(value.data!.experience);
+      mobilityCont.text = _safeStringFromValue(value.data!.mobility);
+      certificationCont.text = _safeStringFromValue(value.data!.certification);
+      educationCont.text = _safeStringFromValue(value.data!.education);
       
       descriptionCont.text = value.data!.description.validate();
       addressCont.text = value.data!.address.validate();
+      
+      // Load company name and VAT number
+      cNameCont.text = _safeStringFromValue(value.data!.companyName);
+      vatNumCont.text = _safeStringFromValue(value.data!.vatNumber);
+      
+      // Load why choose me - handle JSON object, direct string, or List
+      if (value.data != null) {
+        whyChooseMeReasons.clear();
+        dynamic whyChooseMeData = value.data!.whyChooseMe;
+        
+        // First try the parsed object
+        if (value.data!.whyChooseMeObj.reason.isNotEmpty) {
+          whyChooseMeReasons.addAll(value.data!.whyChooseMeObj.reason);
+        }
+        if (value.data!.whyChooseMeObj.title.isNotEmpty) {
+          whyChooseMeCont.text = value.data!.whyChooseMeObj.title;
+        } else if (whyChooseMeData != null) {
+          // Handle direct string (plain text)
+          if (whyChooseMeData is String && whyChooseMeData.isNotEmpty) {
+            // Check if it's JSON
+            if (whyChooseMeData.isJson()) {
+              try {
+                Map<String, dynamic> whyChooseMeJson = jsonDecode(whyChooseMeData);
+                if (whyChooseMeJson['title'] != null) {
+                  whyChooseMeCont.text = whyChooseMeJson['title'].toString();
+                }
+                if (whyChooseMeJson['reason'] != null && whyChooseMeJson['reason'] is List) {
+                  whyChooseMeReasons.clear();
+                  whyChooseMeReasons.addAll((whyChooseMeJson['reason'] as List).map((e) => e.toString()).toList());
+                }
+              } catch (e) {
+                // If JSON parsing fails, treat as plain text
+                whyChooseMeCont.text = whyChooseMeData;
+              }
+            } else {
+              // Plain text string
+              whyChooseMeCont.text = whyChooseMeData;
+            }
+          }
+        }
+      }
 
       setState(() {});
     }).catchError((e) {
@@ -315,6 +362,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     multiPartRequest.fields[CommonKeys.address] = addressCont.text.validate();
     multiPartRequest.fields[UserKeys.designation] =
         designationCont.text.validate();
+    multiPartRequest.fields['company_name'] = cNameCont.text.trim();
+    multiPartRequest.fields['vat_number'] = vatNumCont.text.trim();
     // Send languages - parse comma-separated text and send as JSON array
     if (knownLangCont.text.trim().isNotEmpty) {
       List<String> langList = knownLangCont.text
@@ -335,7 +384,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       multiPartRequest.fields[UserKeys.skills] = skillsCont.text.trim();
     }
     
-    // Send experience, mobility, certification as strings
+    // Send experience, mobility, certification, education as strings
     if (experienceCont.text.trim().isNotEmpty) {
       multiPartRequest.fields['experience'] = experienceCont.text.trim();
     }
@@ -344,6 +393,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     }
     if (certificationCont.text.trim().isNotEmpty) {
       multiPartRequest.fields['certification'] = certificationCont.text.trim();
+    }
+    if (educationCont.text.trim().isNotEmpty) {
+      multiPartRequest.fields['education'] = educationCont.text.trim();
     }
     multiPartRequest.fields[UserKeys.whyChooseReason] =
         jsonEncode(whyChooseMeReasons);

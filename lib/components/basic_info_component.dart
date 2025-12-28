@@ -155,6 +155,29 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
     ).visible(locationText.isNotEmpty);
   }
 
+  Widget _buildHandymanRating() {
+    // Use widget.handymanData directly to get rating
+    final UserData? data = widget.handymanData ?? userData;
+    final num? rating = data?.handymanRating;
+    
+    // Check if rating exists and is greater than 0
+    if (rating == null || rating <= 0) {
+      return SizedBox.shrink();
+    }
+    
+    return Padding(
+      padding: EdgeInsets.only(top: 4),
+      child: Row(
+        children: [
+          DisabledRatingBarWidget(
+            rating: rating.toDouble(),
+            size: 14,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildCustomerLocation() {
     // Use widget.customerData directly to get city/country
     final UserData? data = widget.customerData ?? userData;
@@ -178,7 +201,7 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
     final int? totalRatings = data?.customerTotalRatings;
     
     // Check if rating exists and is greater than 0
-    if (rating == null || (rating is num && rating <= 0)) {
+    if (rating == null || rating <= 0) {
       return SizedBox.shrink();
     }
     
@@ -238,16 +261,8 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
                     ).flexible(),
                   ],
                 ),
-                if (widget.flag == 1 &&
-                    userData.handymanRating.validate().toDouble() > 0)
-                  Row(
-                    children: [
-                      Icon(Icons.star, color: rattingColor, size: 16),
-                      2.width,
-                      Text('${userData.handymanRating.validate().toDouble()}',
-                          style: secondaryTextStyle(weight: FontWeight.bold)),
-                    ],
-                  ),
+                if (widget.flag == 1)
+                  _buildHandymanRating(),
                 if (widget.flag == 1)
                   _buildHandymanLocation(),
                 if (widget.flag == 0)

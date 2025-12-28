@@ -1,3 +1,43 @@
+class HandymanServicePaymentSlot {
+  int? id;
+  String? date;
+  String? startTime;
+  String? endTime;
+  int? totalDays;
+  int? totalHours;
+
+  HandymanServicePaymentSlot({
+    this.id,
+    this.date,
+    this.startTime,
+    this.endTime,
+    this.totalDays,
+    this.totalHours,
+  });
+
+  factory HandymanServicePaymentSlot.fromJson(Map<String, dynamic> json) {
+    return HandymanServicePaymentSlot(
+      id: json['id'],
+      date: json['date'],
+      startTime: json['start_time'],
+      endTime: json['end_time'],
+      totalDays: json['total_days'],
+      totalHours: json['total_hours'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['date'] = date;
+    data['start_time'] = startTime;
+    data['end_time'] = endTime;
+    data['total_days'] = totalDays;
+    data['total_hours'] = totalHours;
+    return data;
+  }
+}
+
 class HandymanServicePaymentModel {
   int? id;
   String? bookingId;
@@ -12,6 +52,7 @@ class HandymanServicePaymentModel {
   String? myEarningFormatted;
   num? totalAmount;
   String? totalAmountFormatted;
+  List<HandymanServicePaymentSlot>? serviceSlots;
 
   HandymanServicePaymentModel({
     this.id,
@@ -27,6 +68,7 @@ class HandymanServicePaymentModel {
     this.myEarningFormatted,
     this.totalAmount,
     this.totalAmountFormatted,
+    this.serviceSlots,
   });
 
   factory HandymanServicePaymentModel.fromJson(Map<String, dynamic> json) {
@@ -44,6 +86,9 @@ class HandymanServicePaymentModel {
       myEarningFormatted: json['my_earning_formatted'],
       totalAmount: json['total_amount'],
       totalAmountFormatted: json['total_amount_formatted'],
+      serviceSlots: json['service_slots'] != null
+          ? (json['service_slots'] as List).map((e) => HandymanServicePaymentSlot.fromJson(e)).toList()
+          : null,
     );
   }
 
@@ -64,6 +109,9 @@ class HandymanServicePaymentModel {
     data['my_earning_formatted'] = myEarningFormatted;
     data['total_amount'] = totalAmount;
     data['total_amount_formatted'] = totalAmountFormatted;
+    if (serviceSlots != null) {
+      data['service_slots'] = serviceSlots!.map((e) => e.toJson()).toList();
+    }
     return data;
   }
 }

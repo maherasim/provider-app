@@ -208,9 +208,23 @@ class UserData {
     apiToken = json['api_token'];
     profileImage = json['profile_image'];
     description = json['description'];
-    knownLanguages = json['known_languages'];
+    // Handle known_languages - can be List or String
+    if (json['known_languages'] != null) {
+      if (json['known_languages'] is List) {
+        knownLanguages = jsonEncode(json['known_languages']);
+      } else {
+        knownLanguages = json['known_languages'];
+      }
+    }
     whyChooseMe = json['why_choose_me'];
-    skills = json['skills'];
+    // Handle skills - can be List or String
+    if (json['skills'] != null) {
+      if (json['skills'] is List) {
+        skills = jsonEncode(json['skills']);
+      } else {
+        skills = json['skills'];
+      }
+    }
     uid = json['uid'];
     subscription = json['subscription'] != null ? ProviderSubscriptionModel.fromJson(json['subscription']) : null;
     isSubscribe = json['is_subscribe'];

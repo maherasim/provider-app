@@ -1527,11 +1527,21 @@ Future<List<HandymanRatingModel>> getHandymanRatingsList({
   List<HandymanRatingModel> ratings = const [],
   Function(bool)? callback,
   var perPage = PER_PAGE_ITEM,
+  String? orderBy,
+  String? orderDir,
 }) async {
   try {
+    String queryParams = 'page=$page&per_page=$perPage';
+    if (orderBy != null && orderBy.isNotEmpty) {
+      queryParams += '&order_by=$orderBy';
+    }
+    if (orderDir != null && orderDir.isNotEmpty) {
+      queryParams += '&order_dir=$orderDir';
+    }
+    
     var response = await handleResponse(
       await buildHttpResponse(
-        'booking-ratings-list?page=$page&per_page=$perPage',
+        'handyman-ratings-list?$queryParams',
         method: HttpMethodType.GET,
       ),
     );
@@ -1542,7 +1552,14 @@ Future<List<HandymanRatingModel>> getHandymanRatingsList({
     ratings.addAll(res.data.validate());
     appStore.setLoading(false);
 
-    callback?.call(res.data.validate().length != perPage);
+    // Use pagination info if available, otherwise fallback to length check
+    bool isLastPage = false;
+    if (res.pagination != null) {
+      isLastPage = res.pagination!.nextPageUrl == null;
+    } else {
+      isLastPage = res.data.validate().length != perPage;
+    }
+    callback?.call(isLastPage);
   } catch (e) {
     appStore.setLoading(false);
     log(e);

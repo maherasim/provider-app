@@ -35,6 +35,8 @@ class _HandymanRatingsScreenState extends State<HandymanRatingsScreen> {
     future = getHandymanRatingsList(
       page: page,
       ratings: ratingList,
+      orderBy: 'created_at',
+      orderDir: 'desc',
       callback: (res) {
         appStore.setLoading(false);
         isLastPage = res;

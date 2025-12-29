@@ -4,8 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../../main.dart';
+import '../../utils/colors.dart';
 import '../../utils/common.dart';
-import '../../utils/configs.dart';
 import '../../utils/constant.dart';
 
 class FilterDateRangeComponent extends StatefulWidget {
@@ -94,7 +94,7 @@ class _FilterDateRangeComponentState extends State<FilterDateRangeComponent> {
                 startDate: startDate,
                 endDate: endDate,
                 backgroundColor: context.cardColor,
-                primaryColor: primaryColor,
+                primaryColor: gradientRed,
                 onApplyClick: (start, end) {
                   setState(() {
                     startDate = start;

@@ -147,19 +147,23 @@ class _BookingStatusFilterBottomSheetState extends State<BookingStatusFilterBott
                   },
                 ).expand(),
                 16.width,
-                AppButton(
-                  text: languages.apply,
-                  color: context.primaryColor,
-                  textColor: white,
-                  width: context.width() - context.navigationBarHeight,
-                  onTap: () {
-                    int selectedCount = cachedBookingStatusDropdown!.where((element) => element.isSelected).length;
-                    if (selectedCount >= 1) {
-                      finish(context, cachedBookingStatusDropdown.validate().where((element) => element.isSelected).map((e) => e.value).join(','));
-                    } else {
-                      toast(languages.filterAtLeastOneBookingStatusToast);
-                    }
-                  },
+                DecoratedBox(
+                  decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                  child: AppButton(
+                    text: languages.apply,
+                    color: Colors.transparent,
+                    elevation: 0,
+                    textStyle: boldTextStyle(color: white),
+                    width: context.width() - context.navigationBarHeight,
+                    onTap: () {
+                      int selectedCount = cachedBookingStatusDropdown!.where((element) => element.isSelected).length;
+                      if (selectedCount >= 1) {
+                        finish(context, cachedBookingStatusDropdown.validate().where((element) => element.isSelected).map((e) => e.value).join(','));
+                      } else {
+                        toast(languages.filterAtLeastOneBookingStatusToast);
+                      }
+                    },
+                  ),
                 ).expand(),
               ],
             ).paddingOnly(left: 16, right: 16, bottom: 16),

@@ -408,8 +408,8 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
       //
       init(flag: true);
       
-      // Show rating dialog after booking completion
-      if (val.customer != null && val.bookingDetail != null) {
+      // Show rating dialog after booking completion - only for providers, not handymen
+      if (isUserTypeProvider && val.customer != null && val.bookingDetail != null) {
         await Future.delayed(Duration(milliseconds: 500));
         if (mounted) {
           await showInDialog(
@@ -1971,10 +1971,8 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                   /// Booking & Service Details
                   _serviceDetailWidget(bookingResponse: res.data!),
 
-                  /// Working Address - Always show after advance payment is done
-                  if(res.data!.bookingDetail!.isAdvancePaymentDone || 
-                     (res.data!.bookingDetail!.address.validate().isNotEmpty) || 
-                     (res.data!.postRequestDetail?.workingAddress.validate().isNotEmpty ?? false)) ...[
+                  /// Working Address - Show only after advance payment is done
+                  if(res.data!.bookingDetail!.isAdvancePaymentDone) ...[
                     16.height,
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 16),

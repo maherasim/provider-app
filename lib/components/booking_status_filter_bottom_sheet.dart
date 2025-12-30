@@ -150,19 +150,19 @@ class _BookingStatusFilterBottomSheetState extends State<BookingStatusFilterBott
                 DecoratedBox(
                   decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
                   child: AppButton(
-                    text: languages.apply,
+                  text: languages.apply,
                     color: Colors.transparent,
                     elevation: 0,
                     textStyle: boldTextStyle(color: white),
-                    width: context.width() - context.navigationBarHeight,
-                    onTap: () {
-                      int selectedCount = cachedBookingStatusDropdown!.where((element) => element.isSelected).length;
-                      if (selectedCount >= 1) {
-                        finish(context, cachedBookingStatusDropdown.validate().where((element) => element.isSelected).map((e) => e.value).join(','));
-                      } else {
-                        toast(languages.filterAtLeastOneBookingStatusToast);
-                      }
-                    },
+                  width: context.width() - context.navigationBarHeight,
+                  onTap: () {
+                    int selectedCount = cachedBookingStatusDropdown!.where((element) => element.isSelected).length;
+                    if (selectedCount >= 1) {
+                      finish(context, cachedBookingStatusDropdown.validate().where((element) => element.isSelected).map((e) => e.value).join(','));
+                    } else {
+                      toast(languages.filterAtLeastOneBookingStatusToast);
+                    }
+                  },
                   ),
                 ).expand(),
               ],

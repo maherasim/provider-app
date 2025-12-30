@@ -45,7 +45,7 @@ class _UserChatScreenState extends State<UserChatScreen> with WidgetsBindingObse
   StreamSubscription? _streamSubscription;
 
   int isReceiverOnline = 0;
-  
+
   bool _isSending = false;
 
   bool get isReceiverUserOnline => isReceiverOnline == 1;
@@ -99,7 +99,7 @@ class _UserChatScreenState extends State<UserChatScreen> with WidgetsBindingObse
           minLines: 1,
           onFieldSubmitted: (s) {
             if (!_isSending) {
-              sendMessages();
+            sendMessages();
             }
           },
           focus: messageFocus,
@@ -154,7 +154,7 @@ class _UserChatScreenState extends State<UserChatScreen> with WidgetsBindingObse
   }) async {
     // Prevent duplicate sends
     if (_isSending || appStore.isLoading) return;
-    
+
     // If Message TextField is Empty.
     if (messageCont.text.trim().isEmpty && !isFile) {
       messageFocus.requestFocus();

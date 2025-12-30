@@ -230,36 +230,36 @@ class _BookingFilterScreenState extends State<BookingFilterScreen> {
                 padding: EdgeInsets.all(16),
                 child: DecoratedBox(
                   decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
-                  child: AppButton(
-                    text: languages.apply,
+                child: AppButton(
+                  text: languages.apply,
                     textStyle: boldTextStyle(color: white),
                     color: Colors.transparent,
                     elevation: 0,
-                    onTap: () {
-                      filterStore.bookingStatus = [];
+                  onTap: () {
+                    filterStore.bookingStatus = [];
 
-                      bookingStatusList.forEach((element) {
-                        if (element.isSelected.validate()) {
-                          filterStore.addToBookingStatusList(bookingStatusList: element.value.validate());
-                        }
-                      });
+                    bookingStatusList.forEach((element) {
+                      if (element.isSelected.validate()) {
+                        filterStore.addToBookingStatusList(bookingStatusList: element.value.validate());
+                      }
+                    });
 
-                      filterStore.paymentType = [];
+                    filterStore.paymentType = [];
 
-                      paymentTypeList.forEach((element) {
-                        if (element.isSelected.validate()) {
-                          filterStore.addToPaymentTypeList(paymentTypeList: element.type.validate());
-                        }
-                      });
+                    paymentTypeList.forEach((element) {
+                      if (element.isSelected.validate()) {
+                        filterStore.addToPaymentTypeList(paymentTypeList: element.type.validate());
+                      }
+                    });
 
-                      filterStore.paymentStatus = [];
-                      paymentStatusList.forEach((element) {
-                        if (element.isSelected.validate()) {
-                          filterStore.addToPaymentStatusList(paymentStatusList: element.status.validate());
-                        }
-                      });
-                      finish(context, true);
-                    },
+                    filterStore.paymentStatus = [];
+                    paymentStatusList.forEach((element) {
+                      if (element.isSelected.validate()) {
+                        filterStore.addToPaymentStatusList(paymentStatusList: element.status.validate());
+                      }
+                    });
+                    finish(context, true);
+                  },
                   ),
                 ),
               ),

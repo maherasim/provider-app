@@ -78,12 +78,17 @@ class BankHistory {
   String bankName;
   String branchName;
   String accountNo;
+  String accountHolder;
   String ifscNo;
+  String ibanNo;
+  String bicNumber;
   String mobileNo;
   String aadharNo;
   String panNo;
+  String stripeAccount;
   List<dynamic> bankAttchments;
   int isDefault;
+  int status;
 
   BankHistory({
     this.id = -1,
@@ -91,27 +96,44 @@ class BankHistory {
     this.bankName = "",
     this.branchName = "",
     this.accountNo = "",
+    this.accountHolder = "",
     this.ifscNo = "",
+    this.ibanNo = "",
+    this.bicNumber = "",
     this.mobileNo = "",
     this.aadharNo = "",
     this.panNo = "",
+    this.stripeAccount = "",
     this.bankAttchments = const [],
     this.isDefault = -1,
+    this.status = 1,
   });
+
+  static String _parseString(dynamic value) {
+    if (value == null) return "";
+    String str = value.toString().trim();
+    if (str.isEmpty || str == "null" || str == "Null" || str == "NULL") return "";
+    return str;
+  }
 
   factory BankHistory.fromJson(Map<String, dynamic> json) {
     return BankHistory(
       id: json['id'] is int ? json['id'] : -1,
       providerId: json['provider_id'] is int ? json['provider_id'] : -1,
-      bankName: json['bank_name'] is String ? json['bank_name'] : "",
-      branchName: json['branch_name'] is String ? json['branch_name'] : "",
-      accountNo: json['account_no'] is String ? json['account_no'] : "",
-      ifscNo: json['ifsc_no'] is String ? json['ifsc_no'] : "",
-      mobileNo: json['mobile_no'] is String ? json['mobile_no'] : "",
-      aadharNo: json['aadhar_no'] is String ? json['aadhar_no'] : "",
-      panNo: json['pan_no'] is String ? json['pan_no'] : "",
-      bankAttchments: json['bank_attchments'] is List ? json['bank_attchments'] : [],
-      isDefault: json['is_default'] is int ? json['is_default'] : -1,
+      bankName: _parseString(json['bank_name']),
+      branchName: _parseString(json['branch_name']),
+      accountNo: _parseString(json['account_no']),
+      accountHolder: _parseString(json['account_holder']),
+      ifscNo: _parseString(json['ifsc_no']),
+      ibanNo: _parseString(json['iban_no']),
+      bicNumber: _parseString(json['bic_number']),
+      mobileNo: _parseString(json['mobile_no']),
+      aadharNo: _parseString(json['aadhar_no']),
+      panNo: _parseString(json['pan_no']),
+      stripeAccount: _parseString(json['stripe_account']),
+      bankAttchments: json['bank_attchments'] is List ? json['bank_attchments'] : (json['bank_attachment'] != null ? [json['bank_attachment']] : []),
+      isDefault: json['is_default'] is int ? json['is_default'] : (json['is_default'] != null ? int.tryParse(json['is_default'].toString()) ?? -1 : -1),
+      status: json['status'] is int ? json['status'] : (json['status'] != null ? int.tryParse(json['status'].toString()) ?? 1 : 1),
     );
   }
 
@@ -122,12 +144,17 @@ class BankHistory {
       'bank_name': bankName,
       'branch_name': branchName,
       'account_no': accountNo,
+      'account_holder': accountHolder,
       'ifsc_no': ifscNo,
+      'iban_no': ibanNo,
+      'bic_number': bicNumber,
       'mobile_no': mobileNo,
       'aadhar_no': aadharNo,
       'pan_no': panNo,
+      'stripe_account': stripeAccount,
       'bank_attchments': [],
       'is_default': isDefault,
+      'status': status,
     };
   }
 }

@@ -47,6 +47,11 @@ class _WithdrawRequestState extends State<WithdrawRequest> {
 
   init(String bankName) async {
     appStore.setLoading(true);
+    // Clear the list before fetching new data
+    bankHistoryList.clear();
+    setState(() {});
+    
+    log('Fetching bank list for userId: ${appStore.userId}');
     getBankListDetail(
       page: page,
       list: bankHistoryList,
@@ -55,9 +60,15 @@ class _WithdrawRequestState extends State<WithdrawRequest> {
       },
       userId: appStore.userId,
     ).then((value) {
+      log('Bank list received: ${value.length} banks');
       setState(() {
         bankHistoryList = value;
       });
+      
+      if (bankHistoryList.isEmpty) {
+        log('Warning: Bank list is empty!');
+      }
+      
       bankHistoryList.forEach((value) {
         if(bankName.isNotEmpty && bankName == value.bankName){
              setState(() {
@@ -70,6 +81,10 @@ class _WithdrawRequestState extends State<WithdrawRequest> {
           });
         }
       });
+    }).catchError((e) {
+      toast(e.toString(), print: true);
+      log('Error loading bank list: ${e.toString()}');
+      log('Stack trace: ${StackTrace.current}');
     }).whenComplete(() {
       appStore.setLoading(false);
     });
@@ -238,39 +253,45 @@ class _WithdrawRequestState extends State<WithdrawRequest> {
                     ],
                   ),
                   12.height,
-                  DropdownButtonFormField<BankHistory>(
-                    decoration: inputDecoration(
-                      context,
-                      fillColor: context.cardColor,
+                  Observer(
+                    builder: (_) => DropdownButtonFormField<BankHistory>(
+                      decoration: inputDecoration(
+                        context,
+                        fillColor: context.cardColor,
+                      ),
+                      isExpanded: true,
+                      menuMaxHeight: 300,
+                      value: selectedBank,
+                      hint: Text(
+                        bankHistoryList.isEmpty 
+                            ? languages.noDataFound 
+                            : languages.egCentralNationalBank,
+                        style: secondaryTextStyle(size: 14),
+                      ),
+                      icon: Icon(Icons.keyboard_arrow_down, color: context.iconColor),
+                      dropdownColor: context.cardColor,
+                      items: bankHistoryList.map((BankHistory e) {
+                        return DropdownMenuItem<BankHistory>(
+                          value: e,
+                          child: Text(
+                            e.bankName.validate(),
+                            style: primaryTextStyle(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: bankHistoryList.isEmpty || appStore.isLoading 
+                          ? null 
+                          : (BankHistory? value) async {
+                              selectedBank = value;
+                              setState(() {});
+                            },
+                      validator: (value) {
+                        if (value == null) return errorThisFieldRequired;
+                        return null;
+                      },
                     ),
-                    isExpanded: true,
-                    menuMaxHeight: 300,
-                    value: selectedBank,
-                    hint: Text(
-                      languages.egCentralNationalBank,
-                      style: secondaryTextStyle(size: 14),
-                    ),
-                    icon: Icon(Icons.keyboard_arrow_down, color: context.iconColor),
-                    dropdownColor: context.cardColor,
-                    items: bankHistoryList.map((BankHistory e) {
-                      return DropdownMenuItem<BankHistory>(
-                        value: e,
-                        child: Text(
-                          e.bankName.validate(),
-                          style: primaryTextStyle(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (BankHistory? value) async {
-                      selectedBank = value;
-                      setState(() {});
-                    },
-                    validator: (value) {
-                      if (value == null) return errorThisFieldRequired;
-                      return null;
-                    },
                   ),
                   32.height,
                   // Withdraw Button

@@ -45,6 +45,8 @@ class _UserChatScreenState extends State<UserChatScreen> with WidgetsBindingObse
   StreamSubscription? _streamSubscription;
 
   int isReceiverOnline = 0;
+  
+  bool _isSending = false;
 
   bool get isReceiverUserOnline => isReceiverOnline == 1;
 
@@ -96,7 +98,9 @@ class _UserChatScreenState extends State<UserChatScreen> with WidgetsBindingObse
           textStyle: primaryTextStyle(),
           minLines: 1,
           onFieldSubmitted: (s) {
-            sendMessages();
+            if (!_isSending) {
+              sendMessages();
+            }
           },
           focus: messageFocus,
           cursorHeight: 20,
@@ -132,7 +136,7 @@ class _UserChatScreenState extends State<UserChatScreen> with WidgetsBindingObse
           decoration: boxDecorationDefault(borderRadius: radius(80), color: primaryColor),
           child: IconButton(
             icon: Icon(Icons.send, color: Colors.white),
-            onPressed: () {
+            onPressed: _isSending ? null : () {
               sendMessages();
             },
           ),
@@ -148,8 +152,9 @@ class _UserChatScreenState extends State<UserChatScreen> with WidgetsBindingObse
     bool isFile = false,
     List<String> attachmentfiles = const [],
   }) async {
-    if (appStore.isLoading) return;
-
+    // Prevent duplicate sends
+    if (_isSending || appStore.isLoading) return;
+    
     // If Message TextField is Empty.
     if (messageCont.text.trim().isEmpty && !isFile) {
       messageFocus.requestFocus();
@@ -157,6 +162,10 @@ class _UserChatScreenState extends State<UserChatScreen> with WidgetsBindingObse
     } else if (isFile && attachmentfiles.isEmpty) {
       return;
     }
+    
+    // Set sending flag immediately to prevent duplicate sends
+    _isSending = true;
+    setState(() {});
 
     // Making Request for sending data to firebase
     ChatMessageModel data = ChatMessageModel();
@@ -218,6 +227,9 @@ class _UserChatScreenState extends State<UserChatScreen> with WidgetsBindingObse
       /// ENd
     }).catchError((e) {
       log(e.toString());
+    }).whenComplete(() {
+      _isSending = false;
+      setState(() {});
     });
   }
 

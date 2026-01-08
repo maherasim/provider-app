@@ -39,7 +39,10 @@ Widget aboutCustomerWidget({BuildContext? context, BookingData? bookingDetail}) 
   return Row(
     children: [
       Text(languages.lblAboutCustomer, style: boldTextStyle(size: LABEL_TEXT_SIZE)).expand(),
-      if (bookingDetail!.canCustomerContact && bookingDetail.status != BookingStatusKeys.complete && bookingDetail.status != BookingStatusKeys.cancelled)
+      if (bookingDetail!.canCustomerContact && 
+          bookingDetail.status != BookingStatusKeys.complete && 
+          bookingDetail.status != BookingStatusKeys.cancelled &&
+          bookingDetail.isAdvancePaymentDone)
         Align(
           alignment: Alignment.topRight,
           child: TextButton(

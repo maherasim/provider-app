@@ -1863,6 +1863,12 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
   Widget extraChargesWidget(
       {required List<ExtraChargesModel> extraChargesList,
       required BookingDetailResponse res}) {
+    // Calculate total of all extra charges
+    double totalExtraCharges = extraChargesList.fold<double>(
+      0.0,
+      (sum, charge) => sum + (charge.price.validate() * charge.qty.validate()),
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1897,38 +1903,60 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
           decoration: boxDecorationWithRoundedCorners(
               backgroundColor: context.cardColor, borderRadius: radius()),
           padding: EdgeInsets.all(16),
-          child: AnimatedWrap(
-            itemCount: extraChargesList.length,
-            listAnimationType: ListAnimationType.FadeIn,
-            fadeInConfiguration: FadeInConfiguration(duration: 2.seconds),
-            runSpacing: 8,
-            spacing: 8,
-            itemBuilder: (_, i) {
-              ExtraChargesModel data = extraChargesList[i];
+          child: Column(
+            children: [
+              AnimatedWrap(
+                itemCount: extraChargesList.length,
+                listAnimationType: ListAnimationType.FadeIn,
+                fadeInConfiguration: FadeInConfiguration(duration: 2.seconds),
+                runSpacing: 8,
+                spacing: 8,
+                itemBuilder: (_, i) {
+                  ExtraChargesModel data = extraChargesList[i];
 
-              return Row(
-                children: [
-                  Text(data.title.validate(),
-                          style: secondaryTextStyle(size: 14))
-                      .expand(),
-                  16.width,
-                  Row(
+                  return Row(
                     children: [
-                      Text('${data.qty} * ${data.price.validate()} = ',
-                          style: secondaryTextStyle()),
-                      4.width,
-                      PriceWidget(
-                          price:
-                              '${data.price.validate() * data.qty.validate()}'
-                                  .toDouble(),
-                          size: 16,
-                          color: textPrimaryColorGlobal,
-                          isBoldText: true),
+                      Text(data.title.validate(),
+                              style: secondaryTextStyle(size: 14))
+                          .expand(),
+                      16.width,
+                      Row(
+                        children: [
+                          Text('${data.qty} * ${data.price.validate()} = ',
+                              style: secondaryTextStyle()),
+                          4.width,
+                          PriceWidget(
+                              price:
+                                  '${data.price.validate() * data.qty.validate()}'
+                                      .toDouble(),
+                              size: 16,
+                              color: textPrimaryColorGlobal,
+                              isBoldText: true),
+                        ],
+                      ),
                     ],
-                  ),
-                ],
-              );
-            },
+                  );
+                },
+              ),
+              if (extraChargesList.isNotEmpty) ...[
+                16.height,
+                Divider(color: context.dividerColor, thickness: 1),
+                16.height,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(languages.lblTotalCharges,
+                        style: boldTextStyle(size: 16)),
+                    PriceWidget(
+                      price: totalExtraCharges,
+                      size: 18,
+                      color: textPrimaryColorGlobal,
+                      isBoldText: true,
+                    ),
+                  ],
+                ),
+              ],
+            ],
           ),
         ),
       ],

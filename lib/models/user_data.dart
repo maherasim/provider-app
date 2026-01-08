@@ -53,6 +53,7 @@ class UserData {
   num? providerServiceRating;
   num? customerRating;
   int? customerTotalRatings;
+  List<CustomerReview>? customerReviews;
   String? providerType;
   bool? isHandymanAvailable;
   String? loginType;
@@ -133,6 +134,7 @@ class UserData {
     this.providerServiceRating,
     this.customerRating,
     this.customerTotalRatings,
+    this.customerReviews,
     this.stateId,
     this.cityId,
     this.address,
@@ -233,6 +235,12 @@ class UserData {
     countryName = json['country_name'] ?? json["country"];
     customerRating = json['customer_rating'];
     customerTotalRatings = json['customer_total_ratings'];
+    if (json['customer_reviews'] != null) {
+      customerReviews = [];
+      json['customer_reviews'].forEach((v) {
+        customerReviews!.add(CustomerReview.fromJson(v));
+      });
+    }
     providerType = json['providertype'];
     handymanCommissionId = json['handymantype_id'];
     handymanType = json['handyman_type'];
@@ -367,5 +375,65 @@ class WhyChooseMe {
       'why_choose_me_title': title,
       'why_choose_me_reason': reason.map((e) => e).toList(),
     };
+  }
+}
+
+class CustomerReview {
+  int? id;
+  int? bookingId;
+  int? customerId;
+  String? customerName;
+  String? customerProfileImage;
+  int? providerId;
+  String? providerName;
+  String? providerProfileImage;
+  num? rating;
+  String? review;
+  String? createdAt;
+
+  CustomerReview({
+    this.id,
+    this.bookingId,
+    this.customerId,
+    this.customerName,
+    this.customerProfileImage,
+    this.providerId,
+    this.providerName,
+    this.providerProfileImage,
+    this.rating,
+    this.review,
+    this.createdAt,
+  });
+
+  factory CustomerReview.fromJson(Map<String, dynamic> json) {
+    return CustomerReview(
+      id: json['id'],
+      bookingId: json['booking_id'],
+      customerId: json['customer_id'],
+      customerName: json['customer_name'],
+      customerProfileImage: json['customer_profile_image'],
+      providerId: json['provider_id'],
+      providerName: json['provider_name'],
+      providerProfileImage: json['provider_profile_image'],
+      rating: json['rating'],
+      review: json['review'],
+      createdAt: json['created_at'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (id != null) data['id'] = id;
+    if (bookingId != null) data['booking_id'] = bookingId;
+    if (customerId != null) data['customer_id'] = customerId;
+    if (customerName != null) data['customer_name'] = customerName;
+    if (customerProfileImage != null) data['customer_profile_image'] = customerProfileImage;
+    if (providerId != null) data['provider_id'] = providerId;
+    if (providerName != null) data['provider_name'] = providerName;
+    if (providerProfileImage != null) data['provider_profile_image'] = providerProfileImage;
+    if (rating != null) data['rating'] = rating;
+    if (review != null) data['review'] = review;
+    if (createdAt != null) data['created_at'] = createdAt;
+    return data;
   }
 }

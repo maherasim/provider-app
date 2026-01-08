@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:handyman_provider_flutter/components/handyman_name_widget.dart';
 import 'package:handyman_provider_flutter/components/image_border_component.dart';
+import 'package:handyman_provider_flutter/components/cached_image_widget.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/models/booking_list_response.dart';
 import 'package:handyman_provider_flutter/models/service_model.dart';
@@ -11,6 +12,7 @@ import 'package:handyman_provider_flutter/components/disabled_rating_bar_widget.
 import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart'; // ignore: unused_import
+import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
 import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -199,11 +201,19 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
     final UserData? data = widget.customerData ?? userData;
     final num? rating = data?.customerRating;
     final int? totalRatings = data?.customerTotalRatings;
+    final List<CustomerReview>? customerReviews = data?.customerReviews;
     
     // Check if rating exists and is greater than 0
     if (rating == null || rating <= 0) {
       return SizedBox.shrink();
     }
+    
+    // Check if there are reviews with comments
+    final bool hasReviews = customerReviews != null && 
+        customerReviews.isNotEmpty && 
+        customerReviews.any((r) => r.review.validate().isNotEmpty);
+    
+    final reviewsToShow = hasReviews ? customerReviews : null;
     
     return Padding(
       padding: EdgeInsets.only(top: 4),
@@ -215,12 +225,133 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
           ),
           4.width,
           if (totalRatings != null && totalRatings > 0)
-            Text(
-              '($totalRatings)',
-              style: secondaryTextStyle(size: 12),
+            GestureDetector(
+              onTap: reviewsToShow != null
+                  ? () => _showCustomerReviewsDialog(reviewsToShow)
+                  : null,
+              child: Text(
+                '($totalRatings)',
+                style: secondaryTextStyle(
+                  size: 12,
+                  color: hasReviews ? primaryColor : null,
+                ),
+              ),
             ),
         ],
       ),
+    );
+  }
+
+  void _showCustomerReviewsDialog(List<CustomerReview> reviews) {
+    final reviewsWithComments = reviews.where((r) => r.review.validate().isNotEmpty).toList();
+    
+    if (reviewsWithComments.isEmpty) return;
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Container(
+            constraints: BoxConstraints(maxHeight: context.height() * 0.7),
+            padding: EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '${languages.review} (${reviewsWithComments.length})',
+                      style: boldTextStyle(size: 18),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+                16.height,
+                Flexible(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: reviewsWithComments.length,
+                    separatorBuilder: (context, index) => Divider(color: context.dividerColor, height: 24),
+                    itemBuilder: (context, index) {
+                      final review = reviewsWithComments[index];
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (review.providerName != null) ...[
+                            Row(
+                              children: [
+                                if (review.providerProfileImage.validate().isNotEmpty)
+                                  CachedImageWidget(
+                                    url: review.providerProfileImage!,
+                                    height: 30,
+                                    width: 30,
+                                    fit: BoxFit.cover,
+                                  ).cornerRadiusWithClipRRect(15),
+                                if (review.providerProfileImage.validate().isNotEmpty) 8.width,
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        review.providerName.validate(),
+                                        style: boldTextStyle(size: 14),
+                                      ),
+                                      if (review.rating != null) ...[
+                                        4.height,
+                                        Row(
+                                          children: [
+                                            DisabledRatingBarWidget(
+                                              rating: review.rating!.toDouble(),
+                                              size: 12,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                                if (review.createdAt.validate().isNotEmpty)
+                                  Text(
+                                    formatDate(review.createdAt.validate(), format: DATE_FORMAT_4),
+                                    style: secondaryTextStyle(size: 10),
+                                  ),
+                              ],
+                            ),
+                            8.height,
+                          ],
+                          Text(
+                            review.review.validate(),
+                            style: primaryTextStyle(),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                16.height,
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(
+                      languages.lblCancel,
+                      style: boldTextStyle(color: primaryColor),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

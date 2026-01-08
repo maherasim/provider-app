@@ -96,10 +96,34 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     await showNotification(currentTimeStamp(), title, body, message, isChatMessage: isChatMessage);
     log('Background notification shown successfully');
     
-    // Update chat unread count if it's a chat message
+    // Update counts based on notification type
     if (isChatMessage) {
       log('Emitting LIVESTREAM_UPDATE_CHAT_UNREAD from background handler');
       LiveStream().emit(LIVESTREAM_UPDATE_CHAT_UNREAD);
+      
+      // Increment notification count for chat messages
+      try {
+        final current = appStore.notificationCount;
+        final next = (current > 0) ? current + 1 : 1;
+        await appStore.setNotificationCount(next);
+        log('Updated notification count to: $next (chat)');
+      } catch (e) {
+        log('increment notificationCount error (background): $e');
+      }
+    } else {
+      // Handle booking status updates and other non-chat notifications
+      log('Processing booking/status notification in background - updating notification count');
+      try {
+        final current = appStore.notificationCount;
+        final next = (current > 0) ? current + 1 : 1;
+        await appStore.setNotificationCount(next);
+        log('Updated notification count for booking status: $next (background)');
+        
+        // Emit event to refresh notification list
+        LiveStream().emit(LIVESTREAM_UPDATE_NOTIFICATIONS);
+      } catch (e) {
+        log('increment notificationCount for booking error (background): $e');
+      }
     }
   } catch (e, stackTrace) {
     log('Background showNotification error: $e');

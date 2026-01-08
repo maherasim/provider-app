@@ -121,7 +121,7 @@ Future<void> registerNotificationListeners() async {
         await showNotification(currentTimeStamp(), title, body, message, isChatMessage: isChatMessage);
       }
       
-      // Foreground chat handling - Update chat unread count immediately
+      // Foreground notification handling - Update counts for both chat and booking status updates
       try {
         final data = message.data;
         final isChat = data['type'] == 'chat' || 
@@ -147,9 +147,23 @@ Future<void> registerNotificationListeners() async {
           } catch (e) {
             log('increment notificationCount error: $e');
           }
+        } else {
+          // Handle booking status updates and other non-chat notifications
+          log('Processing booking/status notification - updating notification count');
+          try {
+            final current = appStore.notificationCount;
+            final next = (current > 0) ? current + 1 : 1;
+            await appStore.setNotificationCount(next);
+            log('Updated notification count for booking status: $next');
+            
+            // Emit event to refresh notification list
+            LiveStream().emit(LIVESTREAM_UPDATE_NOTIFICATIONS);
+          } catch (e) {
+            log('increment notificationCount for booking error: $e');
+          }
         }
       } catch (e) {
-        log('onMessage chat parse error: $e');
+        log('onMessage notification parse error: $e');
       }
       
       log('=== END FOREGROUND MESSAGE PROCESSING ===');

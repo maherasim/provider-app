@@ -14,6 +14,7 @@ import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
+import 'package:handyman_provider_flutter/utils/extensions/num_extenstions.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../../components/base_scaffold_widget.dart';
@@ -44,49 +45,29 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
         {PostJob.postRequestId: widget.postJobData.id.validate()});
   }
 
-  Widget _buildDetailCard({
-    required IconData icon,
-    required Color iconColor,
-    required String title,
-    String? value,
-    Widget? valueWidget,
+  Widget _buildSimpleRow({
+    required String label,
+    required String value,
   }) {
-    return Container(
-      padding: EdgeInsets.all(12),
-      width: double.infinity,
-      decoration: boxDecorationWithRoundedCorners(
-        backgroundColor: context.cardColor,
-        borderRadius: BorderRadius.circular(16),
-      ),
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: iconColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, color: iconColor, size: 24),
+          Text(
+            '$label:',
+            style: boldTextStyle(size: 14),
           ),
-          16.width,
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(title, style: secondaryTextStyle(size: 12)),
-                4.height,
-                if (valueWidget != null)
-                  valueWidget
-                else
-                  Text(
-                    value ?? '',
-                    style: boldTextStyle(size: 14),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-              ],
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w300,
+                color: textPrimaryColorGlobal,
+              ),
+              textAlign: TextAlign.right,
             ),
           ),
         ],
@@ -94,233 +75,139 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
     );
   }
 
-  Widget _buildSectionCard({
-    required IconData icon,
-    required Color iconColor,
+  Widget _buildSimpleSection({
     required String title,
     required String content,
   }) {
-    return Container(
-      padding: EdgeInsets.all(12),
-      width: double.infinity,
-      decoration: boxDecorationWithRoundedCorners(
-        backgroundColor: context.cardColor,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: iconColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, color: iconColor, size: 24),
-          ),
-          16.width,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: boldTextStyle(size: 14)),
-                8.height,
-                ReadMoreText(
-                  parseHtmlString(content),
-                  style: primaryTextStyle(size: 14),
-                  colorClickableText: gradientBlue,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget postJobDetailWidget({required PostJobData data}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Job Title - Full Width
-        _buildDetailCard(
-          icon: Icons.work_outline,
-          iconColor: gradientBlue,
-          title: languages.postJobTitle,
-          value: data.title.validate(),
+        Divider(height: 32, thickness: 1),
+        Text(
+          title,
+          style: boldTextStyle(size: 16),
         ),
-        16.height,
-
-        // Location and Job Type Row
-        Row(
-          children: [
-            Expanded(
-              child: _buildDetailCard(
-                icon: Icons.location_on,
-                iconColor: Colors.green,
-                title: "Location",
-                value: "${data.cityName ?? ''}${data.countryName.validate().isEmpty ? "" : "${data.cityName.validate().isEmpty ? "" :  " - "}${data.countryName}"}",
-              ),
-            ),
-            12.width,
-            Expanded(
-              child: _buildDetailCard(
-                icon: Icons.business_center,
-                iconColor: Colors.orange,
-                title: "Job Type",
-                value: data.type?.displayName ?? '',
-              ),
-            ),
-          ],
+        12.height,
+        ReadMoreText(
+          parseHtmlString(content),
+          style: primaryTextStyle(size: 14),
+          colorClickableText: gradientBlue,
         ),
-        16.height,
+      ],
+    );
+  }
 
-        // Start Date and End Date Row - Prominent Cards
-        Row(
-          children: [
-            Expanded(
-              child: _buildDetailCard(
-                icon: Icons.event_available,
-                iconColor: Colors.orange,
-                title: languages.startDate,
-                value: formatDate(data.startDate.validate()),
-              ),
-            ),
-            12.width,
-            Expanded(
-              child: _buildDetailCard(
-                icon: Icons.event_busy,
-                iconColor: Colors.purple,
-                title: languages.endDate,
-                value: formatDate(data.endDate.validate()),
-              ),
-            ),
-          ],
+  String _formatPrice(num price, PriceType? priceType) {
+    String formattedPrice = price.toPriceFormat();
+    if (priceType == PriceType.hourly) {
+      return '$formattedPrice/${languages.lblHr}';
+    } else if (priceType == PriceType.daily) {
+      return '$formattedPrice/${languages.lblDay}';
+    } else if (priceType == PriceType.fixed) {
+      return '$formattedPrice/${languages.lblFixed}';
+    }
+    return formattedPrice;
+  }
+
+  Widget postJobDetailWidget({required PostJobData data}) {
+    String location = "${data.cityName ?? ''}${data.countryName.validate().isEmpty ? "" : "${data.cityName.validate().isEmpty ? "" :  " - "}${data.countryName}"}";
+    
+    // Get travel_required value - convert to display string
+    String travelRequiredValue = 'No'; // Default to "No"
+    if (data.travelRequired != null) {
+      travelRequiredValue = data.travelRequired!.displayName;
+    } else {
+      // If null, check if we can infer from other data or default to "No"
+      travelRequiredValue = 'No';
+    }
+    
+    // Debug: Log the travel_required value
+    log('Travel Required - Raw: ${data.travelRequired}, Display: $travelRequiredValue');
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Job Title
+        Text(
+          data.title.validate(),
+          style: boldTextStyle(size: 18),
+        ),
+        8.height,
+        
+        // Location in red
+        Text(
+          location,
+          style: boldTextStyle(size: 14, color: gradientRed),
         ),
         24.height,
 
-        // Budget & Duration Section
-        Text('Budget & Duration', style: boldTextStyle(size: LABEL_TEXT_SIZE)),
-        16.height,
-        _buildDetailCard(
-          icon: Icons.attach_money,
-          iconColor: Colors.green,
-          title: "Budget/Price",
-          valueWidget: PriceWidget(
-            price: data.price.validate(),
-            isHourlyService: data.priceType == PriceType.hourly,
-            isDailyService: data.priceType == PriceType.daily,
-            isFixesService: data.priceType == PriceType.fixed,
-            hourlyTextStyle: boldTextStyle(size: 14),
-          ),
+        // Simple key-value pairs
+        _buildSimpleRow(
+          label: "Job Type",
+          value: data.type?.displayName ?? '',
         ),
-        12.height,
-        _buildDetailCard(
-          icon: Icons.account_balance_wallet,
-          iconColor: Colors.green,
-          title: "Total Budget",
-          valueWidget: PriceWidget(
-            price: data.totalBudget.validate(),
-            color: textPrimaryColorGlobal,
-            size: 14,
-          ),
+        _buildSimpleRow(
+          label: languages.startDate,
+          value: formatDate(data.startDate.validate()),
         ),
-        12.height,
-        Row(
-          children: [
-            Expanded(
-              child: _buildDetailCard(
-                icon: Icons.calendar_view_week,
-                iconColor: Colors.blue,
-                title: "Total Days",
-                value: data.totalDays?.toString() ?? '0',
-              ),
-            ),
-            12.width,
-            Expanded(
-              child: _buildDetailCard(
-                icon: Icons.access_time,
-                iconColor: Colors.blue,
-                title: "Total Hours",
-                value: data.totalHours?.toString() ?? '0',
-              ),
-            ),
-          ],
+        _buildSimpleRow(
+          label: languages.endDate,
+          value: formatDate(data.endDate.validate()),
         ),
-        24.height,
-
-        // Work Details Section
-        Text('Work Details', style: boldTextStyle(size: LABEL_TEXT_SIZE)),
-        16.height,
-        _buildDetailCard(
-          icon: Icons.home_work,
-          iconColor: Colors.orange,
-          title: "Remote Work Level",
+        _buildSimpleRow(
+          label: "Budget/Price",
+          value: _formatPrice(data.price.validate(), data.priceType),
+        ),
+        _buildSimpleRow(
+          label: "Total Budget",
+          value: data.totalBudget.validate().toPriceFormat(),
+        ),
+        _buildSimpleRow(
+          label: "Total Days",
+          value: data.totalDays?.toString() ?? '0',
+        ),
+        _buildSimpleRow(
+          label: "Total Hours",
+          value: data.totalHours?.toString() ?? '0',
+        ),
+        _buildSimpleRow(
+          label: "Remote Work Level",
           value: data.remoteWorkLevel?.displayName ?? '',
         ),
-        12.height,
-        _buildDetailCard(
-          icon: Icons.flight,
-          iconColor: Colors.grey,
-          title: "Travel Required",
-          value: data.travelRequired?.displayName ?? '',
+        _buildSimpleRow(
+          label: "Travel Required",
+          value: travelRequiredValue,
         ),
-        12.height,
-        Row(
-          children: [
-            Expanded(
-              child: _buildDetailCard(
-                icon: Icons.trending_up,
-                iconColor: Colors.indigo,
-                title: "Career Level",
-                value: data.careerLevel?.displayName ?? '',
-              ),
-            ),
-            12.width,
-            Expanded(
-              child: _buildDetailCard(
-                icon: Icons.school,
-                iconColor: Colors.green,
-                title: "Education Level",
-                value: data.educationLevel?.displayName ?? '',
-              ),
-            ),
-          ],
+        _buildSimpleRow(
+          label: "Career Level",
+          value: data.careerLevel?.displayName ?? '',
         ),
-        24.height,
+        _buildSimpleRow(
+          label: "Education Level",
+          value: data.educationLevel?.displayName ?? '',
+        ),
 
-        // Description, Requirements, Duties, Benefits - Full Width Cards with Read More
+        // Description, Requirements, Duties, Benefits - Simple sections
         if (data.description.validate().isNotEmpty) ...[
-          _buildSectionCard(
-            icon: Icons.description,
-            iconColor: Colors.blue,
+          _buildSimpleSection(
             title: languages.postJobDescription,
             content: data.description.validate(),
           ),
-          16.height,
         ],
         if (data.requirement.validate().isNotEmpty) ...[
-          _buildSectionCard(
-            icon: Icons.star,
-            iconColor: Colors.orange,
-            title: "Skills & Requirement",
+          _buildSimpleSection(
+            title: "Skills & Requirements",
             content: data.requirement.validate(),
           ),
-          16.height,
         ],
         if (data.duties.validate().isNotEmpty) ...[
-          _buildSectionCard(
-            icon: Icons.checklist,
-            iconColor: Colors.purple,
+          _buildSimpleSection(
             title: "Duties & Responsibilities",
             content: data.duties.validate(),
           ),
-          16.height,
         ],
         if (data.benefits.validate().isNotEmpty) ...[
-          _buildSectionCard(
-            icon: Icons.card_giftcard,
-            iconColor: Colors.green,
+          _buildSimpleSection(
             title: "Benefits",
             content: data.benefits.validate(),
           ),

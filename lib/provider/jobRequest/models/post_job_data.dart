@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'dart:developer' as developer;
 
 import 'package:handyman_provider_flutter/models/user_data.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
@@ -164,7 +165,33 @@ class PostJobData {
     remoteWorkLevel: json["remote_work_level"] == null ? null : RemoteWorkLevel.values.firstWhere((e) => e.backendValue == json["remote_work_level"], orElse: () => RemoteWorkLevel.onsite0),
     careerLevel: json["career_level"] == null ? null : CareerLevel.values.firstWhere((e) => e.backendValue == json["career_level"], orElse: () => CareerLevel.entry),
     educationLevel: json["education_level"] == null ? null : EducationLevel.values.firstWhere((e) => e.backendValue == json["education_level"], orElse: () => EducationLevel.highSchool),
-    travelRequired: json["travel_required"] == null ? null : TravelRequirement.values.firstWhere((e) => e.backendValue == json["travel_required"], orElse: () => TravelRequirement.no),
+    travelRequired: () {
+      if (json["travel_required"] == null) return null;
+      final rawValue = json["travel_required"];
+      final stringValue = rawValue.toString().trim();
+      developer.log('Parsing travel_required - Raw: $rawValue, String: $stringValue');
+      
+      // Direct comparison with enum backend values
+      if (stringValue == "1" || stringValue == "yes") {
+        developer.log('Travel Required: YES');
+        return TravelRequirement.yes;
+      } else if (stringValue == "0" || stringValue == "no") {
+        developer.log('Travel Required: NO');
+        return TravelRequirement.no;
+      }
+      
+      // Try to find in enum
+      try {
+        final result = TravelRequirement.values.firstWhere(
+          (e) => e.backendValue == stringValue,
+        );
+        developer.log('Travel Required found in enum: ${result.displayName}');
+        return result;
+      } catch (e) {
+        developer.log('Travel Required not found in enum, defaulting to NO');
+        return TravelRequirement.no;
+      }
+    }(),
     streetAddress: json["street_address"],
     houseNumber: json["house_number"],
     workingAddress: json["working_address"],

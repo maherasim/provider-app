@@ -1999,8 +1999,10 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                   /// Booking & Service Details
                   _serviceDetailWidget(bookingResponse: res.data!),
 
-                  /// Working Address - Show only after advance payment is done
-                  if(res.data!.bookingDetail!.isAdvancePaymentDone) ...[
+                  /// Working Address - Show only after advance payment is done and bank transfer is approved (if applicable)
+                  if(res.data!.bookingDetail!.isAdvancePaymentDone && 
+                     !(res.data!.bookingDetail!.paymentMethod?.toLowerCase() == 'bank_transfer' && 
+                       res.data!.bookingDetail!.bankTransferStatus == '0')) ...[
                     16.height,
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 16),

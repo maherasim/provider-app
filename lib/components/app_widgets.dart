@@ -42,7 +42,9 @@ Widget aboutCustomerWidget({BuildContext? context, BookingData? bookingDetail}) 
       if (bookingDetail!.canCustomerContact && 
           bookingDetail.status != BookingStatusKeys.complete && 
           bookingDetail.status != BookingStatusKeys.cancelled &&
-          bookingDetail.isAdvancePaymentDone)
+          bookingDetail.isAdvancePaymentDone &&
+          !(bookingDetail.paymentMethod?.toLowerCase() == 'bank_transfer' && 
+            bookingDetail.bankTransferStatus == '0'))
         Align(
           alignment: Alignment.topRight,
           child: TextButton(

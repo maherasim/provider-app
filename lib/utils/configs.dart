@@ -1,7 +1,7 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 
-const APP_NAME = 'Provider';
+const APP_NAME = 'Frobster Employer';
 const DEFAULT_LANGUAGE = 'en';
 
 // App primary base color (used where gradients aren't supported)

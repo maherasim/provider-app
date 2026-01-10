@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/bid_list_screen.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
@@ -376,6 +377,16 @@ Future<void> showNotification(int id, String title, String message, RemoteMessag
     return filePath;
   }
 
+  // Helper function to copy asset to file path for notification icon
+  Future<String> _copyAssetToFile(String assetPath, String fileName) async {
+    final Directory directory = await getApplicationDocumentsDirectory();
+    final String filePath = '${directory.path}/$fileName';
+    final ByteData data = await rootBundle.load(assetPath);
+    final File file = File(filePath);
+    await file.writeAsBytes(data.buffer.asUint8List());
+    return filePath;
+  }
+
   BigPictureStyleInformation? bigPictureStyleInformation = remoteMessage.data.containsKey("image_url")
       ? BigPictureStyleInformation(
           FilePathAndroidBitmap(await _downloadAndSaveFile(remoteMessage.data["image_url"], 'bigPicture')),
@@ -412,6 +423,15 @@ Future<void> showNotification(int id, String title, String message, RemoteMessag
     }
   }
 
+  // Get default Frobster logo for notifications
+  String? defaultLogoPath;
+  try {
+    defaultLogoPath = await _copyAssetToFile('assets/provider 36x36.png', 'frobster_logo_notification.png');
+    log('Loaded Frobster logo for notification: $defaultLogoPath');
+  } catch (e) {
+    log('Error loading Frobster logo: $e');
+  }
+
   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
     channelId,
     channelName,
@@ -427,7 +447,9 @@ Future<void> showNotification(int id, String title, String message, RemoteMessag
         ? FilePathAndroidBitmap(await _downloadAndSaveFile(remoteMessage.data["image_url"], 'largeIcon'))
         : (profileImagePath != null
             ? FilePathAndroidBitmap(profileImagePath)
-            : null),
+            : (defaultLogoPath != null
+                ? FilePathAndroidBitmap(defaultLogoPath)
+                : null)),
     styleInformation: styleInformation,
     ticker: isChatMessage ? message : null,
     category: isChatMessage ? AndroidNotificationCategory.message : AndroidNotificationCategory.status,

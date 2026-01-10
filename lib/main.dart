@@ -45,6 +45,7 @@ import 'utils/firebase_messaging_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 //region Handle Background Firebase Message
+@pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   log('=== BACKGROUND MESSAGE RECEIVED ===');
   log('Message Data: ${message.data}');

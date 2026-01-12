@@ -107,7 +107,7 @@ class AddServiceKey {
   static String duration = 'duration';
   static String attachmentCount = 'attachment_count';
   static String serviceAttachment = 'service_attachment_';
-  static String providerAddressId = ' provider_address_id';
+  static String providerAddressId = 'provider_address_id';
   static String attchments = 'attchments';
   static String visitType = 'visit_type';
   static String translations = 'translations';

@@ -62,6 +62,7 @@ import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
 import 'package:http/http.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../models/addons_service_response.dart';
@@ -561,7 +562,68 @@ Future<ServiceResponse> getServiceList(int page, int providerId, {String? search
 }
 
 Future<ServiceDetailResponse> getServiceDetail(Map request) async {
+  // ========== SERVICE DETAIL API LOGGING ==========
+  print('═══════════════════════════════════════════════════════════');
+  print('📥 GET SERVICE DETAIL API (For Editing)');
+  print('═══════════════════════════════════════════════════════════');
+  print('🌐 API Endpoint: https://frobster.com/api/service-detail');
+  print('📋 Method: POST');
+  print('📤 Request: ${jsonEncode(request)}');
+  print('───────────────────────────────────────────────────────────');
+  
   ServiceDetailResponse res = ServiceDetailResponse.fromJson(await handleResponse(await buildHttpResponse('service-detail', request: request, method: HttpMethodType.POST)));
+  
+  // Log the received data
+  if (res.serviceDetail != null) {
+    final serviceData = res.serviceDetail!;
+    print('📥 RESPONSE DATA RECEIVED:');
+    print('───────────────────────────────────────────────────────────');
+    print('🔍 IMPORTANT FIELDS (checking for empty values):');
+    
+    // Check important fields
+    // Name can be in translations or direct property
+    String name = serviceData.name ?? '';
+    if (name.isEmpty && serviceData.translations != null && serviceData.translations!.isNotEmpty) {
+      final enTranslation = serviceData.translations!['en'];
+      name = enTranslation?.name ?? '';
+    }
+    
+    // Description can be in translations or direct property
+    String description = serviceData.description ?? '';
+    if (description.isEmpty && serviceData.translations != null && serviceData.translations!.isNotEmpty) {
+      final enTranslation = serviceData.translations!['en'];
+      description = enTranslation?.description ?? '';
+    }
+    final countryId = serviceData.countryId;
+    final stateId = serviceData.stateId;
+    final cityId = serviceData.cityId;
+    final advancePaymentAmount = serviceData.advancePaymentAmount;
+    
+    print('   ${name.isEmpty ? "❌" : "✅"} name = "${name.isEmpty ? "EMPTY" : name}" ${name.isEmpty ? "⚠️ EMPTY!" : ""}');
+    print('   ${description.isEmpty ? "❌" : "✅"} description = "${description.isEmpty ? "EMPTY" : (description.length > 50 ? description.substring(0, 50) + "..." : description)}" ${description.isEmpty ? "⚠️ EMPTY!" : ""}');
+    print('   ${countryId == null || countryId == 0 ? "❌" : "✅"} country_id = "$countryId" ${countryId == null || countryId == 0 ? "⚠️ EMPTY!" : ""}');
+    print('   ${stateId == null || stateId == 0 ? "❌" : "✅"} state_id = "$stateId" ${stateId == null || stateId == 0 ? "⚠️ EMPTY!" : ""}');
+    print('   ${cityId == null || cityId == 0 ? "❌" : "✅"} city_id = "$cityId" ${cityId == null || cityId == 0 ? "⚠️ EMPTY!" : ""}');
+    print('   ${advancePaymentAmount == null || advancePaymentAmount == 0 ? "❌" : "✅"} advance_payment_amount = "$advancePaymentAmount" ${advancePaymentAmount == null || advancePaymentAmount == 0 ? "⚠️ EMPTY!" : ""}');
+    
+    print('');
+    print('📋 OTHER FIELDS:');
+    print('   id = ${serviceData.id}');
+    print('   provider_id = ${serviceData.providerId}');
+    print('   category_id = ${serviceData.categoryId}');
+    print('   subcategory_id = ${serviceData.subCategoryId}');
+    print('   price = ${serviceData.price}');
+    print('   discount = ${serviceData.discount}');
+    print('   type = ${serviceData.type}');
+    print('   status = ${serviceData.status}');
+    print('   visit_type = ${serviceData.visitType}');
+    print('   is_advance_payment = ${serviceData.isAdvancePayment}');
+    print('═══════════════════════════════════════════════════════════');
+  } else {
+    print('❌ ERROR: Response data is NULL');
+    print('═══════════════════════════════════════════════════════════');
+  }
+  
   if (!listOfCachedData.any((element) => element?.$1 == request['service_id'])) {
     listOfCachedData.add((request['service_id'], res));
   } else {
@@ -591,16 +653,162 @@ Future<void> addServiceMultiPart({required Map<String, dynamic> value, List<int>
     }
   }
 
-  if (imageFile.validate().isNotEmpty) {
-    multiPartRequest.files.addAll(await getMultipartImages(files: imageFile.validate(), name: AddServiceKey.serviceAttachment));
-    multiPartRequest.fields[AddServiceKey.attachmentCount] = imageFile.validate().length.toString();
+  // Add files to request
+  // Backend expects: service_attachment_0, service_attachment_1, etc.
+  int validFileCount = 0;
+  
+  print('🔵 FILE UPLOAD DEBUG: imageFile=${imageFile?.length ?? 'null'} files');
+  
+  if (imageFile != null && imageFile.isNotEmpty) {
+    print('🔵 FILE UPLOAD: Processing ${imageFile.length} files');
+    
+    for (int i = 0; i < imageFile.length; i++) {
+      File file = imageFile[i];
+      print('🔵 FILE $i: Starting processing, path="${file.path}"');
+      
+      try {
+        // Check if file exists
+        final exists = await file.exists();
+        print('🔵 FILE $i: exists=$exists');
+        
+        if (!exists) {
+          print('⚠️ FILE $i: Does not exist, skipping');
+          log('Skipping non-existent file: ${file.path}');
+          continue;
+        }
+        
+        // Validate file path
+        final filePath = file.path.trim();
+        print('🔵 FILE $i: path="$filePath"');
+        
+        if (filePath.isEmpty || filePath == '/' || filePath == '\\') {
+          print('⚠️ FILE $i: Invalid path, skipping');
+          log('Skipping invalid file path: "$filePath"');
+          continue;
+        }
+        
+        // Field name MUST be exactly: service_attachment_0, service_attachment_1, etc.
+        // Backend checks: $request->hasFile("service_attachment_0")
+        String fieldName = '${AddServiceKey.serviceAttachment}$i'; // Results in: service_attachment_0
+        print('🔵 FILE $i: fieldName="$fieldName"');
+        
+        // Use fromPath() - same as gallery uploads (which work)
+        // Extract filename from path
+        String filename = filePath.split(RegExp(r'[/\\]')).last;
+        if (filename.isEmpty || filename == '/' || filename == '\\') {
+          filename = 'image_${DateTime.now().millisecondsSinceEpoch}_$i.jpg';
+        }
+        print('🔵 FILE $i: filename="$filename", using fromPath()');
+        
+        // Create MultipartFile from path (same approach as working gallery uploads)
+        print('🔵 FILE $i: Creating MultipartFile from path...');
+        final multipartFile = await MultipartFile.fromPath(
+          fieldName,
+          file.path,
+          filename: filename,
+        );
+        print('🔵 FILE $i: MultipartFile created - length=${multipartFile.length}, field=${multipartFile.field}');
+        
+        // Verify file was created
+        if (multipartFile.length == 0) {
+          print('⚠️ FILE $i: MultipartFile has 0 length, skipping');
+          log('MultipartFile has 0 length, skipping');
+          continue;
+        }
+        
+        // Add to request
+        print('🔵 FILE $i: Adding to multiPartRequest.files...');
+        multiPartRequest.files.add(multipartFile);
+        validFileCount++;
+        print('✅ FILE $i: Successfully added! Total files in request: ${multiPartRequest.files.length}');
+        
+        log('Added file: field=${multipartFile.field}, filename=${multipartFile.filename}, size=${multipartFile.length} bytes');
+      } catch (e, stackTrace) {
+        print('❌ FILE $i: ERROR - $e');
+        print('Stack trace: $stackTrace');
+        log('Error creating MultipartFile: $e');
+        log('Stack trace: $stackTrace');
+      }
+    }
+  } else {
+    print('⚠️ FILE UPLOAD: No files provided (imageFile is null or empty)');
   }
+  
+  // attachment_count MUST match number of files
+  multiPartRequest.fields[AddServiceKey.attachmentCount] = validFileCount.toString();
+  print('🔵 FILE UPLOAD: attachment_count set to $validFileCount, files in request: ${multiPartRequest.files.length}');
 
-  log("${multiPartRequest.fields}");
+  log("Fields: ${multiPartRequest.fields}");
 
-  multiPartRequest.headers.addAll(buildHeaderTokens());
+  // Get headers but REMOVE Content-Type (multipart will set it automatically with boundary)
+  Map<String, String> headers = buildHeaderTokens();
+  headers.remove('content-type');
+  headers.remove('Content-Type');
+  headers.remove(HttpHeaders.contentTypeHeader);
+  
+  multiPartRequest.headers.addAll(headers);
+  
+  // Double-check: Remove Content-Type if it was added (CRITICAL - breaks multipart boundary)
+  multiPartRequest.headers.remove('content-type');
+  multiPartRequest.headers.remove('Content-Type');
+  multiPartRequest.headers.remove(HttpHeaders.contentTypeHeader);
 
-  log("Multi Part Request : ${jsonEncode(multiPartRequest.fields)} ${multiPartRequest.files.map((e) => e.field + ": " + e.filename.validate())}");
+  // ========== COMPREHENSIVE REQUEST LOGGING ==========
+  print('═══════════════════════════════════════════════════════════');
+  print('📡 SERVICE SAVE/UPDATE API REQUEST');
+  print('═══════════════════════════════════════════════════════════');
+  print('🌐 API Endpoint: ${multiPartRequest.url}');
+  print('📋 Method: ${multiPartRequest.method}');
+  print('');
+  print('📦 ALL REQUEST FIELDS:');
+  print('───────────────────────────────────────────────────────────');
+  
+  // Log all fields with special attention to the fields user mentioned
+  final allFields = multiPartRequest.fields;
+  final importantFields = [
+    AddServiceKey.name,
+    AddServiceKey.id,
+    CommonKeys.countryId,
+    CommonKeys.stateId,
+    CommonKeys.cityId,
+    AddServiceKey.description,
+    AdvancePaymentKey.advancePaymentAmount,
+    AddServiceKey.providerId,
+    AddServiceKey.categoryId,
+    AddServiceKey.type,
+    AddServiceKey.price,
+    AddServiceKey.discountPrice,
+  ];
+  
+  // Log important fields first
+  print('🔍 IMPORTANT FIELDS (checking for empty values):');
+  for (var key in importantFields) {
+    final value = allFields[key];
+    final isEmpty = value == null || value.toString().trim().isEmpty;
+    print('   ${isEmpty ? "❌" : "✅"} $key = "${value ?? "NULL"}" ${isEmpty ? "⚠️ EMPTY!" : ""}');
+  }
+  
+  print('');
+  print('📋 ALL OTHER FIELDS:');
+  for (var entry in allFields.entries) {
+    if (!importantFields.contains(entry.key)) {
+      print('   ${entry.key} = "${entry.value}"');
+    }
+  }
+  
+  print('');
+  print('📎 FILES:');
+  print('   Files count: ${multiPartRequest.files.length}');
+  print('   attachment_count: ${allFields[AddServiceKey.attachmentCount] ?? "NOT SET"}');
+  for (var file in multiPartRequest.files) {
+    print('   - ${file.field}: ${file.filename ?? "null"} (${file.length} bytes)');
+  }
+  
+  print('═══════════════════════════════════════════════════════════');
+  
+  // Also log as JSON for easy copying
+  log("Multi Part Request Fields (JSON): ${jsonEncode(multiPartRequest.fields)}");
+  log("Multi Part Request Files: ${multiPartRequest.files.map((e) => '${e.field}: ${e.filename ?? 'null'}').join(', ')}");
 
   appStore.setLoading(true);
 
@@ -612,11 +820,25 @@ Future<void> addServiceMultiPart({required Map<String, dynamic> value, List<int>
     toast(jsonDecode(temp)['message'], print: true);
     finish(getContext, true);
   }, onError: (error) {
-    toast(error.toString(), print: true);
+    String errorMessage = error.toString();
+    log('Upload error: $errorMessage');
+    if (errorMessage.contains("File `/` does not exist") || 
+        errorMessage.contains("FileDoesNotExist") ||
+        errorMessage.contains("does not exist")) {
+      errorMessage = 'Image upload failed. Please try selecting the image again.';
+    }
+    toast(errorMessage, print: true);
     appStore.setLoading(false);
   }).catchError((e) {
     appStore.setLoading(false);
-    toast(e.toString());
+    String errorMessage = e.toString();
+    log('Upload exception: $errorMessage');
+    if (errorMessage.contains("File `/` does not exist") || 
+        errorMessage.contains("FileDoesNotExist") ||
+        errorMessage.contains("does not exist")) {
+      errorMessage = 'Image upload failed. Please try selecting the image again.';
+    }
+    toast(errorMessage);
   });
 }
 //endregion
@@ -1587,13 +1809,128 @@ Future<Map<String, String>> getMultipartFields({required Map<String, dynamic> va
 
 Future<List<MultipartFile>> getMultipartImages({required List<File> files, required String name}) async {
   List<MultipartFile> multiPartRequest = [];
+  int validFileIndex = 0; // Track index for valid files only
 
-  await Future.forEach<File>(files, (element) async {
-    int i = files.indexOf(element);
+  // Use for loop instead of Future.forEach for better control
+  for (int i = 0; i < files.length; i++) {
+    final element = files[i];
+    
+    log('Processing file $i for multipart: path="${element.path}"');
+    
+    // Validate file path before creating MultipartFile
+    final filePath = element.path.trim();
+    if (filePath.isEmpty || filePath == '/' || filePath == '\\') {
+      log('Skipping invalid file path in getMultipartImages: "${element.path}"');
+      continue; // Skip this file
+    }
+    
+    // Additional path validation - ensure it's a real path, not just "/"
+    if (filePath.length <= 1 || !filePath.contains(Platform.pathSeparator) || filePath == Platform.pathSeparator) {
+      log('Skipping invalid file path (too short or root only): "${element.path}"');
+      continue;
+    }
+    
+    // Check if file exists
+    try {
+      final exists = await element.exists();
+      if (!exists) {
+        log('File does not exist in getMultipartImages: ${element.path}');
+        continue; // Skip this file
+      }
+      
+      // Verify file is readable and has content
+      final stat = await element.stat();
+      if (stat.size == 0) {
+        log('File is empty, skipping: ${element.path}');
+        continue;
+      }
+      
+      log('File is valid: ${element.path}, size: ${stat.size} bytes');
+      
+      // Double-check path is still valid before creating MultipartFile
+      if (element.path.isEmpty || element.path == '/' || element.path.trim().isEmpty) {
+        log('File path became invalid, skipping: "${element.path}"');
+        continue;
+      }
+      
+      // Create MultipartFile with detailed error handling
+      try {
+        // Extract filename from path
+        final fileName = element.path.split(Platform.pathSeparator).last;
+        
+        // Ensure filename is valid
+        if (fileName.isEmpty || fileName == '/' || fileName == '\\') {
+          log('Invalid filename extracted from path: "$fileName", skipping');
+          continue;
+        }
+        
+        log('Reading file bytes for: ${element.path}, filename: $fileName');
+        
+        // Read file bytes into memory to avoid path issues
+        final fileBytes = await element.readAsBytes();
+        
+        if (fileBytes.isEmpty) {
+          log('File bytes are empty, skipping: ${element.path}');
+          continue;
+        }
+        
+        log('File bytes read successfully: ${fileBytes.length} bytes');
+        
+        // Determine content type based on file extension
+        String? contentType;
+        final extension = fileName.split('.').last.toLowerCase();
+        switch (extension) {
+          case 'jpg':
+          case 'jpeg':
+            contentType = 'image/jpeg';
+            break;
+          case 'png':
+            contentType = 'image/png';
+            break;
+          case 'gif':
+            contentType = 'image/gif';
+            break;
+          case 'webp':
+            contentType = 'image/webp';
+            break;
+          default:
+            contentType = 'image/jpeg'; // Default to jpeg
+        }
+        
+        log('Creating MultipartFile with field: ${name}${validFileIndex}, filename: $fileName, contentType: $contentType, size: ${fileBytes.length} bytes');
+        
+        // Create MultipartFile from bytes instead of path to avoid server-side path issues
+        final multipartFile = MultipartFile.fromBytes(
+          '${name}${validFileIndex}',
+          fileBytes,
+          filename: fileName,
+          contentType: MediaType.parse(contentType),
+        );
+        
+        // Verify the multipart file was created correctly
+        if (multipartFile.filename == null || multipartFile.filename!.isEmpty) {
+          log('MultipartFile filename is null or empty, skipping');
+          continue;
+        }
+        
+        multiPartRequest.add(multipartFile);
+        validFileIndex++; // Only increment for successfully added files
+        log('Successfully created MultipartFile - field: ${multipartFile.field}, filename: ${multipartFile.filename}, length: ${multipartFile.length}');
+      } catch (e, stackTrace) {
+        log('Error creating MultipartFile for "${element.path}": $e');
+        log('Stack trace: $stackTrace');
+        // Don't throw, just skip this file and continue
+        continue;
+      }
+    } catch (e, stackTrace) {
+      log('Error processing file ${element.path}: $e');
+      log('Stack trace: $stackTrace');
+      // Continue to next file instead of stopping
+      continue;
+    }
+  }
 
-    multiPartRequest.add(await MultipartFile.fromPath('${'$name' + i.toString()}', element.path));
-  });
-
+  log('Created ${multiPartRequest.length} MultipartFile objects from ${files.length} files');
   return multiPartRequest;
 }
 //endregion

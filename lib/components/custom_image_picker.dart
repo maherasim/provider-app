@@ -85,7 +85,9 @@ class _CustomImagePickerState extends State<CustomImagePicker> {
             ).then((file) async {
               if (file != null) {
                 if (file == GalleryFileTypes.CAMERA) {
-                  await getCameraImage().then((value) {
+                  await getCameraImage().then((value) async {
+                    log('Camera image captured: path="${value.path}", exists=${await value.exists()}');
+                    
                     if (widget.isMultipleImages) {
                       if (imageFiles.validate().isNotEmpty) {
                         imageFiles.insert(0, value);
@@ -96,7 +98,17 @@ class _CustomImagePickerState extends State<CustomImagePicker> {
                       // Replace any existing image
                       imageFiles = [value];
                     }
+                    
+                    log('Image files list updated, count: ${imageFiles.length}');
+                    for (var imgFile in imageFiles) {
+                      log('  - File path: "${imgFile.path}"');
+                    }
+                    
                     setState(() {});
+                    widget.onFileSelected.call(imageFiles);
+                  }).catchError((e) {
+                    toast('Error capturing image: ${e.toString()}');
+                    log('Error in getCameraImage: $e');
                   });
                 } else if (file == GalleryFileTypes.GALLERY) {
                   if (widget.isMultipleImages) {

@@ -150,32 +150,138 @@ class ServiceData {
       this.translations});
 
   ServiceData.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    // Handle id - can be string or num
+    if (json['id'] != null) {
+      var idValue = json['id'];
+      if (idValue is int) {
+        id = idValue;
+      } else if (idValue is num) {
+        id = idValue.toInt();
+      } else if (idValue is String) {
+        id = int.tryParse(idValue);
+      }
+    }
     name = json['name'];
     providerImage = json['provider_image'];
-    categoryId = json['category_id'];
-    subCategoryId = json['subcategory_id'];
-    providerId = json['provider_id'];
-    price = json['price'];
+    // Handle category_id - can be string or num
+    if (json['category_id'] != null) {
+      var categoryIdValue = json['category_id'];
+      if (categoryIdValue is int) {
+        categoryId = categoryIdValue;
+      } else if (categoryIdValue is num) {
+        categoryId = categoryIdValue.toInt();
+      } else if (categoryIdValue is String) {
+        categoryId = int.tryParse(categoryIdValue);
+      }
+    }
+    // Handle subcategory_id - can be string or num
+    if (json['subcategory_id'] != null) {
+      var subCategoryIdValue = json['subcategory_id'];
+      if (subCategoryIdValue is int) {
+        subCategoryId = subCategoryIdValue;
+      } else if (subCategoryIdValue is num) {
+        subCategoryId = subCategoryIdValue.toInt();
+      } else if (subCategoryIdValue is String) {
+        subCategoryId = int.tryParse(subCategoryIdValue);
+      }
+    }
+    // Handle provider_id - can be string or num
+    if (json['provider_id'] != null) {
+      var providerIdValue = json['provider_id'];
+      if (providerIdValue is int) {
+        providerId = providerIdValue;
+      } else if (providerIdValue is num) {
+        providerId = providerIdValue.toInt();
+      } else if (providerIdValue is String) {
+        providerId = int.tryParse(providerIdValue);
+      }
+    }
+    // Handle price - can be string or num
+    if (json['price'] != null) {
+      price = json['price'] is num ? json['price'] : (json['price'] is String ? double.tryParse(json['price']) : null);
+    }
     priceFormat = json['price_format'];
     type = json['type'];
-    discount = json['discount'];
+    // Handle discount - can be string or num
+    if (json['discount'] != null) {
+      discount = json['discount'] is num ? json['discount'] : (json['discount'] is String ? double.tryParse(json['discount']) : null);
+    }
     duration = json['duration'];
     cancellationPolicy = json['cancellation_policy'];
     countryTax = json['tax_country_id'].toString();
-    minimumBookings = json['minimum_booking'];
-    status = json['status'];
-    isSlot = json['is_slot'];
+    minimumBookings = json['minimum_booking']?.toString();
+    // Handle status - can be string or num
+    if (json['status'] != null) {
+      var statusValue = json['status'];
+      if (statusValue is int) {
+        status = statusValue;
+      } else if (statusValue is num) {
+        status = statusValue.toInt();
+      } else if (statusValue is String) {
+        status = int.tryParse(statusValue);
+      }
+    }
+    // Handle is_slot - can be string or num
+    if (json['is_slot'] != null) {
+      var isSlotValue = json['is_slot'];
+      if (isSlotValue is int) {
+        isSlot = isSlotValue;
+      } else if (isSlotValue is num) {
+        isSlot = isSlotValue.toInt();
+      } else if (isSlotValue is String) {
+        isSlot = int.tryParse(isSlotValue);
+      }
+    }
     visitType = json['visit_type'];
     description = json['description'];
     requirements = json['requirements'];
-    isFeatured = json['is_featured'];
+    // Handle is_featured - can be string or num
+    if (json['is_featured'] != null) {
+      var isFeaturedValue = json['is_featured'];
+      if (isFeaturedValue is int) {
+        isFeatured = isFeaturedValue;
+      } else if (isFeaturedValue is num) {
+        isFeatured = isFeaturedValue.toInt();
+      } else if (isFeaturedValue is String) {
+        isFeatured = int.tryParse(isFeaturedValue);
+      }
+    }
     providerName = json['provider_name'];
-    countryId = json['countryId'];
+    // Handle both camelCase and snake_case for country_id - can be string or num
+    var countryIdValue = json['countryId'] ?? json['country_id'];
+    if (countryIdValue != null) {
+      if (countryIdValue is int) {
+        countryId = countryIdValue;
+      } else if (countryIdValue is num) {
+        countryId = countryIdValue.toInt();
+      } else if (countryIdValue is String) {
+        countryId = int.tryParse(countryIdValue);
+      }
+    }
     // Some APIs return human-readable names
     countryName = json['country_name'];
-    stateId = json['stateId'];
-    cityId = json['city_id'];
+    // Handle both camelCase and snake_case for state_id - can be string or num
+    var stateIdValue = json['stateId'] ?? json['state_id'];
+    if (stateIdValue != null) {
+      if (stateIdValue is int) {
+        stateId = stateIdValue;
+      } else if (stateIdValue is num) {
+        stateId = stateIdValue.toInt();
+      } else if (stateIdValue is String) {
+        stateId = int.tryParse(stateIdValue);
+      }
+    }
+    // Handle city_id - can be string or num
+    if (json['city_id'] != null) {
+      var cityIdValue = json['city_id'];
+      if (cityIdValue is int) {
+        cityId = cityIdValue;
+      } else if (cityIdValue is num) {
+        cityId = cityIdValue.toInt();
+      } else if (cityIdValue is String) {
+        cityId = int.tryParse(cityIdValue);
+      }
+    }
     cityName = json['city_name'];
     categoryName = json['category_name'];
     //image_attchments = json['attchments'];
@@ -203,9 +309,25 @@ class ServiceData {
             },
           )
         : null;
-    totalReview = json['total_review'];
-    totalRating = json['total_rating'];
-    isFavourite = json['is_favourite'];
+    // Handle total_review - can be string or num
+    if (json['total_review'] != null) {
+      totalReview = json['total_review'] is num ? json['total_review'] : (json['total_review'] is String ? double.tryParse(json['total_review']) : null);
+    }
+    // Handle total_rating - can be string or num
+    if (json['total_rating'] != null) {
+      totalRating = json['total_rating'] is num ? json['total_rating'] : (json['total_rating'] is String ? double.tryParse(json['total_rating']) : null);
+    }
+    // Handle is_favourite - can be string or num
+    if (json['is_favourite'] != null) {
+      var isFavouriteValue = json['is_favourite'];
+      if (isFavouriteValue is int) {
+        isFavourite = isFavouriteValue;
+      } else if (isFavouriteValue is num) {
+        isFavourite = isFavouriteValue.toInt();
+      } else if (isFavouriteValue is String) {
+        isFavourite = int.tryParse(isFavouriteValue);
+      }
+    }
     views = json['views'] ?? json['total_views'];
     totalBookingCount = json['total_booking_count'];
     completedBookingCount = json['completed_booking_count'];
@@ -223,8 +345,29 @@ class ServiceData {
         : null;
     advancePaymentSetting = json[AdvancePaymentKey.advancePaymentSetting];
     isEnableAdvancePayment = json[AdvancePaymentKey.isEnableAdvancePayment];
-    advancePaymentAmount = json[AdvancePaymentKey.advancePaymentAmount];
-    advancePaymentPercentage = json[AdvancePaymentKey.advancePaymentAmount];
+    
+    // Handle advance_payment_amount - just fetch the value directly, no calculation
+    if (json[AdvancePaymentKey.advancePaymentAmount] != null) {
+      var amountValue = json[AdvancePaymentKey.advancePaymentAmount];
+      if (amountValue is num) {
+        advancePaymentAmount = amountValue;
+      } else if (amountValue is String) {
+        advancePaymentAmount = double.tryParse(amountValue);
+      }
+      print('🔵 MODEL: Fetched advancePaymentAmount=$advancePaymentAmount directly from API');
+    }
+    
+    // Handle advance_payment_percentage - store as string to preserve "%" sign for display
+    if (json['advance_payment_percentage'] != null) {
+      var percentageValue = json['advance_payment_percentage'];
+      // Store as string to preserve the "%" sign (e.g., "20%")
+      if (percentageValue is String) {
+        advancePaymentPercentage = double.tryParse(percentageValue.replaceAll('%', '').trim());
+      } else if (percentageValue is num) {
+        advancePaymentPercentage = percentageValue.toDouble();
+      }
+      print('🔵 MODEL: Fetched advance_payment_percentage=$percentageValue from API');
+    }
     
     // Handle remote_work_level - can be string, null, or other types
     if (json['remote_work_level'] != null) {

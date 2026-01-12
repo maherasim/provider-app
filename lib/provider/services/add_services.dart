@@ -160,9 +160,24 @@ class _AddServicesState extends State<AddServices> {
     selectedVisitType = visitTypeData.first;
     appStore.setSelectedLanguage(languageList().first);
     if (isUpdate) {
+      // Log the data being loaded for debugging
+      print('🔵 LOADING SERVICE DATA FOR EDITING:');
+      print('   countryId from data: ${widget.data!.countryId}');
+      print('   stateId from data: ${widget.data!.stateId}');
+      print('   cityId from data: ${widget.data!.cityId}');
+      print('   name from data: ${widget.data!.name}');
+      print('   description from data: ${widget.data!.description}');
+      print('   advancePaymentAmount from data: ${widget.data!.advancePaymentAmount}');
+      print('   translations: ${widget.data!.translations?.keys.toList()}');
+      
       countryId = widget.data!.countryId.validate();
-      stateId = widget.data!.stateId.validate();
-      cityId = widget.data!.cityId.validate();
+      // Ensure stateId and cityId are properly set (not 0 if they have values)
+      final loadedStateId = widget.data!.stateId;
+      final loadedCityId = widget.data!.cityId;
+      stateId = (loadedStateId != null && loadedStateId != 0) ? loadedStateId : 0;
+      cityId = (loadedCityId != null && loadedCityId != 0) ? loadedCityId : 0;
+      
+      print('🔵 SETTING IDs: countryId=$countryId, stateId=$stateId, cityId=$cityId');
       minBookingCont.text = widget.data!.minimumBookings.validate();
       cancellationPolicyCont.text = widget.data!.cancellationPolicy.validate();
       tempAttachments = widget.data!.attchments.validate();
@@ -170,11 +185,22 @@ class _AddServicesState extends State<AddServices> {
           .validate()
           .map((e) => File(e.url.toString()))
           .toList();
-      serviceNameCont.text =
-          widget.data?.translations?[DEFAULT_LANGUAGE]?.name.validate() ?? "";
+      // Load name - check translations first, then direct field
+      String serviceName = widget.data?.translations?[DEFAULT_LANGUAGE]?.name.validate() ?? "";
+      if (serviceName.isEmpty) {
+        serviceName = widget.data?.name.validate() ?? "";
+      }
+      serviceNameCont.text = serviceName;
+      
       priceCont.text = widget.data!.price.toString().validate();
       discountCont.text = widget.data!.discount.toString().validate();
-      descriptionCont.text = widget.data?.translations?[DEFAULT_LANGUAGE]?.description.validate() ?? "";
+      
+      // Load description - check translations first, then direct field
+      String serviceDescription = widget.data?.translations?[DEFAULT_LANGUAGE]?.description.validate() ?? "";
+      if (serviceDescription.isEmpty) {
+        serviceDescription = widget.data?.description.validate() ?? "";
+      }
+      descriptionCont.text = serviceDescription;
       categoryId = widget.data!.categoryId.validate();
       subCategoryId = widget.data!.subCategoryId.validate();
       isFeature = widget.data!.isFeatured.validate() == 1 ? true : false;
@@ -189,9 +215,17 @@ class _AddServicesState extends State<AddServices> {
       isTimeSlotAvailable = widget.data!.isSlot.validate() == 1 ? true : false;
       //isAdvancePaymentAllowedBySystem = widget.data!.isAdvancePaymentSetting;
       isAdvancePayment = widget.data!.isAdvancePayment;
-      if (widget.data!.advancePaymentAmount != null) {
-        prePayAmountController.text =
-            widget.data!.advancePaymentAmount.validate().toString();
+      
+      // Fetch advance_payment_percentage directly from API and display as integer (e.g., "70" instead of "70.00%")
+      if (widget.data!.advancePaymentPercentage != null) {
+        // Convert to integer to remove decimals (e.g., 70.00 -> 70)
+        int percentageInt = widget.data!.advancePaymentPercentage!.toInt();
+        prePayAmountController.text = percentageInt.toString();
+        print('🔵 ADVANCE PAYMENT: Displaying percentage=$percentageInt (cleaned from ${widget.data!.advancePaymentPercentage})');
+      } else if (widget.data!.advancePaymentAmount != null) {
+        // Fallback to amount if percentage is not available
+        prePayAmountController.text = widget.data!.advancePaymentAmount!.toString();
+        print('🔵 ADVANCE PAYMENT: Fetched amount=${widget.data!.advancePaymentAmount} from API');
       }
       if (widget.data?.translations?.isNotEmpty ?? false) {
         translations = await widget.data!.translations!;
@@ -323,9 +357,19 @@ class _AddServicesState extends State<AddServices> {
       stateList.clear();
       stateList.addAll(value);
 
-      if (value.any((element) => element.id == stateId)) {
-        selectedState =
-            value.firstWhere((element) => element.id == stateId);
+      print('🔵 LOADING STATES: stateId=$stateId, states count=${value.length}');
+      if (stateId != 0 && stateId != null) {
+        // Find state with matching ID (handle nullable id)
+        final matchingState = value.firstWhere(
+          (element) => element.id != null && element.id == stateId,
+          orElse: () => StateListResponse(),
+        );
+        if (matchingState.id != null) {
+          selectedState = matchingState;
+          print('✅ STATE SELECTED: ${selectedState?.name} (id: ${selectedState?.id})');
+        } else {
+          print('⚠️ STATE NOT FOUND: stateId=$stateId not in list');
+        }
       }
       setState(() {});
     }).catchError((e) {
@@ -341,9 +385,19 @@ class _AddServicesState extends State<AddServices> {
       cityList.clear();
       cityList.addAll(value);
 
-      if (value.any((element) => element.id == cityId)) {
-        selectedCity =
-            value.firstWhere((element) => element.id == cityId);
+      print('🔵 LOADING CITIES: cityId=$cityId, cities count=${value.length}');
+      if (cityId != 0 && cityId != null) {
+        // Find city with matching ID (handle nullable id)
+        final matchingCity = value.firstWhere(
+          (element) => element.id != null && element.id == cityId,
+          orElse: () => CityListResponse(),
+        );
+        if (matchingCity.id != null) {
+          selectedCity = matchingCity;
+          print('✅ CITY SELECTED: ${selectedCity?.name} (id: ${selectedCity?.id})');
+        } else {
+          print('⚠️ CITY NOT FOUND: cityId=$cityId not in list');
+        }
       }
       setState(() {});
     }).catchError((e) {
@@ -482,15 +536,85 @@ class _AddServicesState extends State<AddServices> {
 //region Service APi Call
   Future<void> _submitService(Map<String, dynamic> req) async {
     try {
+      // Filter out invalid files: check path is valid, not empty, not just "/", and file exists
+      List<File> validImageFiles = [];
+      log('Processing ${imageFiles.length} image files for upload');
+      
+      for (var file in imageFiles) {
+        final filePath = file.path.trim();
+        log('Checking file: path="$filePath", exists=${await file.exists()}');
+        
+        if (file.path.contains('http')) {
+          log('Skipping network image: ${file.path}');
+          continue; // Skip network images
+        }
+        
+        // Validate path - check for empty, root path, or invalid paths
+        if (filePath.isEmpty || 
+            filePath == '/' || 
+            filePath == '\\' ||
+            filePath.length <= 1 ||
+            filePath == Platform.pathSeparator) {
+          log('Skipping invalid file path: "$filePath"');
+          continue;
+        }
+        
+        // Ensure path contains directory separators (not just a single character)
+        if (!filePath.contains(Platform.pathSeparator) && filePath.length < 3) {
+          log('Skipping invalid file path (no directory separator): "$filePath"');
+          continue;
+        }
+        
+        // Check if file exists
+        try {
+          final exists = await file.exists();
+          if (exists) {
+            // Verify file is readable and has content
+            final stat = await file.stat();
+            if (stat.size == 0) {
+              log('File is empty, skipping: ${file.path}');
+              continue;
+            }
+            
+            // Double-check path is still valid
+            final currentPath = file.path.trim();
+            if (currentPath.isEmpty || currentPath == '/' || currentPath == '\\') {
+              log('File path became invalid after check, skipping: "$currentPath"');
+              continue;
+            }
+            
+            log('File is valid: ${file.path}, size: ${stat.size} bytes');
+            validImageFiles.add(file);
+          } else {
+            log('File does not exist: ${file.path}');
+          }
+        } catch (e) {
+          log('Error checking file existence: ${file.path}, error: $e');
+        }
+      }
+      
+      log('Valid image files count: ${validImageFiles.length}');
+      
+      if (validImageFiles.isEmpty) {
+        toast('Please select valid images');
+        return;
+      }
+      
       await addServiceMultiPart(
         value: req,
         serviceAddressList: serviceAddressList,
-        imageFile: imageFiles
-            .where((element) => !element.path.contains('http'))
-            .toList(),
+        imageFile: validImageFiles,
       );
     } catch (e) {
-      toast(e.toString());
+      log('Error in _submitService: $e');
+      String errorMessage = e.toString();
+      // Provide user-friendly error message for file upload errors
+      if (errorMessage.contains("File `/` does not exist") || 
+          errorMessage.contains("FileDoesNotExist") ||
+          errorMessage.contains("does not exist")) {
+        errorMessage = 'Image upload failed. Please try selecting the image again.';
+      }
+      toast(errorMessage);
     }
   }
 

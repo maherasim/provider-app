@@ -633,7 +633,67 @@ Future<List<File>> getMultipleImageSource({bool isCamera = true}) async {
 Future<File> getCameraImage({bool isCamera = true}) async {
   final pickedImage = await ImagePicker()
       .pickImage(source: isCamera ? ImageSource.camera : ImageSource.gallery);
-  return File(pickedImage!.path);
+  
+  if (pickedImage == null) {
+    throw Exception('No image was selected');
+  }
+  
+  log('Image picked: path="${pickedImage.path}", isCamera=$isCamera');
+  
+  // Validate path before creating File object
+  final imagePath = pickedImage.path.trim();
+  if (imagePath.isEmpty || imagePath == '/' || imagePath == '\\' || imagePath.length <= 1) {
+    throw Exception('Invalid image path: "$imagePath"');
+  }
+  
+  final sourceFile = File(imagePath);
+  
+  // Verify source file exists
+  final exists = await sourceFile.exists();
+  log('Source file exists: $exists, path="$imagePath"');
+  
+  if (!exists) {
+    throw Exception('Image file does not exist: $imagePath');
+  }
+  
+  // For camera images, copy to permanent location to ensure file persists
+  // Gallery images are already in permanent location, so no copy needed
+  if (isCamera) {
+    try {
+      final Directory appDocDir = await getApplicationDocumentsDirectory();
+      final String fileName = 'camera_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final String permanentPath = '${appDocDir.path}/$fileName';
+      
+      log('Copying camera image from "$imagePath" to "$permanentPath"');
+      
+      final File permanentFile = await sourceFile.copy(permanentPath);
+      
+      // Verify the copied file exists and has content
+      final copiedExists = await permanentFile.exists();
+      if (!copiedExists) {
+        log('ERROR: Copied file does not exist, using original');
+        return sourceFile;
+      }
+      
+      final stat = await permanentFile.stat();
+      if (stat.size == 0) {
+        log('ERROR: Copied file is empty, using original');
+        return sourceFile;
+      }
+      
+      log('✅ Camera image copied successfully: size=${stat.size} bytes');
+      return permanentFile;
+    } catch (e, stackTrace) {
+      log('ERROR copying camera image: $e');
+      log('Stack trace: $stackTrace');
+      log('Falling back to original file');
+      return sourceFile;
+    }
+  }
+  
+  // Gallery images: return original file directly (same as what works)
+  log('Returning original file for gallery image');
+  return sourceFile;
 }
 
 String getDateInString({required DateTimeRange dateTime, String? format}) {

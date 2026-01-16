@@ -107,14 +107,21 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
   void init({bool flag = false, bool isStartDrive = false}) async {
     future = bookingDetail({CommonKeys.bookingId: widget.bookingId.toString()},
         callbackForStatus: (status, id) async {
+      if (!mounted) return;
       bookingStatus = status;
       handymanId = id;
-      afterBuildCreated(() => startLocationUpdates(
-          status: status, handymanID: id, isFirstTimeLoad: true));
+      afterBuildCreated(() {
+        if (mounted) {
+          startLocationUpdates(
+              status: status, handymanID: id, isFirstTimeLoad: true);
+        }
+      });
     });
     if (flag) {
       _paymentUniqueKey = UniqueKey();
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 
@@ -317,16 +324,22 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
 
   Future<void> setLocation() async {
     await getLocation();
+    if (!mounted) return;
     await updateLocation(widget.bookingId, latitude ?? "", longitude ?? "")
         .then((value) async {
+      if (!mounted) return;
       handymanLocation = value;
       final datetimeStr = value.data.datetime.toString();
       final parsed = DateTime.tryParse(datetimeStr);
       locationTime = parsed != null ? "${parsed.timeAgo}" : "";
       locationTimer();
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     }).catchError((error) {
-      toast(error.toString());
+      if (mounted) {
+        toast(error.toString());
+      }
     }).whenComplete(() {});
   }
 
@@ -335,6 +348,10 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
     locationTimers = Timer.periodic(
         Duration(seconds: handymanUpdateLocationRefreshPeriodInSeconds),
         (Timer timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
       final datetimeStr = handymanLocation?.data.datetime.toString();
       if (datetimeStr != null && datetimeStr.isNotEmpty) {
         final parsed = DateTime.tryParse(datetimeStr);
@@ -342,7 +359,9 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
       } else {
         locationTime = "${DateTime.now().timeAgo}";
       }
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
   }
 
@@ -448,32 +467,39 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
 
   Future<void> _getCurrentLocation({required bool isFirstTime}) async {
     await getHandymanLocation(widget.bookingId).then((value) {
+      if (!mounted) return;
       handymanLocation = value;
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
       if (value != null &&
           value.data.latitude != null &&
           value.data.longitude != null) {
-        setState(() {
-          if (isFirstTime) {
-            final datetimeStr = value.data.datetime.toString();
-            final parsed = DateTime.tryParse(datetimeStr);
-            locationTime = parsed != null ? parsed.timeAgo : "";
-          }
-          _currentPosition = LatLng(
-            double.parse(value.data.latitude.toString()),
-            double.parse(value.data.longitude.toString()),
-          );
-          if (mapController != null) {
-            mapController!.animateCamera(CameraUpdate.newCameraPosition(
-              CameraPosition(
-                target: _currentPosition!,
-                zoom: 15.0,
-              ),
-            ));
-          }
-        });
+        if (mounted) {
+          setState(() {
+            if (isFirstTime) {
+              final datetimeStr = value.data.datetime.toString();
+              final parsed = DateTime.tryParse(datetimeStr);
+              locationTime = parsed != null ? parsed.timeAgo : "";
+            }
+            _currentPosition = LatLng(
+              double.parse(value.data.latitude.toString()),
+              double.parse(value.data.longitude.toString()),
+            );
+            if (mapController != null) {
+              mapController!.animateCamera(CameraUpdate.newCameraPosition(
+                CameraPosition(
+                  target: _currentPosition!,
+                  zoom: 15.0,
+                ),
+              ));
+            }
+          });
+        }
       } else {
-        _currentPosition = LatLng(0, 0);
+        if (mounted) {
+          _currentPosition = LatLng(0, 0);
+        }
       }
     });
   }
@@ -1546,7 +1572,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
         child: Row(
           children: [
             AppButton(
-              text: res.service!.isOnlineService.validate() ? languages.start : languages.lblStartDrive,
+              text: languages.lblStartDrive, // Always show "Start Work"
               color: startDriveButtonColor,
               onTap: () {
                 _showGradientConfirmDialog(
@@ -1555,12 +1581,11 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                   negativeText: languages.lblNo,
                   onAccept: () async {
                     appStore.setLoading(true);
+                    // Always send 'on_going' status when clicking Start Work
                     await updateBooking(
                       res,
                       '',
-                      res.service!.isOnlineService.validate()
-                          ? BookingStatusKeys.inProgress
-                          : BookingStatusKeys.onGoing,
+                      BookingStatusKeys.onGoing,
                     );
                     startLocationUpdates(
                         status: res.bookingDetail?.status.validate() ?? "",
@@ -1980,7 +2005,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
         },
       );
     } else if (res.hasData) {
-      countDownKey = GlobalKey();
+      // Don't recreate countDownKey on every build - only recreate when needed in updateBooking
       return Stack(
         fit: StackFit.expand,
         children: [
@@ -2078,7 +2103,8 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                       BookingStatusKeys.onGoing ==
                               res.data!.bookingDetail!.status &&
                           !isUserTypeHandyman &&
-                          res.data!.handymanData![0].id != appStore.userId),
+                          res.data!.handymanData.validate().isNotEmpty &&
+                          res.data!.handymanData!.first.id != appStore.userId),
 
                   /// My Service List
                   if (res.data!.postRequestDetail != null &&
@@ -2098,11 +2124,13 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                   /// Last Updated
                   if (BookingStatusKeys.onGoing ==
                           res.data!.bookingDetail!.status &&
-                      res.data!.handymanData![0].id == appStore.userId)
+                      res.data!.handymanData.validate().isNotEmpty &&
+                      res.data!.handymanData!.first.id == appStore.userId)
                     16.height,
                   if (BookingStatusKeys.onGoing ==
                           res.data!.bookingDetail!.status &&
-                      res.data!.handymanData![0].id == appStore.userId)
+                      res.data!.handymanData.validate().isNotEmpty &&
+                      res.data!.handymanData!.first.id == appStore.userId)
                     Container(
                       width: context.width(),
                       decoration: boxDecorationWithRoundedCorners(

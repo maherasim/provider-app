@@ -180,9 +180,19 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
       aboutMeCont.text = parseHtmlString(widget.data!.aboutMe.validate());
       educationCont.text = parseHtmlString(widget.data!.education.validate()); // Use education field directly
       
-      // Initialize availability
+      // Initialize availability - normalize the value to match dropdown items
       if (widget.data!.availability != null) {
-        selectedAvailability = widget.data!.availability.validate();
+        String availabilityValue = widget.data!.availability.validate().toLowerCase();
+        // Normalize: convert "Full-time", "full-time", "full_time" to "full_time"
+        // and "Part-time", "part-time", "part_time" to "part_time"
+        if (availabilityValue.contains('full') || availabilityValue == 'full_time') {
+          selectedAvailability = 'full_time';
+        } else if (availabilityValue.contains('part') || availabilityValue == 'part_time') {
+          selectedAvailability = 'part_time';
+        } else {
+          // Default to full_time if value doesn't match
+          selectedAvailability = 'full_time';
+        }
       } else if (widget.data!.isHandymanAvailable != null) {
         selectedAvailability = widget.data!.isHandymanAvailable == true ? 'full_time' : 'part_time';
       }

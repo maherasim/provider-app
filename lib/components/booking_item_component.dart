@@ -250,13 +250,34 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                   Marquee(
                     child: Text(
                       widget.bookingData.isPackageBooking
-                          ? '${widget.bookingData.bookingPackage!.name.validate()}'
+                          ? '${widget.bookingData.bookingPackage!.name.validate()}' 
                           : '${widget.bookingData.serviceName.validate()}',
                       style: boldTextStyle(),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
                   ),
+                  8.height,
+                  // City and Country
+                  if (widget.bookingData.cityName.validate().isNotEmpty || 
+                      widget.bookingData.countryName.validate().isNotEmpty)
+                    Builder(
+                      builder: (context) {
+                        List<String> locationParts = [];
+                        if (widget.bookingData.cityName.validate().isNotEmpty) {
+                          locationParts.add(widget.bookingData.cityName.validate());
+                        }
+                        if (widget.bookingData.countryName.validate().isNotEmpty) {
+                          locationParts.add(widget.bookingData.countryName.validate());
+                        }
+                        return Text(
+                          locationParts.join(' - '),
+                          style: secondaryTextStyle(size: 12),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        );
+                      },
+                    ),
                   8.height,
                   if (widget.bookingData.bookingPackage != null)
                     PriceWidget(
@@ -284,16 +305,35 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                             style: boldTextStyle(size: 12, color: Colors.green),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
-                          ).paddingLeft(4).expand(),
+                          ).paddingLeft(4).expand(                        ),
                       ],
                     ),
-                  if (widget.bookingData.address != null)
-                    Text(
-                      widget.bookingData.address.validate(),
-                      style: boldTextStyle(size: 12, color: Colors.green),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ).paddingLeft(4).visible(widget.bookingData.isAdvancePaymentDone),
+                  // Job Type (Online/Onsite/Hybrid) - After Price
+                  if (widget.bookingData.service?.visitType != null)
+                    Builder(
+                      builder: (context) {
+                        String visitType = widget.bookingData.service!.visitType.validate();
+                        String displayText = '';
+                        if (visitType == VISIT_OPTION_ONLINE) {
+                          displayText = languages.onlineRemoteService;
+                        } else if (visitType == VISIT_OPTION_ON_SITE) {
+                          displayText = languages.onSiteVisit;
+                        } else if (visitType == VISIT_OPTION_HYBRID) {
+                          displayText = 'Hybrid';
+                        }
+                        return displayText.isNotEmpty
+                            ? Padding(
+                                padding: EdgeInsets.only(top: 4),
+                                child: Text(
+                                  displayText,
+                                  style: secondaryTextStyle(size: 12, color: primaryColor),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              )
+                            : SizedBox.shrink();
+                      },
+                    ),
                 ],
               ).expand(),
             ],
@@ -328,7 +368,10 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                           ),
                         ).expand(flex: 5),
                       ],
-                    ).paddingAll(8).visible(widget.bookingData.isAdvancePaymentDone),
+                    ).paddingAll(8).visible(
+                      // Hide address if payment status is pending by admin
+                      widget.bookingData.paymentStatus != PENDING_BY_ADMINS
+                    ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

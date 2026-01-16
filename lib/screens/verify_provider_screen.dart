@@ -132,6 +132,8 @@ class _VerifyProviderScreenState extends State<VerifyProviderScreen> {
   void getProviderDocList() {
     getProviderDoc().then((res) {
       appStore.setLoading(false);
+      providerDocuments.clear();
+      uploadedDocList!.clear();
       providerDocuments.addAll(res.providerDocuments!);
       providerDocuments.forEach((element) {
         uploadedDocList!.add(element.documentId!);
@@ -139,6 +141,7 @@ class _VerifyProviderScreenState extends State<VerifyProviderScreen> {
       });
       setState(() {});
     }).catchError((e) {
+      appStore.setLoading(false);
       toast(e.toString(), print: true);
     });
   }
@@ -183,6 +186,17 @@ class _VerifyProviderScreenState extends State<VerifyProviderScreen> {
             padding: EdgeInsets.all(12),
             children: [
               8.height,
+              // Instruction text
+              Text(
+                'Upload New Document',
+                style: boldTextStyle(size: 16),
+              ).paddingOnly(bottom: 8),
+              if (documents.isEmpty && !appStore.isLoading)
+                Text(
+                  'No document types available. Please contact support.',
+                  style: secondaryTextStyle(color: Colors.orange),
+                ).paddingOnly(bottom: 8),
+              8.height,
               Row(
                 children: [
                   if (documents.isNotEmpty)
@@ -199,28 +213,65 @@ class _VerifyProviderScreenState extends State<VerifyProviderScreen> {
                         );
                       }).toList(),
                       onChanged: (Documents? value) async {
-                        selectedDoc = value;
-                        docId = value!.id!;
-                        setState(() {});
+                        if (value != null) {
+                          selectedDoc = value;
+                          docId = value.id!;
+                          setState(() {});
+                        }
                       },
-                    ).expand(),
-                  8.width.visible(!uploadedDocList!.contains(docId)),
-                  8.width,
-                  if (docId != 0)
-                    AppButton(
-                      onTap: () {
-                        getMultipleFile(docId);
-                      },
-                      color: Colors.green.withValues(alpha:0.1),
-                      elevation: 0,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.add, color: Colors.green, size: 24),
-                          Text(languages.lblAddDoc, style: secondaryTextStyle()),
-                        ],
+                    ).expand()
+                  else if (!appStore.isLoading)
+                    Container(
+                      padding: EdgeInsets.all(16),
+                      decoration: boxDecorationWithRoundedCorners(
+                        backgroundColor: context.cardColor,
+                        borderRadius: radius(),
                       ),
+                      child: Text(
+                        'No document types available',
+                        style: secondaryTextStyle(),
+                      ),
+                    ).expand(),
+                  8.width,
+                  // Always show button, but disable if no document selected
+                  AppButton(
+                    onTap: docId != 0 && documents.isNotEmpty ? () {
+                      // Check if document is already uploaded to determine if we should update or add
+                      try {
+                        ProviderDocuments existingDoc = providerDocuments.firstWhere(
+                          (doc) => doc.documentId == docId,
+                        );
+                        // Update existing document
+                        getMultipleFile(docId, updateId: existingDoc.id);
+                      } catch (e) {
+                        // Document not found, add new document
+                        getMultipleFile(docId);
+                      }
+                    } : null,
+                    color: docId != 0 && documents.isNotEmpty 
+                        ? Colors.green.withValues(alpha:0.1) 
+                        : Colors.grey.withValues(alpha:0.3),
+                    elevation: 0,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          uploadedDocList!.contains(docId) ? AntDesign.edit : Icons.add, 
+                          color: docId != 0 && documents.isNotEmpty ? Colors.green : Colors.grey, 
+                          size: 24
+                        ),
+                        4.width,
+                        Text(
+                          docId != 0 
+                              ? (uploadedDocList!.contains(docId) ? languages.lblUpdate : languages.lblAddDoc)
+                              : languages.lblAddDoc, 
+                          style: secondaryTextStyle(
+                            color: docId != 0 && documents.isNotEmpty ? null : Colors.grey
+                          )
+                        ),
+                      ],
                     ),
+                  ),
                 ],
               ),
               16.height,

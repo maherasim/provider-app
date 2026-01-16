@@ -2139,7 +2139,7 @@ class LanguageEn extends Languages {
   String get servicePayment => 'Service Payment';
 
   @override
-  String get handymanRatings => 'Handyman Ratings';
+  String get handymanRatings => 'Worker Ratings';
 
   @override
   String get yourComment => 'Your Comment';

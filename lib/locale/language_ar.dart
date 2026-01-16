@@ -2144,7 +2144,7 @@ class LanguageAr extends Languages {
   String get servicePayment => 'دفع الخدمة';
 
   @override
-  String get handymanRatings => 'تقييمات الحرفي';
+  String get handymanRatings => 'تقييمات العامل الماهر';
 
   @override
   String get yourComment => 'تعليقك';

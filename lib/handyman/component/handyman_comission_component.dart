@@ -3,6 +3,7 @@ import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/models/handyman_dashboard_response.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
+import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
 import 'package:nb_utils/nb_utils.dart';
 
@@ -28,22 +29,44 @@ class HandymanCommissionComponent extends StatelessWidget {
               RichTextWidget(
                 textAlign: TextAlign.center,
                 list: [
-                  TextSpan(text: "${languages.lblHandymanType}: ", style: secondaryTextStyle()),
-                  TextSpan(text: '${commission.name.validate()}', style: boldTextStyle()),
+                  TextSpan(text: "Worker type: ", style: secondaryTextStyle()),
+                  TextSpan(text: 'Commission', style: boldTextStyle()),
                 ],
               ),
               8.height,
-              RichTextWidget(
-                textAlign: TextAlign.center,
-                list: [
-                  TextSpan(text: '${languages.lblMyCommission}: ', style: secondaryTextStyle()),
-                  TextSpan(text: isCommissionTypePercent(commission.type) ? '${commission.commission.validate()}%' : '${appConfigurationStore.currencySymbol}${commission.commission.validate()}', style: boldTextStyle()),
-                  if (isCommissionTypePercent(commission.type))
-                    TextSpan(
-                      text: ' (${languages.lblFixed})',
-                      style: secondaryTextStyle(),
-                    ),
-                ],
+              Builder(
+                builder: (context) {
+                  // Check if type is percent or percentage
+                  String commissionType = commission.type.validate().toLowerCase();
+                  bool isPercent = commissionType == COMMISSION_TYPE_PERCENT || 
+                                  commissionType == COMMISSION_TYPE_PERCENTAGE;
+                  
+                  // Format commission value - remove decimals if whole number
+                  num commissionValue = commission.commission.validate();
+                  String formattedCommission = isPercent 
+                      ? (commissionValue % 1 == 0 
+                          ? commissionValue.toInt().toString() 
+                          : commissionValue.toString())
+                      : commissionValue.toString();
+                  
+                  return RichTextWidget(
+                    textAlign: TextAlign.center,
+                    list: [
+                      TextSpan(text: '${languages.lblMyCommission}: ', style: secondaryTextStyle()),
+                      TextSpan(
+                        text: isPercent 
+                            ? '$formattedCommission %'
+                            : '${appConfigurationStore.currencySymbol}$formattedCommission',
+                        style: boldTextStyle(),
+                      ),
+                      if (isPercent)
+                        TextSpan(
+                          text: ' (${languages.lblFixed})',
+                          style: secondaryTextStyle(),
+                        ),
+                    ],
+                  );
+                },
               ),
             ],
           ),

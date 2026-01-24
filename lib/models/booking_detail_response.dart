@@ -23,6 +23,7 @@ class BookingDetailResponse {
   List<TaxData>? taxes;
   List<ServiceProof>? serviceProof;
   PostJobData? postRequestDetail;
+  String? showRateCustomerButton;
 
   bool get isMe => handymanData.validate().isNotEmpty ? handymanData.validate().first.id.validate() == appStore.userId.validate() : false;
 
@@ -38,6 +39,7 @@ class BookingDetailResponse {
     this.taxes,
     this.serviceProof,
     this.postRequestDetail,
+    this.showRateCustomerButton,
   });
 
   BookingDetailResponse.fromJson(Map<String, dynamic> json) {
@@ -79,6 +81,7 @@ class BookingDetailResponse {
       });
     }
     postRequestDetail = json['post_request_detail'] != null ? PostJobData.fromJson(json['post_request_detail']) : null;
+    showRateCustomerButton = json['show_rate_customer_button'];
   }
 
   Map<String, dynamic> toJson() {
@@ -112,6 +115,9 @@ class BookingDetailResponse {
     }
     if (postRequestDetail != null) {
       data['post_request_detail'] = postRequestDetail?.toJson();
+    }
+    if (showRateCustomerButton != null) {
+      data['show_rate_customer_button'] = showRateCustomerButton;
     }
     return data;
   }

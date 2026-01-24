@@ -62,19 +62,19 @@ class Data {
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-    currentPage: json["current_page"],
-    data: List<PostJobData>.from(json["data"].map((x) => PostJobData.fromJson(x))),
-    firstPageUrl: json["first_page_url"],
-    from: json["from"],
-    lastPage: json["last_page"],
-    lastPageUrl: json["last_page_url"],
-    links: List<Link>.from(json["links"].map((x) => Link.fromJson(x))),
+    currentPage: json["current_page"] ?? 1,
+    data: json["data"] != null ? List<PostJobData>.from(json["data"].map((x) => PostJobData.fromJson(x))) : <PostJobData>[],
+    firstPageUrl: json["first_page_url"] ?? "",
+    from: json["from"] ?? 0,
+    lastPage: json["last_page"] ?? 1,
+    lastPageUrl: json["last_page_url"] ?? "",
+    links: json["links"] != null ? List<Link>.from(json["links"].map((x) => Link.fromJson(x))) : <Link>[],
     nextPageUrl: json["next_page_url"],
-    path: json["path"],
-    perPage: json["per_page"],
+    path: json["path"] ?? "",
+    perPage: json["per_page"] ?? 10,
     prevPageUrl: json["prev_page_url"],
-    to: json["to"],
-    total: json["total"],
+    to: json["to"] ?? 0,
+    total: json["total"] ?? 0,
   );
 
   Map<String, dynamic> toJson() => {

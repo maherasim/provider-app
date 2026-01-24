@@ -214,9 +214,9 @@ class _VerifyProviderScreenState extends State<VerifyProviderScreen> {
                       }).toList(),
                       onChanged: (Documents? value) async {
                         if (value != null) {
-                          selectedDoc = value;
+                        selectedDoc = value;
                           docId = value.id!;
-                          setState(() {});
+                        setState(() {});
                         }
                       },
                     ).expand()
@@ -234,7 +234,7 @@ class _VerifyProviderScreenState extends State<VerifyProviderScreen> {
                     ).expand(),
                   8.width,
                   // Always show button, but disable if no document selected
-                  AppButton(
+                    AppButton(
                     onTap: docId != 0 && documents.isNotEmpty ? () {
                       // Check if document is already uploaded to determine if we should update or add
                       try {
@@ -251,10 +251,10 @@ class _VerifyProviderScreenState extends State<VerifyProviderScreen> {
                     color: docId != 0 && documents.isNotEmpty 
                         ? Colors.green.withValues(alpha:0.1) 
                         : Colors.grey.withValues(alpha:0.3),
-                    elevation: 0,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
+                      elevation: 0,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
                         Icon(
                           uploadedDocList!.contains(docId) ? AntDesign.edit : Icons.add, 
                           color: docId != 0 && documents.isNotEmpty ? Colors.green : Colors.grey, 
@@ -269,9 +269,9 @@ class _VerifyProviderScreenState extends State<VerifyProviderScreen> {
                             color: docId != 0 && documents.isNotEmpty ? null : Colors.grey
                           )
                         ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
                 ],
               ),
               16.height,

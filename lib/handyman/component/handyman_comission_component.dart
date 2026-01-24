@@ -50,9 +50,9 @@ class HandymanCommissionComponent extends StatelessWidget {
                       : commissionValue.toString();
                   
                   return RichTextWidget(
-                    textAlign: TextAlign.center,
-                    list: [
-                      TextSpan(text: '${languages.lblMyCommission}: ', style: secondaryTextStyle()),
+                textAlign: TextAlign.center,
+                list: [
+                  TextSpan(text: '${languages.lblMyCommission}: ', style: secondaryTextStyle()),
                       TextSpan(
                         text: isPercent 
                             ? '$formattedCommission %'
@@ -60,11 +60,11 @@ class HandymanCommissionComponent extends StatelessWidget {
                         style: boldTextStyle(),
                       ),
                       if (isPercent)
-                        TextSpan(
-                          text: ' (${languages.lblFixed})',
-                          style: secondaryTextStyle(),
-                        ),
-                    ],
+                    TextSpan(
+                      text: ' (${languages.lblFixed})',
+                      style: secondaryTextStyle(),
+                    ),
+                ],
                   );
                 },
               ),

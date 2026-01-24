@@ -120,7 +120,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
     if (flag) {
       _paymentUniqueKey = UniqueKey();
       if (mounted) {
-        setState(() {});
+      setState(() {});
       }
     }
   }
@@ -278,7 +278,13 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
           ? SERVICE_PAYMENT_STATUS_ADVANCE_PAID
           : bookDetail.bookingDetail!.paymentStatus.validate();
     }
-    countDownKey = GlobalKey();
+    // Only recreate countDownKey if the widget needs to be reset
+    // Don't recreate on every updateBooking call to avoid widget tree inconsistencies
+    if (updatedStatus == BookingStatusKeys.inProgress || 
+        updatedStatus == BookingStatusKeys.hold ||
+        updatedStatus == BookingStatusKeys.complete) {
+      countDownKey = GlobalKey();
+    }
     setState(() {});
 
     hideKeyboard(context);
@@ -334,11 +340,11 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
       locationTime = parsed != null ? "${parsed.timeAgo}" : "";
       locationTimer();
       if (mounted) {
-        setState(() {});
+      setState(() {});
       }
     }).catchError((error) {
       if (mounted) {
-        toast(error.toString());
+      toast(error.toString());
       }
     }).whenComplete(() {});
   }
@@ -360,7 +366,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
         locationTime = "${DateTime.now().timeAgo}";
       }
       if (mounted) {
-        setState(() {});
+      setState(() {});
       }
     });
   }
@@ -470,35 +476,35 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
       if (!mounted) return;
       handymanLocation = value;
       if (mounted) {
-        setState(() {});
+      setState(() {});
       }
       if (value != null &&
           value.data.latitude != null &&
           value.data.longitude != null) {
         if (mounted) {
-          setState(() {
-            if (isFirstTime) {
-              final datetimeStr = value.data.datetime.toString();
-              final parsed = DateTime.tryParse(datetimeStr);
-              locationTime = parsed != null ? parsed.timeAgo : "";
-            }
-            _currentPosition = LatLng(
-              double.parse(value.data.latitude.toString()),
-              double.parse(value.data.longitude.toString()),
-            );
-            if (mapController != null) {
-              mapController!.animateCamera(CameraUpdate.newCameraPosition(
-                CameraPosition(
-                  target: _currentPosition!,
-                  zoom: 15.0,
-                ),
-              ));
-            }
-          });
+        setState(() {
+          if (isFirstTime) {
+            final datetimeStr = value.data.datetime.toString();
+            final parsed = DateTime.tryParse(datetimeStr);
+            locationTime = parsed != null ? parsed.timeAgo : "";
+          }
+          _currentPosition = LatLng(
+            double.parse(value.data.latitude.toString()),
+            double.parse(value.data.longitude.toString()),
+          );
+          if (mapController != null) {
+            mapController!.animateCamera(CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: _currentPosition!,
+                zoom: 15.0,
+              ),
+            ));
+          }
+        });
         }
       } else {
         if (mounted) {
-          _currentPosition = LatLng(0, 0);
+        _currentPosition = LatLng(0, 0);
         }
       }
     });
@@ -1093,7 +1099,9 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
             ).onTap(() {
               startLocationUpdates(
                   status: data?.bookingDetail?.status.validate() ?? "",
-                  handymanID: data?.handymanData?.first.id.validate() ?? -1);
+                  handymanID: (data?.handymanData.validate().isNotEmpty ?? false)
+                      ? data!.handymanData!.first.id.validate()
+                      : -1);
             }),
             16.width,
             Container(
@@ -1502,10 +1510,10 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                 },
               ),
             ).expand(),
-            if (res.customer != null) ...[
+            if (res.customer != null && res.showRateCustomerButton == "Rate Customer") ...[
               16.width,
               AppButton(
-                text: 'Rate Customer',
+                text: res.showRateCustomerButton ?? 'Rate Customer',
                 color: Colors.yellow,
                 elevation: 0,
                 textStyle: boldTextStyle(color: Colors.black),
@@ -1534,10 +1542,10 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                 },
               ),
             ).expand(),
-            if (res.customer != null) ...[
+            if (res.customer != null && res.showRateCustomerButton == "Rate Customer") ...[
               16.width,
               AppButton(
-                text: 'Rate Customer',
+                text: res.showRateCustomerButton ?? 'Rate Customer',
                 color: Colors.yellow,
                 elevation: 0,
                 textStyle: boldTextStyle(color: Colors.black),
@@ -1549,9 +1557,9 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
       }
       else {
         // Booking is complete, show rate customer button
-        if (res.customer != null) {
+        if (res.customer != null && res.showRateCustomerButton == "Rate Customer") {
           return AppButton(
-            text: 'Rate Customer',
+            text: res.showRateCustomerButton ?? 'Rate Customer',
             color: Colors.yellow,
             elevation: 0,
             textStyle: boldTextStyle(color: Colors.black),
@@ -1587,10 +1595,12 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                       '',
                       BookingStatusKeys.onGoing,
                     );
+                    final handymanData = res.handymanData.validate();
                     startLocationUpdates(
                         status: res.bookingDetail?.status.validate() ?? "",
-                        handymanID:
-                            res.handymanData?.first.id.validate() ?? -1);
+                        handymanID: (handymanData.isNotEmpty)
+                            ? handymanData.first.id.validate()
+                            : -1);
                   },
                 );
               },
@@ -2099,12 +2109,12 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                   _buildCounterWidget(value: res.data!),
 
                   /// Location Tracking
-                  locationTrackWidget(data: res.data).visible(
-                      BookingStatusKeys.onGoing ==
-                              res.data!.bookingDetail!.status &&
-                          !isUserTypeHandyman &&
-                          res.data!.handymanData.validate().isNotEmpty &&
-                          res.data!.handymanData!.first.id != appStore.userId),
+                  if (BookingStatusKeys.onGoing ==
+                          res.data!.bookingDetail!.status &&
+                      !isUserTypeHandyman &&
+                      res.data!.handymanData.validate().isNotEmpty &&
+                      res.data!.handymanData!.first.id != appStore.userId)
+                    locationTrackWidget(data: res.data),
 
                   /// My Service List
                   if (res.data!.postRequestDetail != null &&
@@ -2122,16 +2132,19 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                       serviceProofList: res.data!.serviceProof!),
 
                   /// Last Updated
-                  if (BookingStatusKeys.onGoing ==
-                          res.data!.bookingDetail!.status &&
-                      res.data!.handymanData.validate().isNotEmpty &&
-                      res.data!.handymanData!.first.id == appStore.userId)
-                    16.height,
-                  if (BookingStatusKeys.onGoing ==
-                          res.data!.bookingDetail!.status &&
-                      res.data!.handymanData.validate().isNotEmpty &&
-                      res.data!.handymanData!.first.id == appStore.userId)
-                    Container(
+                  Builder(
+                    builder: (context) {
+                      final handymanData = res.data!.handymanData.validate();
+                      final isCurrentUserHandyman = handymanData.isNotEmpty &&
+                          handymanData.first.id == appStore.userId;
+                      final isOnGoing = BookingStatusKeys.onGoing ==
+                          res.data!.bookingDetail!.status;
+                      
+                      if (isOnGoing && isCurrentUserHandyman) {
+                        return Column(
+                          children: [
+                            16.height,
+                            Container(
                       width: context.width(),
                       decoration: boxDecorationWithRoundedCorners(
                         backgroundColor: context.cardColor,
@@ -2170,14 +2183,14 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                                     style: boldTextStyle(
                                         size: 12, color: primaryColor)),
                                 onPressed: () {
+                                  final handymanData = res.data?.handymanData.validate();
                                   startLocationUpdates(
                                       status: res.data?.bookingDetail?.status
                                               .validate() ??
                                           "",
-                                      handymanID: res
-                                              .data?.handymanData?.first.id
-                                              .validate() ??
-                                          -1);
+                                      handymanID: (handymanData?.isNotEmpty ?? false)
+                                          ? handymanData!.first.id.validate()
+                                          : -1);
                                 },
                                 isSemanticButton: false,
                               ).paddingLeft(3),
@@ -2187,6 +2200,12 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                         ],
                       ),
                     ).paddingOnly(left: 16, right: 16),
+                          ],
+                        );
+                      }
+                      return SizedBox.shrink();
+                    },
+                  ),
 
                   /// About Handyman Card
                   if (res.data!.handymanData!.isNotEmpty &&

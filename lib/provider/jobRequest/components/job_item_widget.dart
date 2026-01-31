@@ -170,7 +170,7 @@ class _JobItemWidgetState extends State<JobItemWidget> {
           JobRequestDetailsScreen(
             acceptedBidId: widget.data.acceptedBidId!,
           ).launch(context);
-        } else if(widget.data.status == RequestStatus.requested) {
+        } else {
           JobPostDetailScreen(postJobData: widget.data).launch(context);
         }
       });

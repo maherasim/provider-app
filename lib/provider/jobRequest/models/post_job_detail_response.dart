@@ -5,12 +5,14 @@ import 'bidder_data.dart';
 class PostJobDetailResponse {
   PostJobData? postRequestDetail;
   List<BidderData> bidderData;
+  bool? showUpdateBid;
 
-  PostJobDetailResponse({this.postRequestDetail, required this.bidderData});
+  PostJobDetailResponse({this.postRequestDetail, required this.bidderData, this.showUpdateBid});
 
   factory PostJobDetailResponse.fromJson(dynamic json) => PostJobDetailResponse(
     postRequestDetail: json['post_request_detail'] != null ? PostJobData.fromJson(json['post_request_detail']) : null,
     bidderData: json['bider_data'] == null ? [] :  List<BidderData>.from(json['bider_data'].map((e) => BidderData.fromJson(e))),
+    showUpdateBid: json['show_update_bid'] ?? true,
   );
 
   Map<String, dynamic> toJson() {
@@ -19,6 +21,9 @@ class PostJobDetailResponse {
       map['post_request_detail'] = postRequestDetail?.toJson();
     }
       map['bider_data'] = bidderData.map((v) => v.toJson()).toList();
+    if (showUpdateBid != null) {
+      map['show_update_bid'] = showUpdateBid;
+    }
     return map;
   }
 }

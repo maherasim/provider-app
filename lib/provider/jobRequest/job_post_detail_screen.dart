@@ -636,52 +636,64 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                       ),
                     ],
                   ),
-                  Positioned(
-                    bottom: 16,
-                    left: 16,
-                    right: 16,
-                    child: InkWell(
-                      borderRadius: radius(14),
-                      onTap: () async {
-                        bool? res = await showInDialog(
-                          context,
-                          contentPadding: EdgeInsets.zero,
-                          hideSoftKeyboard: true,
-                          backgroundColor: context.cardColor,
-                          builder: (_) {
-                            BidderData? myBid;
-                            if (data.bidderData.any((element) => element.providerId == appStore.userId)) {
-                              myBid = data.bidderData.firstWhere((element) => element.providerId == appStore.userId);
-                            }
-                            return BidPriceDialog(
-                              data: widget.postJobData,
-                              price: myBid?.price,
-                              whyText: myBid?.whyChooseMe,
-                              isUpdateBid: myBid != null,
+                  Builder(
+                    builder: (context) {
+                      // Use the show_update_bid field from API response
+                      // If false, hide the button (bid is cancelled)
+                      // If true or null, show the button
+                      if (data.showUpdateBid == false) {
+                        return SizedBox.shrink();
+                      }
+                      
+                      // Get user's bid for the dialog
+                      BidderData? myBid;
+                      if (data.bidderData.any((element) => element.providerId == appStore.userId)) {
+                        myBid = data.bidderData.firstWhere((element) => element.providerId == appStore.userId);
+                      }
+                      
+                      return Positioned(
+                        bottom: 16,
+                        left: 16,
+                        right: 16,
+                        child: InkWell(
+                          borderRadius: radius(14),
+                          onTap: () async {
+                            bool? res = await showInDialog(
+                              context,
+                              contentPadding: EdgeInsets.zero,
+                              hideSoftKeyboard: true,
+                              backgroundColor: context.cardColor,
+                              builder: (_) {
+                                return BidPriceDialog(
+                                  data: widget.postJobData,
+                                  price: myBid?.price,
+                                  whyText: myBid?.whyChooseMe,
+                                  isUpdateBid: myBid != null,
+                                );
+                              }
                             );
 
-                          }
-                        );
-
-                        if (res ?? false) {
-                          init();
-                          setState(() {});
-                        }
-                      },
-                      child: Container(
-                        width: context.width(),
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          gradient: kAppPrimaryGradient,
-                          borderRadius: radius(14),
+                            if (res ?? false) {
+                              init();
+                              setState(() {});
+                            }
+                          },
+                          child: Container(
+                            width: context.width(),
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              gradient: kAppPrimaryGradient,
+                              borderRadius: radius(14),
+                            ),
+                            child: Text(
+                              data.postRequestDetail!.canBid.validate() ? languages.bid : "${languages.lblUpdate} ${languages.bid}",
+                              style: boldTextStyle(color: white),
+                            ),
+                          ),
                         ),
-                        child: Text(
-                          data.postRequestDetail!.canBid.validate() ? languages.bid : "${languages.lblUpdate} ${languages.bid}",
-                          style: boldTextStyle(color: white),
-                        ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
                 ],
               );

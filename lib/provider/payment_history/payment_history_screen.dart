@@ -9,6 +9,7 @@ import 'package:nb_utils/nb_utils.dart';
 
 import '../../utils/common.dart';
 import '../../utils/colors.dart';
+import '../../utils/extensions/num_extenstions.dart';
 
 class PaymentHistoryScreen extends StatefulWidget {
   @override
@@ -35,12 +36,32 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
   }
 
   Widget _buildHeaderCell(String text, double width) {
-    return Container(
+    return SizedBox(
       width: width,
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-      child: Text(
-        text,
-        style: boldTextStyle(color: Colors.white),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+        child: Text(
+          text,
+          style: boldTextStyle(color: Colors.white, size: 12),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 2,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDataCell(String text, double width, {TextAlign align = TextAlign.left}) {
+    return SizedBox(
+      width: width,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+        child: Text(
+          text,
+          style: primaryTextStyle(size: 12),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 2,
+          textAlign: align,
+        ),
       ),
     );
   }
@@ -81,59 +102,73 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                             ),
                           ),
                           child: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              _buildHeaderCell("ID", 80),
-                              _buildHeaderCell("Service", 120),
-                              _buildHeaderCell("Users", 120),
-                              _buildHeaderCell("Payment Type", 120),
-                              _buildHeaderCell("Status", 100),
-                              _buildHeaderCell("Date & Time", 150),
+                              _buildHeaderCell("ID", 70),
+                              _buildHeaderCell("Service", 140),
+                              _buildHeaderCell("Users", 130),
+                              _buildHeaderCell("Payment Type", 110),
+                              _buildHeaderCell("Status", 90),
+                              _buildHeaderCell("Date & Time", 140),
                               _buildHeaderCell("Amount", 100),
                             ],
                           ),
                         ),
-                        // DataTable without header
-                        DataTable(
-                          headingRowHeight: 0,
-                          headingTextStyle: boldTextStyle(),
-                          dataTextStyle: primaryTextStyle(),
-                          dividerThickness: 0,
-                          columns: [
-                            DataColumn(label: SizedBox(width: 80)),
-                            DataColumn(label: SizedBox(width: 120)),
-                            DataColumn(label: SizedBox(width: 120)),
-                            DataColumn(label: SizedBox(width: 120)),
-                            DataColumn(label: SizedBox(width: 100)),
-                            DataColumn(label: SizedBox(width: 150)),
-                            DataColumn(label: SizedBox(width: 100)),
-                          ],
-                          rows: list.map((payment) {
-                            return DataRow(
-                              color: (list.indexOf(payment) % 2) != 0 ? WidgetStatePropertyAll(context.cardColor) : null,
-                              cells: [
-                                DataCell(Text(payment.txnId ?? '')),
-                                DataCell(Text(payment.booking?.service?.name ?? '')),
-                                DataCell(Text('${payment.customer?.firstName ?? ' '} ${payment.customer?.lastName ?? ' '}')),
-                                DataCell(Text(payment.paymentType ?? '')),
-                                DataCell(DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    gradient: kAppPrimaryGradient,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
+                        // Data rows
+                        ...list.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final payment = entry.value;
+                          final formattedAmount = payment.totalAmount != null 
+                              ? payment.totalAmount!.toPriceFormat()
+                              : '\$0.00';
+                          
+                          return Container(
+                            color: (index % 2) != 0 ? context.cardColor : null,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _buildDataCell(payment.txnId ?? '-', 70),
+                                _buildDataCell(payment.booking?.service?.name ?? '-', 140),
+                                _buildDataCell(
+                                  '${payment.customer?.firstName ?? ''} ${payment.customer?.lastName ?? ''}'.trim().isEmpty 
+                                      ? '-' 
+                                      : '${payment.customer?.firstName ?? ''} ${payment.customer?.lastName ?? ''}'.trim(),
+                                  130
+                                ),
+                                _buildDataCell(payment.paymentType ?? '-', 110),
+                                SizedBox(
+                                  width: 90,
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    child: Text(
-                                      payment.paymentStatus ?? '',
-                                      style: TextStyle(color: Colors.white),
+                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                                    child: DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        gradient: kAppPrimaryGradient,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                                        child: Text(
+                                          payment.paymentStatus ?? '-',
+                                          style: TextStyle(color: Colors.white, fontSize: 11),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                )),
-                                DataCell(Text( payment.dateTime == null ? '' : formatDate(payment.dateTime?.toIso8601String(), showDateWithTime: true))),
-                                DataCell(Text("\$${payment.totalAmount}")),
+                                ),
+                                _buildDataCell(
+                                  payment.dateTime == null 
+                                      ? '-' 
+                                      : formatDate(payment.dateTime?.toIso8601String(), showDateWithTime: true),
+                                  140
+                                ),
+                                _buildDataCell(formattedAmount, 100, align: TextAlign.right),
                               ],
-                            );
-                          }).toList(),
-                        ),
+                            ),
+                          );
+                        }).toList(),
                       ],
                     ),
                   ),

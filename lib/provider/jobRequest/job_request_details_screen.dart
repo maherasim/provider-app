@@ -299,9 +299,9 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                 crossAxisCount: 2,
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                childAspectRatio: 1.4,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
+                childAspectRatio: 2.2,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
                 children: [
                   _buildInfoCard(
                     icon: Icons.h_mobiledata,
@@ -356,7 +356,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   _buildInfoCard(
                     icon: Icons.person,
                     iconColor: Colors.indigo,
-                    title: 'Provider',
+                    title: 'Worker',
                     value: postJobDetail!.provider?.displayName.validate() ?? '',
                   ),
                   _buildInfoCard(
@@ -442,15 +442,9 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   ),
                   16.width,
                   Expanded(
-                    child: AppButton(
-                      text: 'Cancel',
-                      textStyle: boldTextStyle(color: white, size: 16),
-                      color: cancelled,
-                      width: context.width(),
-                      onTap: () async {
-                        confirmationRequestDialog(context,RequestStatus.cancel);
-                      },
-                    ),
+                    child: _gradientButton(context, 'Cancel', () async {
+                      confirmationRequestDialog(context,RequestStatus.cancel);
+                    }),
                   ),
                 ],
               ).paddingOnly(bottom: 24),
@@ -502,25 +496,19 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   ),
                   16.width,
                   Expanded(
-                    child: AppButton(
-                      text: '+ Extra Charges',
-                      textStyle: boldTextStyle(color: white, size: 16),
-                      color: addExtraCharge,
-                      width: context.width(),
-                      onTap: () async {
-                        bool? res = await showInDialog(
-                          context,
-                          contentPadding: EdgeInsets.zero,
-                          hideSoftKeyboard: true,
-                          backgroundColor: context.cardColor,
-                          builder: (_) =>  ExtraChargesDialog(data: postJobDetail!),
-                        );
-                        if (res ?? false) {
-                          init();
-                          setState(() {});
-                        }
-                      },
-                    ),
+                    child: _gradientButton(context, '+ Extra Charges', () async {
+                      bool? res = await showInDialog(
+                        context,
+                        contentPadding: EdgeInsets.zero,
+                        hideSoftKeyboard: true,
+                        backgroundColor: context.cardColor,
+                        builder: (_) =>  ExtraChargesDialog(data: postJobDetail!),
+                      );
+                      if (res ?? false) {
+                        init();
+                        setState(() {});
+                      }
+                    }),
                   ),
                 ],
               ).paddingOnly(bottom: 24),
@@ -554,26 +542,20 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   ),
                   if(postJobDetail!.status == RequestStatus.remainingPaid) 16.width,
                   if(postJobDetail!.status == RequestStatus.remainingPaid) Expanded(
-                    child: AppButton(
-                      text: 'Download',
-                      textStyle: boldTextStyle(color: white, size: 16),
-                      color: completed,
-                      width: context.width(),
-                      onTap: () async {
-                        if(postJobDetail!.id == null) {
-                          toast(languages.somethingWentWrong);
-                          return;
-                        }
-                        appStore.setLoading(true);
-                        downloadBidInvoice(postJobDetail!.id!).then((value) {
-                          appStore.setLoading(false);
-                          toast(value.message.validate());
-                        }).catchError((e) {
-                          appStore.setLoading(false);
-                          toast(e.toString());
-                        });
-                      },
-                    ),
+                    child: _gradientButton(context, 'Download', () async {
+                      if(postJobDetail!.id == null) {
+                        toast(languages.somethingWentWrong);
+                        return;
+                      }
+                      appStore.setLoading(true);
+                      downloadBidInvoice(postJobDetail!.id!).then((value) {
+                        appStore.setLoading(false);
+                        toast(value.message.validate());
+                      }).catchError((e) {
+                        appStore.setLoading(false);
+                        toast(e.toString());
+                      });
+                    }),
                   ),
                 ],
               ).paddingOnly(bottom: 24),
@@ -877,30 +859,30 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
     bool isDate = false,
   }) {
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: EdgeInsets.all(8),
       decoration: boxDecorationWithRoundedCorners(
         backgroundColor: context.cardColor,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: iconColor, size: 24),
-          6.height,
+          Icon(icon, color: iconColor, size: 18),
+          4.height,
           Text(
             title,
-            style: secondaryTextStyle(size: 11),
+            style: secondaryTextStyle(size: 10),
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          4.height,
+          2.height,
           Flexible(
             child: Text(
               value,
               style: boldTextStyle(
-                size: isDate ? 9 : 12,
+                size: isDate ? 8 : 11,
               ),
               textAlign: TextAlign.center,
               maxLines: 2,

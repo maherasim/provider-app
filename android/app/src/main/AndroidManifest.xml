@@ -20,7 +20,7 @@
     </queries>
     <application
         android:icon="@mipmap/ic_launcher"
-        android:label="Frobster Employer"
+        android:label="Frobster Pro"
         tools:replace="android:label">
 
         <meta-data

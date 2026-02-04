@@ -26,6 +26,7 @@ import 'package:handyman_provider_flutter/models/login_response.dart';
 import 'package:handyman_provider_flutter/models/notification_list_response.dart';
 import 'package:handyman_provider_flutter/models/payment_history_response.dart';
 import 'package:handyman_provider_flutter/models/payment_list_reasponse.dart';
+import 'package:handyman_provider_flutter/models/post_job_payment_data.dart';
 import 'package:handyman_provider_flutter/models/plan_list_response.dart';
 import 'package:handyman_provider_flutter/models/plan_request_model.dart';
 import 'package:handyman_provider_flutter/models/profile_update_response.dart';
@@ -1317,11 +1318,80 @@ Future<List<PaymentData>> getPaymentHistory(int page, List<PaymentData> list, Fu
   var res = paymentHistoryResponseFromJson(await handleResponse(await buildHttpResponse('payment-list-all?page=$page', method: HttpMethodType.GET)));
 
   if (page == 1) list.clear();
-  list.addAll(res.data.data.validate());
+  
+  // Add regular payments
+  list.addAll(res.data.payments.data.validate());
+  
+  // Convert and add post job payments
+  if (res.data.postJobPayments.postJobData != null && res.data.postJobPayments.postJobData!.isNotEmpty) {
+    for (var postJobPayment in res.data.postJobPayments.postJobData!) {
+      // Split customer name into first and last name
+      String? firstName;
+      String? lastName;
+      if (postJobPayment.customerName != null && postJobPayment.customerName!.isNotEmpty) {
+        final nameParts = postJobPayment.customerName!.trim().split(' ');
+        firstName = nameParts.isNotEmpty ? nameParts.first : null;
+        lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : null;
+      }
+      
+      // Create UserData for customer
+      UserData? customerData;
+      if (postJobPayment.customerId != null) {
+        customerData = UserData(
+          id: postJobPayment.customerId,
+          firstName: firstName,
+          lastName: lastName,
+        );
+      }
+      
+      // Create ServiceData with job title
+      ServiceData? serviceData;
+      if (postJobPayment.jobTitle != null && postJobPayment.jobTitle!.isNotEmpty) {
+        serviceData = ServiceData(name: postJobPayment.jobTitle);
+      }
+      
+      // Create BookingData with service
+      BookingData? bookingData;
+      if (serviceData != null) {
+        bookingData = BookingData(
+          id: postJobPayment.postJobBidRequestId,
+          service: serviceData,
+          timeSlots: [], // Required field, empty list for post job payments
+          bookingType: BOOKING_TYPE_USER_POST_JOB, // Mark as post job payment
+        );
+      }
+      
+      // Convert PostJobPaymentData to PaymentData format
+      PaymentData paymentData = PaymentData(
+        id: postJobPayment.id,
+        bookingId: postJobPayment.postJobBidRequestId,
+        customerId: postJobPayment.customerId,
+        totalAmount: postJobPayment.totalAmount,
+        paymentStatus: postJobPayment.paymentStatus,
+        paymentMethod: postJobPayment.paymentType,
+        customerName: postJobPayment.customerName,
+        txnId: postJobPayment.txnId,
+        quantity: null,
+        discount: postJobPayment.discount,
+        price: null,
+        date: postJobPayment.datetime,
+        dateTime: postJobPayment.dateTime,
+        paymentType: postJobPayment.paymentType,
+        status: postJobPayment.paymentStatus,
+        booking: bookingData,
+        customer: customerData,
+      );
+      
+      list.add(paymentData);
+    }
+  }
 
   appStore.setLoading(false);
 
-  lastPageCallback?.call(res.data.data.validate().length != PER_PAGE_ITEM);
+  // Check if last page (both payments and post_job_payments)
+  bool isLastPage = res.data.payments.data.validate().length < PER_PAGE_ITEM && 
+                    (res.data.postJobPayments.postJobData == null || res.data.postJobPayments.postJobData!.isEmpty || res.data.postJobPayments.postJobData!.length < PER_PAGE_ITEM);
+  lastPageCallback?.call(isLastPage);
 
   return list;
 }
@@ -1491,6 +1561,8 @@ Future<JobRequestDetailResponse?> getPostJobDetailByBid(num bidId) async {
     JobRequestDetailResponse? job;
     if(res["success"] == true) {
       res["data"]["tax_percent"] = res["tax_percent"];
+      res["data"]["provider_rating_exists"] = res["provider_rating_exists"];
+      res["data"]["show_rate_customer_button"] = res["show_rate_customer_button"];
       print(res["data"]);
       job = JobRequestDetailResponse.fromJson(res["data"]);
     }
@@ -1793,6 +1865,10 @@ Future<List<HandymanRatingModel>> getHandymanRatingsList({
 
 Future<BaseResponseModel> saveProviderRating(Map request) async {
   return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('save-customer-rating', request: request, method: HttpMethodType.POST)));
+}
+
+Future<BaseResponseModel> savePostJobBidProviderRating(Map request) async {
+  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('postbid/rating-by-provider/save', request: request, method: HttpMethodType.POST)));
 }
 //endregion
 

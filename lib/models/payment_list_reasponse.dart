@@ -15,8 +15,10 @@ class PaymentListResponse {
 
   PaymentListResponse.fromJson(Map<String, dynamic> json) {
     pagination = json['pagination'] != null ? new Pagination.fromJson(json['pagination']) : null;
-    if (json['data'] != null) {
+    if (json['data'] != null && json['data'] is List) {
       data = (json['data'] as List).map((i) => PaymentData.fromJson(i)).toList();
+    } else {
+      data = [];
     }
   }
 
@@ -83,14 +85,14 @@ class PaymentData {
   });
 
   PaymentData.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    bookingId = json['booking_id'];
-    customerId = json['customer_id'];
+    id = json['id'] is int ? json['id'] : (json['id'] != null ? int.tryParse(json['id'].toString()) : null);
+    bookingId = json['booking_id'] is int ? json['booking_id'] : (json['booking_id'] != null ? int.tryParse(json['booking_id'].toString()) : null);
+    customerId = json['customer_id'] is int ? json['customer_id'] : (json['customer_id'] != null ? int.tryParse(json['customer_id'].toString()) : null);
     totalAmount = json['total_amount'];
     paymentStatus = json['payment_status'];
     paymentMethod = json['payment_method'];
     customerName = json['customer_name'];
-    quantity = json['quantity'];
+    quantity = json['quantity'] is int ? json['quantity'] : (json['quantity'] != null ? int.tryParse(json['quantity'].toString()) : null);
     txnId = json['txn_id'];
     taxes = json['taxes'] != null ? (json['taxes'] as List).map((i) => TaxData.fromJson(i)).toList() : null;
     couponData = json['coupon_data'] != null ? CouponData.fromJson(json['coupon_data']) : null;
@@ -99,8 +101,16 @@ class PaymentData {
     price = json['price'];
     date = json['date'];
     extraCharges = json['extra_charges'] != null ? (json['extra_charges'] as List).map((i) => ExtraChargesModel.fromJson(i)).toList() : null;
-    print(json['datetime'].toString().split(' ').first);
-    dateTime = json['datetime'] != null ? DateTime.parse(json['datetime']) : null;
+    if (json['datetime'] != null) {
+      try {
+        print(json['datetime'].toString().split(' ').first);
+        dateTime = DateTime.parse(json['datetime']);
+      } catch (e) {
+        dateTime = null;
+      }
+    } else {
+      dateTime = null;
+    }
     paymentType = json['payment_type'];
     status = json['status'];
     booking = json['booking'] != null ? BookingData.fromJson(json['booking']) : null;

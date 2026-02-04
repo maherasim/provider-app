@@ -4,6 +4,7 @@ import 'package:handyman_provider_flutter/components/app_widgets.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/models/post_job_detail_response.dart';
+import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/extensions/context_ext.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -127,10 +128,15 @@ class _HoldReasonDialogState extends State<HoldReasonDialog> {
                         textColor: context.iconColor,
                       ).expand(),
                       16.width,
-                      AppButton(
+                      InkWell(
+                        borderRadius: radius(12),
                         onTap: _handleSubmitClick,
-                        color: context.primaryColor,
-                        text: languages.confirm,
+                        child: Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(12)),
+                          child: Text(languages.confirm, style: boldTextStyle(color: white, size: 16)),
+                        ),
                       ).expand(),
                     ],
                   ),

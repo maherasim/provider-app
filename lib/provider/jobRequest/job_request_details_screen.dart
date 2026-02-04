@@ -8,6 +8,7 @@ import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/components/extra_charges_dialog.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/components/hold_dialog.dart';
+import 'package:handyman_provider_flutter/provider/jobRequest/components/post_job_bid_rating_dialog.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/components/split_payment.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/models/post_job_data.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/models/post_job_detail_response.dart';
@@ -448,71 +449,205 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   ),
                 ],
               ).paddingOnly(bottom: 24),
-              if(postJobDetail!.status == RequestStatus.advancePaid)
-                _gradientButton(context, 'Start Work', () async {
-                  confirmationRequestDialog(context, RequestStatus.inProcess);
-                }).paddingOnly(bottom: 24),
-              if(postJobDetail!.status == RequestStatus.inProgress) Row(
+              if(postJobDetail!.status == RequestStatus.inProgress) Column(
                 children: [
-                  Expanded(
-                    child: AppButton(
-                      text: 'hold',
-                      textStyle: boldTextStyle(color: white, size: 16),
-                      color: hold,
-                      width: context.width(),
-                      onTap: () async {
-                        bool? res = await showInDialog(
-                          context,
-                          contentPadding: EdgeInsets.zero,
-                          hideSoftKeyboard: true,
-                          backgroundColor: context.cardColor,
-                          builder: (_) =>  HoldReasonDialog(data: postJobDetail!),
-                        );
-                        if (res ?? false) {
-                          init();
-                          setState(() {});
-                        }
-                      },
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: AppButton(
+                          text: 'hold',
+                          textStyle: boldTextStyle(color: white, size: 16),
+                          color: hold,
+                          width: context.width(),
+                          onTap: () async {
+                            bool? res = await showInDialog(
+                              context,
+                              contentPadding: EdgeInsets.zero,
+                              hideSoftKeyboard: true,
+                              backgroundColor: context.cardColor,
+                              builder: (_) =>  HoldReasonDialog(data: postJobDetail!),
+                            );
+                            if (res ?? false) {
+                              init();
+                              setState(() {});
+                            }
+                          },
+                        ),
+                      ),
+                      16.width,
+                      Expanded(
+                        child: _gradientButton(context, 'Done', () async {
+                          confirmationRequestDialog(context, RequestStatus.done);
+                        }),
+                      ),
+                    ],
                   ),
-                  16.width,
-                  Expanded(
-                    child: _gradientButton(context, 'Done', () async {
-                      confirmationRequestDialog(context, RequestStatus.done);
-                    }),
-                  ),
-                ]
-              ).paddingOnly(bottom: 24),
-              if(postJobDetail!.status == RequestStatus.hold)
-                _gradientButton(context, 'Resume Work', () async {
-                  confirmationRequestDialog(context, RequestStatus.inProgress);
-                }).paddingOnly(bottom: 24),
-              if(postJobDetail!.status == RequestStatus.confirmDone) Row(
-                children: [
-                  Expanded(
-                    child: _gradientButton(context, 'Complete', () async {
-                      confirmationRequestDialog(context, RequestStatus.completed);
-                    }),
-                  ),
-                  16.width,
-                  Expanded(
-                    child: _gradientButton(context, '+ Extra Charges', () async {
-                      bool? res = await showInDialog(
-                        context,
-                        contentPadding: EdgeInsets.zero,
-                        hideSoftKeyboard: true,
-                        backgroundColor: context.cardColor,
-                        builder: (_) =>  ExtraChargesDialog(data: postJobDetail!),
-                      );
-                      if (res ?? false) {
-                        init();
-                        setState(() {});
-                      }
-                    }),
+                  16.height,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _gradientButton(context, 'Chat', () async {
+                            final customerId = postJobDetail?.customer?.id;
+                            if (customerId == null) {
+                              toast(languages.somethingWentWrong);
+                              return;
+                            }
+                            toast(languages.pleaseWaitWhileWeLoadChatDetails);
+                            try {
+                              final res = await FrobsterChatApi.openWithUser(userId: customerId, title: 'Direct Message');
+                              Fluttertoast.cancel();
+                              if (res.status && res.conversationId != 0) {
+                                FrobsterChatThreadScreen(
+                                  conversationId: res.conversationId,
+                                  title: 'Direct Message',
+                                  otherDisplayName: postJobDetail?.customer?.displayName,
+                                ).launch(context);
+                              } else {
+                                toast("${postJobDetail?.customer?.displayName} ${languages.isNotAvailableForChat}");
+                              }
+                            } catch (e) {
+                              Fluttertoast.cancel();
+                              toast(e.toString(), print: true);
+                            }
+                          }),
+                      ),
+                    ],
                   ),
                 ],
               ).paddingOnly(bottom: 24),
-              if([RequestStatus.advancePaid, RequestStatus.inProcess, RequestStatus.inProgress, RequestStatus.hold, RequestStatus.done, RequestStatus.confirmDone, RequestStatus.completed, RequestStatus.remainingPaid].contains(postJobDetail!.status)) Row(
+              if(postJobDetail!.status == RequestStatus.hold) Row(
+                children: [
+                  Expanded(
+                    child: _gradientButton(context, 'Resume Work', () async {
+                      confirmationRequestDialog(context, RequestStatus.inProgress);
+                    }),
+                  ),
+                  16.width,
+                  Expanded(
+                    child: _gradientButton(context, 'Chat', () async {
+                        final customerId = postJobDetail?.customer?.id;
+                        if (customerId == null) {
+                          toast(languages.somethingWentWrong);
+                          return;
+                        }
+                        toast(languages.pleaseWaitWhileWeLoadChatDetails);
+                        try {
+                          final res = await FrobsterChatApi.openWithUser(userId: customerId, title: 'Direct Message');
+                          Fluttertoast.cancel();
+                          if (res.status && res.conversationId != 0) {
+                            FrobsterChatThreadScreen(
+                              conversationId: res.conversationId,
+                              title: 'Direct Message',
+                              otherDisplayName: postJobDetail?.customer?.displayName,
+                            ).launch(context);
+                          } else {
+                            toast("${postJobDetail?.customer?.displayName} ${languages.isNotAvailableForChat}");
+                          }
+                        } catch (e) {
+                          Fluttertoast.cancel();
+                          toast(e.toString(), print: true);
+                        }
+                      }),
+                  ),
+                ],
+              ).paddingOnly(bottom: 24),
+              if(postJobDetail!.status == RequestStatus.confirmDone) Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _gradientButton(context, 'Complete', () async {
+                          confirmationRequestDialog(context, RequestStatus.completed);
+                        }),
+                      ),
+                      16.width,
+                      Expanded(
+                        child: _gradientButton(context, '+ Extra Charges', () async {
+                          bool? res = await showInDialog(
+                            context,
+                            contentPadding: EdgeInsets.zero,
+                            hideSoftKeyboard: true,
+                            backgroundColor: context.cardColor,
+                            builder: (_) =>  ExtraChargesDialog(data: postJobDetail!),
+                          );
+                          if (res ?? false) {
+                            init();
+                            setState(() {});
+                          }
+                        }),
+                      ),
+                    ],
+                  ),
+                  16.height,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _gradientButton(context, 'Chat', () async {
+                            final customerId = postJobDetail?.customer?.id;
+                            if (customerId == null) {
+                              toast(languages.somethingWentWrong);
+                              return;
+                            }
+                            toast(languages.pleaseWaitWhileWeLoadChatDetails);
+                            try {
+                              final res = await FrobsterChatApi.openWithUser(userId: customerId, title: 'Direct Message');
+                              Fluttertoast.cancel();
+                              if (res.status && res.conversationId != 0) {
+                                FrobsterChatThreadScreen(
+                                  conversationId: res.conversationId,
+                                  title: 'Direct Message',
+                                  otherDisplayName: postJobDetail?.customer?.displayName,
+                                ).launch(context);
+                              } else {
+                                toast("${postJobDetail?.customer?.displayName} ${languages.isNotAvailableForChat}");
+                              }
+                            } catch (e) {
+                              Fluttertoast.cancel();
+                              toast(e.toString(), print: true);
+                            }
+                          }),
+                      ),
+                    ],
+                  ),
+                ],
+              ).paddingOnly(bottom: 24),
+              if(postJobDetail!.status == RequestStatus.advancePaid) Row(
+                children: [
+                  Expanded(
+                    child: _gradientButton(context, 'Start Work', () async {
+                      confirmationRequestDialog(context, RequestStatus.inProcess);
+                    }),
+                  ),
+                  16.width,
+                  Expanded(
+                    child: _gradientButton(context, 'Chat', () async {
+                        final customerId = postJobDetail?.customer?.id;
+                        if (customerId == null) {
+                          toast(languages.somethingWentWrong);
+                          return;
+                        }
+                        toast(languages.pleaseWaitWhileWeLoadChatDetails);
+                        try {
+                          final res = await FrobsterChatApi.openWithUser(userId: customerId, title: 'Direct Message');
+                          Fluttertoast.cancel();
+                          if (res.status && res.conversationId != 0) {
+                            FrobsterChatThreadScreen(
+                              conversationId: res.conversationId,
+                              title: 'Direct Message',
+                              otherDisplayName: postJobDetail?.customer?.displayName,
+                            ).launch(context);
+                          } else {
+                            toast("${postJobDetail?.customer?.displayName} ${languages.isNotAvailableForChat}");
+                          }
+                        } catch (e) {
+                          Fluttertoast.cancel();
+                          toast(e.toString(), print: true);
+                        }
+                      }),
+                  ),
+                ],
+              ).paddingOnly(bottom: 24),
+              if([RequestStatus.inProcess, RequestStatus.done, RequestStatus.completed].contains(postJobDetail!.status)) Row(
                 children: [
                   Expanded(
                     child: _gradientButton(context, 'Chat', () async {
@@ -540,23 +675,93 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                         }
                       }),
                   ),
-                  if(postJobDetail!.status == RequestStatus.remainingPaid) 16.width,
-                  if(postJobDetail!.status == RequestStatus.remainingPaid) Expanded(
-                    child: _gradientButton(context, 'Download', () async {
-                      if(postJobDetail!.id == null) {
-                        toast(languages.somethingWentWrong);
-                        return;
-                      }
-                      appStore.setLoading(true);
-                      downloadBidInvoice(postJobDetail!.id!).then((value) {
-                        appStore.setLoading(false);
-                        toast(value.message.validate());
-                      }).catchError((e) {
-                        appStore.setLoading(false);
-                        toast(e.toString());
-                      });
-                    }),
+                ],
+              ).paddingOnly(bottom: 24),
+              if(postJobDetail!.status == RequestStatus.remainingPaid) Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _gradientButton(context, 'Chat', () async {
+                            final customerId = postJobDetail?.customer?.id;
+                            if (customerId == null) {
+                              toast(languages.somethingWentWrong);
+                              return;
+                            }
+                            toast(languages.pleaseWaitWhileWeLoadChatDetails);
+                            try {
+                              final res = await FrobsterChatApi.openWithUser(userId: customerId, title: 'Direct Message');
+                              Fluttertoast.cancel();
+                              if (res.status && res.conversationId != 0) {
+                                FrobsterChatThreadScreen(
+                                  conversationId: res.conversationId,
+                                  title: 'Direct Message',
+                                  otherDisplayName: postJobDetail?.customer?.displayName,
+                                ).launch(context);
+                              } else {
+                                toast("${postJobDetail?.customer?.displayName} ${languages.isNotAvailableForChat}");
+                              }
+                            } catch (e) {
+                              Fluttertoast.cancel();
+                              toast(e.toString(), print: true);
+                            }
+                          }),
+                      ),
+                      16.width,
+                      Expanded(
+                        child: _gradientButton(context, 'Download', () async {
+                          if(postJobDetail!.id == null) {
+                            toast(languages.somethingWentWrong);
+                            return;
+                          }
+                          appStore.setLoading(true);
+                          downloadBidInvoice(postJobDetail!.id!).then((value) {
+                            appStore.setLoading(false);
+                            toast(value.message.validate());
+                          }).catchError((e) {
+                            appStore.setLoading(false);
+                            toast(e.toString());
+                          });
+                        }),
+                      ),
+                    ],
                   ),
+                  if(postJobDetail!.showRateCustomerButton == true) ...[
+                    16.height,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _gradientButton(context, 'Rate Customer', () async {
+                            if (postJobDetail?.id == null || postJobDetail?.providerId == null || postJobDetail?.customer?.id == null) {
+                              toast(languages.somethingWentWrong);
+                              return;
+                            }
+                            bool? res = await showInDialog(
+                              context,
+                              contentPadding: EdgeInsets.zero,
+                              hideSoftKeyboard: true,
+                              backgroundColor: context.cardColor,
+                              builder: (_) => PostJobBidRatingDialog(
+                                postJobBidId: postJobDetail!.id!,
+                                providerId: postJobDetail!.providerId!,
+                                customerId: postJobDetail!.customer!.id!,
+                                customerName: postJobDetail?.customer?.displayName,
+                                customerImage: null,
+                                customerCity: null,
+                                customerCountry: null,
+                                customerRating: null,
+                                customerTotalRatings: null,
+                              ),
+                            );
+                            if (res ?? false) {
+                              init();
+                              setState(() {});
+                            }
+                          }),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ).paddingOnly(bottom: 24),
             ],
@@ -811,6 +1016,9 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
   Widget _buildExtraChargesBreakdown() {
     if (postJobDetail!.extraCharges.isEmpty) return SizedBox.shrink();
 
+    // Calculate total of all extra charges
+    num totalExtraCharges = postJobDetail!.extraCharges.fold(0, (sum, charge) => sum + ((charge.amount ?? 0) * (charge.quantity ?? 0)));
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -825,6 +1033,21 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ...postJobDetail!.extraCharges.map((charge) => _extraChargesDetails(charge)).toList(),
+              8.height,
+              Divider(color: context.dividerColor, thickness: 1),
+              8.height,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Total Extra Charges', style: boldTextStyle(size: 14)),
+                  PriceWidget(
+                    price: totalExtraCharges,
+                    color: textPrimaryColorGlobal,
+                    isBoldText: true,
+                    size: 16,
+                  ),
+                ],
+              ),
             ],
           ),
         ),

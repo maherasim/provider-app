@@ -9,6 +9,7 @@ import 'package:nb_utils/nb_utils.dart';
 
 import '../../utils/common.dart';
 import '../../utils/colors.dart';
+import '../../utils/constant.dart';
 import '../../utils/extensions/num_extenstions.dart';
 
 class PaymentHistoryScreen extends StatefulWidget {
@@ -66,6 +67,100 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
     );
   }
 
+  Widget _buildPaymentTable(List<PaymentData> payments, String serviceHeader) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Custom gradient header row
+            Container(
+              decoration: BoxDecoration(
+                gradient: kAppPrimaryGradient,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildHeaderCell("ID", 70),
+                  _buildHeaderCell(serviceHeader, 140),
+                  _buildHeaderCell("Users", 130),
+                  _buildHeaderCell("Payment Type", 110),
+                  _buildHeaderCell("Status", 90),
+                  _buildHeaderCell("Date & Time", 140),
+                  _buildHeaderCell("Amount", 100),
+                ],
+              ),
+            ),
+            // Data rows
+            ...payments.asMap().entries.map((entry) {
+              final index = entry.key;
+              final payment = entry.value;
+              final formattedAmount = payment.totalAmount != null 
+                  ? payment.totalAmount!.toPriceFormat()
+                  : '\$0.00';
+              
+              // Get service name (for regular payments) or job title (for post job payments)
+              final serviceOrJobName = payment.booking?.service?.name ?? '-';
+              
+              return Container(
+                color: (index % 2) != 0 ? context.cardColor : null,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildDataCell(payment.txnId ?? '-', 70),
+                    _buildDataCell(serviceOrJobName, 140),
+                    _buildDataCell(
+                      '${payment.customer?.firstName ?? ''} ${payment.customer?.lastName ?? ''}'.trim().isEmpty 
+                          ? '-' 
+                          : '${payment.customer?.firstName ?? ''} ${payment.customer?.lastName ?? ''}'.trim(),
+                      130
+                    ),
+                    _buildDataCell(payment.paymentType ?? '-', 110),
+                    SizedBox(
+                      width: 90,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: kAppPrimaryGradient,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                            child: Text(
+                              payment.paymentStatus ?? '-',
+                              style: TextStyle(color: Colors.white, fontSize: 11),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    _buildDataCell(
+                      payment.dateTime == null 
+                          ? '-' 
+                          : formatDate(payment.dateTime?.toIso8601String(), showDateWithTime: true),
+                      140
+                    ),
+                    _buildDataCell(formattedAmount, 100, align: TextAlign.right),
+                  ],
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
+    ).paddingSymmetric(horizontal: 16);
+  }
+
   @override
   void setState(fn) {
     if (mounted) super.setState(fn);
@@ -81,98 +176,25 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
         child: SnapHelperWidget<List<PaymentData>>(
           future: future,
           onSuccess: (list) {
+            // Separate regular payments and post job payments
+            final regularPayments = list.where((payment) => payment.booking?.bookingType != BOOKING_TYPE_USER_POST_JOB).toList();
+            final postJobPayments = list.where((payment) => payment.booking?.bookingType == BOOKING_TYPE_USER_POST_JOB).toList();
+            
             return AnimatedScrollView(
               crossAxisAlignment: CrossAxisAlignment.start,
               physics: AlwaysScrollableScrollPhysics(),
               children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Custom gradient header row
-                        Container(
-                          decoration: BoxDecoration(
-                            gradient: kAppPrimaryGradient,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(12),
-                              topRight: Radius.circular(12),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              _buildHeaderCell("ID", 70),
-                              _buildHeaderCell("Service", 140),
-                              _buildHeaderCell("Users", 130),
-                              _buildHeaderCell("Payment Type", 110),
-                              _buildHeaderCell("Status", 90),
-                              _buildHeaderCell("Date & Time", 140),
-                              _buildHeaderCell("Amount", 100),
-                            ],
-                          ),
-                        ),
-                        // Data rows
-                        ...list.asMap().entries.map((entry) {
-                          final index = entry.key;
-                          final payment = entry.value;
-                          final formattedAmount = payment.totalAmount != null 
-                              ? payment.totalAmount!.toPriceFormat()
-                              : '\$0.00';
-                          
-                          return Container(
-                            color: (index % 2) != 0 ? context.cardColor : null,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                _buildDataCell(payment.txnId ?? '-', 70),
-                                _buildDataCell(payment.booking?.service?.name ?? '-', 140),
-                                _buildDataCell(
-                                  '${payment.customer?.firstName ?? ''} ${payment.customer?.lastName ?? ''}'.trim().isEmpty 
-                                      ? '-' 
-                                      : '${payment.customer?.firstName ?? ''} ${payment.customer?.lastName ?? ''}'.trim(),
-                                  130
-                                ),
-                                _buildDataCell(payment.paymentType ?? '-', 110),
-                                SizedBox(
-                                  width: 90,
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                                    child: DecoratedBox(
-                                      decoration: BoxDecoration(
-                                        gradient: kAppPrimaryGradient,
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                                        child: Text(
-                                          payment.paymentStatus ?? '-',
-                                          style: TextStyle(color: Colors.white, fontSize: 11),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                _buildDataCell(
-                                  payment.dateTime == null 
-                                      ? '-' 
-                                      : formatDate(payment.dateTime?.toIso8601String(), showDateWithTime: true),
-                                  140
-                                ),
-                                _buildDataCell(formattedAmount, 100, align: TextAlign.right),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      ],
-                    ),
-                  ),
-                )
+                // Regular Payments Section
+                if (regularPayments.isNotEmpty) ...[
+                  Text('Regular Payments', style: boldTextStyle(size: 16)).paddingOnly(left: 16, top: 16, bottom: 8),
+                  _buildPaymentTable(regularPayments, "Service"),
+                  16.height,
+                ],
+                // Post Job Payments Section
+                if (postJobPayments.isNotEmpty) ...[
+                  Text('Job Request Payments', style: boldTextStyle(size: 16)).paddingOnly(left: 16, top: 8, bottom: 8),
+                  _buildPaymentTable(postJobPayments, "Job Request"),
+                ],
               ],
               onNextPage: () {
                 if (!isLastPage) {

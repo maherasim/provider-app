@@ -109,7 +109,7 @@ class _ExtraChargesDialogState extends State<ExtraChargesDialog> {
   Widget build(BuildContext context) {
     return Container(
       width: context.width(),
-      height: context.height() * 0.8,
+      height: context.height() * 0.45,
       color: Colors.transparent,
       child: Stack(
         children: [
@@ -119,12 +119,12 @@ class _ExtraChargesDialogState extends State<ExtraChargesDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(languages.addExtraCharges, style: boldTextStyle(size: 18)).paddingAll(16),
+                Text(languages.addExtraCharges, style: boldTextStyle(size: 14)).paddingSymmetric(horizontal: 16, vertical: 8),
                 // Scrollable Content
                 Expanded(
                   child: ListView.builder(
                     shrinkWrap: true,
-                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                     itemCount: chargeRows.length,
                     itemBuilder: (context, index) {
                       return _buildChargeRow(index);
@@ -136,28 +136,28 @@ class _ExtraChargesDialogState extends State<ExtraChargesDialog> {
                   width: double.infinity,
                   child: OutlinedButton.icon(
                     onPressed: addRow,
-                    icon: _gradientText(Icon(Icons.add, size: 20)),
-                    label: _gradientText(Text(languages.addMore)),
+                    icon: _gradientText(Icon(Icons.add, size: 16)),
+                    label: _gradientText(Text(languages.addMore, style: secondaryTextStyle(size: 12))),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: gradientRed,
                       side: BorderSide(color: gradientRed),
-                      padding: EdgeInsets.symmetric(vertical: 12),
+                      padding: EdgeInsets.symmetric(vertical: 8),
                     ),
                   ),
-                ).paddingSymmetric(horizontal: 16,vertical: 8),
+                ).paddingSymmetric(horizontal: 16,vertical: 4),
                 // Info text
                 Row(
                   children: [
-                    Icon(Icons.info_outline, size: 16, color: context.iconColor),
-                    8.width,
+                    Icon(Icons.info_outline, size: 12, color: context.iconColor),
+                    4.width,
                     Expanded(
                       child: Text(
                         languages.extraChargesWillBeIncludedInFinalInvoice,
-                        style: secondaryTextStyle(size: 12),
+                        style: secondaryTextStyle(size: 10),
                       ),
                     ),
                   ],
-                ).paddingSymmetric(vertical: 8,horizontal: 16),
+                ).paddingSymmetric(vertical: 4,horizontal: 16),
                 
                 // Fixed Footer with Action buttons
                 Row(
@@ -171,19 +171,19 @@ class _ExtraChargesDialogState extends State<ExtraChargesDialog> {
                       text: languages.lblCancel,
                       textColor: context.iconColor,
                     ).expand(),
-                    16.width,
+                    8.width,
                     DecoratedBox(
                       decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
                       child: AppButton(
                         onTap: _handleSubmitClick,
                         color: Color(0x00000000),
                         text: languages.save,
-                        textStyle: boldTextStyle(color: white),
+                        textStyle: boldTextStyle(color: white, size: 14),
                         elevation: 0,
                       ),
                     ).expand(),
                   ],
-                ).paddingSymmetric(vertical: 8,horizontal: 16),
+                ).paddingSymmetric(vertical: 4,horizontal: 16),
               ],
             ),
           ),
@@ -199,11 +199,11 @@ class _ExtraChargesDialogState extends State<ExtraChargesDialog> {
     final row = chargeRows[index];
     
     return Container(
-      margin: EdgeInsets.only(bottom: 16),
-      padding: EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 8),
+      padding: EdgeInsets.all(10),
       decoration: boxDecorationWithRoundedCorners(
         backgroundColor: context.scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: context.dividerColor),
       ),
       child: Column(
@@ -215,19 +215,19 @@ class _ExtraChargesDialogState extends State<ExtraChargesDialog> {
               _gradientText(
                 Text(
                   '${languages.charge} ${index + 1}',
-                  style: boldTextStyle(size: 14),
+                  style: boldTextStyle(size: 11),
                 ),
               ),
               if (chargeRows.length > 1)
                 IconButton(
                   onPressed: () => removeRow(index),
-                  icon: Icon(Icons.close, size: 20, color: Colors.red),
+                  icon: Icon(Icons.close, size: 18, color: Colors.red),
                   padding: EdgeInsets.zero,
-                  constraints: BoxConstraints(minWidth: 24, minHeight: 24),
+                  constraints: BoxConstraints(minWidth: 20, minHeight: 20),
                 ),
             ],
           ),
-          16.height,
+          8.height,
           AppTextField(
             textFieldType: TextFieldType.NAME,
             controller: row.titleController,
@@ -241,10 +241,11 @@ class _ExtraChargesDialogState extends State<ExtraChargesDialog> {
               filled: true,
               hintText: languages.title,
               hintStyle: secondaryTextStyle(),
+              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             ),
           ),
 
-          16.height,
+          8.height,
           // Form fields
           Row(
             children: [
@@ -262,10 +263,11 @@ class _ExtraChargesDialogState extends State<ExtraChargesDialog> {
                     filled: true,
                     hintText: languages.price,
                     hintStyle: secondaryTextStyle(),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   ),
                 ),
               ),
-              12.width,
+              8.width,
               Expanded(
                 child: AppTextField(
                   textFieldType: TextFieldType.NUMBER,
@@ -280,6 +282,7 @@ class _ExtraChargesDialogState extends State<ExtraChargesDialog> {
                     filled: true,
                     hintText: languages.quantity,
                     hintStyle: secondaryTextStyle(),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   ),
                 ),
               ),

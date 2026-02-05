@@ -237,37 +237,47 @@ class _PlansComingSoonBanner extends StatefulWidget {
 }
 
 class _PlansComingSoonBannerState extends State<_PlansComingSoonBanner>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+    with TickerProviderStateMixin {
+  late AnimationController _entranceController;
   late Animation<double> _scale;
   late Animation<double> _opacity;
+
+  late AnimationController _shimmerController;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    // Entrance animation
+    _entranceController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 500),
+      duration: Duration(milliseconds: 800),
     );
-    _scale = Tween<double>(begin: 0.92, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+    _scale = Tween<double>(begin: 0.9, end: 1.0).animate(
+      CurvedAnimation(parent: _entranceController, curve: Curves.elasticOut),
     );
     _opacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+      CurvedAnimation(parent: _entranceController, curve: Curves.easeIn),
     );
-    _controller.forward();
+    _entranceController.forward();
+
+    // Loop animation for "Attract Mode" (Shimmer + Pulse)
+    _shimmerController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 4),
+    )..repeat();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _entranceController.dispose();
+    _shimmerController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _controller,
+      animation: _entranceController,
       builder: (context, child) {
         return Opacity(
           opacity: _opacity.value,
@@ -278,119 +288,193 @@ class _PlansComingSoonBannerState extends State<_PlansComingSoonBanner>
           ),
         );
       },
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          gradient: widget.isDarkMode
-              ? LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    widget.cardColor,
-                    widget.cardColor,
-                  ],
-                )
-              : kAppPrimaryGradient,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: widget.isDarkMode
-              ? []
-              : [
-                  BoxShadow(
-                    color: gradientRed.withValues(alpha: 0.35),
-                    blurRadius: 12,
-                    offset: Offset(0, 4),
-                    spreadRadius: 0,
-                  ),
-                  BoxShadow(
-                    color: gradientBlue.withValues(alpha: 0.2),
-                    blurRadius: 8,
-                    offset: Offset(0, 2),
-                    spreadRadius: 0,
-                  ),
-                ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: Stack(
-            children: [
-              // Subtle pattern / shine overlay
-              if (!widget.isDarkMode)
-                Positioned(
-                  right: -24,
-                  top: -24,
-                  child: Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withValues(alpha: 0.12),
+      child: AnimatedBuilder(
+        animation: _shimmerController,
+        builder: (context, child) {
+          final double shimmerValue = _shimmerController.value;
+          // Pulse scale for the icon
+          final double pulseScale =
+              1.0 + (0.08 * (0.5 - (0.5 - shimmerValue).abs()) * 2);
+
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              // Dynamic gradient background
+              gradient: widget.isDarkMode
+                  ? LinearGradient(
+                      colors: [widget.cardColor, widget.cardColor],
+                    )
+                  : LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        gradientRed,
+                        gradientBlue,
+                        gradientRed, // Slight loop back to red for richness
+                      ],
+                      // Gently shift the gradient alignment or just static is fine if we have the shimmer overlay
+                      stops: [0.0, 0.7, 1.0],
                     ),
-                  ),
-                ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(18, 14, 10, 14),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: widget.isDarkMode
+                  ? []
+                  : [
+                      BoxShadow(
+                        color: gradientRed.withValues(alpha: 0.35),
+                        blurRadius: 15,
+                        offset: Offset(0, 8),
+                        spreadRadius: -2,
                       ),
-                      child: Icon(
-                        Icons.auto_awesome_rounded,
-                        size: 26,
-                        color: Colors.white,
+                      BoxShadow(
+                        color: gradientBlue.withValues(alpha: 0.25),
+                        blurRadius: 10,
+                        offset: Offset(0, 4),
+                        spreadRadius: -1,
                       ),
-                    ),
-                    14.width,
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Plans coming soon',
-                            style: boldTextStyle(
-                              size: 16,
-                              color: Colors.white,
-                              letterSpacing: 0.3,
-                            ),
-                          ),
-                          4.height,
-                          Text(
-                            'We\'re building something great for you. Stay tuned.',
-                            style: secondaryTextStyle(
-                              size: 12,
-                              color: Colors.white.withValues(alpha: 0.9),
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(24),
-                        onTap: widget.onClose,
-                        child: Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.close_rounded,
-                            size: 22,
-                            color: Colors.white.withValues(alpha: 0.9),
+                    ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Stack(
+                children: [
+                  // 1. Moving Background Pattern (Circles)
+                  if (!widget.isDarkMode)
+                    Positioned(
+                      right: -30,
+                      top: -30,
+                      child: Transform.translate(
+                        offset: Offset(
+                            0, 15 * (0.5 - (0.5 - shimmerValue).abs())),
+                        child: Container(
+                          width: 140,
+                          height: 140,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.1),
                           ),
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  if (!widget.isDarkMode)
+                    Positioned(
+                      left: -20,
+                      bottom: -40,
+                      child: Transform.translate(
+                        offset: Offset(
+                            0, -10 * (0.5 - (0.5 - shimmerValue).abs())),
+                        child: Container(
+                          width: 90,
+                          height: 90,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.08),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  // 2. Shimmer Light Overlay (sweeps across)
+                  if (!widget.isDarkMode)
+                    Positioned.fill(
+                      child: LayoutBuilder(builder: (context, constraints) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment(
+                                  -2.5 + (shimmerValue * 5), -1.0), // Fast sweep
+                              end: Alignment(
+                                  -0.5 + (shimmerValue * 5), 1.0),
+                              colors: [
+                                Colors.transparent,
+                                Colors.white.withValues(alpha: 0.15),
+                                Colors.transparent,
+                              ],
+                              stops: [0.3, 0.5, 0.7],
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+
+                  // 3. Main Content
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(16, 16, 12, 16),
+                    child: Row(
+                      children: [
+                        // Icon with Pulse
+                        Transform.scale(
+                          scale: pulseScale,
+                          child: Container(
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.25),
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.1),
+                                  blurRadius: 8,
+                                  offset: Offset(0, 4),
+                                )
+                              ],
+                            ),
+                            child: Icon(
+                              Icons.auto_awesome_rounded,
+                              size: 26,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        14.width,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Premium Plans Soon',
+                                style: boldTextStyle(
+                                  size: 16,
+                                  color: Colors.white,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              4.height,
+                              Text(
+                                "We're building something great for you. Stay tuned.",
+                                style: secondaryTextStyle(
+                                  size: 13,
+                                  color: Colors.white.withValues(alpha: 0.95),
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Close Button
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(24),
+                            onTap: widget.onClose,
+                            child: Padding(
+                              padding: EdgeInsets.all(6),
+                              child: Icon(
+                                Icons.close_rounded,
+                                size: 20,
+                                color: Colors.white.withValues(alpha: 0.8),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }

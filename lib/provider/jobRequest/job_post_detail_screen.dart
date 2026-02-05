@@ -48,6 +48,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
   Widget _buildSimpleRow({
     required String label,
     required String value,
+    Color? valueBackgroundColor,
   }) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10),
@@ -60,15 +61,32 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
             style: boldTextStyle(size: 14),
           ),
           Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w300,
-                color: textPrimaryColorGlobal,
-              ),
-              textAlign: TextAlign.right,
-            ),
+            child: valueBackgroundColor != null
+                ? Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: valueBackgroundColor,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: textPrimaryColorGlobal,
+                      ),
+                      textAlign: TextAlign.right,
+                    ),
+                  )
+                : Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w300,
+                      color: textPrimaryColorGlobal,
+                    ),
+                    textAlign: TextAlign.right,
+                  ),
           ),
         ],
       ),
@@ -145,6 +163,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
         _buildSimpleRow(
           label: "Job Type",
           value: data.type?.displayName ?? '',
+          valueBackgroundColor: data.type?.bgColor,
         ),
         _buildSimpleRow(
           label: languages.startDate,

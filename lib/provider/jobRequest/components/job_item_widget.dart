@@ -59,7 +59,7 @@ class _JobItemWidgetState extends State<JobItemWidget> {
                       borderRadius: radius(20),
                     ),
                     child: Text(
-                      widget.data.status.displayName,
+                      widget.data.status == RequestStatus.confirmDone ? 'Completed' : widget.data.status.displayName,
                       style: boldTextStyle(color: Colors.white, size: 12),
                     ),
                   ),
@@ -121,12 +121,15 @@ class _JobItemWidgetState extends State<JobItemWidget> {
                     ],
                   ),
                 10.height,
-                // meta row: type, views, proposals
+                // meta row: type, views, proposals (job type with distinct bg: onsite=green, hybrid=orange, remote=blue)
                 Row(
                   children: [
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      decoration: boxDecorationDefault(color: context.scaffoldBackgroundColor, borderRadius: radius(20)),
+                      decoration: boxDecorationDefault(
+                        color: widget.data.type?.bgColor ?? context.scaffoldBackgroundColor,
+                        borderRadius: radius(20),
+                      ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [

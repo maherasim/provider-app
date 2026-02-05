@@ -285,16 +285,17 @@ enum PriceType {
   const PriceType(this.displayName, this.backendValue);
 }
 
-/// Job Type
+/// Job Type – each has a distinct bg color for quick visibility
 enum JobType {
-  onSite("On Site", "onsite"),
-  hybrid("Hybrid", "hybrid"),
-  remote("Remote / Home Office", "remote");
+  onSite("On Site", "onsite", Color(0xFFBBDEFB)),   // light blue
+  hybrid("Hybrid", "hybrid", Color(0xFFFFE0B2)),   // orange
+  remote("Remote", "remote", Color(0xFFC8E6C9));    // green
 
   final String displayName;
   final String backendValue;
+  final Color bgColor;
 
-  const JobType(this.displayName, this.backendValue);
+  const JobType(this.displayName, this.backendValue, this.bgColor);
 }
 
 /// Job Schedule

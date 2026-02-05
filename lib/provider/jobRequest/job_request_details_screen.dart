@@ -345,6 +345,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                     iconColor: Colors.orange,
                     title: 'Job Type',
                     value: postJobDetail!.postRequest?.type.displayName.validate() ?? '',
+                    cardBackgroundColor: postJobDetail!.postRequest?.type.bgColor,
                   ),
                   _buildInfoCard(
                     icon: Icons.attach_money,
@@ -1140,11 +1141,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
     required String title,
     required String value,
     bool isDate = false,
+    Color? cardBackgroundColor,
   }) {
     return Container(
       padding: EdgeInsets.all(8),
       decoration: boxDecorationWithRoundedCorners(
-        backgroundColor: context.cardColor,
+        backgroundColor: cardBackgroundColor ?? context.cardColor,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(

@@ -158,7 +158,7 @@ class PostJobData {
     requirement: json["requirement"],
     latitude: json["latitude"]?.toDouble(),
     longitude: json["longitude"]?.toDouble(),
-    status: RequestStatus.values.firstWhere((e) => e.backendValue == json["status"], orElse: () => RequestStatus.requested) ,
+    status: RequestStatus.fromJson(json["status"]),
     priceType: (json["price_type"] ?? json["job_price"]) == null ? null : PriceType.values.firstWhere((e) => e.backendValue == (json["price_type"] ?? json["job_price"]), orElse: () => PriceType.fixed),
     type: json["type"] == null ? null : JobType.values.firstWhere((e) => e.backendValue == json["type"], orElse: () => JobType.onSite),
     jobSchedule: json["job_schedule"] == null ? null : JobSchedule.values.firstWhere((e) => e.backendValue == json["job_schedule"], orElse: () => JobSchedule.fullTime),
@@ -365,12 +365,12 @@ enum EducationLevel {
 
   const EducationLevel(this.displayName, this.backendValue);
 }
-
+ 
 /// Education Level
 enum RequestStatus {
   requested('Requested','requested',defaultStatus),
   accepted('Accepted','accepted',accept),
-  pendingAdvance('Advance Payment Pending','Advance Payment Pending',primaryColorWithOpacity),
+  pendingAdvance('Advance Payment Pending','advance_payment_pending',primaryColorWithOpacity),
   advancePaid('Advance Paid','advance_paid',primaryColorWithOpacity),
   inProcess('In Process','in_process',primaryColorWithOpacity),
   inProgress('In Progress','in_progress',primaryColorWithOpacity),
@@ -378,6 +378,7 @@ enum RequestStatus {
   done('Done','done',primaryColorWithOpacity),
   confirmDone( 'Confirm Done','confirm_done',primaryColorWithOpacity),
   completed( 'Completed','completed',primaryColorWithOpacity),
+  remainingPaymentPending('Waiting for admin approval','remaining_payment_pending',primaryColorWithOpacity),
   remainingPaid( 'Remaining Paid','remaining_paid',primaryColorWithOpacity),
 
   cancel( 'Cancelled','cancelled',cancelled);
@@ -385,6 +386,17 @@ enum RequestStatus {
   final String backendValue;
   final Color bgColor;
   const RequestStatus(this.displayName,this.backendValue,this.bgColor);
+
+  /// Parses status from API. Accepts snake_case and "Display Form" for pending statuses.
+  static RequestStatus fromJson(dynamic value) {
+    if (value == null) return RequestStatus.requested;
+    final s = value.toString().trim();
+    final sLower = s.toLowerCase();
+    final sNormalized = sLower.replaceAll(' ', '_');
+    if (s == 'Advance Payment Pending' || sNormalized == 'advance_payment_pending') return RequestStatus.pendingAdvance;
+    if (s == 'Remaining Payment Pending' || sNormalized == 'remaining_payment_pending' || sLower == 'remaining payment pending') return RequestStatus.remainingPaymentPending;
+    return RequestStatus.values.firstWhere((e) => e.backendValue == s || e.backendValue == sLower || e.backendValue == sNormalized, orElse: () => RequestStatus.requested);
+  }
 }
 
 

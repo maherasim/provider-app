@@ -283,7 +283,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
     if (updatedStatus == BookingStatusKeys.inProgress || 
         updatedStatus == BookingStatusKeys.hold ||
         updatedStatus == BookingStatusKeys.complete) {
-      countDownKey = GlobalKey();
+    countDownKey = GlobalKey();
     }
     setState(() {});
 
@@ -2110,8 +2110,8 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
 
                   /// Location Tracking
                   if (BookingStatusKeys.onGoing ==
-                          res.data!.bookingDetail!.status &&
-                      !isUserTypeHandyman &&
+                              res.data!.bookingDetail!.status &&
+                          !isUserTypeHandyman &&
                       res.data!.handymanData.validate().isNotEmpty &&
                       res.data!.handymanData!.first.id != appStore.userId)
                     locationTrackWidget(data: res.data),
@@ -2143,8 +2143,8 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                       if (isOnGoing && isCurrentUserHandyman) {
                         return Column(
                           children: [
-                            16.height,
-                            Container(
+                    16.height,
+                    Container(
                       width: context.width(),
                       decoration: boxDecorationWithRoundedCorners(
                         backgroundColor: context.cardColor,

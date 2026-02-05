@@ -103,7 +103,7 @@ class PaymentData {
     extraCharges = json['extra_charges'] != null ? (json['extra_charges'] as List).map((i) => ExtraChargesModel.fromJson(i)).toList() : null;
     if (json['datetime'] != null) {
       try {
-        print(json['datetime'].toString().split(' ').first);
+    print(json['datetime'].toString().split(' ').first);
         dateTime = DateTime.parse(json['datetime']);
       } catch (e) {
         dateTime = null;

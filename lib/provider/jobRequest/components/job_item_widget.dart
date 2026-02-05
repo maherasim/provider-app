@@ -28,10 +28,10 @@ class _JobItemWidgetState extends State<JobItemWidget> {
         borderRadius: radius(),
         backgroundColor: context.cardColor,
       ),
-      width: context.width(),
       margin: EdgeInsets.symmetric(vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           // Image with status and price pill overlays
           ClipRRect(
@@ -45,7 +45,7 @@ class _JobItemWidgetState extends State<JobItemWidget> {
                   url: widget.data.images.isNotEmpty ? widget.data.images.first : "",
                   fit: BoxFit.cover,
                   height: 170,
-                  width: context.width(),
+                  width: double.infinity,
                   circle: false,
                 ),
                 // Status chip
@@ -128,27 +128,52 @@ class _JobItemWidgetState extends State<JobItemWidget> {
                       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: boxDecorationDefault(color: context.scaffoldBackgroundColor, borderRadius: radius(20)),
                       child: Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(Icons.work_outline, size: 14, color: textSecondaryColorGlobal),
                           6.width,
-                          Text(widget.data.type?.displayName ?? '', style: primaryTextStyle(size: 12)),
+                          Flexible(
+                            child: Text(
+                              widget.data.type?.displayName ?? '',
+                              style: primaryTextStyle(size: 12),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                     10.width,
-                    Row(
-                      children: [
-                        Icon(Icons.visibility_outlined, size: 16, color: textSecondaryColorGlobal),
-                        6.width,
-                        Text("Views: ${widget.data.totalViews ?? 0}", style: secondaryTextStyle()),
-                      ],
-                    ).expand(),
-                    Row(
-                      children: [
-                        Icon(Icons.receipt_long_outlined, size: 16, color: textSecondaryColorGlobal),
-                        6.width,
-                        Text("Proposals: ${widget.data.proposalsCount ?? 0}", style: secondaryTextStyle()),
-                      ],
+                    Expanded(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.visibility_outlined, size: 16, color: textSecondaryColorGlobal),
+                          6.width,
+                          Flexible(
+                            child: Text(
+                              "Views: ${widget.data.totalViews ?? 0}",
+                              style: secondaryTextStyle(),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.receipt_long_outlined, size: 16, color: textSecondaryColorGlobal),
+                          6.width,
+                          Flexible(
+                            child: Text(
+                              "Proposals: ${widget.data.proposalsCount ?? 0}",
+                              style: secondaryTextStyle(),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

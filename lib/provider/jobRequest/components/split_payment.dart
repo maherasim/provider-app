@@ -151,11 +151,28 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
                         textColor: context.iconColor,
                       ).expand(),
                       16.width,
-                      AppButton(
-                        onTap: _handleSubmitClick,
-                        color: context.primaryColor,
-                        text: languages.confirm,
-                      ).expand(),
+                      Expanded(
+                        child: InkWell(
+                          borderRadius: radius(),
+                          onTap: _handleSubmitClick,
+                          child: Container(
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              borderRadius: radius(),
+                              gradient: const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [Colors.red, Colors.blue],
+                              ),
+                            ),
+                            child: Text(
+                              languages.confirm,
+                              style: boldTextStyle(color: Colors.white, size: 16),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ],

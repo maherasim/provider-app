@@ -652,46 +652,46 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                       }
                       
                       return Positioned(
-                        bottom: 16,
-                        left: 16,
-                        right: 16,
-                        child: InkWell(
-                          borderRadius: radius(14),
-                          onTap: () async {
-                            bool? res = await showInDialog(
-                              context,
-                              contentPadding: EdgeInsets.zero,
-                              hideSoftKeyboard: true,
-                              backgroundColor: context.cardColor,
-                              builder: (_) {
-                                return BidPriceDialog(
-                                  data: widget.postJobData,
-                                  price: myBid?.price,
-                                  whyText: myBid?.whyChooseMe,
-                                  isUpdateBid: myBid != null,
-                                );
-                              }
+                    bottom: 16,
+                    left: 16,
+                    right: 16,
+                    child: InkWell(
+                      borderRadius: radius(14),
+                      onTap: () async {
+                        bool? res = await showInDialog(
+                          context,
+                          contentPadding: EdgeInsets.zero,
+                          hideSoftKeyboard: true,
+                          backgroundColor: context.cardColor,
+                          builder: (_) {
+                            return BidPriceDialog(
+                              data: widget.postJobData,
+                              price: myBid?.price,
+                              whyText: myBid?.whyChooseMe,
+                              isUpdateBid: myBid != null,
                             );
+                          }
+                        );
 
-                            if (res ?? false) {
-                              init();
-                              setState(() {});
-                            }
-                          },
-                          child: Container(
-                            width: context.width(),
-                            padding: EdgeInsets.symmetric(vertical: 12),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              gradient: kAppPrimaryGradient,
-                              borderRadius: radius(14),
-                            ),
-                            child: Text(
-                              data.postRequestDetail!.canBid.validate() ? languages.bid : "${languages.lblUpdate} ${languages.bid}",
-                              style: boldTextStyle(color: white),
-                            ),
-                          ),
+                        if (res ?? false) {
+                          init();
+                          setState(() {});
+                        }
+                      },
+                      child: Container(
+                        width: context.width(),
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          gradient: kAppPrimaryGradient,
+                          borderRadius: radius(14),
                         ),
+                        child: Text(
+                          data.postRequestDetail!.canBid.validate() ? languages.bid : "${languages.lblUpdate} ${languages.bid}",
+                          style: boldTextStyle(color: white),
+                        ),
+                      ),
+                    ),
                       );
                     },
                   ),

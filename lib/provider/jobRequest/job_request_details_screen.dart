@@ -129,6 +129,9 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
       case RequestStatus.completed:
         message = languages.jobCompletedWaitingForCustomer;
         break;
+      case RequestStatus.remainingPaymentPending:
+        message = 'Waiting for admin approval';
+        break;
       case RequestStatus.remainingPaid:
         message = languages.paymentCompletedDownloadInvoice;
         break;
@@ -138,6 +141,27 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
     }
 
     return message;
+  }
+
+  static const _statusesShowingWorkingAddress = [
+    RequestStatus.advancePaid,
+    RequestStatus.inProgress,
+    RequestStatus.inProcess,
+    RequestStatus.hold,
+    RequestStatus.done,
+    RequestStatus.completed,
+    RequestStatus.remainingPaymentPending,
+    RequestStatus.remainingPaid,
+  ];
+
+  bool _shouldShowWorkingAddress(JobRequestDetailResponse detail) {
+    return _statusesShowingWorkingAddress.contains(detail.status);
+  }
+
+  String _workingAddressDisplay(JobRequestDetailResponse detail) {
+    final raw = detail.postRequest?.workingAddress?.toString().trim() ?? '';
+    if (raw.isEmpty || raw == 'null') return '';
+    return raw;
   }
 
   Widget _buildBody() {
@@ -150,7 +174,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
       if (s == RequestStatus.pendingAdvance) return 2;
       if (s == RequestStatus.advancePaid) return 3;
       if (s == RequestStatus.inProcess) return 4;
-      if (s == RequestStatus.inProgress || s == RequestStatus.hold || s == RequestStatus.done || s == RequestStatus.confirmDone) return 5;
+      if (s == RequestStatus.inProgress || s == RequestStatus.hold || s == RequestStatus.done || s == RequestStatus.confirmDone || s == RequestStatus.remainingPaymentPending) return 5;
       if (s == RequestStatus.completed || s == RequestStatus.remainingPaid) return 6;
       return 0;
     }
@@ -370,6 +394,42 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               ),
               16.height,
 
+              // Working Address card – only for statuses where job is active/completed
+              if (_shouldShowWorkingAddress(postJobDetail!) && _workingAddressDisplay(postJobDetail!).isNotEmpty)
+                Padding(
+                  padding: EdgeInsets.only(bottom: 16),
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(12),
+                    decoration: boxDecorationWithRoundedCorners(
+                      backgroundColor: context.cardColor,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.work_outline, color: Colors.brown, size: 22),
+                        10.width,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Working Address', style: secondaryTextStyle(size: 11)),
+                              4.height,
+                              Text(
+                                _workingAddressDisplay(postJobDetail!),
+                                style: primaryTextStyle(size: 14),
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
               // Status Card - Full Width
               Container(
                 padding: EdgeInsets.all(12),
@@ -444,7 +504,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   16.width,
                   Expanded(
                     child: _gradientButton(context, 'Cancel', () async {
-                      confirmationRequestDialog(context,RequestStatus.cancel);
+                        confirmationRequestDialog(context,RequestStatus.cancel);
                     }),
                   ),
                 ],
@@ -452,34 +512,34 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               if(postJobDetail!.status == RequestStatus.inProgress) Column(
                 children: [
                   Row(
-                    children: [
-                      Expanded(
-                        child: AppButton(
-                          text: 'hold',
-                          textStyle: boldTextStyle(color: white, size: 16),
-                          color: hold,
-                          width: context.width(),
-                          onTap: () async {
-                            bool? res = await showInDialog(
-                              context,
-                              contentPadding: EdgeInsets.zero,
-                              hideSoftKeyboard: true,
-                              backgroundColor: context.cardColor,
-                              builder: (_) =>  HoldReasonDialog(data: postJobDetail!),
-                            );
-                            if (res ?? false) {
-                              init();
-                              setState(() {});
-                            }
-                          },
-                        ),
-                      ),
-                      16.width,
-                      Expanded(
-                        child: _gradientButton(context, 'Done', () async {
-                          confirmationRequestDialog(context, RequestStatus.done);
-                        }),
-                      ),
+                children: [
+                  Expanded(
+                    child: AppButton(
+                      text: 'hold',
+                      textStyle: boldTextStyle(color: white, size: 16),
+                      color: hold,
+                      width: context.width(),
+                      onTap: () async {
+                        bool? res = await showInDialog(
+                          context,
+                          contentPadding: EdgeInsets.zero,
+                          hideSoftKeyboard: true,
+                          backgroundColor: context.cardColor,
+                          builder: (_) =>  HoldReasonDialog(data: postJobDetail!),
+                        );
+                        if (res ?? false) {
+                          init();
+                          setState(() {});
+                        }
+                      },
+                    ),
+                  ),
+                  16.width,
+                  Expanded(
+                    child: _gradientButton(context, 'Done', () async {
+                      confirmationRequestDialog(context, RequestStatus.done);
+                    }),
+                  ),
                     ],
                   ),
                   16.height,
@@ -519,7 +579,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                 children: [
                   Expanded(
                     child: _gradientButton(context, 'Resume Work', () async {
-                      confirmationRequestDialog(context, RequestStatus.inProgress);
+                  confirmationRequestDialog(context, RequestStatus.inProgress);
                     }),
                   ),
                   16.width,
@@ -554,28 +614,28 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               if(postJobDetail!.status == RequestStatus.confirmDone) Column(
                 children: [
                   Row(
-                    children: [
-                      Expanded(
-                        child: _gradientButton(context, 'Complete', () async {
-                          confirmationRequestDialog(context, RequestStatus.completed);
-                        }),
-                      ),
-                      16.width,
-                      Expanded(
+                children: [
+                  Expanded(
+                    child: _gradientButton(context, 'Complete', () async {
+                      confirmationRequestDialog(context, RequestStatus.completed);
+                    }),
+                  ),
+                  16.width,
+                  Expanded(
                         child: _gradientButton(context, '+ Extra Charges', () async {
-                          bool? res = await showInDialog(
-                            context,
-                            contentPadding: EdgeInsets.zero,
-                            hideSoftKeyboard: true,
-                            backgroundColor: context.cardColor,
-                            builder: (_) =>  ExtraChargesDialog(data: postJobDetail!),
-                          );
-                          if (res ?? false) {
-                            init();
-                            setState(() {});
-                          }
+                        bool? res = await showInDialog(
+                          context,
+                          contentPadding: EdgeInsets.zero,
+                          hideSoftKeyboard: true,
+                          backgroundColor: context.cardColor,
+                          builder: (_) =>  ExtraChargesDialog(data: postJobDetail!),
+                        );
+                        if (res ?? false) {
+                          init();
+                          setState(() {});
+                        }
                         }),
-                      ),
+                    ),
                     ],
                   ),
                   16.height,
@@ -710,20 +770,20 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                       16.width,
                       Expanded(
                         child: _gradientButton(context, 'Download', () async {
-                          if(postJobDetail!.id == null) {
-                            toast(languages.somethingWentWrong);
-                            return;
-                          }
-                          appStore.setLoading(true);
-                          downloadBidInvoice(postJobDetail!.id!).then((value) {
-                            appStore.setLoading(false);
-                            toast(value.message.validate());
-                          }).catchError((e) {
-                            appStore.setLoading(false);
-                            toast(e.toString());
-                          });
+                        if(postJobDetail!.id == null) {
+                          toast(languages.somethingWentWrong);
+                          return;
+                        }
+                        appStore.setLoading(true);
+                        downloadBidInvoice(postJobDetail!.id!).then((value) {
+                          appStore.setLoading(false);
+                          toast(value.message.validate());
+                        }).catchError((e) {
+                          appStore.setLoading(false);
+                          toast(e.toString());
+                        });
                         }),
-                      ),
+                    ),
                     ],
                   ),
                   if(postJobDetail!.showRateCustomerButton == true) ...[

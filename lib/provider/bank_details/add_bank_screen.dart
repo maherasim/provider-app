@@ -60,8 +60,10 @@ class _AddBankScreenState extends State<AddBankScreen> {
       multiPartRequest.fields['id'] = widget.data!.id.toString();
     }
     
-    // provider_id is auto-set by API, but we can include it
-    multiPartRequest.fields['provider_id'] = appStore.userId.toString();
+    // Use logged-in user id so bank is stored under correct account (not providerId from token)
+    final int loggedInUserId = appStore.userId.validate();
+    multiPartRequest.fields['user_id'] = loggedInUserId.toString();
+    multiPartRequest.fields['provider_id'] = loggedInUserId.toString();
     
     // Required fields
     multiPartRequest.fields['bank_name'] = bankNameCont.text.trim();

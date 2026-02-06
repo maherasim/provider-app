@@ -69,13 +69,16 @@ class _BankDetailsState extends State<BankDetails> {
   }
 
   init() async {
+    // List banks where provider_id matches logged-in user; API uses Bearer token
+    final int loggedInId = appStore.userId.validate();
     future = getBankListDetail(
       page: page,
       list: bankHistoryList,
       lastPageCallback: (b) {
         isLastPage = b;
       },
-      userId: appStore.userId,
+      userId: loggedInId,
+      providerId: loggedInId,
     );
   }
 

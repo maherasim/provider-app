@@ -131,29 +131,7 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
     if (text.isEmpty) return;
     if (_sending) return;
 
-    _sending = true;
-
-    // Optimistically add the message to the list so UI feels instant
-    final tempId = (_messages.isNotEmpty ? _messages.last.id + 1 : 1) * -1;
-    final nowString = DateTime.now().toString();
-    final provisional = FrobsterMessage(
-      id: tempId,
-      senderId: appStore.userId.validate(),
-      senderName: appStore.userName.validate(),
-      senderAvatarUrl: appStore.userProfileImage.validate().isNotEmpty ? appStore.userProfileImage : null,
-      message: text,
-      createdAt: nowString,
-      read: false,
-      attachment: null,
-      policyViolation: false,
-      hidden: false,
-      piiTypes: const [],
-    );
-
-    _messages.add(provisional);
-    _safeSetState(() {});
-    _scrollToBottom();
-    _messageController.clear();
+    _safeSetState(() => _sending = true);
 
     try {
       final res = await FrobsterChatApi.sendMessage(conversationId: widget.conversationId, message: text);
@@ -161,15 +139,16 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
         final types = res.piiTypes.join(', ');
         toast('Message hidden due to policy (${types.isEmpty ? 'policy' : types})');
       }
-      // Refresh from server so IDs and flags are correct
+      // Only show in listing after sent successfully: refresh from server then clear field
       await _fetchNew();
-    } catch (e) {
-      // On error, remove the provisional message
-      _messages.removeWhere((m) => m.id == tempId);
+      _messageController.clear();
       _safeSetState(() {});
+      _scrollToBottom();
+    } catch (e) {
       toast(e.toString(), print: true);
+      // Keep text so user can retry
     } finally {
-      _sending = false;
+      _safeSetState(() => _sending = false);
     }
   }
 
@@ -289,11 +268,20 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
                   8.width,
                   InkWell(
                     borderRadius: radius(24),
-                    onTap: _send,
+                    onTap: _sending ? null : _send,
                     child: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(shape: BoxShape.circle, gradient: kAppPrimaryGradient),
-                      child: const Icon(Icons.send, color: white, size: 20),
+                      child: _sending
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(white),
+                              ),
+                            )
+                          : const Icon(Icons.send, color: white, size: 20),
                     ),
                   ),
                 ],

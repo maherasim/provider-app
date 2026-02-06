@@ -35,6 +35,9 @@ class ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
 
   int _chatUnread = 0;
 
+  /// Prevents double-tap and shows loading feedback when switching tabs.
+  bool _isNavigating = false;
+
   List<Widget> fragmentList = [
     ProviderHomeFragment(),
     BookingFragment(),
@@ -210,8 +213,32 @@ class ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
               ),
           ],
         ),
-        body: fragmentList[currentIndex],
-        bottomNavigationBar: Blur(
+        body: Stack(
+          children: [
+            fragmentList[currentIndex],
+            if (_isNavigating)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.08),
+                  child: Center(
+                    child: SizedBox(
+                      width: 36,
+                      height: 36,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        valueColor: AlwaysStoppedAnimation<Color>(gradientBlue),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+        bottomNavigationBar: AbsorbPointer(
+          absorbing: _isNavigating,
+          child: Opacity(
+            opacity: _isNavigating ? 0.7 : 1.0,
+            child: Blur(
           blur: 30,
           borderRadius: radius(0),
           child: NavigationBarTheme(
@@ -303,12 +330,23 @@ class ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
                 }),
               ],
               onDestinationSelected: (index) {
+                if (_isNavigating || index == currentIndex) return;
+                _isNavigating = true;
+                setState(() {});
                 currentIndex = index;
                 setState(() {});
+                Future.delayed(Duration(milliseconds: 400), () {
+                  if (mounted) {
+                    _isNavigating = false;
+                    setState(() {});
+                  }
+                });
               },
+            ),
             ),
           ),
         ),
+      ),
       ),
     );
   }

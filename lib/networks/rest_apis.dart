@@ -1212,15 +1212,19 @@ Future<List<WalletHistory>> getWalletHistory({
   }
 }
 
+/// Fetches bank list for the logged-in provider. Uses Bearer token; lists banks where provider_id matches [providerId].
 Future<List<BankHistory>> getBankListDetail({
   required int userId,
   int? page,
   var perPage = PER_PAGE_ITEM,
   required List<BankHistory> list,
   Function(bool)? lastPageCallback,
+  int? providerId,
 }) async {
+  // Filter by provider_id so logged-in id matches; request uses Bearer token via buildHttpResponse
+  final int filterId = providerId ?? userId;
   BankListResponse res = BankListResponse.fromJson(
-    await handleResponse(await buildHttpResponse('user-bank-detail?per_page=$perPage&page=$page&user_id=$userId', method: HttpMethodType.GET)),
+    await handleResponse(await buildHttpResponse('user-bank-detail?per_page=$perPage&page=$page&user_id=$userId&provider_id=$filterId', method: HttpMethodType.GET)),
   );
 
   if (page == 1) list.clear();

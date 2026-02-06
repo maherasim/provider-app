@@ -62,20 +62,22 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
           ),
           Expanded(
             child: valueBackgroundColor != null
-                ? Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: valueBackgroundColor,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      value,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: textPrimaryColorGlobal,
+                ? Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: valueBackgroundColor,
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      textAlign: TextAlign.right,
+                      child: Text(
+                        value,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: textPrimaryColorGlobal,
+                        ),
+                      ),
                     ),
                   )
                 : Text(

@@ -66,66 +66,32 @@ class _ProviderHomeFragmentState extends State<ProviderHomeFragment> {
     );
   }
 
+  /// Static "Plans coming soon" banner only. No API, no plan expired / buy now / reminder.
   Widget planBanner(DashboardResponse data) {
-    if (data.isPlanExpired.validate()) {
-      return subSubscriptionPlanWidget(
-        planBgColor:
-            appStore.isDarkMode ? context.cardColor : Colors.red.shade50,
-        planTitle: languages.lblPlanExpired,
-        planSubtitle: languages.lblPlanSubTitle,
-        planButtonTxt: languages.btnTxtBuyNow,
-        btnColor: Colors.red,
-        onTap: () {
-          PricingPlanScreen().launch(context);
-        },
-      );
-    } else if (data.userNeverPurchasedPlan.validate()) {
-      return AnimatedSwitcher(
-        duration: Duration(milliseconds: 320),
-        switchInCurve: Curves.easeOutCubic,
-        switchOutCurve: Curves.easeInCubic,
-        transitionBuilder: (Widget child, Animation<double> animation) {
-          return FadeTransition(
-            opacity: animation,
-            child: SizeTransition(
-              sizeFactor: animation,
-              axisAlignment: -1,
-              child: child,
-            ),
-          );
-        },
-        child: _hidePlansComingSoonBanner
-            ? SizedBox.shrink(key: ValueKey('hidden'))
-            : _PlansComingSoonBanner(
-                key: ValueKey('visible'),
-                onClose: () =>
-                    setState(() => _hidePlansComingSoonBanner = true),
-                isDarkMode: appStore.isDarkMode,
-                cardColor: context.cardColor,
-                iconColor: context.iconColor,
-              ),
-      );
-    } else if (data.isPlanAboutToExpire.validate()) {
-      int days = getRemainingPlanDays();
-
-      if (days != 0 && days <= PLAN_REMAINING_DAYS) {
-        return subSubscriptionPlanWidget(
-          planBgColor:
-              appStore.isDarkMode ? context.cardColor : Colors.orange.shade50,
-          planTitle: languages.lblReminder,
-          planSubtitle: languages.planAboutToExpire(days),
-          planButtonTxt: languages.lblRenew,
-          btnColor: Colors.orange,
-          onTap: () {
-            PricingPlanScreen().launch(context);
-          },
+    return AnimatedSwitcher(
+      duration: Duration(milliseconds: 320),
+      switchInCurve: Curves.easeOutCubic,
+      switchOutCurve: Curves.easeInCubic,
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: SizeTransition(
+            sizeFactor: animation,
+            axisAlignment: -1,
+            child: child,
+          ),
         );
-      } else {
-        return Offstage();
-      }
-    } else {
-      return Offstage();
-    }
+      },
+      child: _hidePlansComingSoonBanner
+          ? SizedBox.shrink(key: ValueKey('hidden'))
+          : _PlansComingSoonBanner(
+              key: ValueKey('visible'),
+              onClose: () => setState(() => _hidePlansComingSoonBanner = true),
+              isDarkMode: appStore.isDarkMode,
+              cardColor: context.cardColor,
+              iconColor: context.iconColor,
+            ),
+    );
   }
 
   @override

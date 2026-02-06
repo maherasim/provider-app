@@ -35,9 +35,9 @@ class _BidPriceDialogState extends State<BidPriceDialog> {
   }
 
   void init() async {
-    //
     servicePrice.text = widget.price?.toString() ?? '';
-    whyChooseMe.text = widget.whyText ?? '';
+    // Strip HTML tags from API text so the field shows plain text
+    whyChooseMe.text = parseHtmlString(widget.whyText ?? '');
   }
 
   void _handleSubmitClick() async {
@@ -93,7 +93,7 @@ class _BidPriceDialogState extends State<BidPriceDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(languages.giveYourEstimatePriceHere, style: boldTextStyle()),
+                        Text(parseHtmlString(languages.giveYourEstimatePriceHere), style: boldTextStyle()),
                         16.height,
                         AppTextField(
                           textFieldType: TextFieldType.NUMBER,

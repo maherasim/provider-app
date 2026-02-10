@@ -369,19 +369,9 @@ class PriceCommonWidget extends StatelessWidget {
                       16.height,
                       Row(
                         children: [
-                          Text.rich(
-                            TextSpan(children: [
-                              TextSpan(
-                                  text: bookingDetail.paidAmount.validate() != 0
-                                      ? languages.advancePaid
-                                      : languages.advancePayment,
-                                  style: secondaryTextStyle(size: 14)),
-                              TextSpan(
-                                text:
-                                    " (${serviceDetail.advancePaymentPercentage.validate().toString()}%)  ",
-                                style: boldTextStyle(color: Colors.green),
-                              ),
-                            ]),
+                          Text(
+                            languages.advancePayment,
+                            style: secondaryTextStyle(size: 14),
                           ).expand(),
                           PriceWidget(
                               price: getAdvancePaymentAmount,

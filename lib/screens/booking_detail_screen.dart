@@ -1466,6 +1466,61 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
         );
       }
     }
+    else if (res.bookingDetail!.status == BookingStatusKeys.pendingApproval) {
+      showBottomActionBar = true;
+      return Container(
+        child: Row(
+          children: [
+            DecoratedBox(
+              decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+              child: AppButton(
+                text: languages.lblCompleted,
+                textStyle: boldTextStyle(color: white),
+                color: Colors.transparent,
+                elevation: 0,
+                onTap: () {
+                  bool isAnyServiceAddonUnCompleted = res
+                      .bookingDetail!.serviceaddon
+                      .validate()
+                      .any((element) => element.status.getBoolInt() == false);
+                  showConfirmDialogCustom(
+                    context,
+                    onAccept: (_) {
+                      _handlePendingApproval(val: res, isAddExtraCharges: false);
+                    },
+                    primaryColor: context.primaryColor,
+                    positiveText: languages.lblYes,
+                    negativeText: languages.lblNo,
+                    subTitle: isAnyServiceAddonUnCompleted
+                        ? languages.pleaseNoteThatAllServiceMarkedCompleted
+                        : null,
+                    title: languages.confirmationRequestTxt,
+                  );
+                },
+              ),
+            ).expand(),
+            if (!res.bookingDetail!.isFreeService &&
+                res.bookingDetail!.bookingPackage == null)
+              AppButton(
+                margin: EdgeInsets.only(left: 16),
+                child: Text(
+                  languages.lblAddExtraCharges,
+                  style: boldTextStyle(color: Colors.white),
+                ).fit(),
+                color: addExtraCharge,
+                onTap: () async {
+                  chargesList.clear();
+                  bool? a = await AddExtraChargesScreen().launch(context);
+
+                  if (a ?? false) {
+                    _handlePendingApproval(val: res, isAddExtraCharges: true);
+                  }
+                },
+              ).expand(),
+          ],
+        ),
+      );
+    }
     else if (res.bookingDetail!.status == BookingStatusKeys.complete) {
       showBottomActionBar = true;
       
@@ -1626,59 +1681,10 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
       );
     }
     else if (res.bookingDetail!.status == BookingStatusKeys.pendingApproval) {
+      // Completed & Add Extra Charges are for provider only; handyman just waits
       showBottomActionBar = true;
-      return Container(
-        child: Row(
-          children: [
-            DecoratedBox(
-              decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
-              child: AppButton(
-                text: languages.lblCompleted,
-                textStyle: boldTextStyle(color: white),
-                color: Colors.transparent,
-                elevation: 0,
-                onTap: () {
-                  bool isAnyServiceAddonUnCompleted = res
-                      .bookingDetail!.serviceaddon
-                      .validate()
-                      .any((element) => element.status.getBoolInt() == false);
-                  showConfirmDialogCustom(
-                    context,
-                    onAccept: (_) {
-                      _handlePendingApproval(val: res, isAddExtraCharges: false);
-                    },
-                    primaryColor: context.primaryColor,
-                    positiveText: languages.lblYes,
-                    negativeText: languages.lblNo,
-                    subTitle: isAnyServiceAddonUnCompleted
-                        ? languages.pleaseNoteThatAllServiceMarkedCompleted
-                        : null,
-                    title: languages.confirmationRequestTxt,
-                  );
-                },
-              ),
-            ).expand(),
-            if (!res.bookingDetail!.isFreeService &&
-                res.bookingDetail!.bookingPackage == null)
-              AppButton(
-                margin: EdgeInsets.only(left: 16),
-                child: Text(
-                  languages.lblAddExtraCharges,
-                  style: boldTextStyle(color: Colors.white),
-                ).fit(),
-                color: addExtraCharge,
-                onTap: () async {
-                  chargesList.clear();
-                  bool? a = await AddExtraChargesScreen().launch(context);
-
-                  if (a ?? false) {
-                    _handlePendingApproval(val: res, isAddExtraCharges: true);
-                  }
-                },
-              ).expand(),
-          ],
-        ),
-      );
+      return Text(languages.lblWaitingForResponse, style: boldTextStyle())
+          .center();
     }
     else if (res.bookingDetail!.status == BookingStatusKeys.onGoing) {
       showBottomActionBar = true;
@@ -1913,24 +1919,25 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
           children: [
             Text(languages.lblExtraCharges,
                 style: boldTextStyle(size: LABEL_TEXT_SIZE)),
-            IconButton(
-              style:
-                  ButtonStyle(padding: WidgetStatePropertyAll(EdgeInsets.zero)),
-              icon: ic_edit_square.iconImage(size: 18),
-              visualDensity: VisualDensity.compact,
-              onPressed: () async {
-                chargesList.clear();
-                chargesList.addAll(extraChargesList);
-                bool? a =
-                    await AddExtraChargesScreen(isFromEditExtraCharge: true)
-                        .launch(context);
+            // Edit extra charges - commented out per requirement
+            // IconButton(
+            //   style:
+            //       ButtonStyle(padding: WidgetStatePropertyAll(EdgeInsets.zero)),
+            //   icon: ic_edit_square.iconImage(size: 18),
+            //   visualDensity: VisualDensity.compact,
+            //   onPressed: () async {
+            //     chargesList.clear();
+            //     chargesList.addAll(extraChargesList);
+            //     bool? a =
+            //         await AddExtraChargesScreen(isFromEditExtraCharge: true)
+            //             .launch(context);
 
-                if (a ?? false) {
-                  _handlePendingApproval(val: res, isEditExtraCharges: true);
-                }
-              },
-            ).visible(res.bookingDetail!.paymentStatus != PAID &&
-                res.bookingDetail!.paymentStatus != PENDING_BY_ADMINS),
+            //     if (a ?? false) {
+            //       _handlePendingApproval(val: res, isEditExtraCharges: true);
+            //     }
+            //   },
+            // ).visible(res.bookingDetail!.paymentStatus != PAID &&
+            //     res.bookingDetail!.paymentStatus != PENDING_BY_ADMINS),
           ],
         ),
         16.height,

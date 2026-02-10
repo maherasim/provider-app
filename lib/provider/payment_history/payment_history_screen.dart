@@ -87,7 +87,7 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildHeaderCell("ID", 70),
+                  _buildHeaderCell("No.", 70),
                   _buildHeaderCell(serviceHeader, 140),
                   _buildHeaderCell("Users", 130),
                   _buildHeaderCell("Payment Type", 110),
@@ -97,10 +97,11 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                 ],
               ),
             ),
-            // Data rows
+            // Data rows – ID column shows simple serial number (1, 2, 3…) instead of raw txn ID
             ...payments.asMap().entries.map((entry) {
               final index = entry.key;
               final payment = entry.value;
+              final serialNo = (index + 1).toString();
               final formattedAmount = payment.totalAmount != null 
                   ? payment.totalAmount!.toPriceFormat()
                   : '\$0.00';
@@ -113,7 +114,7 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildDataCell(payment.txnId ?? '-', 70),
+                    _buildDataCell(serialNo, 70),
                     _buildDataCell(serviceOrJobName, 140),
                     _buildDataCell(
                       '${payment.customer?.firstName ?? ''} ${payment.customer?.lastName ?? ''}'.trim().isEmpty 

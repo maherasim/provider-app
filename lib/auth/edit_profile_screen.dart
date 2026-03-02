@@ -33,6 +33,7 @@ import 'package:nb_utils/nb_utils.dart';
 import '../components/add_reasons_component.dart';
 import '../components/chat_gpt_loder.dart';
 import '../models/user_update_response.dart';
+import '../provider/jobRequest/models/post_job_data.dart';
 
 class EditProfileScreen extends StatefulWidget {
   @override
@@ -66,6 +67,10 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   List<String> availabilityList = <String>['Full Time', 'Hybrid'];
   String selectedAvailability = 'Full Time';
 
+  CareerLevel? selectedCareerLevel = CareerLevel.notSpecified;
+  ProfileEducationLevel? selectedEducation = ProfileEducationLevel.notSpecified;
+  YearsOfExperience? selectedYearsOfExperience = YearsOfExperience.lessThan1Year;
+
   TextEditingController fNameCont = TextEditingController();
   TextEditingController lNameCont = TextEditingController();
   TextEditingController emailCont = TextEditingController();
@@ -79,7 +84,6 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   TextEditingController whyChooseMeCont = TextEditingController();
   TextEditingController cNameCont = TextEditingController();
   TextEditingController vatNumCont = TextEditingController();
-  TextEditingController educationCont = TextEditingController();
   TextEditingController experienceCont = TextEditingController();
   TextEditingController mobilityCont = TextEditingController();
   TextEditingController certificationCont = TextEditingController();
@@ -97,7 +101,6 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   FocusNode whyChooseMeFocus = FocusNode();
   FocusNode cNameFocus = FocusNode();
   FocusNode vatNumFocus = FocusNode();
-  FocusNode educationFocus = FocusNode();
   FocusNode experienceFocus = FocusNode();
   FocusNode mobilityFocus = FocusNode();
   FocusNode certificationFocus = FocusNode();
@@ -217,12 +220,42 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         }
       }
       
-      // Load experience, mobility, certification, education as strings
-      // Handle both String and List types from API
+      // Load experience, mobility, certification as strings
       experienceCont.text = _safeStringFromValue(value.data!.experience);
       mobilityCont.text = _safeStringFromValue(value.data!.mobility);
       certificationCont.text = _safeStringFromValue(value.data!.certification);
-      educationCont.text = _safeStringFromValue(value.data!.education);
+
+      // Load career level, education, years of experience (dropdowns)
+      if (value.data!.careerLevel != null && value.data!.careerLevel!.isNotEmpty) {
+        try {
+          selectedCareerLevel = CareerLevel.values.firstWhere(
+            (e) => e.backendValue == value.data!.careerLevel,
+            orElse: () => CareerLevel.notSpecified,
+          );
+        } catch (_) {
+          selectedCareerLevel = CareerLevel.notSpecified;
+        }
+      }
+      if (value.data!.education != null && value.data!.education!.isNotEmpty) {
+        try {
+          selectedEducation = ProfileEducationLevel.values.firstWhere(
+            (e) => e.backendValue == value.data!.education,
+            orElse: () => ProfileEducationLevel.notSpecified,
+          );
+        } catch (_) {
+          selectedEducation = ProfileEducationLevel.notSpecified;
+        }
+      }
+      if (value.data!.yearsOfExperience != null && value.data!.yearsOfExperience!.isNotEmpty) {
+        try {
+          selectedYearsOfExperience = YearsOfExperience.values.firstWhere(
+            (e) => e.backendValue == value.data!.yearsOfExperience,
+            orElse: () => YearsOfExperience.lessThan1Year,
+          );
+        } catch (_) {
+          selectedYearsOfExperience = YearsOfExperience.lessThan1Year;
+        }
+      }
       
       descriptionCont.text = value.data!.description.validate();
       addressCont.text = value.data!.address.validate();
@@ -394,9 +427,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     if (certificationCont.text.trim().isNotEmpty) {
       multiPartRequest.fields['certification'] = certificationCont.text.trim();
     }
-    if (educationCont.text.trim().isNotEmpty) {
-      multiPartRequest.fields['education'] = educationCont.text.trim();
-    }
+    multiPartRequest.fields['education'] = selectedEducation?.backendValue ?? ProfileEducationLevel.notSpecified.backendValue;
+    multiPartRequest.fields['career_level'] = selectedCareerLevel?.backendValue ?? CareerLevel.notSpecified.backendValue;
+    multiPartRequest.fields['years_of_experience'] = selectedYearsOfExperience?.backendValue ?? YearsOfExperience.lessThan1Year.backendValue;
     multiPartRequest.fields[UserKeys.whyChooseReason] =
         jsonEncode(whyChooseMeReasons);
     multiPartRequest.fields[UserKeys.whyChooseTitle] =
@@ -942,7 +975,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           textFieldType: TextFieldType.NAME,
                           controller: mobilityCont,
                           focus: mobilityFocus,
-                          nextFocus: certificationFocus,
+                          nextFocus: experienceFocus,
                           decoration: inputDecoration(context,
                               hint: 'Mobility (e.g., Car, Bike, Public Transport)'),
                           suffix: Icon(Icons.directions_car, size: 18, color: context.iconColor).paddingAll(14),
@@ -952,7 +985,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           textFieldType: TextFieldType.MULTILINE,
                           controller: experienceCont,
                           focus: experienceFocus,
-                          nextFocus: educationFocus,
+                          nextFocus: certificationFocus,
                           minLines: 3,
                           maxLines: 5,
                           decoration: inputDecoration(context,
@@ -960,12 +993,79 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           suffix: Icon(Icons.business_center, size: 18, color: context.iconColor).paddingAll(14),
                         ),
                         16.height,
-                        AppTextField(
-                          textFieldType: TextFieldType.OTHER,
-                          controller: educationCont,
-                          focus: educationFocus,
-                          decoration:
-                              inputDecoration(context, hint: 'Education'),
+                        DropdownButtonFormField<CareerLevel>(
+                          decoration: inputDecoration(context,
+                              hint: 'Career Level',
+                              fillColor: context.scaffoldBackgroundColor),
+                          isExpanded: true,
+                          value: selectedCareerLevel,
+                          dropdownColor: context.cardColor,
+                          menuMaxHeight: 300,
+                          items: CareerLevel.values.map((CareerLevel level) {
+                            return DropdownMenuItem<CareerLevel>(
+                              value: level,
+                              child: Text(
+                                level.displayName,
+                                style: primaryTextStyle(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (CareerLevel? value) {
+                            selectedCareerLevel = value;
+                            setState(() {});
+                          },
+                        ),
+                        16.height,
+                        DropdownButtonFormField<ProfileEducationLevel>(
+                          decoration: inputDecoration(context,
+                              hint: 'Education',
+                              fillColor: context.scaffoldBackgroundColor),
+                          isExpanded: true,
+                          value: selectedEducation,
+                          dropdownColor: context.cardColor,
+                          menuMaxHeight: 300,
+                          items: ProfileEducationLevel.values.map((ProfileEducationLevel level) {
+                            return DropdownMenuItem<ProfileEducationLevel>(
+                              value: level,
+                              child: Text(
+                                level.displayName,
+                                style: primaryTextStyle(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (ProfileEducationLevel? value) {
+                            selectedEducation = value;
+                            setState(() {});
+                          },
+                        ),
+                        16.height,
+                        DropdownButtonFormField<YearsOfExperience>(
+                          decoration: inputDecoration(context,
+                              hint: 'Years of Experience',
+                              fillColor: context.scaffoldBackgroundColor),
+                          isExpanded: true,
+                          value: selectedYearsOfExperience,
+                          dropdownColor: context.cardColor,
+                          menuMaxHeight: 300,
+                          items: YearsOfExperience.values.map((YearsOfExperience val) {
+                            return DropdownMenuItem<YearsOfExperience>(
+                              value: val,
+                              child: Text(
+                                val.displayName,
+                                style: primaryTextStyle(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (YearsOfExperience? value) {
+                            selectedYearsOfExperience = value;
+                            setState(() {});
+                          },
                         ),
                         16.height,
                         AppTextField(

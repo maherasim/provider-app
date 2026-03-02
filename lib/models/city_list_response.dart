@@ -7,10 +7,18 @@ class CityListResponse {
 
   factory CityListResponse.fromJson(Map<String, dynamic> json) {
     return CityListResponse(
-      id: json['id'],
+      id: _parseInt(json['id']),
       name: json['name'],
-      stateId: json['state_id'],
+      stateId: _parseInt(json['state_id']),
     );
+  }
+
+  static int? _parseInt(dynamic v) {
+    if (v == null) return null;
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    if (v is String) return int.tryParse(v);
+    return null;
   }
 
   Map<String, dynamic> toJson() {

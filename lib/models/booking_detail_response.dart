@@ -340,6 +340,7 @@ class ServiceAddon {
   String createdAt;
   String updatedAt;
   bool isSelected = false;
+  bool? showEditDeleteButtons;
   Map<String, MultiLanguageRequest>? translations;
 
   ServiceAddon({
@@ -354,10 +355,16 @@ class ServiceAddon {
     this.deletedAt = "",
     this.createdAt = "",
     this.updatedAt = "",
+    this.showEditDeleteButtons,
     this.translations
   });
 
   factory ServiceAddon.fromJson(Map<String, dynamic> json) {
+    bool? showEditDelete;
+    if (json['show_edit_delete_buttons'] != null) {
+      final v = json['show_edit_delete_buttons'];
+      showEditDelete = v == true || v == 1 || v == '1';
+    }
     return ServiceAddon(
       id: json['id'] is int ? json['id'] : -1,
       name: json['name'] is String ? json['name'] : "",
@@ -370,6 +377,7 @@ class ServiceAddon {
       deletedAt: json['deleted_at'] is String ? json['deleted_at'] : "",
       createdAt: json['created_at'] is String ? json['created_at'] : "",
       updatedAt: json['updated_at'] is String ? json['updated_at'] : "",
+      showEditDeleteButtons: showEditDelete,
       translations:  json['translations'] != null
     ? (jsonDecode(json['translations']) as Map<String, dynamic>).map(
         (key, value) {

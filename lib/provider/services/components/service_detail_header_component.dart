@@ -115,7 +115,7 @@ class _ServiceDetailHeaderComponentState
           ),
           Positioned(
             top: context.statusBarHeight + 8,
-            child: isUserTypeProvider
+            child: (isUserTypeProvider && (widget.serviceDetail.showEditDeleteButtons ?? true))
                 ? Container(
                     padding: EdgeInsets.all(0),
                     decoration: BoxDecoration(

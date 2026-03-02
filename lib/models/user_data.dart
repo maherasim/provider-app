@@ -49,6 +49,8 @@ class UserData {
   String? aboutMe;
   String? availability;
   String? education;
+  String? careerLevel;
+  String? yearsOfExperience;
   List<String>? languagesArray;
   num? providerServiceRating;
   num? customerRating;
@@ -255,7 +257,9 @@ class UserData {
     aboutMe = json['about_me'];
     availability = json['availability'];
     education = json['education'];
-    
+    careerLevel = json['career_level']?.toString();
+    yearsOfExperience = json['years_of_experience']?.toString();
+
     // Handle languages - can be array or JSON string
     if (json['languages'] != null) {
       if (json['languages'] is List) {

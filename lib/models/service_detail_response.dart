@@ -15,11 +15,18 @@ class ServiceDetailResponse {
   });
 
   factory ServiceDetailResponse.fromJson(Map<String, dynamic> json) {
+    final provider = json['provider'] != null ? Provider.fromJson(json['provider']) : null;
+    ServiceData? serviceDetail = json['service_detail'] != null ? ServiceData.fromJson(json['service_detail']) : null;
+    // When service_detail has no state_id, use provider's state_id so edit form can pre-select state
+    if (serviceDetail != null && (serviceDetail.stateId == null || serviceDetail.stateId == 0) && provider?.stateId != null) {
+      serviceDetail.stateId = provider!.stateId;
+      assert(() { print('🔵 SERVICE DETAIL: state_id taken from provider: ${provider!.stateId}'); return true; }());
+    }
     return ServiceDetailResponse(
-      provider: json['provider'] != null ? Provider.fromJson(json['provider']) : null,
+      provider: provider,
       ratingData: json['rating_data'] != null ? (json['rating_data'] as List).map((i) => RatingData.fromJson(i)).toList() : null,
       serviceFaq: json['service_faq'] != null ? (json['service_faq'] as List).map((i) => ServiceFaq.fromJson(i)).toList() : null,
-      serviceDetail: json['service_detail'] != null ? ServiceData.fromJson(json['service_detail']) : null,
+      serviceDetail: serviceDetail,
     );
   }
 
@@ -192,16 +199,16 @@ class Provider {
   factory Provider.fromJson(Map<String, dynamic> json) {
     return Provider(
       address: json['address'],
-      cityId: json['city_id'],
+      cityId: _parseInt(json['city_id']),
       cityName: json['city_name'],
       contactNumber: json['contact_number'],
-      countryId: json['country_id'],
+      countryId: _parseInt(json['country_id']),
       createdAt: json['created_at'],
       description: json['description'],
       displayName: json['display_name'],
       email: json['email'],
       firstName: json['first_name'],
-      id: json['id'],
+      id: _parseInt(json['id']),
       isFeatured: json['is_featured'],
       lastName: json['last_name'],
       lastNotificationSeen: json['last_notification_seen'],
@@ -211,7 +218,7 @@ class Provider {
       providerType: json['providertype'],
       providerTypeId: json['providertype_id'],
       serviceAddressId: json['service_address_id'],
-      stateId: json['state_id'],
+      stateId: _parseInt(json['state_id']),
       status: json['status'],
       timeZone: json['time_zone'],
       uid: json['uid'],
@@ -219,6 +226,14 @@ class Provider {
       userType: json['user_type'],
       username: json['username'],
     );
+  }
+
+  static int? _parseInt(dynamic v) {
+    if (v == null) return null;
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    if (v is String) return int.tryParse(v);
+    return null;
   }
 
   Map<String, dynamic> toJson() {

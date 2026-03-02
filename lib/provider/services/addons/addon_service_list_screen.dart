@@ -222,7 +222,8 @@ class _AddonServiceListScreenState extends State<AddonServiceListScreen> {
                             ),
                           ],
                         ).expand(),
-                        PopupMenuButton(
+                        if (data.showEditDeleteButtons ?? true)
+                          PopupMenuButton(
                           icon: Icon(Icons.more_vert,
                               size: 24, color: context.iconColor),
                           color: context.scaffoldBackgroundColor,
@@ -260,8 +261,6 @@ class _AddonServiceListScreenState extends State<AddonServiceListScreen> {
                     ),
                   );
                 },
-              );
-            },
             errorBuilder: (error) {
               return NoDataWidget(
                 title: error,

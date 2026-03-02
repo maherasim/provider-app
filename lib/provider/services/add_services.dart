@@ -146,7 +146,7 @@ class _AddServicesState extends State<AddServices> {
   int? selectedProviderId;
   List<UserData> providerList = [];
   RemoteWorkLevel? selectedRemoteWorkLevel = RemoteWorkLevel.onsite0;
-  CareerLevel? selectedCareerLevel = CareerLevel.entry;
+  CareerLevel? selectedCareerLevel = CareerLevel.notSpecified;
   TravelRequirement? selectedTravelRequired = TravelRequirement.no;
 
   @override
@@ -259,10 +259,10 @@ class _AddServicesState extends State<AddServices> {
         try {
           selectedCareerLevel = CareerLevel.values.firstWhere(
             (e) => e.backendValue == widget.data!.careerLevel,
-            orElse: () => CareerLevel.entry,
+            orElse: () => CareerLevel.notSpecified,
           );
         } catch (e) {
-          selectedCareerLevel = CareerLevel.entry;
+          selectedCareerLevel = CareerLevel.notSpecified;
         }
       }
       
@@ -357,19 +357,16 @@ class _AddServicesState extends State<AddServices> {
       stateList.clear();
       stateList.addAll(value);
 
-      print('🔵 LOADING STATES: stateId=$stateId, states count=${value.length}');
       if (stateId != 0 && stateId != null) {
-        // Find state with matching ID (handle nullable id)
-        final matchingState = value.firstWhere(
-          (element) => element.id != null && element.id == stateId,
-          orElse: () => StateListResponse(),
-        );
-        if (matchingState.id != null) {
-          selectedState = matchingState;
-          print('✅ STATE SELECTED: ${selectedState?.name} (id: ${selectedState?.id})');
-        } else {
-          print('⚠️ STATE NOT FOUND: stateId=$stateId not in list');
+        final stateIdInt = _toInt(stateId);
+        StateListResponse? matchingState;
+        for (var e in value) {
+          if (_toInt(e.id) == stateIdInt) {
+            matchingState = e;
+            break;
+          }
         }
+        if (matchingState != null) selectedState = matchingState;
       }
       setState(() {});
     }).catchError((e) {
@@ -378,26 +375,31 @@ class _AddServicesState extends State<AddServices> {
     appStore.setLoading(false);
   }
 
-  Future<void> getCity(int stateId) async {
+  static int _toInt(dynamic v) {
+    if (v == null) return 0;
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    if (v is String) return int.tryParse(v) ?? 0;
+    return 0;
+  }
+
+  Future<void> getCity(int stateIdParam) async {
     appStore.setLoading(true);
 
-    await getUpdatedCityList(stateId).then((value) async {
+    await getUpdatedCityList(stateIdParam).then((value) async {
       cityList.clear();
       cityList.addAll(value);
 
-      print('🔵 LOADING CITIES: cityId=$cityId, cities count=${value.length}');
       if (cityId != 0 && cityId != null) {
-        // Find city with matching ID (handle nullable id)
-        final matchingCity = value.firstWhere(
-          (element) => element.id != null && element.id == cityId,
-          orElse: () => CityListResponse(),
-        );
-        if (matchingCity.id != null) {
-          selectedCity = matchingCity;
-          print('✅ CITY SELECTED: ${selectedCity?.name} (id: ${selectedCity?.id})');
-        } else {
-          print('⚠️ CITY NOT FOUND: cityId=$cityId not in list');
+        final cityIdInt = _toInt(cityId);
+        CityListResponse? matchingCity;
+        for (var e in value) {
+          if (_toInt(e.id) == cityIdInt) {
+            matchingCity = e;
+            break;
+          }
         }
+        if (matchingCity != null) selectedCity = matchingCity;
       }
       setState(() {});
     }).catchError((e) {
@@ -536,35 +538,35 @@ class _AddServicesState extends State<AddServices> {
 //region Service APi Call
   Future<void> _submitService(Map<String, dynamic> req) async {
     try {
-      // Filter out invalid files: check path is valid, not empty, not just "/", and file exists
+      // Filter to only real local files (existing images are File(url) and are skipped)
       List<File> validImageFiles = [];
       log('Processing ${imageFiles.length} image files for upload');
-      
+
       for (var file in imageFiles) {
         final filePath = file.path.trim();
         log('Checking file: path="$filePath", exists=${await file.exists()}');
-        
+
         if (file.path.contains('http')) {
-          log('Skipping network image: ${file.path}');
-          continue; // Skip network images
+          log('Skipping network image (existing): ${file.path}');
+          continue; // Existing images - not uploaded again
         }
-        
+
         // Validate path - check for empty, root path, or invalid paths
-        if (filePath.isEmpty || 
-            filePath == '/' || 
+        if (filePath.isEmpty ||
+            filePath == '/' ||
             filePath == '\\' ||
             filePath.length <= 1 ||
             filePath == Platform.pathSeparator) {
           log('Skipping invalid file path: "$filePath"');
           continue;
         }
-        
+
         // Ensure path contains directory separators (not just a single character)
         if (!filePath.contains(Platform.pathSeparator) && filePath.length < 3) {
           log('Skipping invalid file path (no directory separator): "$filePath"');
           continue;
         }
-        
+
         // Check if file exists
         try {
           final exists = await file.exists();
@@ -575,14 +577,14 @@ class _AddServicesState extends State<AddServices> {
               log('File is empty, skipping: ${file.path}');
               continue;
             }
-            
+
             // Double-check path is still valid
             final currentPath = file.path.trim();
             if (currentPath.isEmpty || currentPath == '/' || currentPath == '\\') {
               log('File path became invalid after check, skipping: "$currentPath"');
               continue;
             }
-            
+
             log('File is valid: ${file.path}, size: ${stat.size} bytes');
             validImageFiles.add(file);
           } else {
@@ -592,14 +594,23 @@ class _AddServicesState extends State<AddServices> {
           log('Error checking file existence: ${file.path}, error: $e');
         }
       }
-      
+
       log('Valid image files count: ${validImageFiles.length}');
-      
+
+      // When editing: allow submit with no new files if we have existing attachments (they stay on server)
+      final bool hasExistingImages = tempAttachments.validate().isNotEmpty;
       if (validImageFiles.isEmpty) {
-        toast('Please select valid images');
-        return;
+        if (!isUpdate) {
+          toast('Please select valid images');
+          return;
+        }
+        if (isUpdate && !hasExistingImages) {
+          toast('Please select valid images');
+          return;
+        }
+        // isUpdate && hasExistingImages → proceed with empty validImageFiles (keep existing only)
       }
-      
+
       await addServiceMultiPart(
         value: req,
         serviceAddressList: serviceAddressList,
@@ -795,7 +806,7 @@ class _AddServicesState extends State<AddServices> {
                       isExpanded: true,
                       dropdownColor: context.cardColor,
                       menuMaxHeight: 300,
-                      value: selectedState,
+                      value: stateList.where((s) => s.id != null && s.id == stateId).firstOrNull ?? selectedState,
                       validator: (value) {
                         if (value == null) return errorThisFieldRequired;
                         return null;
@@ -828,7 +839,7 @@ class _AddServicesState extends State<AddServices> {
                   ),
                   isExpanded: true,
                   menuMaxHeight: 400,
-                  value: selectedCity,
+                  value: cityList.where((c) => c.id != null && c.id == cityId).firstOrNull ?? selectedCity,
                   dropdownColor: context.cardColor,
                   validator: (value) {
                     if (value == null) return errorThisFieldRequired;

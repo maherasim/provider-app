@@ -322,14 +322,14 @@ Future<List<CountryListResponse>> getUpdatedCountryList() async {
 
 Future<List<StateListResponse>> getUpdatedStateList(int? countryId) async {
   Map res = await (handleResponse(await buildHttpResponse('countries/$countryId/states',method: HttpMethodType.GET)));
-  Iterable data = res['states'];
-  return data.map((e) => StateListResponse.fromJson(e)).toList();
+  Iterable data = res['states'] ?? res['data'] ?? [];
+  return (data as List).map((e) => StateListResponse.fromJson(Map<String, dynamic>.from(e is Map ? e : {}))).toList();
 }
 
 Future<List<CityListResponse>> getUpdatedCityList(int? stateId) async {
   Map res = await (handleResponse(await buildHttpResponse('states/$stateId/cities',method: HttpMethodType.GET)));
-  Iterable data = res['cities'];
-  return data.map((e) => CityListResponse.fromJson(e)).toList();
+  Iterable data = res['cities'] ?? res['data'] ?? [];
+  return (data as List).map((e) => CityListResponse.fromJson(Map<String, dynamic>.from(e is Map ? e : {}))).toList();
 }
 
 //endregion

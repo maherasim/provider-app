@@ -47,6 +47,7 @@ class ServiceData {
   num? views;
   num? totalBookingCount;
   num? completedBookingCount;
+  bool? showEditDeleteButtons;
   List<ServiceAddressMapping>? serviceAddressMapping;
   Map<String, MultiLanguageRequest>? translations;
 
@@ -206,7 +207,7 @@ class ServiceData {
     if (json['discount'] != null) {
       discount = json['discount'] is num ? json['discount'] : (json['discount'] is String ? double.tryParse(json['discount']) : null);
     }
-    duration = json['duration'];
+    duration = _parseDuration(json['duration']);
     cancellationPolicy = json['cancellation_policy'];
     countryTax = json['tax_country_id'].toString();
     minimumBookings = json['minimum_booking']?.toString();
@@ -232,7 +233,7 @@ class ServiceData {
         isSlot = int.tryParse(isSlotValue);
       }
     }
-    visitType = json['visit_type'];
+    visitType = _normalizeVisitType(json['visit_type']);
     description = json['description'];
     requirements = json['requirements'];
     // Handle is_featured - can be string or num
@@ -331,6 +332,10 @@ class ServiceData {
     views = json['views'] ?? json['total_views'];
     totalBookingCount = json['total_booking_count'];
     completedBookingCount = json['completed_booking_count'];
+    if (json['show_edit_delete_buttons'] != null) {
+      final v = json['show_edit_delete_buttons'];
+      showEditDeleteButtons = v == true || v == 1 || v == '1';
+    }
 
     if (json['service_address_mapping'] != null) {
       serviceAddressMapping = [];
@@ -387,6 +392,27 @@ class ServiceData {
         travelRequired = json['travel_required'].toString();
       }
     }
+  }
+
+  /// API may send duration as minutes (e.g. 60) or "H:MM" string. Normalize to "H:MM".
+  static String? _parseDuration(dynamic v) {
+    if (v == null) return null;
+    if (v is String) return v;
+    if (v is int || v is num) {
+      int totalMinutes = (v is int) ? v : (v as num).toInt();
+      int h = totalMinutes ~/ 60;
+      int m = totalMinutes % 60;
+      return '$h:$m';
+    }
+    return v.toString();
+  }
+
+  /// API may send visit_type as "at_customer". Map to app constant "on_site".
+  static String? _normalizeVisitType(dynamic v) {
+    if (v == null) return null;
+    String s = v.toString().trim().toLowerCase();
+    if (s == 'at_customer') return VISIT_OPTION_ON_SITE;
+    return s.isNotEmpty ? s : null;
   }
 
   Map<String, dynamic> toJson() {

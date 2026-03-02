@@ -163,7 +163,7 @@ class PostJobData {
     type: json["type"] == null ? null : JobType.values.firstWhere((e) => e.backendValue == json["type"], orElse: () => JobType.onSite),
     jobSchedule: json["job_schedule"] == null ? null : JobSchedule.values.firstWhere((e) => e.backendValue == json["job_schedule"], orElse: () => JobSchedule.fullTime),
     remoteWorkLevel: json["remote_work_level"] == null ? null : RemoteWorkLevel.values.firstWhere((e) => e.backendValue == json["remote_work_level"], orElse: () => RemoteWorkLevel.onsite0),
-    careerLevel: json["career_level"] == null ? null : CareerLevel.values.firstWhere((e) => e.backendValue == json["career_level"], orElse: () => CareerLevel.entry),
+    careerLevel: json["career_level"] == null ? null : CareerLevel.values.firstWhere((e) => e.backendValue == json["career_level"], orElse: () => CareerLevel.notSpecified),
     educationLevel: json["education_level"] == null ? null : EducationLevel.values.firstWhere((e) => e.backendValue == json["education_level"], orElse: () => EducationLevel.highSchool),
     travelRequired: () {
       if (json["travel_required"] == null) return null;
@@ -328,12 +328,17 @@ enum RemoteWorkLevel {
 
 /// Career Level
 enum CareerLevel {
-  intern("Intern", "intern"),
-  entry("Entry", "entry"),
-  junior("Junior", "junior"),
-  midLevel("Mid-Level", "mid"),
-  senior("Senior", "senior"),
-  lead("Lead", "lead"),
+  notSpecified("Not Specified", "not_specified"),
+  entryLevel("Entry Level", "entry_level"),
+  intermediateLevel("Intermediate Level", "intermediate_level"),
+  experienced("Experienced", "experienced"),
+  professional("Professional", "professional"),
+  middleManagement("Middle Management", "middle_management"),
+  executiveManagement("Executive Management", "executive_management"),
+  seniorManagement("Senior Management", "senior_management"),
+  director("Director", "director"),
+  technician("Technician", "technician"),
+  leader("Leader", "leader"),
   manager("Manager", "manager");
 
   final String displayName;
@@ -366,7 +371,46 @@ enum EducationLevel {
 
   const EducationLevel(this.displayName, this.backendValue);
 }
- 
+
+/// Profile Education (edit profile dropdown)
+enum ProfileEducationLevel {
+  notSpecified("Not Specified", "not_specified"),
+  anyGraduate("Any Graduate", "any_graduate"),
+  apprenticeshipDegree("Apprenticeship Degree", "apprenticeship_degree"),
+  traineeshipDegree("Traineeship Degree", "traineeship_degree"),
+  secondaryDegree("Secondary Degree", "secondary_degree"),
+  undergraduateDiploma("Undergraduate Diploma", "undergraduate_diploma"),
+  highSchoolGraduate("High school graduate", "high_school_graduate"),
+  associateDegree("Associate degree", "associate_degree"),
+  collegeDegree("College Degree", "college_degree"),
+  universityDegree("University Degree", "university_degree"),
+  bachelorsDegree("Bachelor's Degree", "bachelors_degree"),
+  mastersDegree("Master's Degree", "masters_degree"),
+  doctorateDegree("Doctorate Degree", "doctorate_degree"),
+  professionalDegree("Professional Degree", "professional_degree");
+
+  final String displayName;
+  final String backendValue;
+
+  const ProfileEducationLevel(this.displayName, this.backendValue);
+}
+
+/// Years of Experience (edit profile dropdown).
+/// API expects string: e.g. 1_to_3, 5_to_8, more_than_10 (dropdown value).
+enum YearsOfExperience {
+  lessThan1Year("Less than 1 Year", "less_than_1"),
+  oneTo3Years("1 to 3 Years", "1_to_3"),
+  threeTo5Years("3 to 5 Years", "3_to_5"),
+  fiveTo8Years("5 to 8 Years", "5_to_8"),
+  eightTo10Years("8 to 10 Years", "8_to_10"),
+  moreThan10Years("More than 10 Years", "more_than_10");
+
+  final String displayName;
+  final String backendValue;
+
+  const YearsOfExperience(this.displayName, this.backendValue);
+}
+
 /// Education Level
 enum RequestStatus {
   requested('Requested','requested',defaultStatus),

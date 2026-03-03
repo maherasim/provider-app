@@ -16,6 +16,7 @@ class UserData {
   int? countryId;
   int? stateId;
   int? cityId;
+  int? taxCountryId;
   String? address;
   int? providerId;
   String? playerId;
@@ -235,6 +236,7 @@ class UserData {
     designation = json['designation'];
     cityName = json['city_name'] ?? json["city"];
     countryName = json['country_name'] ?? json["country"];
+    taxCountryId = json['tax_country_id'] is int ? json['tax_country_id'] : int.tryParse(json['tax_country_id']?.toString() ?? '');
     customerRating = json['customer_rating'];
     customerTotalRatings = json['customer_total_ratings'];
     if (json['customer_reviews'] != null) {

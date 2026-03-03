@@ -2,6 +2,43 @@ import 'package:handyman_provider_flutter/provider/jobRequest/models/post_job_da
 
 import 'bidder_data.dart';
 
+/// Single review item for provider_review (customer reviews provider) or customer_review (provider reviews customer).
+class BidReviewItem {
+  int? id;
+  num? rating;
+  String? review;
+  String? raterName;
+  int? raterId;
+  String? createdAt;
+
+  BidReviewItem({
+    this.id,
+    this.rating,
+    this.review,
+    this.raterName,
+    this.raterId,
+    this.createdAt,
+  });
+
+  factory BidReviewItem.fromJson(Map<String, dynamic> json) => BidReviewItem(
+    id: json["id"] is int ? json["id"] : int.tryParse(json["id"]?.toString() ?? ''),
+    rating: json["rating"] is num ? json["rating"] : (json["rating"] != null ? num.tryParse(json["rating"].toString()) : null),
+    review: json["review"]?.toString(),
+    raterName: json["rater_name"]?.toString(),
+    raterId: json["rater_id"] is int ? json["rater_id"] : int.tryParse(json["rater_id"]?.toString() ?? ''),
+    createdAt: json["created_at"]?.toString(),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "rating": rating,
+    "review": review,
+    "rater_name": raterName,
+    "rater_id": raterId,
+    "created_at": createdAt,
+  };
+}
+
 class PostJobDetailResponse {
   PostJobData? postRequestDetail;
   List<BidderData> bidderData;
@@ -52,6 +89,8 @@ class JobRequestDetailResponse {
   String? taxPercent;
   bool? providerRatingExists;
   bool? showRateCustomerButton;
+  List<BidReviewItem> providerReview;
+  List<BidReviewItem> customerReview;
 
   JobRequestDetailResponse({
     this.id,
@@ -77,6 +116,8 @@ class JobRequestDetailResponse {
     this.taxPercent,
     this.providerRatingExists,
     this.showRateCustomerButton,
+    this.providerReview = const [],
+    this.customerReview = const [],
   });
 
   factory JobRequestDetailResponse.fromJson(Map<String, dynamic> json) => JobRequestDetailResponse(
@@ -103,6 +144,8 @@ class JobRequestDetailResponse {
     taxPercent: json["tax_percent"],
     providerRatingExists: json["provider_rating_exists"] is bool ? json["provider_rating_exists"] : (json["provider_rating_exists"] == 1 || json["provider_rating_exists"] == "1"),
     showRateCustomerButton: json["show_rate_customer_button"] is bool ? json["show_rate_customer_button"] : (json["show_rate_customer_button"] != 0 && json["show_rate_customer_button"] != "0" && json["show_rate_customer_button"] != false),
+    providerReview: json["provider_review"] == null ? [] : List<BidReviewItem>.from((json["provider_review"] as List).map((x) => BidReviewItem.fromJson(x is Map<String, dynamic> ? x : Map<String, dynamic>.from(x as Map)))),
+    customerReview: json["customer_review"] == null ? [] : List<BidReviewItem>.from((json["customer_review"] as List).map((x) => BidReviewItem.fromJson(x is Map<String, dynamic> ? x : Map<String, dynamic>.from(x as Map)))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -129,6 +172,8 @@ class JobRequestDetailResponse {
     "tax_percent": taxPercent,
     "provider_rating_exists": providerRatingExists,
     "show_rate_customer_button": showRateCustomerButton,
+    "provider_review": providerReview.map((x) => x.toJson()).toList(),
+    "customer_review": customerReview.map((x) => x.toJson()).toList(),
   };
 }
 

@@ -26,6 +26,7 @@ import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart
 import 'package:handyman_provider_flutter/utils/images.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
+import 'package:handyman_provider_flutter/utils/language_options.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -41,6 +42,7 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class EditProfileScreenState extends State<EditProfileScreen> {
+   
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   File? imageFile;
@@ -57,12 +59,18 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   List<String> whyChooseMeReasons = [];
   List<String> skills = [];
 
+  /// Selected language values for Known Languages multi-select (e.g. ['english', 'german']).
+  List<String> selectedLanguages = [];
+
   List<AddressResponse> serviceAddressList = [];
   AddressResponse? selectedAddress;
 
   CountryListResponse? selectedCountry;
   StateListResponse? selectedState;
   CityListResponse? selectedCity;
+
+  CountryListResponse? selectedTaxCountry;
+  int taxCountryId = 0;
 
   List<String> availabilityList = <String>['Full Time', 'Hybrid'];
   String selectedAvailability = 'Full Time';
@@ -173,6 +181,29 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
+  /// Normalize API string to language option value (key in kLanguageOptions).
+  String _languageStringToValue(String s) {
+    if (s.isEmpty) return '';
+    String normalized = s.toLowerCase().trim();
+    String withUnderscore = normalized.replaceAll(' ', '_');
+    if (kLanguageOptions.containsKey(normalized)) return normalized;
+    if (kLanguageOptions.containsKey(withUnderscore)) return withUnderscore;
+    for (var e in kLanguageOptions.entries) {
+      if (e.value.toLowerCase() == s.toLowerCase()) return e.key;
+    }
+    return withUnderscore.isNotEmpty ? withUnderscore : normalized;
+  }
+
+  void _parsePlainLanguageString(String knownLanguagesStr) {
+    List<String> parts = knownLanguagesStr.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+    for (String part in parts) {
+      String value = _languageStringToValue(part);
+      if (value.isNotEmpty && !selectedLanguages.contains(value)) {
+        selectedLanguages.add(value);
+      }
+    }
+  }
+
   // Helper function to safely convert API values to string (handles both String and List)
   String _safeStringFromValue(dynamic value) {
     if (value == null) return '';
@@ -188,22 +219,29 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       isEmailVerified = value.data!.isEmailVerified.validate().getBoolInt();
       await setValue(IS_EMAIL_VERIFIED, isEmailVerified);
 
-      // Load known languages - handle JSON string (from model) or plain string
+      // Load known languages - multi-select values (backend may send JSON array or plain string)
       String? knownLanguagesStr = value.data!.knownLanguages;
+      selectedLanguages = [];
       if (knownLanguagesStr != null && knownLanguagesStr.isNotEmpty) {
         if (knownLanguagesStr.isJson()) {
           try {
             Iterable it = jsonDecode(knownLanguagesStr);
-            knownLangCont.text = it.map((e) => e.toString()).join(', ');
-            knownLanguages.clear();
-            knownLanguages.addAll(it.map((e) => e.toString()).toList());
-          } catch (e) {
-            knownLangCont.text = knownLanguagesStr;
+            for (var e in it) {
+              String s = e.toString().trim();
+              if (s.isEmpty) continue;
+              String value = _languageStringToValue(s);
+              if (value.isNotEmpty && !selectedLanguages.contains(value)) {
+                selectedLanguages.add(value);
+              }
+            }
+          } catch (_) {
+            _parsePlainLanguageString(knownLanguagesStr);
           }
         } else {
-          knownLangCont.text = knownLanguagesStr;
+          _parsePlainLanguageString(knownLanguagesStr);
         }
       }
+      knownLanguages = List<String>.from(selectedLanguages);
 
       // Load skills - handle JSON string (from model) or plain string
       String? skillsStr = value.data!.skills;
@@ -259,6 +297,11 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       
       descriptionCont.text = value.data!.description.validate();
       addressCont.text = value.data!.address.validate();
+
+      taxCountryId = value.data!.taxCountryId ?? countryId;
+      if (countryList.isNotEmpty && taxCountryId > 0) {
+        selectedTaxCountry = countryList.where((e) => e.id == taxCountryId).firstOrNull;
+      }
       
       // Load company name and VAT number
       cNameCont.text = _safeStringFromValue(value.data!.companyName);
@@ -334,6 +377,12 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       if (value.any((element) => element.id == getIntAsync(COUNTRY_ID))) {
         selectedCountry = value
             .firstWhere((element) => element.id == getIntAsync(COUNTRY_ID));
+        if (selectedTaxCountry == null) {
+          selectedTaxCountry = selectedCountry;
+          taxCountryId = selectedCountry?.id ?? getIntAsync(COUNTRY_ID);
+        } else if (taxCountryId > 0 && value.any((e) => e.id == taxCountryId)) {
+          selectedTaxCountry = value.firstWhere((e) => e.id == taxCountryId);
+        }
       }
       setState(() {});
     }).catchError((e) {
@@ -392,24 +441,15 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     multiPartRequest.fields[CommonKeys.countryId] = countryId.toString();
     multiPartRequest.fields[CommonKeys.stateId] = stateId.toString();
     multiPartRequest.fields[CommonKeys.cityId] = cityId.toString();
+    multiPartRequest.fields['tax_country_id'] = taxCountryId.toString();
     multiPartRequest.fields[CommonKeys.address] = addressCont.text.validate();
     multiPartRequest.fields[UserKeys.designation] =
         designationCont.text.validate();
     multiPartRequest.fields['company_name'] = cNameCont.text.trim();
     multiPartRequest.fields['vat_number'] = vatNumCont.text.trim();
-    // Send languages - parse comma-separated text and send as JSON array
-    if (knownLangCont.text.trim().isNotEmpty) {
-      List<String> langList = knownLangCont.text
-          .split(',')
-          .map((e) => e.trim())
-          .where((e) => e.isNotEmpty)
-          .toList();
-      if (langList.isNotEmpty) {
-        multiPartRequest.fields[UserKeys.knownLanguages] = jsonEncode(langList);
-      }
-    } else if (knownLanguages.isNotEmpty) {
-      // Fallback to list if text field is empty but list has items
-      multiPartRequest.fields[UserKeys.knownLanguages] = jsonEncode(knownLanguages);
+    // Send languages - multi-select values as JSON array (known_languages / languages[])
+    if (selectedLanguages.isNotEmpty) {
+      multiPartRequest.fields[UserKeys.knownLanguages] = jsonEncode(selectedLanguages);
     }
     
     // Send skills as string (comma-separated or plain text)
@@ -568,6 +608,96 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         ).paddingAll(16.0);
       },
     );
+  }
+
+  void _showLanguageMultiSelect(BuildContext context) {
+    List<String> tempSelected = List<String>.from(selectedLanguages);
+    TextEditingController searchCont = TextEditingController();
+    ValueNotifier<String> searchNotifier = ValueNotifier('');
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: context.cardColor,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return DraggableScrollableSheet(
+              initialChildSize: 0.6,
+              minChildSize: 0.3,
+              maxChildSize: 0.95,
+              expand: false,
+              builder: (_, scrollController) => Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: AppTextField(
+                            controller: searchCont,
+                            textFieldType: TextFieldType.OTHER,
+                            decoration: inputDecoration(context, hint: 'Search languages'),
+                            onChanged: (v) {
+                              searchNotifier.value = v;
+                            },
+                          ),
+                        ),
+                        8.width,
+                        TextButton(
+                          onPressed: () {
+                            selectedLanguages = List<String>.from(tempSelected);
+                            setState(() {});
+                            finish(context);
+                          },
+                          child: Text(languages.done, style: boldTextStyle(color: primaryColor)),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(height: 1),
+                  Expanded(
+                    child: ValueListenableBuilder<String>(
+                      valueListenable: searchNotifier,
+                      builder: (_, query, __) {
+                        String q = query.toLowerCase().trim();
+                        var entries = kLanguageOptions.entries.where((e) =>
+                            e.key.contains(q) || e.value.toLowerCase().contains(q)).toList();
+                        return ListView.builder(
+                          controller: scrollController,
+                          itemCount: entries.length,
+                          itemBuilder: (_, i) {
+                            String value = entries[i].key;
+                            String label = entries[i].value;
+                            bool checked = tempSelected.contains(value);
+                            return CheckboxListTile(
+                              value: checked,
+                              onChanged: (v) {
+                                if (v == true) {
+                                  if (!tempSelected.contains(value)) tempSelected.add(value);
+                                } else {
+                                  tempSelected.remove(value);
+                                }
+                                setModalState(() {});
+                              },
+                              title: Text(label, style: primaryTextStyle(size: 14)),
+                              controlAffinity: ListTileControlAffinity.leading,
+                              activeColor: primaryColor,
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    ).then((_) {
+      searchCont.dispose();
+      searchNotifier.dispose();
+    });
   }
 
   @override
@@ -847,6 +977,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               onChanged: (CountryListResponse? value) async {
                                 countryId = value!.id!;
                                 selectedCountry = value;
+                                selectedTaxCountry = value;
+                                taxCountryId = value.id!;
                                 selectedState = null;
                                 selectedCity = null;
                                 setState(() {});
@@ -882,6 +1014,25 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                 },
                               ).expand(),
                           ],
+                        ),
+                        16.height,
+                        DropdownButtonFormField<CountryListResponse>(
+                          decoration: inputDecoration(context,
+                              hint: 'Select Country tax'),
+                          isExpanded: true,
+                          menuMaxHeight: 300,
+                          value: selectedTaxCountry,
+                          dropdownColor: context.cardColor,
+                          items: countryList.map((CountryListResponse e) {
+                            return DropdownMenuItem<CountryListResponse>(
+                              value: e,
+                              child: Text(e.name!,
+                                  style: primaryTextStyle(),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis),
+                            );
+                          }).toList(),
+                          onChanged: null,
                         ),
                         16.height,
                         if (cityList.isNotEmpty)
@@ -951,14 +1102,60 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               hint: languages.hintAddress),
                         ),
                         16.height,
-                        AppTextField(
-                          textFieldType: TextFieldType.NAME,
-                          controller: knownLangCont,
-                          focus: knownLangFocus,
-                          nextFocus: skillsFocus,
-                          decoration: inputDecoration(context,
-                              hint: languages.knownLanguages + ' (comma-separated)'),
-                          suffix: Icon(Icons.language, size: 18, color: context.iconColor).paddingAll(14),
+                        Text(languages.knownLanguages, style: secondaryTextStyle()),
+                        8.height,
+                        InkWell(
+                          onTap: () => _showLanguageMultiSelect(context),
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: context.cardColor,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: context.dividerColor),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.language, size: 20, color: context.iconColor),
+                                    8.width,
+                                    Text(
+                                      selectedLanguages.isEmpty
+                                          ? 'Select languages'
+                                          : '${selectedLanguages.length} selected',
+                                      style: selectedLanguages.isEmpty
+                                          ? secondaryTextStyle()
+                                          : primaryTextStyle(size: 14),
+                                    ),
+                                    Spacer(),
+                                    Icon(Icons.arrow_drop_down, color: context.iconColor),
+                                  ],
+                                ),
+                                if (selectedLanguages.isNotEmpty) ...[
+                                  8.height,
+                                  Wrap(
+                                    spacing: 6,
+                                    runSpacing: 6,
+                                    children: selectedLanguages.map((value) {
+                                      String label = kLanguageOptions[value] ?? value;
+                                      return Chip(
+                                        label: Text(label, style: primaryTextStyle(size: 12)),
+                                        deleteIcon: Icon(Icons.close, size: 16, color: context.iconColor),
+                                        onDeleted: () {
+                                          selectedLanguages.remove(value);
+                                          setState(() {});
+                                        },
+                                        backgroundColor: context.scaffoldBackgroundColor,
+                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      );
+                                    }).toList(),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
                         ),
                         16.height,
                         AppTextField(

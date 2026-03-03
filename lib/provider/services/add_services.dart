@@ -1481,16 +1481,16 @@ class _AddServicesState extends State<AddServices> {
                     errorThisFieldRequired: languages.hintRequired,
                     decoration: inputDecoration(
                       context,
-                      hint: languages.advancePayAmountPer,
+                      hint: '${languages.advancePayAmountPer} (20-99)',
                       fillColor: context.scaffoldBackgroundColor,
                       counterText: '',
                     ),
                     keyboardType: TextInputType.number,
                     validator: (s) {
-                      if (s!.isEmpty) return errorThisFieldRequired;
-
-                      if (s.toInt() <= 0 || s.toInt() >= 100)
-                        return languages.valueConditionMessage;
+                      if (s!.trim().isEmpty) return errorThisFieldRequired;
+                      final v = int.tryParse(s.trim());
+                      if (v == null) return 'Please enter a valid number';
+                      if (v < 20 || v > 99) return 'Advance payment must be between 20 and 99';
                       return null;
                     },
                   ),

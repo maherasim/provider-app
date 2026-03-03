@@ -90,25 +90,24 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
                           controller: advance,
                           isValidationRequired: true,
                           validator: (value) {
-                            if (value!.isEmpty) {
+                            if (value!.trim().isEmpty) {
                               return context.translate.hintRequired;
                             }
-                            final advanceValue = int.tryParse(value) ?? 0;
-                            if(advanceValue > 99 || advanceValue < 1) {
-                              return languages.advancePercentageShouldBeBetween;
+                            final advanceValue = int.tryParse(value.trim());
+                            if (advanceValue == null) return 'Please enter a valid number';
+                            if (advanceValue < 20 || advanceValue > 99) {
+                              return 'Advance payment must be between 20 and 99';
                             }
                             return null;
                           },
                           onChanged: (value) {
-                            final advanceValue = int.tryParse(value) ?? 0;
-
-                            remaining.text = '${100-advanceValue}';
-
+                            final advanceValue = int.tryParse(value ?? '') ?? 0;
+                            remaining.text = '${100 - advanceValue}';
                           },
                           decoration: inputDecoration(context).copyWith(
                             fillColor: context.cardColor,
                             filled: true,
-                            hintText: languages.advancePercentage,
+                            hintText: '${languages.advancePercentage} (20-99)',
                             hintStyle: secondaryTextStyle(),
                             prefixText: "% ",
                             prefixStyle: primaryTextStyle(size: 16),

@@ -261,6 +261,8 @@ class _AddonServiceListScreenState extends State<AddonServiceListScreen> {
                     ),
                   );
                 },
+              );
+            },
             errorBuilder: (error) {
               return NoDataWidget(
                 title: error,

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:handyman_provider_flutter/components/app_widgets.dart';
 import 'package:handyman_provider_flutter/components/base_scaffold_widget.dart';
+import 'package:handyman_provider_flutter/components/disabled_rating_bar_widget.dart';
 import 'package:handyman_provider_flutter/components/empty_error_state_widget.dart';
 import 'package:handyman_provider_flutter/components/price_widget.dart';
 import 'package:handyman_provider_flutter/main.dart';
@@ -475,6 +476,13 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
 
               // Extra Charges Breakdown
               _buildExtraChargesBreakdown(),
+
+              // Employer Review (reviews from customer about provider)
+              _buildReviewSection('Employer Review', postJobDetail!.providerReview),
+
+              // Customer Review (reviews from provider about customer / employer)
+              _buildReviewSection('Customer Review', postJobDetail!.customerReview),
+
               24.height,
 
             ],
@@ -1071,6 +1079,74 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildReviewSection(String title, List<BidReviewItem> reviews) {
+    if (reviews.isEmpty) return SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        24.height,
+        Text(title, style: boldTextStyle(size: LABEL_TEXT_SIZE)),
+        16.height,
+        ...reviews.map((r) => _buildReviewCard(r)).toList(),
+      ],
+    );
+  }
+
+  Widget _buildReviewCard(BidReviewItem r) {
+    final rating = (r.rating ?? 0).toDouble();
+    final dateStr = r.createdAt != null && r.createdAt!.isNotEmpty
+        ? formatDate(r.createdAt, format: DATE_FORMAT_2)
+        : '';
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.all(12),
+      decoration: boxDecorationWithRoundedCorners(
+        backgroundColor: context.cardColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            r.raterName?.validate() ?? '',
+            style: boldTextStyle(size: 14),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          if (dateStr.isNotEmpty) ...[
+            4.height,
+            Text(dateStr, style: secondaryTextStyle(size: 12)),
+          ],
+          8.height,
+          Row(
+            children: [
+              DisabledRatingBarWidget(
+                rating: rating,
+                size: 16,
+                activeColor: getRatingBarColor(rating.round()),
+              ),
+              6.width,
+              Text(
+                '${rating.toInt()}/5',
+                style: secondaryTextStyle(size: 12),
+              ),
+            ],
+          ),
+          if ((r.review ?? '').trim().isNotEmpty) ...[
+            8.height,
+            Text(
+              r.review!.trim(),
+              style: secondaryTextStyle(size: 13),
+              maxLines: 10,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ],
+      ),
     );
   }
 

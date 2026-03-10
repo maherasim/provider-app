@@ -344,6 +344,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         }
       }
 
+      if (!mounted) return;
       setState(() {});
     }).catchError((e) {
       appStore.setLoading(false);
@@ -361,6 +362,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         selectedAddress = value.addressResponse!.firstWhere(
             (element) => element.id == getIntAsync(SERVICE_ADDRESS_ID));
       }
+      if (!mounted) return;
       setState(() {});
     }).catchError((e) {
       toast(e.toString(), print: true);
@@ -384,6 +386,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
           selectedTaxCountry = value.firstWhere((e) => e.id == taxCountryId);
         }
       }
+      if (!mounted) return;
       setState(() {});
     }).catchError((e) {
       toast('$e', print: true);
@@ -401,6 +404,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         selectedState =
             value.firstWhere((element) => element.id == getIntAsync(STATE_ID));
       }
+      if (!mounted) return;
       setState(() {});
     }).catchError((e) {
       toast('$e', print: true);
@@ -419,6 +423,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         selectedCity =
             value.firstWhere((element) => element.id == getIntAsync(CITY_ID));
       }
+      if (!mounted) return;
       setState(() {});
     }).catchError((e) {
       toast('$e', print: true);
@@ -495,6 +500,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       multiPartRequest,
       onSuccess: (data) async {
         appStore.setLoading(false);
+        if (!mounted) return;
         if (data != null) {
           if ((data as String).isJson()) {
             UserUpdateResponse res =
@@ -507,10 +513,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
               }, FirebaseAuth.instance.currentUser!.uid);
             }
             saveUserData(res.data!);
-            finish(context);
             toast(res.message.validate().capitalizeFirstLetter());
-
-            finish(context);
+            if (mounted) finish(context);
           }
         }
       },
@@ -533,6 +537,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       toast(value.message);
 
       await setValue(IS_EMAIL_VERIFIED, isEmailVerified);
+      if (!mounted) return;
       setState(() {});
 
       appStore.setLoading(false);
@@ -542,7 +547,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       appStore.setLoading(false);
 
       toast(e.toString());
-      setState(() {});
+      if (mounted) setState(() {});
     });
   }
 
@@ -571,7 +576,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       primaryColor: context.primaryColor,
       onAccept: (BuildContext context) async {
         imageFile = File(pickedFile!.path);
-        setState(() {});
+        if (mounted) setState(() {});
       },
       onCancel: (BuildContext context) {
         imageFile = null;
@@ -614,7 +619,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     List<String> tempSelected = List<String>.from(selectedLanguages);
     TextEditingController searchCont = TextEditingController();
     ValueNotifier<String> searchNotifier = ValueNotifier('');
-    showModalBottomSheet<void>(
+    showModalBottomSheet<List<String>?>(
       context: context,
       isScrollControlled: true,
       backgroundColor: context.cardColor,
@@ -645,9 +650,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         8.width,
                         TextButton(
                           onPressed: () {
-                            selectedLanguages = List<String>.from(tempSelected);
-                            setState(() {});
-                            finish(context);
+                            Navigator.of(ctx).pop(List<String>.from(tempSelected));
                           },
                           child: Text(languages.done, style: boldTextStyle(color: primaryColor)),
                         ),
@@ -694,9 +697,16 @@ class EditProfileScreenState extends State<EditProfileScreen> {
           },
         );
       },
-    ).then((_) {
-      searchCont.dispose();
-      searchNotifier.dispose();
+    ).then((List<String>? result) {
+      final selected = result != null ? List<String>.from(result) : null;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        searchCont.dispose();
+        searchNotifier.dispose();
+        if (selected != null && mounted) {
+          selectedLanguages = selected;
+          setState(() {});
+        }
+      });
     });
   }
 

@@ -510,6 +510,10 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
     });
   }
 
+  /// Starts periodic sharing of current location to the server when booking is "On Going".
+  /// Handyman: sends own location so customer can see it on the map.
+  /// Provider (viewing a handyman's booking): starts fetching handyman's location for the map.
+  /// Only runs when [status] is [BookingStatusKeys.onGoing]; otherwise stops any existing updates.
   void startLocationUpdates(
       {required String status,
       required int handymanID,
@@ -551,10 +555,14 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                   status: status, handymanID: handymanID);
             },
           );
+          if (mounted) toast('Location sharing started');
         }
+      } else {
+        if (mounted) toast('Please allow location permission to share your location');
       }
     } else {
       stopLocationUpdates();
+      if (mounted) toast('Location sharing is only available when the booking is in progress');
     }
   }
 

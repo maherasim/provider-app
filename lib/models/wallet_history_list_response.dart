@@ -9,11 +9,18 @@ class WalletHistoryListResponse {
 
   WalletHistoryListResponse({this.data, this.pagination, this.availableBalance});
 
+  static num? _parseNum(dynamic v) {
+    if (v == null) return null;
+    if (v is num) return v;
+    if (v is String) return num.tryParse(v);
+    return null;
+  }
+
   factory WalletHistoryListResponse.fromJson(Map<String, dynamic> json) {
     return WalletHistoryListResponse(
       data: json['data'] != null ? (json['data'] as List).map((i) => WalletHistory.fromJson(i)).toList() : null,
       pagination: json['pagination'] != null ? Pagination.fromJson(json['pagination']) : null,
-      availableBalance: json['available_balance'] != null ? json['available_balance'] : 0,
+      availableBalance: _parseNum(json['available_balance']) ?? 0,
     );
   }
 
@@ -46,14 +53,22 @@ class WalletHistory {
     this.userImage,
   });
 
+  static int? _parseInt(dynamic v) {
+    if (v == null) return null;
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    if (v is String) return int.tryParse(v);
+    return null;
+  }
+
   factory WalletHistory.fromJson(Map<String, dynamic> json) {
     return WalletHistory(
       activityData: json['activity_data'] != null ? ActivityData.fromJson(jsonDecode(json['activity_data'] as String)) : null,
-      activityMessage: json['activity_message'],
-      activityType: json['activity_type'],
-      datetime: json['datetime'],
-      id: json['id'],
-      userImage: json['user_image'],
+      activityMessage: json['activity_message']?.toString(),
+      activityType: json['activity_type']?.toString(),
+      datetime: json['datetime']?.toString(),
+      id: _parseInt(json['id']),
+      userImage: json['user_image']?.toString(),
     );
   }
 
@@ -89,14 +104,29 @@ class ActivityData {
     this.transactionType,
   });
 
+  static num? _parseNum(dynamic v) {
+    if (v == null) return null;
+    if (v is num) return v;
+    if (v is String) return num.tryParse(v);
+    return null;
+  }
+
+  static int? _parseInt(dynamic v) {
+    if (v == null) return null;
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    if (v is String) return int.tryParse(v);
+    return null;
+  }
+
   factory ActivityData.fromJson(Map<String, dynamic> json) {
     return ActivityData(
-      amount: json['amount'],
-      providerName: json['provider_name'],
-      title: json['title'],
-      userId: json['user_id'],
-      creditDebitAmount: json['credit_debit_amount'],
-      transactionType: json['transaction_type'],
+      amount: _parseNum(json['amount']),
+      providerName: json['provider_name']?.toString(),
+      title: json['title']?.toString(),
+      userId: _parseInt(json['user_id']),
+      creditDebitAmount: _parseNum(json['credit_debit_amount']),
+      transactionType: json['transaction_type']?.toString(),
     );
   }
 

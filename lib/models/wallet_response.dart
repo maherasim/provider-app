@@ -4,8 +4,14 @@ class WalletResponse {
   WalletResponse({this.balance});
 
   factory WalletResponse.fromJson(Map<String, dynamic> json) {
+    num? balance;
+    if (json['balance'] != null) {
+      final v = json['balance'];
+      if (v is num) balance = v;
+      else if (v is String) balance = num.tryParse(v);
+    }
     return WalletResponse(
-      balance: json['balance'],
+      balance: balance,
     );
   }
 

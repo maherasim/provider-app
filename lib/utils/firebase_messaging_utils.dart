@@ -423,10 +423,10 @@ Future<void> showNotification(int id, String title, String message, RemoteMessag
     }
   }
 
-  // Get default Frobster logo for notifications
+  // Get default Frobster Pro app logo for notifications
   String? defaultLogoPath;
   try {
-    defaultLogoPath = await _copyAssetToFile('assets/provider 36x36.png', 'frobster_logo_notification.png');
+    defaultLogoPath = await _copyAssetToFile('assets/frobster Pro app logo.png', 'frobster_logo_notification.png');
     log('Loaded Frobster logo for notification: $defaultLogoPath');
   } catch (e) {
     log('Error loading Frobster logo: $e');

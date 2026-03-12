@@ -1,0 +1,3 @@
+# Install: pip install -r scripts/requirements-images.txt
+# Used by scripts/optimize_images.py to resize and compress images.
+Pillow>=10.0.0

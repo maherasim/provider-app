@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.compile.JavaCompile
+
 allprojects {
     repositories {
         google()
@@ -5,6 +7,12 @@ allprojects {
         maven {
             url = uri("https://phonepe.mycloudrepo.io/public/repositories/phonepe-intentsdk-android")
         }
+    }
+    // Use Java 11 for all modules and suppress "source value 8 is obsolete" from dependencies
+    tasks.withType<JavaCompile>().configureEach {
+        sourceCompatibility = JavaVersion.VERSION_11.toString()
+        targetCompatibility = JavaVersion.VERSION_11.toString()
+        options.compilerArgs.add("-Xlint:-options")
     }
 }
 

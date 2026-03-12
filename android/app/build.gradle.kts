@@ -30,15 +30,21 @@ android {
         targetSdk = 36
         versionCode = 91
         versionName = "11.13.0"
+        ndk {
+            debugSymbolLevel = "none"
+        }
     }
 
     signingConfigs {
         create("release") {
             val props = loadKeystoreProps("key.properties")
-            keyAlias = props["keyAlias"]
-            keyPassword = props["keyPassword"]
-            storeFile = props["storeFile"]?.let { file(it) }
-            storePassword = props["storePassword"]
+            val storePath = props["storeFile"]
+            if (storePath != null) {
+                storeFile = rootProject.file(storePath)
+                keyAlias = props["keyAlias"]
+                keyPassword = props["keyPassword"]
+                storePassword = props["storePassword"]
+            }
         }
     }
 
@@ -51,10 +57,14 @@ android {
         }
 
         getByName("release") {
-            isShrinkResources = false
-            isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("release")
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            isShrinkResources = true
+            isMinifyEnabled = true
+            signingConfig = if (signingConfigs.getByName("release").storeFile != null) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 }

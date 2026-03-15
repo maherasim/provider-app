@@ -20,7 +20,7 @@
     </queries>
     <application
         android:icon="@mipmap/ic_launcher"
-        android:label="Frobster Pro"
+        android:label="Persotel Pro"
         tools:replace="android:label">
 
         <meta-data

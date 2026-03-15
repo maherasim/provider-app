@@ -10,7 +10,7 @@ plugins {
 
 
 android {
-    namespace = "com.frobster.provider"
+    namespace = "com.Persotel.provide"
     compileSdk = 36
     ndkVersion = "28.2.13676358"
 
@@ -25,7 +25,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.frobster.provider"
+        applicationId = "com.Persotel.provide"
         minSdk = flutter.minSdkVersion
         targetSdk = 36
         versionCode = 91

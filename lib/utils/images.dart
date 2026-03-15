@@ -1,4 +1,5 @@
-const appLogo = 'assets/ic_app_logo.png';
+/// App logo used on splash and elsewhere. Persotel Pro branding.
+const appLogo = 'assets/persotel provider pro.png';
 
 const chat_default_wallpaper = "assets/images/default_wallpaper.png";
 const imgForceUpdate = 'assets/images/force_update.png';

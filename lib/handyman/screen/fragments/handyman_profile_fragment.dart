@@ -14,7 +14,7 @@ import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/models/handyman_dashboard_response.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/screens/about_us_screen.dart';
-import 'package:handyman_provider_flutter/screens/languages_screen.dart';
+// import 'package:handyman_provider_flutter/screens/languages_screen.dart'; // Hidden – app always uses German (de)
 import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
@@ -345,22 +345,23 @@ class _HandymanProfileFragmentState extends State<HandymanProfileFragment> {
                   indent: 15.0,
                   endIndent: 15.0,
                   color: context.dividerColor),
-              SettingItemWidget(
-                leading:
-                    Image.asset(language, width: 16, color: context.iconColor),
-                title: languages.language,
-                titleTextStyle: primaryTextStyle(),
-                trailing: Icon(Icons.chevron_right,
-                    color: appStore.isDarkMode
-                        ? white
-                        : gray.withValues(alpha: 0.8),
-                    size: 24),
-                onTap: () {
-                  LanguagesScreen().launch(context).then((value) {
-                    keyForExperienceWidget = UniqueKey();
-                  });
-                },
-              ),
+              // Language setting hidden – app always uses German (de).
+              // SettingItemWidget(
+              //   leading:
+              //       Image.asset(language, width: 16, color: context.iconColor),
+              //   title: languages.language,
+              //   titleTextStyle: primaryTextStyle(),
+              //   trailing: Icon(Icons.chevron_right,
+              //       color: appStore.isDarkMode
+              //           ? white
+              //           : gray.withValues(alpha: 0.8),
+              //       size: 24),
+              //   onTap: () {
+              //     LanguagesScreen().launch(context).then((value) {
+              //       keyForExperienceWidget = UniqueKey();
+              //     });
+              //   },
+              // ),
               Divider(
                   height: 0,
                   endIndent: 16,

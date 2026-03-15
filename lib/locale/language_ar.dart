@@ -1986,7 +1986,28 @@ class LanguageAr extends Languages {
   String get trackHandymanLocation => 'تتبع موقع العامل الماهر';
 
   @override
-  String get lastUpdatedAt => 'अंतिम बार अद्यतन किया गया:';
+  String get lastUpdatedAt => 'آخر تحديث في:';
+
+  @override
+  String get workingAddress => 'عنوان العمل';
+
+  @override
+  String get addressNotAvailable => 'العنوان غير متوفر';
+
+  @override
+  String get resumeWork => 'استئناف العمل';
+
+  @override
+  String get rateCustomer => 'تقييم العميل';
+
+  @override
+  String get locationSharingStarted => 'بدء مشاركة الموقع';
+
+  @override
+  String get allowLocationPermission => 'يرجى السماح بإذن الموقع لمشاركة موقعك';
+
+  @override
+  String get locationSharingOnlyWhenInProgress => 'مشاركة الموقع متاحة فقط عندما تكون الحجز قيد التنفيذ';
 
   String get lblBankDetails => "التفاصيل المصرفية";
 

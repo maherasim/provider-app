@@ -555,14 +555,14 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                   status: status, handymanID: handymanID);
             },
           );
-          if (mounted) toast('Location sharing started');
+          if (mounted) toast(languages.locationSharingStarted);
         }
       } else {
         if (mounted) toast('Please allow location permission to share your location');
       }
     } else {
       stopLocationUpdates();
-      if (mounted) toast('Location sharing is only available when the booking is in progress');
+      if (mounted) toast(languages.locationSharingOnlyWhenInProgress);
     }
   }
 
@@ -615,12 +615,12 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
   String getDateTimeText(BookingData bookingDetail) {
     try {
       final dateStr = bookingDetail.date.validate();
-      if (dateStr.isEmpty) return 'N/A';
+      if (dateStr.isEmpty) return languages.notAvailable;
       
       String dateTimeText = formatDate(dateStr, format: DATE_FORMAT_2);
     if (bookingDetail.bookingSlot == null) {
         final timeText = formatDate(dateStr, isTime: true);
-        return '${dateTimeText} at ${timeText}';
+        return '${dateTimeText} ${languages.at} ${timeText}';
       } else {
         try {
           final slotDate = getSlotWithDate(
@@ -628,18 +628,18 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
             slotTime: bookingDetail.bookingSlot.validate()
           );
           final timeText = formatDate(slotDate, isTime: true);
-          return '${dateTimeText} at ${timeText}';
+          return '${dateTimeText} ${languages.at} ${timeText}';
         } catch (e) {
           // If slot date parsing fails, fallback to regular date
           final timeText = formatDate(dateStr, isTime: true);
-          return '${dateTimeText} at ${timeText}';
+          return '${dateTimeText} ${languages.at} ${timeText}';
         }
       }
     } catch (e) {
       // If date parsing fails completely, return a safe fallback
       return bookingDetail.date.validate().isNotEmpty 
           ? bookingDetail.date.validate() 
-          : 'N/A';
+          : languages.notAvailable;
     }
   }
 
@@ -1576,7 +1576,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
             if (res.customer != null && res.showRateCustomerButton == "Rate Customer") ...[
               16.width,
               AppButton(
-                text: res.showRateCustomerButton ?? 'Rate Customer',
+                text: res.showRateCustomerButton ?? languages.rateCustomer,
                 color: Colors.yellow,
                 elevation: 0,
                 textStyle: boldTextStyle(color: Colors.black),
@@ -1608,7 +1608,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
             if (res.customer != null && res.showRateCustomerButton == "Rate Customer") ...[
               16.width,
               AppButton(
-                text: res.showRateCustomerButton ?? 'Rate Customer',
+                text: res.showRateCustomerButton ?? languages.rateCustomer,
                 color: Colors.yellow,
                 elevation: 0,
                 textStyle: boldTextStyle(color: Colors.black),
@@ -1622,7 +1622,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
         // Booking is complete, show rate customer button
         if (res.customer != null && res.showRateCustomerButton == "Rate Customer") {
           return AppButton(
-            text: res.showRateCustomerButton ?? 'Rate Customer',
+            text: res.showRateCustomerButton ?? languages.rateCustomer,
             color: Colors.yellow,
             elevation: 0,
             textStyle: boldTextStyle(color: Colors.black),
@@ -1736,7 +1736,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
       return DecoratedBox(
         decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
         child: AppButton(
-          text: 'Resume Work',
+          text: languages.resumeWork,
           color: Color(0x00000000),
           elevation: 0,
           textStyle: boldTextStyle(color: white),
@@ -2071,7 +2071,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                               Icon(Icons.location_on, color: gradientBlue, size: 20),
                               8.width,
                               Text(
-                                'Working Address',
+                                languages.workingAddress,
                                 style: secondaryTextStyle(size: 12),
                               ),
                             ],
@@ -2104,7 +2104,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                               }
                               // 4. Fallback message
                               else {
-                                address = 'Address not available';
+                                address = languages.addressNotAvailable;
                               }
                               
                               return Text(
@@ -2241,7 +2241,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                               children: res.data!.handymanData!.map(
                                 (e) {
                                   return Text(
-                                    "View Detail", // Todo Language
+                                    languages.viewDetail,
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
@@ -2426,7 +2426,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                                   Text(
                                     (() {
                                       final String status = res.data!.bookingDetail!.paymentStatus.validate();
-                                      if (status.isEmpty) return 'N/A';
+                                      if (status.isEmpty) return languages.notAvailable;
                                       final String methodRaw = res.data!.bookingDetail!.paymentMethod.validate();
                                       final String method = methodRaw.capitalizeFirstLetter();
                                       final String? bank = res.data!.bookingDetail!.bankTransferStatus;

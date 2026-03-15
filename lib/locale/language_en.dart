@@ -1983,6 +1983,27 @@ class LanguageEn extends Languages {
   @override
   String get lastUpdatedAt => 'Last updated at:';
 
+  @override
+  String get workingAddress => 'Working Address';
+
+  @override
+  String get addressNotAvailable => 'Address not available';
+
+  @override
+  String get resumeWork => 'Resume Work';
+
+  @override
+  String get rateCustomer => 'Rate Customer';
+
+  @override
+  String get locationSharingStarted => 'Location sharing started';
+
+  @override
+  String get allowLocationPermission => 'Please allow location permission to share your location';
+
+  @override
+  String get locationSharingOnlyWhenInProgress => 'Location sharing is only available when the booking is in progress';
+
   String get lblBankDetails => "Bank Details";
 
   @override

@@ -25,7 +25,7 @@ import 'package:handyman_provider_flutter/provider/taxes/taxes_screen.dart';
 import 'package:handyman_provider_flutter/provider/timeSlots/my_time_slots_screen.dart';
 import 'package:handyman_provider_flutter/provider/wallet/wallet_history_screen.dart';
 import 'package:handyman_provider_flutter/screens/about_us_screen.dart';
-import 'package:handyman_provider_flutter/screens/languages_screen.dart';
+// import 'package:handyman_provider_flutter/screens/languages_screen.dart'; // Hidden – app always uses German (de)
 import 'package:handyman_provider_flutter/screens/verify_provider_screen.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
@@ -674,25 +674,26 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                     );
                   },
                 ),
-                SettingItemWidget(
-                  decoration: BoxDecoration(color: context.cardColor),
-                  leading: Image.asset(language,
-                      height: 16,
-                      width: 16,
-                      color:
-                          appStore.isDarkMode ? white : appTextSecondaryColor),
-                  title: languages.language,
-                  titleTextStyle: boldTextStyle(size: 14),
-                  trailing: Icon(Icons.chevron_right,
-                      color: appStore.isDarkMode
-                          ? white
-                          : gray.withValues(alpha: 0.8),
-                      size: 18),
-                  padding: EdgeInsets.only(top: 20, left: 16, right: 16),
-                  onTap: () {
-                    LanguagesScreen().launch(context);
-                  },
-                ),
+                // Language setting hidden – app always uses German (de).
+                // SettingItemWidget(
+                //   decoration: BoxDecoration(color: context.cardColor),
+                //   leading: Image.asset(language,
+                //       height: 16,
+                //       width: 16,
+                //       color:
+                //           appStore.isDarkMode ? white : appTextSecondaryColor),
+                //   title: languages.language,
+                //   titleTextStyle: boldTextStyle(size: 14),
+                //   trailing: Icon(Icons.chevron_right,
+                //       color: appStore.isDarkMode
+                //           ? white
+                //           : gray.withValues(alpha: 0.8),
+                //       size: 18),
+                //   padding: EdgeInsets.only(top: 20, left: 16, right: 16),
+                //   onTap: () {
+                //     LanguagesScreen().launch(context);
+                //   },
+                // ),
                 SettingItemWidget(
                   decoration: BoxDecoration(color: context.cardColor),
                   leading: Image.asset(changePassword,

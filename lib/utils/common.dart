@@ -91,6 +91,12 @@ int getRemainingPlanDays() {
 List<LanguageDataModel> languageList() {
   return [
     LanguageDataModel(
+        id: 5,
+        name: 'German',
+        languageCode: 'de',
+        fullLanguageCode: 'de-DE',
+        flag: 'assets/flag/ic_de.png'),
+    LanguageDataModel(
         id: 1,
         name: 'English',
         languageCode: 'en',
@@ -114,12 +120,6 @@ List<LanguageDataModel> languageList() {
         languageCode: 'fr',
         fullLanguageCode: 'fr-FR',
         flag: 'assets/flag/ic_fr.png'),
-    LanguageDataModel(
-        id: 5,
-        name: 'German',
-        languageCode: 'de',
-        fullLanguageCode: 'de-DE',
-        flag: 'assets/flag/ic_de.png'),
   ];
 
   /*if (getStringAsync(SERVER_LANGUAGES).isNotEmpty) {

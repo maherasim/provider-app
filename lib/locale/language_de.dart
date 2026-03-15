@@ -1987,6 +1987,27 @@ class LanguageDe extends Languages {
   @override
   String get lastUpdatedAt => 'Zuletzt aktualisiert unter:';
 
+  @override
+  String get workingAddress => 'Arbeitsadresse';
+
+  @override
+  String get addressNotAvailable => 'Adresse nicht verfügbar';
+
+  @override
+  String get resumeWork => 'Arbeit fortsetzen';
+
+  @override
+  String get rateCustomer => 'Kunde bewerten';
+
+  @override
+  String get locationSharingStarted => 'Standortfreigabe gestartet';
+
+  @override
+  String get allowLocationPermission => 'Bitte erlauben Sie die Standortberechtigung, um Ihren Standort zu teilen';
+
+  @override
+  String get locationSharingOnlyWhenInProgress => 'Standortfreigabe ist nur möglich, wenn die Buchung in Bearbeitung ist';
+
   String get lblBankDetails => "Bankdaten";
 
   @override

@@ -1988,6 +1988,27 @@ class LanguageFr extends Languages {
   @override
   String get lastUpdatedAt => 'Dernière mise à jour à :';
 
+  @override
+  String get workingAddress => 'Adresse de travail';
+
+  @override
+  String get addressNotAvailable => 'Adresse non disponible';
+
+  @override
+  String get resumeWork => 'Reprendre le travail';
+
+  @override
+  String get rateCustomer => 'Évaluer le client';
+
+  @override
+  String get locationSharingStarted => 'Partage de position démarré';
+
+  @override
+  String get allowLocationPermission => 'Veuillez autoriser l\'accès à la position pour partager votre position';
+
+  @override
+  String get locationSharingOnlyWhenInProgress => 'Le partage de position est disponible uniquement lorsque la réservation est en cours';
+
   String get lblBankDetails => "Coordonnées bancaires";
 
   @override

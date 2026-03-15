@@ -1327,6 +1327,20 @@ abstract class Languages {
 
   String get lastUpdatedAt;
 
+  String get workingAddress;
+
+  String get addressNotAvailable;
+
+  String get resumeWork;
+
+  String get rateCustomer;
+
+  String get locationSharingStarted;
+
+  String get allowLocationPermission;
+
+  String get locationSharingOnlyWhenInProgress;
+
   String get lblBankDetails;
 
   String get withdraw;

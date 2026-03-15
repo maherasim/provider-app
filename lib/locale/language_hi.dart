@@ -1988,6 +1988,27 @@ class LanguageHi extends Languages {
   @override
   String get lastUpdatedAt => 'अंतिम बार अद्यतन किया गया:';
 
+  @override
+  String get workingAddress => 'काम का पता';
+
+  @override
+  String get addressNotAvailable => 'पता उपलब्ध नहीं है';
+
+  @override
+  String get resumeWork => 'काम फिर से शुरू करें';
+
+  @override
+  String get rateCustomer => 'ग्राहक को रेट करें';
+
+  @override
+  String get locationSharingStarted => 'लोकेशन शेयरिंग शुरू';
+
+  @override
+  String get allowLocationPermission => 'कृपया अपना लोकेशन शेयर करने के लिए लोकेशन परमिशन दें';
+
+  @override
+  String get locationSharingOnlyWhenInProgress => 'लोकेशन शेयरिंग केवल बुकिंग प्रगति में होने पर उपलब्ध है';
+
   String get lblBankDetails => "बैंक विवरण";
 
   @override

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -87,16 +88,21 @@ Future<Response> buildHttpResponse(
     } else {
       return response;
     }
-  } on Exception {
+  } on SocketException catch (_) {
     throw errorInternetNotAvailable;
+  } on TimeoutException catch (_) {
+    throw errorInternetNotAvailable;
+  } on Exception catch (e) {
+    // Other errors (SSL, format, etc.) – don't report as "offline"
+    log('buildHttpResponse error: $e');
+    throw errorSomethingWentWrong;
   }
 }
 
 Future handleResponse(Response response,
     {HttpResponseType httpResponseType = HttpResponseType.JSON}) async {
-  if (!await isNetworkAvailable()) {
-    throw errorInternetNotAvailable;
-  }
+  // We already have a response, so network was available; skip connectivity check
+  // to avoid false "offline" when connectivity_plus is wrong or delayed.
   if (response.statusCode == 400) {
     throw '${languages.badRequest}';
   } else if (response.statusCode == 403) {

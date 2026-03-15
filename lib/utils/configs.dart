@@ -1,29 +1,29 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 
-const APP_NAME = 'Frobster Pro';
-const DEFAULT_LANGUAGE = 'en';
+const APP_NAME = 'Persotel Pro';
+const DEFAULT_LANGUAGE = 'de';
 
 // App primary base color (used where gradients aren't supported)
 // Align with red–blue gradient: use the red endpoint as the base
 const primaryColor = Color(0xFFE53935);
 
-const DOMAIN_URL = "https://frobster.com";
+const DOMAIN_URL = "https://persotel.com";
 
 const BASE_URL = "$DOMAIN_URL/api/";
 
 /// You can specify in Admin Panel, These will be used if you don't specify in Admin Panel
 const IOS_LINK_FOR_PARTNER =
     "https://apps.apple.com/in/app/handyman-provider-app/id1596025324";
-const TERMS_CONDITION_URL = 'https://iqonic.design/terms-of-use/';
-const PRIVACY_POLICY_URL = 'https://iqonic.design/privacy-policy/';
-const HELP_AND_SUPPORT_URL = 'https://iqonic.design/privacy-policy/';
+const TERMS_CONDITION_URL = 'https://persotel.de/terms-of-use/';
+const PRIVACY_POLICY_URL = 'https://persotel.de/privacy-policy/';
+const HELP_AND_SUPPORT_URL = 'https://persotel.de/privacy-policy/';
 const REFUND_POLICY_URL =
-    'https://iqonic.design/licensing-terms-more/#refund-policy';
-const INQUIRY_SUPPORT_EMAIL = 'hello@iqonic.design';
+    'https://persotel.de/licensing-terms-more/#refund-policy';
+const INQUIRY_SUPPORT_EMAIL = 'hello@persotel.de';
 
 /// You can add help line number here for contact. It's demo number
-const HELP_LINE_NUMBER = '+15265897485';
+const HELP_LINE_NUMBER = '+4917620000000';
 
 // Airtel Money Payments
 /// It Supports ["UGX", "NGN", "TZS", "KES", "RWF", "ZMW", "CFA", "XOF", "XAF", "CDF", "USD", "XAF", "SCR", "MGA", "MWK"]
@@ -43,7 +43,7 @@ const SADAD_PAY_URL = "https://d.sadad.qa";
 const RAZORPAY_CURRENCY_CODE = 'INR';
 
 /// PAYPAL PAYMENT DETAIL
-const PAYPAL_CURRENCY_CODE = 'USD';
+const PAYPAL_CURRENCY_CODE = 'EURO';
 
 /// STRIPE PAYMENT DETAIL
 const STRIPE_MERCHANT_COUNTRY_CODE = 'IN';

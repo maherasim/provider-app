@@ -696,7 +696,11 @@ packages:
     source: hosted
     version: "0.6.0"
   flutter_launcher_icons:
+<<<<<<< Updated upstream
     dependency: "direct dev"
+=======
+    dependency: "direct main"
+>>>>>>> Stashed changes
     description:
       name: flutter_launcher_icons
       sha256: "10f13781741a2e3972126fae08393d3c4e01fa4cd7473326b94b72cf594195e7"
@@ -804,10 +808,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_widget_from_html
-      sha256: "0dfebf7417df2149de93926520c703db9be0c9017e60dc5cf43cebed37f4d11e"
+      sha256: "483a45db08211c4639b2634c09755d2a0a5c48675a743937f8400a8ff2fc7cbf"
       url: "https://pub.dev"
     source: hosted
-    version: "0.16.0"
+    version: "0.16.1"
   flutter_widget_from_html_core:
     dependency: transitive
     description:
@@ -853,18 +857,18 @@ packages:
     dependency: transitive
     description:
       name: fwfh_cached_network_image
-      sha256: "8f4896109ff3e42424ccacf9058ba3afe5d575b58946c8ac646ac85ae882ce23"
+      sha256: "484cb5f8047f02cfac0654fca5832bfa91bb715fd7fc651c04eb7454187c4af8"
       url: "https://pub.dev"
     source: hosted
-    version: "0.16.0"
+    version: "0.16.1"
   fwfh_chewie:
     dependency: transitive
     description:
       name: fwfh_chewie
-      sha256: "1ce7c56894db19881a997813b933835dec142878431370c0eb40f1f878396a25"
+      sha256: ae74fc26798b0e74f3983f7b851e74c63b9eeb2d3015ecd4b829096b2c3f8818
       url: "https://pub.dev"
     source: hosted
-    version: "0.16.0"
+    version: "0.16.1"
   fwfh_just_audio:
     dependency: transitive
     description:
@@ -877,26 +881,26 @@ packages:
     dependency: transitive
     description:
       name: fwfh_svg
-      sha256: "82f3eb378186fe39b3e2e01ed48a1830d34b0b9a237d951077e74ff0d99e2ac3"
+      sha256: "2e6bb241179eeeb1a7941e05c8c923b05d332d36a9085233e7bf110ea7deb915"
       url: "https://pub.dev"
     source: hosted
-    version: "0.16.0"
+    version: "0.16.1"
   fwfh_url_launcher:
     dependency: transitive
     description:
       name: fwfh_url_launcher
-      sha256: "5cf1b1baa16740abaef8eb41a8e16ba430295d5ec20b880e4cb94e2924774f0a"
+      sha256: c38aa8fb373fda3a89b951fa260b539f623f6edb45eee7874cb8b492471af881
       url: "https://pub.dev"
     source: hosted
-    version: "0.16.0"
+    version: "0.16.1"
   fwfh_webview:
     dependency: transitive
     description:
       name: fwfh_webview
-      sha256: "894aa7d98ebdc2d86d79ac2309173043dec7f102575de87bf9626ddb26104e49"
+      sha256: f71b0aa16e15d82f3c017f33560201ff5ae04e91e970cab5d12d3bcf970b870c
       url: "https://pub.dev"
     source: hosted
-    version: "0.15.4"
+    version: "0.15.6"
   geocoding:
     dependency: "direct main"
     description:

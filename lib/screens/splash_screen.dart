@@ -39,13 +39,15 @@ class SplashScreenState extends State<SplashScreen> {
     // Sync new configurations when app is open
     await setValue(LAST_APP_CONFIGURATION_SYNCED_TIME, 0);
 
-    
     ///Set app configurations
     await getAppConfigurations().then((value) {}).catchError((e) async {
       if (!await isNetworkAvailable()) {
         toast(errorInternetNotAvailable);
       }
       log(e);
+      // Allow app to proceed with defaults so user is not stuck on splash
+      // (e.g. connectivity_plus can report offline on simulator or slow networks)
+      await setValue(IS_APP_CONFIGURATION_SYNCED_AT_LEAST_ONCE, true);
     });
 
     appStore.setLoading(false);

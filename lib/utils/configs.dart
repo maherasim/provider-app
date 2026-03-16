@@ -8,7 +8,7 @@ const DEFAULT_LANGUAGE = 'de';
 // Align with red–blue gradient: use the red endpoint as the base
 const primaryColor = Color(0xFFE53935);
 
-const DOMAIN_URL = "https://persotel.com";
+const DOMAIN_URL = "https://persotel.de";
 
 const BASE_URL = "$DOMAIN_URL/api/";
 
@@ -74,7 +74,6 @@ const chatFilesAllowedExtensions = [
 ];
 
 const max_acceptable_file_size = 5; // Size in Mb
-
 
 // 🔴🔵 RED → BLUE Gradient (Added)
 const redBlueGradient = LinearGradient(

@@ -10,7 +10,7 @@ plugins {
 
 
 android {
-    namespace = "com.Persotel.provide"
+    namespace = "de.persotel.pro"
     compileSdk = 36
     ndkVersion = "28.2.13676358"
 
@@ -25,7 +25,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.Persotel.provide"
+        applicationId = "de.persotel.pro"
         minSdk = flutter.minSdkVersion
         targetSdk = 36
         versionCode = 91

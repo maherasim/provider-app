@@ -696,11 +696,7 @@ packages:
     source: hosted
     version: "0.6.0"
   flutter_launcher_icons:
-<<<<<<< Updated upstream
-    dependency: "direct dev"
-=======
     dependency: "direct main"
->>>>>>> Stashed changes
     description:
       name: flutter_launcher_icons
       sha256: "10f13781741a2e3972126fae08393d3c4e01fa4cd7473326b94b72cf594195e7"

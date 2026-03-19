@@ -10,7 +10,7 @@ plugins {
 
 
 android {
-    namespace = "com.frobster.provider"
+    namespace = "com.frobster.pro"
     compileSdk = 36
     ndkVersion = "28.2.13676358"
 
@@ -25,13 +25,19 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.frobster.provider"
+        applicationId = "com.frobster.pro"
         minSdk = flutter.minSdkVersion
         targetSdk = 36
-        versionCode = 91
+        versionCode = 93
         versionName = "11.13.0"
         ndk {
             debugSymbolLevel = "none"
+        }
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
         }
     }
 

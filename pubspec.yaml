@@ -99,19 +99,13 @@ dev_dependencies:
   # flutter packages pub run build_runner build --delete-conflicting-outputs
 
 flutter_launcher_icons:
-<<<<<<< Updated upstream
   android: true
   ios: true
   image_path: "assets/frobster Pro app logo.png"
   adaptive_icon_background: "#FFFFFF"
   adaptive_icon_foreground: "assets/frobster Pro app logo.png"
   remove_alpha_ios: true
-=======
-  android: "launcher_icon"
-  ios: true
-  image_path: "assets/ic_app_logo.png"
-  min_sdk_android: 21 # android min sdk min:16, default 21
->>>>>>> Stashed changes
+  min_sdk_android: 21
 
 flutter:
   uses-material-design: true

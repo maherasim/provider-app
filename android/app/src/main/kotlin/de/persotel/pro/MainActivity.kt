@@ -1,4 +1,4 @@
-package com.Persotel.provide
+package de.persotel.pro
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

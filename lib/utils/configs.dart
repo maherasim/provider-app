@@ -75,7 +75,6 @@ const chatFilesAllowedExtensions = [
 
 const max_acceptable_file_size = 5; // Size in Mb
 
-
 // 🔴🔵 RED → BLUE Gradient (Added)
 const redBlueGradient = LinearGradient(
   begin: Alignment.topLeft,

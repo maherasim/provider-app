@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:88760716486:android:1bc293e09a4e3b7c80dbc7",
+        "mobilesdk_app_id": "1:88760716486:android:084282ace0971f4080dbc7",
         "android_client_info": {
-          "package_name": "com.Persotel.provide"
+          "package_name": "com.frobster.frobsteruser"
         }
       },
       "oauth_client": [],
@@ -27,28 +27,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:88760716486:android:a1665628dcca3fab80dbc7",
+        "mobilesdk_app_id": "1:88760716486:android:cc5814ac6bfabf4b80dbc7",
         "android_client_info": {
-          "package_name": "com.frobster.provider"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAWSFmXUbdkkWCXfMB0VgG0-DEVFK_GT4o"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:88760716486:android:1acc9d11d6472e4580dbc7",
-        "android_client_info": {
-          "package_name": "com.frobster.user"
+          "package_name": "com.frobster.pro"
         }
       },
       "oauth_client": [],
@@ -84,9 +65,28 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:88760716486:android:cfd4016d33b0888e80dbc7",
+        "mobilesdk_app_id": "1:88760716486:android:746fe1b396a1851980dbc7",
         "android_client_info": {
-          "package_name": "com.persotel.userapp"
+          "package_name": "de.persotel.pro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWSFmXUbdkkWCXfMB0VgG0-DEVFK_GT4o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:88760716486:android:899d16ecb345b58e80dbc7",
+        "android_client_info": {
+          "package_name": "de.persotel.user"
         }
       },
       "oauth_client": [],

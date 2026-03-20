@@ -387,49 +387,49 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ],
             ),
           ),
-        // Select user type text field...
-        ValueListenableBuilder(
-          valueListenable: _valueNotifier,
-          builder: (context, value, child) => DropdownButtonFormField<UserTypeData>(
-            onChanged: (UserTypeData? val) {
-              selectedUserCommissionType = val;
-              _valueNotifier.notifyListeners();
-            },
-            validator: selectedUserCommissionType == null
-                ? (c) {
-                    if (c == null) return errorThisFieldRequired;
-                    return null;
-                  }
-                : null,
-            value: selectedUserCommissionType,
-            dropdownColor: context.cardColor,
-            decoration: inputDecoration(context, hint: languages.lblSelectCommission),
-            items: List.generate(
-              commissionTypeList.length,
-              (index) {
-                UserTypeData data = commissionTypeList[index];
-
-                return DropdownMenuItem<UserTypeData>(
-                  child: Row(
-                    children: [
-                      Text(data.name.toString(), style: primaryTextStyle()),
-                      4.width,
-                      if (data.type == COMMISSION_TYPE_PERCENT)
-                        Text(
-                          '(${data.commission.toString()}%)',
-                          style: primaryTextStyle(),
-                        )
-                      else if (data.type == COMMISSION_TYPE_FIXED)
-                        Text('(${data.commission.validate().toPriceFormat()})', style: primaryTextStyle()),
-                    ],
-                  ),
-                  value: data,
-                );
-              },
-            ),
-          ),
-        ),
-        16.height,
+        // Select user type text field... (hidden - commission dropdown)
+        // ValueListenableBuilder(
+        //   valueListenable: _valueNotifier,
+        //   builder: (context, value, child) => DropdownButtonFormField<UserTypeData>(
+        //     onChanged: (UserTypeData? val) {
+        //       selectedUserCommissionType = val;
+        //       _valueNotifier.notifyListeners();
+        //     },
+        //     validator: selectedUserCommissionType == null
+        //         ? (c) {
+        //             if (c == null) return errorThisFieldRequired;
+        //             return null;
+        //           }
+        //         : null,
+        //     value: selectedUserCommissionType,
+        //     dropdownColor: context.cardColor,
+        //     decoration: inputDecoration(context, hint: languages.lblSelectCommission),
+        //     items: List.generate(
+        //       commissionTypeList.length,
+        //       (index) {
+        //         UserTypeData data = commissionTypeList[index];
+        //
+        //         return DropdownMenuItem<UserTypeData>(
+        //           child: Row(
+        //             children: [
+        //               Text(data.name.toString(), style: primaryTextStyle()),
+        //               4.width,
+        //               if (data.type == COMMISSION_TYPE_PERCENT)
+        //                 Text(
+        //                   '(${data.commission.toString()}%)',
+        //                   style: primaryTextStyle(),
+        //                 )
+        //               else if (data.type == COMMISSION_TYPE_FIXED)
+        //                 Text('(${data.commission.validate().toPriceFormat()})', style: primaryTextStyle()),
+        //             ],
+        //           ),
+        //           value: data,
+        //         );
+        //       },
+        //     ),
+        //   ),
+        // ),
+        // 16.height,
         // Password text field...
         AppTextField(
           textFieldType: TextFieldType.PASSWORD,
@@ -608,8 +608,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // Sign up user
   void saveUser() async {
     if (formKey.currentState!.validate()) {
-      if (selectedUserCommissionType == null || selectedUserCommissionType!.id == -1) {
-        return toast(languages.pleaseSelectCommission);
+      // Commission dropdown hidden - use first available type if needed
+      // if (selectedUserCommissionType == null || selectedUserCommissionType!.id == -1) {
+      //   return toast(languages.pleaseSelectCommission);
+      // }
+      if (selectedUserCommissionType == null && commissionTypeList.isNotEmpty && commissionTypeList.first.id != -1) {
+        selectedUserCommissionType = commissionTypeList.first;
       }
 
       formKey.currentState!.save();
@@ -635,10 +639,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
           request.putIfAbsent(UserKeys.providerId, () => selectedProviderId);
         }
 
-        if (selectedUserTypeValue == USER_TYPE_PROVIDER) {
-          request.putIfAbsent(UserKeys.providerTypeId, () => selectedUserCommissionType!.id.toString());
-        } else {
-          request.putIfAbsent(UserKeys.handymanTypeId, () => selectedUserCommissionType!.id.toString());
+        // Commission dropdown hidden - add type only if we have a valid selection
+        if (selectedUserCommissionType != null && selectedUserCommissionType!.id != -1) {
+          if (selectedUserTypeValue == USER_TYPE_PROVIDER) {
+            request.putIfAbsent(UserKeys.providerTypeId, () => selectedUserCommissionType!.id.toString());
+          } else {
+            request.putIfAbsent(UserKeys.handymanTypeId, () => selectedUserCommissionType!.id.toString());
+          }
         }
 
         log(request);

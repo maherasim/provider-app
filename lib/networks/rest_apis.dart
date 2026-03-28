@@ -567,7 +567,7 @@ Future<ServiceDetailResponse> getServiceDetail(Map request) async {
   print('═══════════════════════════════════════════════════════════');
   print('📥 GET SERVICE DETAIL API (For Editing)');
   print('═══════════════════════════════════════════════════════════');
-  print('🌐 API Endpoint: https://frobster.com/api/service-detail');
+  print('🌐 API Endpoint: https://persotel.de/api/service-detail');
   print('📋 Method: POST');
   print('📤 Request: ${jsonEncode(request)}');
   print('───────────────────────────────────────────────────────────');

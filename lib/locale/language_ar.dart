@@ -2480,6 +2480,199 @@ class LanguageAr extends Languages {
   
   @override
   String get waitingForProviderToMarkBidAsCompleted => 'في انتظار المزود لتمييز العرض كمكتمل';
+
+  @override
+  String get lblExtraChargesBreakdown => 'تفصيل الرسوم الإضافية';
+
+  @override
+  String get lblSplitPayment => 'تقسيم الدفع';
+
+  @override
+  String get lblStartWork => 'بدء العمل';
+
+  @override
+  String get lblMarkComplete => 'إكمال';
+
+  @override
+  String get lblPlusExtraCharges => '+ رسوم إضافية';
+
+  @override
+  String get lblDownload => 'تنزيل';
+
+  @override
+  String get lblEmployerReview => 'تقييم صاحب العمل';
+
+  @override
+  String get lblCustomerReview => 'تقييم العميل';
+
+  @override
+  String get lblRateUnitPrice => 'السعر (للوحدة)';
+
+  @override
+  String get lblNetAmount => 'المبلغ الصافي';
+
+  @override
+  String get lblNetAmountFormula => '(المجموع الفرعي - الضريبة)';
+
+  @override
+  String get lblGrandTotalAmount => 'المبلغ الإجمالي';
+
+  @override
+  String get lblDirectMessage => 'رسالة مباشرة';
+
+  @override
+  String get lblTotal => 'الإجمالي';
+
+  @override
+  String get lblSearchLanguagesHint => 'بحث عن اللغات';
+
+  @override
+  String get lblCompanyNameHint => 'اسم الشركة';
+
+  @override
+  String get lblVatNumberHint => 'رقم ضريبة القيمة المضافة';
+
+  @override
+  String get lblSelectAvailabilityHint => 'اختر التوفر';
+
+  @override
+  String get lblSelectCountryTaxHint => 'اختر ضريبة البلد';
+
+  @override
+  String get lblMobilityHint => 'التنقل (مثل سيارة، دراجة، مواصلات)';
+
+  @override
+  String get lblExperienceDescHint => 'الخبرة (صف خبرتك المهنية)';
+
+  @override
+  String get lblCareerLevelHint => 'المستوى المهني';
+
+  @override
+  String get lblEducationHint => 'التعليم';
+
+  @override
+  String get lblYearsOfExperienceHint => 'سنوات الخبرة';
+
+  @override
+  String get lblCertificationHint => 'الشهادات (مفصولة بفواصل)';
+
+  @override
+  String get lblSelectProviderHint => 'اختر مقدم الخدمة';
+
+  @override
+  String get lblRemoteWorkLevelHint => 'مستوى العمل عن بُعد';
+
+  @override
+  String get lblTravelRequiredHint => 'السفر مطلوب';
+
+  @override
+  String get lblAccountHolderNameHint => 'اسم صاحب الحساب';
+
+  @override
+  String get lblMobileNumberHint => 'رقم الجوال';
+
+  @override
+  String get lblIbanNumberHint => 'رقم الآيبان';
+
+  @override
+  String get lblBicSwiftHint => 'رمز BIC / SWIFT';
+
+  @override
+  String get lblStripeAccountHint => 'حساب Stripe';
+
+  @override
+  String get lblRegularPayments => 'مدفوعات عادية';
+
+  @override
+  String get lblJobRequestPayments => 'مدفوعات طلبات العمل';
+
+  @override
+  String get lblAttachment => 'مرفق';
+
+  @override
+  String get lblUpdateBid => 'تحديث العرض';
+
+  @override
+  String get lblCompanyInformation => 'معلومات الشركة';
+
+  @override
+  String get lblProfessionalDetails => 'تفاصيل مهنية';
+
+  @override
+  String get lblContactAndAddress => 'جهة الاتصال والعنوان';
+
+  @override
+  String get lblLocationSection => 'الموقع';
+
+  @override
+  String get lblLanguagesSection => 'اللغات';
+
+  @override
+  String get lblAddLanguage => 'إضافة لغة';
+
+  @override
+  String get lblEducationAndBio => 'التعليم والنبذة';
+
+  @override
+  String get lblSkillsHint => 'المهارات';
+
+  @override
+  String get lblExperienceHint => 'الخبرة';
+
+  @override
+  String get lblMobilityShortHint => 'التنقل';
+
+  @override
+  String get lblCertificationShortHint => 'الشهادات';
+
+  @override
+  String get lblHandymanCommissionHint => 'عمولة الحرفي (1-85)';
+
+  @override
+  String get lblAboutMeHint => 'نبذة عني';
+
+  @override
+  String get lblBidPriceLabel => 'سعر العرض: ';
+
+  @override
+  String get lblRequirementsColon => 'المتطلبات:';
+
+  @override
+  String get lblJobType => 'نوع العمل';
+
+  @override
+  String get lblRateType => 'نوع السعر';
+
+  @override
+  String get lblTotalBudget => 'الميزانية الإجمالية';
+
+  @override
+  String get lblProposals => 'العروض';
+
+  @override
+  String get lblWorker => 'العامل';
+
+  @override
+  String get lblHybrid => 'هجين';
+
+  @override
+  String get lblBankTransferDetails => 'تفاصيل التحويل البنكي';
+
+  @override
+  String get lblBankTransfer => 'تحويل بنكي';
+
+  @override
+  String get lblBankTransferInstructions =>
+      'يرجى تحويل المبلغ إلى الحساب البنكي التالي:';
+
+  @override
+  String get lblCountry => 'البلد';
+
+  @override
+  String get lblIban => 'IBAN';
+
+  @override
+  String get lblBicSwiftShort => 'BIC/Swift';
   
   @override
   String get invoice => 'فاتورة';

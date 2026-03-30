@@ -332,64 +332,64 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   _buildInfoCard(
                     icon: Icons.h_mobiledata,
                     iconColor: gradientBlue,
-                    title: 'Title',
+                    title: languages.lblTitle,
                     value: postJobDetail!.postRequest?.title?.validate() ?? '',
                   ),
                   _buildInfoCard(
                     icon: Icons.location_on,
                     iconColor: Colors.green,
-                    title: 'Location',
+                    title: languages.lblLocationSection,
                     value: "${postJobDetail!.postRequest?.city?.name}${(postJobDetail!.postRequest?.country?.name??'').isEmpty ? '' : ', ${postJobDetail!.postRequest?.country?.name}' }",
                   ),
                   _buildInfoCard(
                     icon: Icons.business_center,
                     iconColor: Colors.orange,
-                    title: 'Job Type',
+                    title: languages.lblJobType,
                     value: postJobDetail!.postRequest?.type.displayName.validate() ?? '',
                     cardBackgroundColor: postJobDetail!.postRequest?.type.bgColor,
                   ),
                   _buildInfoCard(
                     icon: Icons.attach_money,
                     iconColor: Colors.green[600]!,
-                    title: 'Rate Type',
+                    title: languages.lblRateType,
                     value: postJobDetail!.postRequest?.priceType.displayName.validate() ?? '',
                   ),
                   _buildInfoCard(
                     icon: Icons.event_available,
                     iconColor: Colors.blue,
-                    title: 'Start Date',
+                    title: languages.startDate,
                     value: formatDate(postJobDetail!.postRequest?.startDate?.toIso8601String().validate(),showDateWithTime: true),
                     isDate: true,
                   ),
                   _buildInfoCard(
                     icon: Icons.event_busy,
                     iconColor: Colors.red,
-                    title: 'End Date',
+                    title: languages.endDate,
                     value:  formatDate(postJobDetail!.postRequest?.endDate?.toIso8601String().validate(),showDateWithTime: true),
                     isDate: true,
                   ),
                   _buildInfoCard(
                     icon: Icons.account_balance_wallet,
                     iconColor: Colors.blue,
-                    title: 'Total Budget',
+                    title: languages.lblTotalBudget,
                     value: postJobDetail!.postRequest?.totalBudget?.validate().toPriceFormat() ?? '0',
                   ),
                   _buildInfoCard(
                     icon: Icons.groups,
                     iconColor: Colors.grey,
-                    title: 'Proposals',
+                    title: languages.lblProposals,
                     value: (postJobDetail!.postRequest?.postBidList.length??0).validate().toString(), // Simplified for now
                   ),
                   _buildInfoCard(
                     icon: Icons.person,
                     iconColor: Colors.indigo,
-                    title: 'Worker',
+                    title: languages.lblWorker,
                     value: postJobDetail!.provider?.displayName.validate() ?? '',
                   ),
                   _buildInfoCard(
                     icon: Icons.person_outline,
                     iconColor: Colors.green,
-                    title: 'Customer',
+                    title: languages.customer,
                     value:  postJobDetail!.customer?.displayName.validate() ?? '',
                   ),
                 ],
@@ -416,7 +416,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Working Address', style: secondaryTextStyle(size: 11)),
+                              Text(languages.workingAddress, style: secondaryTextStyle(size: 11)),
                               4.height,
                               Text(
                                 _workingAddressDisplay(postJobDetail!),
@@ -447,7 +447,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                     Icon(Icons.flag, color: gradientBlue, size: 24),
                     6.height,
                     Text(
-                      'Status',
+                      languages.lblStatus,
                       style: secondaryTextStyle(size: 11),
                     ),
                     4.height,
@@ -478,10 +478,10 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               _buildExtraChargesBreakdown(),
 
               // Employer Review (reviews from customer about provider)
-              _buildReviewSection('Employer Review', postJobDetail!.providerReview),
+              _buildReviewSection(languages.lblEmployerReview, postJobDetail!.providerReview),
 
               // Customer Review (reviews from provider about customer / employer)
-              _buildReviewSection('Customer Review', postJobDetail!.customerReview),
+              _buildReviewSection(languages.lblCustomerReview, postJobDetail!.customerReview),
 
               24.height,
 
@@ -495,7 +495,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               if(postJobDetail!.status == RequestStatus.accepted) Row(
                 children: [
                   Expanded(
-                    child: _gradientButton(context, 'Split Payment', () async {
+                    child: _gradientButton(context, languages.lblSplitPayment, () async {
                         bool? res = await showInDialog(
                             context,
                             contentPadding: EdgeInsets.zero,
@@ -512,7 +512,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   ),
                   16.width,
                   Expanded(
-                    child: _gradientButton(context, 'Cancel', () async {
+                    child: _gradientButton(context, languages.lblCancel, () async {
                         confirmationRequestDialog(context,RequestStatus.cancel);
                     }),
                   ),
@@ -524,7 +524,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                 children: [
                   Expanded(
                     child: AppButton(
-                      text: 'hold',
+                      text: languages.hold,
                       textStyle: boldTextStyle(color: white, size: 16),
                       color: hold,
                       width: context.width(),
@@ -545,7 +545,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   ),
                   16.width,
                   Expanded(
-                    child: _gradientButton(context, 'Done', () async {
+                    child: _gradientButton(context, languages.done, () async {
                       confirmationRequestDialog(context, RequestStatus.done);
                     }),
                   ),
@@ -555,7 +555,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: _gradientButton(context, 'Chat', () async {
+                        child: _gradientButton(context, languages.lblChat, () async {
                             final customerId = postJobDetail?.customer?.id;
                             if (customerId == null) {
                               toast(languages.somethingWentWrong);
@@ -563,12 +563,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                             }
                             toast(languages.pleaseWaitWhileWeLoadChatDetails);
                             try {
-                              final res = await FrobsterChatApi.openWithUser(userId: customerId, title: 'Direct Message');
+                              final res = await FrobsterChatApi.openWithUser(userId: customerId, title: languages.lblDirectMessage);
                               Fluttertoast.cancel();
                               if (res.status && res.conversationId != 0) {
                                 FrobsterChatThreadScreen(
                                   conversationId: res.conversationId,
-                                  title: 'Direct Message',
+                                  title: languages.lblDirectMessage,
                                   otherDisplayName: postJobDetail?.customer?.displayName,
                                 ).launch(context);
                               } else {
@@ -587,13 +587,13 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               if(postJobDetail!.status == RequestStatus.hold) Row(
                 children: [
                   Expanded(
-                    child: _gradientButton(context, 'Resume Work', () async {
+                    child: _gradientButton(context, languages.resumeWork, () async {
                   confirmationRequestDialog(context, RequestStatus.inProgress);
                     }),
                   ),
                   16.width,
                   Expanded(
-                    child: _gradientButton(context, 'Chat', () async {
+                    child: _gradientButton(context, languages.lblChat, () async {
                         final customerId = postJobDetail?.customer?.id;
                         if (customerId == null) {
                           toast(languages.somethingWentWrong);
@@ -601,12 +601,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                         }
                         toast(languages.pleaseWaitWhileWeLoadChatDetails);
                         try {
-                          final res = await FrobsterChatApi.openWithUser(userId: customerId, title: 'Direct Message');
+                          final res = await FrobsterChatApi.openWithUser(userId: customerId, title: languages.lblDirectMessage);
                           Fluttertoast.cancel();
                           if (res.status && res.conversationId != 0) {
                             FrobsterChatThreadScreen(
                               conversationId: res.conversationId,
-                              title: 'Direct Message',
+                              title: languages.lblDirectMessage,
                               otherDisplayName: postJobDetail?.customer?.displayName,
                             ).launch(context);
                           } else {
@@ -625,13 +625,13 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   Row(
                 children: [
                   Expanded(
-                    child: _gradientButton(context, 'Complete', () async {
+                    child: _gradientButton(context, languages.lblMarkComplete, () async {
                       confirmationRequestDialog(context, RequestStatus.completed);
                     }),
                   ),
                   16.width,
                   Expanded(
-                        child: _gradientButton(context, '+ Extra Charges', () async {
+                        child: _gradientButton(context, languages.lblPlusExtraCharges, () async {
                         bool? res = await showInDialog(
                           context,
                           contentPadding: EdgeInsets.zero,
@@ -651,7 +651,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: _gradientButton(context, 'Chat', () async {
+                        child: _gradientButton(context, languages.lblChat, () async {
                             final customerId = postJobDetail?.customer?.id;
                             if (customerId == null) {
                               toast(languages.somethingWentWrong);
@@ -659,12 +659,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                             }
                             toast(languages.pleaseWaitWhileWeLoadChatDetails);
                             try {
-                              final res = await FrobsterChatApi.openWithUser(userId: customerId, title: 'Direct Message');
+                              final res = await FrobsterChatApi.openWithUser(userId: customerId, title: languages.lblDirectMessage);
                               Fluttertoast.cancel();
                               if (res.status && res.conversationId != 0) {
                                 FrobsterChatThreadScreen(
                                   conversationId: res.conversationId,
-                                  title: 'Direct Message',
+                                  title: languages.lblDirectMessage,
                                   otherDisplayName: postJobDetail?.customer?.displayName,
                                 ).launch(context);
                               } else {
@@ -683,13 +683,13 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               if(postJobDetail!.status == RequestStatus.advancePaid) Row(
                 children: [
                   Expanded(
-                    child: _gradientButton(context, 'Start Work', () async {
+                    child: _gradientButton(context, languages.lblStartWork, () async {
                       confirmationRequestDialog(context, RequestStatus.inProcess);
                     }),
                   ),
                   16.width,
                   Expanded(
-                    child: _gradientButton(context, 'Chat', () async {
+                    child: _gradientButton(context, languages.lblChat, () async {
                         final customerId = postJobDetail?.customer?.id;
                         if (customerId == null) {
                           toast(languages.somethingWentWrong);
@@ -697,12 +697,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                         }
                         toast(languages.pleaseWaitWhileWeLoadChatDetails);
                         try {
-                          final res = await FrobsterChatApi.openWithUser(userId: customerId, title: 'Direct Message');
+                          final res = await FrobsterChatApi.openWithUser(userId: customerId, title: languages.lblDirectMessage);
                           Fluttertoast.cancel();
                           if (res.status && res.conversationId != 0) {
                             FrobsterChatThreadScreen(
                               conversationId: res.conversationId,
-                              title: 'Direct Message',
+                              title: languages.lblDirectMessage,
                               otherDisplayName: postJobDetail?.customer?.displayName,
                             ).launch(context);
                           } else {
@@ -719,7 +719,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               if([RequestStatus.inProcess, RequestStatus.done, RequestStatus.completed].contains(postJobDetail!.status)) Row(
                 children: [
                   Expanded(
-                    child: _gradientButton(context, 'Chat', () async {
+                    child: _gradientButton(context, languages.lblChat, () async {
                         final customerId = postJobDetail?.customer?.id;
                         if (customerId == null) {
                           toast(languages.somethingWentWrong);
@@ -727,12 +727,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                         }
                         toast(languages.pleaseWaitWhileWeLoadChatDetails);
                         try {
-                          final res = await FrobsterChatApi.openWithUser(userId: customerId, title: 'Direct Message');
+                          final res = await FrobsterChatApi.openWithUser(userId: customerId, title: languages.lblDirectMessage);
                           Fluttertoast.cancel();
                           if (res.status && res.conversationId != 0) {
                             FrobsterChatThreadScreen(
                               conversationId: res.conversationId,
-                              title: 'Direct Message',
+                              title: languages.lblDirectMessage,
                               otherDisplayName: postJobDetail?.customer?.displayName,
                             ).launch(context);
                           } else {
@@ -751,7 +751,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: _gradientButton(context, 'Chat', () async {
+                        child: _gradientButton(context, languages.lblChat, () async {
                             final customerId = postJobDetail?.customer?.id;
                             if (customerId == null) {
                               toast(languages.somethingWentWrong);
@@ -759,12 +759,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                             }
                             toast(languages.pleaseWaitWhileWeLoadChatDetails);
                             try {
-                              final res = await FrobsterChatApi.openWithUser(userId: customerId, title: 'Direct Message');
+                              final res = await FrobsterChatApi.openWithUser(userId: customerId, title: languages.lblDirectMessage);
                               Fluttertoast.cancel();
                               if (res.status && res.conversationId != 0) {
                                 FrobsterChatThreadScreen(
                                   conversationId: res.conversationId,
-                                  title: 'Direct Message',
+                                  title: languages.lblDirectMessage,
                                   otherDisplayName: postJobDetail?.customer?.displayName,
                                 ).launch(context);
                               } else {
@@ -778,7 +778,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                       ),
                       16.width,
                       Expanded(
-                        child: _gradientButton(context, 'Download', () async {
+                        child: _gradientButton(context, languages.lblDownload, () async {
                         if(postJobDetail!.id == null) {
                           toast(languages.somethingWentWrong);
                           return;
@@ -800,7 +800,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                     Row(
                       children: [
                         Expanded(
-                          child: _gradientButton(context, 'Rate Customer', () async {
+                          child: _gradientButton(context, languages.rateCustomer, () async {
                             if (postJobDetail?.id == null || postJobDetail?.providerId == null || postJobDetail?.customer?.id == null) {
                               toast(languages.somethingWentWrong);
                               return;
@@ -905,7 +905,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         24.height,
-        Text('Price Details', style: boldTextStyle(size: LABEL_TEXT_SIZE)),
+        Text(languages.lblPriceDetail, style: boldTextStyle(size: LABEL_TEXT_SIZE)),
         16.height,
         Container(
           padding: EdgeInsets.all(12),
@@ -918,7 +918,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text('Rate (Unit Price)', style: secondaryTextStyle(size: 12)).expand(),
+                  Text(languages.lblRateUnitPrice, style: secondaryTextStyle(size: 12)).expand(),
                   16.width,
                   PriceWidget(
                     price: data.price?.validate() ?? 0,
@@ -934,7 +934,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Quantity', style: secondaryTextStyle(size: 12)).flexible(fit: FlexFit.loose),
+                  Text(languages.quantity, style: secondaryTextStyle(size: 12)).flexible(fit: FlexFit.loose),
                   16.width,
                   Text(quantity.toString(), style: boldTextStyle(size: 14)),
                 ],
@@ -944,7 +944,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               // Total calculation row
               Row(
                 children: [
-                  Text('Total Amount', style: secondaryTextStyle(size: 12)).expand(),
+                  Text(languages.lblTotalAmount, style: secondaryTextStyle(size: 12)).expand(),
                   16.width,
                   PriceWidget(
                     price: totalAmount,
@@ -959,7 +959,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               if (extraCharges > 0)
                 Row(
                   children: [
-                    Text('Extra Charges', style: secondaryTextStyle(size: 12)).expand(),
+                    Text(languages.lblExtraCharges, style: secondaryTextStyle(size: 12)).expand(),
                     16.width,
                     PriceWidget(
                       price: extraCharges,
@@ -974,7 +974,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Subtotal', style: secondaryTextStyle(size: 12)).flexible(fit: FlexFit.loose),
+                  Text(languages.lblSubTotal, style: secondaryTextStyle(size: 12)).flexible(fit: FlexFit.loose),
                   PriceWidget(
                     price: subTotal,
                     color: textPrimaryColorGlobal,
@@ -991,8 +991,8 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Net Amount', style: secondaryTextStyle(size: 12)),
-                      Text('(Subtotal - Tax)', style: secondaryTextStyle(size: 11)),
+                      Text(languages.lblNetAmount, style: secondaryTextStyle(size: 12)),
+                      Text(languages.lblNetAmountFormula, style: secondaryTextStyle(size: 11)),
                     ],
                   ).flexible(fit: FlexFit.loose),
                   PriceWidget(
@@ -1013,7 +1013,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                       children: [
                         Row(
                           children: [
-                            Text('Tax', style: secondaryTextStyle(size: 12)),
+                            Text(languages.lblTax, style: secondaryTextStyle(size: 12)),
                             Text(' ($taxPercent%)', style: boldTextStyle(color: gradientBlue, size: 12)).expand()
                           ],
                         ).expand(),
@@ -1035,7 +1035,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                      'Grand Total Amount', style: secondaryTextStyle(size: 12)
+                      languages.lblGrandTotalAmount, style: secondaryTextStyle(size: 12)
                   ),
                   16.width,
                   PriceWidget(
@@ -1052,7 +1052,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                 children: [
                   Row(
                     children: [
-                      Text('Advance Payment(${postJobDetail?.advancePercent ?? 0}%)', style: secondaryTextStyle(size: 12)).expand(),
+                      Text('${languages.advancePayment} (${postJobDetail?.advancePercent ?? 0}%)', style: secondaryTextStyle(size: 12)).expand(),
                       16.width,
                       PriceWidget(
                         price: advance,
@@ -1066,7 +1066,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               ),
               Row(
                 children: [
-                  Text('Remaining Amount', style: secondaryTextStyle(size: 12)).expand(),
+                  Text(languages.remainingAmount, style: secondaryTextStyle(size: 12)).expand(),
                   16.width,
                   PriceWidget(
                     price: remaining,
@@ -1160,7 +1160,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         24.height,
-        Text('Extra Charges Breakdown', style: boldTextStyle(size: LABEL_TEXT_SIZE)),
+        Text(languages.lblExtraChargesBreakdown, style: boldTextStyle(size: LABEL_TEXT_SIZE)),
         16.height,
         Container(
           padding: EdgeInsets.all(16),
@@ -1176,7 +1176,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Total Extra Charges', style: boldTextStyle(size: 14)),
+                  Text(languages.lblTotalCharges, style: boldTextStyle(size: 14)),
                   PriceWidget(
                     price: totalExtraCharges,
                     color: textPrimaryColorGlobal,

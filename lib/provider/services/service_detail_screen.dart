@@ -149,7 +149,7 @@ class ServiceDetailScreenState extends State<ServiceDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Cancelation Policy', style: boldTextStyle(size: LABEL_TEXT_SIZE)),
+        Text(languages.lblCancellationPolicy, style: boldTextStyle(size: LABEL_TEXT_SIZE)),
         16.height,
         HtmlWidget(
           policy.validate(),
@@ -210,7 +210,7 @@ class ServiceDetailScreenState extends State<ServiceDetailScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Requirements:',
+                  Text(languages.lblRequirementsColon,
                       style: boldTextStyle(size: LABEL_TEXT_SIZE)),
                   8.height,
                   ReadMoreText(

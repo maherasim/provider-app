@@ -641,7 +641,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           child: AppTextField(
                             controller: searchCont,
                             textFieldType: TextFieldType.OTHER,
-                            decoration: inputDecoration(context, hint: 'Search languages'),
+                            decoration: inputDecoration(context, hint: languages.lblSearchLanguagesHint),
                             onChanged: (v) {
                               searchNotifier.value = v;
                             },
@@ -873,7 +873,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           controller: cNameCont,
                           focus: cNameFocus,
                           decoration:
-                              inputDecoration(context, hint: 'Company Name'),
+                              inputDecoration(context, hint: languages.lblCompanyNameHint),
                         ),
                         16.height,
                         Row(
@@ -926,7 +926,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           controller: vatNumCont,
                           focus: vatNumFocus,
                           nextFocus: designationFocus,
-                          decoration:inputDecoration(context, hint: 'VAT Number'),
+                          decoration:inputDecoration(context, hint: languages.lblVatNumberHint),
                         ),
                         16.height,
                         AppTextField(
@@ -942,7 +942,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           children: [
                             DropdownButtonFormField<String>(
                               decoration: inputDecoration(context,
-                                  hint: 'Select Availability'),
+                                  hint: languages.lblSelectAvailabilityHint),
                               isExpanded: true,
                               value: selectedAvailability,
                               dropdownColor: context.cardColor,
@@ -1028,7 +1028,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         16.height,
                         DropdownButtonFormField<CountryListResponse>(
                           decoration: inputDecoration(context,
-                              hint: 'Select Country tax'),
+                              hint: languages.lblSelectCountryTaxHint),
                           isExpanded: true,
                           menuMaxHeight: 300,
                           value: selectedTaxCountry,
@@ -1184,7 +1184,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           focus: mobilityFocus,
                           nextFocus: experienceFocus,
                           decoration: inputDecoration(context,
-                              hint: 'Mobility (e.g., Car, Bike, Public Transport)'),
+                              hint: languages.lblMobilityHint),
                           suffix: Icon(Icons.directions_car, size: 18, color: context.iconColor).paddingAll(14),
                         ),
                         16.height,
@@ -1196,13 +1196,13 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           minLines: 3,
                           maxLines: 5,
                           decoration: inputDecoration(context,
-                              hint: 'Experience (describe your work experience)'),
+                              hint: languages.lblExperienceDescHint),
                           suffix: Icon(Icons.business_center, size: 18, color: context.iconColor).paddingAll(14),
                         ),
                         16.height,
                         DropdownButtonFormField<CareerLevel>(
                           decoration: inputDecoration(context,
-                              hint: 'Career Level',
+                              hint: languages.lblCareerLevelHint,
                               fillColor: context.scaffoldBackgroundColor),
                           isExpanded: true,
                           value: selectedCareerLevel,
@@ -1227,7 +1227,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         16.height,
                         DropdownButtonFormField<ProfileEducationLevel>(
                           decoration: inputDecoration(context,
-                              hint: 'Education',
+                              hint: languages.lblEducationHint,
                               fillColor: context.scaffoldBackgroundColor),
                           isExpanded: true,
                           value: selectedEducation,
@@ -1252,7 +1252,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         16.height,
                         DropdownButtonFormField<YearsOfExperience>(
                           decoration: inputDecoration(context,
-                              hint: 'Years of Experience',
+                              hint: languages.lblYearsOfExperienceHint,
                               fillColor: context.scaffoldBackgroundColor),
                           isExpanded: true,
                           value: selectedYearsOfExperience,
@@ -1281,7 +1281,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           focus: certificationFocus,
                           nextFocus: descriptionFocus,
                           decoration: inputDecoration(context,
-                              hint: 'Certification (comma-separated)'),
+                              hint: languages.lblCertificationHint),
                           suffix: Icon(Icons.verified, size: 18, color: context.iconColor).paddingAll(14),
                         ),
                         16.height,

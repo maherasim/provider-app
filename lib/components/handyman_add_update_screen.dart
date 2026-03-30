@@ -866,7 +866,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Profile', style: boldTextStyle(size: 16)),
+                    Text(languages.lblProfile, style: boldTextStyle(size: 16)),
                     12.height,
                     // Profile Image Preview and Upload
                     // Show existing image only when no new file is selected
@@ -986,7 +986,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     16.height,
                     Divider(),
                     12.height,
-                    Text('Company Information', style: boldTextStyle(size: 16)),
+                    Text(languages.lblCompanyInformation, style: boldTextStyle(size: 16)),
                     12.height,
                     // Company Name - Required
                     AppTextField(
@@ -998,7 +998,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       isValidationRequired: true,
                       decoration: inputDecoration(
                         context,
-                        hint: 'Company Name',
+                        hint: languages.lblCompanyNameHint,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
                     ),
@@ -1013,14 +1013,14 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       isValidationRequired: true,
                       decoration: inputDecoration(
                         context,
-                        hint: 'VAT Number',
+                        hint: languages.lblVatNumberHint,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
                     ),
                     16.height,
                     Divider(),
                     12.height,
-                    Text('Professional Details', style: boldTextStyle(size: 16)),
+                    Text(languages.lblProfessionalDetails, style: boldTextStyle(size: 16)),
                     12.height,
                     // Skills - Text Input (Required)
                     AppTextField(
@@ -1032,7 +1032,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       isValidationRequired: true,
                       decoration: inputDecoration(
                         context,
-                        hint: 'Skills',
+                        hint: languages.lblSkillsHint,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
                     ),
@@ -1049,7 +1049,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       maxLines: 5,
                       decoration: inputDecoration(
                         context,
-                        hint: 'Experience',
+                        hint: languages.lblExperienceHint,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
                     ),
@@ -1064,7 +1064,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       isValidationRequired: true,
                       decoration: inputDecoration(
                         context,
-                        hint: 'Mobility',
+                        hint: languages.lblMobilityShortHint,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
                     ),
@@ -1079,14 +1079,14 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       isValidationRequired: true,
                       decoration: inputDecoration(
                         context,
-                        hint: 'Certification',
+                        hint: languages.lblCertificationShortHint,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
                     ),
                     16.height,
                     Divider(),
                     12.height,
-                    Text('Contact & Address', style: boldTextStyle(size: 16)),
+                    Text(languages.lblContactAndAddress, style: boldTextStyle(size: 16)),
                     12.height,
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -1157,7 +1157,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     16.height,
                     Divider(),
                     12.height,
-                    Text('Commission', style: boldTextStyle(size: 16)),
+                    Text(languages.commission, style: boldTextStyle(size: 16)),
                     12.height,
                     // Handyman Commission - Number input (1-85)
                     AppTextField(
@@ -1169,7 +1169,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       isValidationRequired: false,
                       decoration: inputDecoration(
                         context,
-                        hint: 'Handyman Commission (1-85)',
+                        hint: languages.lblHandymanCommissionHint,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
                       validator: (value) {
@@ -1188,7 +1188,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     16.height,
                     Divider(),
                     12.height,
-                    Text('Location', style: boldTextStyle(size: 16)),
+                    Text(languages.lblLocationSection, style: boldTextStyle(size: 16)),
                     12.height,
                     DropdownButtonFormField<AddressResponse>(
                         decoration: inputDecoration(
@@ -1223,7 +1223,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       DropdownButtonFormField<UserData>(
                           decoration: inputDecoration(
                             context,
-                            hint: 'Select Provider',
+                            hint: languages.lblSelectProviderHint,
                             fillColor: context.scaffoldBackgroundColor,
                           ),
                           isExpanded: true,
@@ -1286,7 +1286,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       DropdownButtonFormField<StateListResponse>(
                         decoration: inputDecoration(
                           context,
-                          hint: 'Select State',
+                          hint: languages.selectState,
                           fillColor: context.scaffoldBackgroundColor,
                         ),
                         isExpanded: true,
@@ -1321,7 +1321,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       DropdownButtonFormField<CityListResponse>(
                         decoration: inputDecoration(
                           context,
-                          hint: 'Select City',
+                          hint: languages.selectCity,
                           fillColor: context.scaffoldBackgroundColor,
                         ),
                         isExpanded: true,
@@ -1445,11 +1445,11 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       items: [
                         DropdownMenuItem<String>(
                           value: '1',
-                          child: Text('Active', style: primaryTextStyle()),
+                          child: Text(languages.active, style: primaryTextStyle()),
                         ),
                         DropdownMenuItem<String>(
                           value: '0',
-                          child: Text('Inactive', style: primaryTextStyle()),
+                          child: Text(languages.inactive, style: primaryTextStyle()),
                         ),
                       ],
                       onChanged: (String? value) {
@@ -1460,7 +1460,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     16.height,
                     Divider(),
                     12.height,
-                    Text('Languages', style: boldTextStyle(size: 16)),
+                    Text(languages.lblLanguagesSection, style: boldTextStyle(size: 16)),
                     8.height,
                     Text(languages.knownLanguages, style: secondaryTextStyle()),
                     8.height,
@@ -1541,12 +1541,12 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                           setState(() {});
                         }
                       },
-                      child: Text('Add Language',
+                      child: Text(languages.lblAddLanguage,
                           style: primaryTextStyle(color: gradientBlue)),
                     ),
                     Divider(),
                     12.height,
-                    Text('Education & Bio', style: boldTextStyle(size: 16)),
+                    Text(languages.lblEducationAndBio, style: boldTextStyle(size: 16)),
                     12.height,
                     // Education - Text Input (Required)
                     AppTextField(
@@ -1558,7 +1558,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       isValidationRequired: true,
                       decoration: inputDecoration(
                         context,
-                        hint: 'Education',
+                        hint: languages.lblEducationHint,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
                     ),
@@ -1574,7 +1574,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       maxLines: 5,
                       decoration: inputDecoration(
                         context,
-                        hint: 'About Me',
+                        hint: languages.lblAboutMeHint,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
                     ),

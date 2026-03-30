@@ -2480,6 +2480,199 @@ class LanguageHi extends Languages {
   
   @override
   String get waitingForProviderToMarkBidAsCompleted => 'प्रदाता के बोली को पूरा के रूप में चिह्नित करने की प्रतीक्षा कर रहा है';
+
+  @override
+  String get lblExtraChargesBreakdown => 'अतिरिक्त शुल्क विवरण';
+
+  @override
+  String get lblSplitPayment => 'भुगतान विभाजित करें';
+
+  @override
+  String get lblStartWork => 'काम शुरू करें';
+
+  @override
+  String get lblMarkComplete => 'पूर्ण करें';
+
+  @override
+  String get lblPlusExtraCharges => '+ अतिरिक्त शुल्क';
+
+  @override
+  String get lblDownload => 'डाउनलोड';
+
+  @override
+  String get lblEmployerReview => 'नियोक्ता समीक्षा';
+
+  @override
+  String get lblCustomerReview => 'ग्राहक समीक्षा';
+
+  @override
+  String get lblRateUnitPrice => 'दर (इकाई मूल्य)';
+
+  @override
+  String get lblNetAmount => 'शुल्क के बाद राशि';
+
+  @override
+  String get lblNetAmountFormula => '(उप-योग - कर)';
+
+  @override
+  String get lblGrandTotalAmount => 'कुल योग राशि';
+
+  @override
+  String get lblDirectMessage => 'सीधा संदेश';
+
+  @override
+  String get lblTotal => 'कुल';
+
+  @override
+  String get lblSearchLanguagesHint => 'भाषाएँ खोजें';
+
+  @override
+  String get lblCompanyNameHint => 'कंपनी का नाम';
+
+  @override
+  String get lblVatNumberHint => 'VAT नंबर';
+
+  @override
+  String get lblSelectAvailabilityHint => 'उপलब्धता चुनें';
+
+  @override
+  String get lblSelectCountryTaxHint => 'देश कर चुनें';
+
+  @override
+  String get lblMobilityHint => 'गतिशीलता (जैसे कार, बाइक, सार्वजनिक परिवहन)';
+
+  @override
+  String get lblExperienceDescHint => 'अनुभव (अपना कार्यानुभव बताएँ)';
+
+  @override
+  String get lblCareerLevelHint => 'करियर स्तर';
+
+  @override
+  String get lblEducationHint => 'शिक्षा';
+
+  @override
+  String get lblYearsOfExperienceHint => 'अनुभव के वर्ष';
+
+  @override
+  String get lblCertificationHint => 'प्रमाणपत्र (अल्पविराम से अलग)';
+
+  @override
+  String get lblSelectProviderHint => 'प्रदाता चुनें';
+
+  @override
+  String get lblRemoteWorkLevelHint => 'दूरस्थ कार्य स्तर';
+
+  @override
+  String get lblTravelRequiredHint => 'यात्रा आवश्यक';
+
+  @override
+  String get lblAccountHolderNameHint => 'खाताधारक का नाम';
+
+  @override
+  String get lblMobileNumberHint => 'मोबाइल नंबर';
+
+  @override
+  String get lblIbanNumberHint => 'IBAN नंबर';
+
+  @override
+  String get lblBicSwiftHint => 'BIC / SWIFT कोड';
+
+  @override
+  String get lblStripeAccountHint => 'Stripe खाता';
+
+  @override
+  String get lblRegularPayments => 'नियमित भुगतान';
+
+  @override
+  String get lblJobRequestPayments => 'नौकरी अनुरोध भुगतान';
+
+  @override
+  String get lblAttachment => 'अनुलग्नक';
+
+  @override
+  String get lblUpdateBid => 'बोली अपडेट करें';
+
+  @override
+  String get lblCompanyInformation => 'कंपनी की जानकारी';
+
+  @override
+  String get lblProfessionalDetails => 'पेशेवर विवरण';
+
+  @override
+  String get lblContactAndAddress => 'संपर्क और पता';
+
+  @override
+  String get lblLocationSection => 'स्थान';
+
+  @override
+  String get lblLanguagesSection => 'भाषाएँ';
+
+  @override
+  String get lblAddLanguage => 'भाषा जोड़ें';
+
+  @override
+  String get lblEducationAndBio => 'शिक्षा और जीवनी';
+
+  @override
+  String get lblSkillsHint => 'कौशल';
+
+  @override
+  String get lblExperienceHint => 'अनुभव';
+
+  @override
+  String get lblMobilityShortHint => 'गतिशीलता';
+
+  @override
+  String get lblCertificationShortHint => 'प्रमाणपत्र';
+
+  @override
+  String get lblHandymanCommissionHint => 'हैंडीमैन कमीशन (1-85)';
+
+  @override
+  String get lblAboutMeHint => 'मेरे बारे में';
+
+  @override
+  String get lblBidPriceLabel => 'बोली मूल्य: ';
+
+  @override
+  String get lblRequirementsColon => 'आवश्यकताएँ:';
+
+  @override
+  String get lblJobType => 'नौकरी प्रकार';
+
+  @override
+  String get lblRateType => 'दर प्रकार';
+
+  @override
+  String get lblTotalBudget => 'कुल बजट';
+
+  @override
+  String get lblProposals => 'प्रस्ताव';
+
+  @override
+  String get lblWorker => 'कार्यकर्ता';
+
+  @override
+  String get lblHybrid => 'हाइब्रिड';
+
+  @override
+  String get lblBankTransferDetails => 'बैंक ट्रांसफर विवरण';
+
+  @override
+  String get lblBankTransfer => 'बैंक ट्रांसफर';
+
+  @override
+  String get lblBankTransferInstructions =>
+      'कृपया राशि निम्नलिखित बैंक खाते में ट्रांसफर करें:';
+
+  @override
+  String get lblCountry => 'देश';
+
+  @override
+  String get lblIban => 'IBAN';
+
+  @override
+  String get lblBicSwiftShort => 'BIC/Swift';
   
   @override
   String get invoice => 'चालान';

@@ -384,7 +384,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                         directionMarguee: DirectionMarguee.oneDirection,
                         child: Row(
                           children: [
-                            Text('Bid Price: ', style: secondaryTextStyle(size: 12)),
+                            Text(languages.lblBidPriceLabel, style: secondaryTextStyle(size: 12)),
                             PriceWidget(
                               price: bidderData.price.validate(),
                               isHourlyService: bidderData.postJobData?.priceType == PriceType.hourly,

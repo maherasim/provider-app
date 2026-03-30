@@ -329,7 +329,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       barrierDismissible: false,
       builder: (context) {
         return AppCommonDialog(
-          title: 'Bank Transfer Details',
+          title: languages.lblBankTransferDetails,
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Column(
@@ -337,7 +337,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Please transfer the amount to the following bank account:',
+                  languages.lblBankTransferInstructions,
                   style: secondaryTextStyle(),
                 ),
                 16.height,
@@ -350,15 +350,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildBankDetailRow('Bank Name:', 'Norisbank'),
+                      _buildBankDetailRow('${languages.bankName}:', 'Norisbank'),
                       8.height,
-                      _buildBankDetailRow('Country:', 'Germany'),
+                      _buildBankDetailRow('${languages.lblCountry}:', 'Germany'),
                       8.height,
-                      _buildBankDetailRow('Account Number:', '4776167'),
+                      _buildBankDetailRow('${languages.accountNumber}:', '4776167'),
                       8.height,
-                      _buildBankDetailRow('IBAN:', 'DE57760260000477616700'),
+                      _buildBankDetailRow('${languages.lblIban}:', 'DE57760260000477616700'),
                       8.height,
-                      _buildBankDetailRow('BIC/Swift:', 'NORDSDE71XXX'),
+                      _buildBankDetailRow('${languages.lblBicSwiftShort}:', 'NORDSDE71XXX'),
                     ],
                   ),
                 ),
@@ -417,7 +417,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       barrierDismissible: false,
       builder: (context) {
         return AppCommonDialog(
-          title: 'Bank Transfer',
+          title: languages.lblBankTransfer,
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Column(
@@ -433,7 +433,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   controller: referenceIdController,
                   textFieldType: TextFieldType.NAME,
                   decoration: InputDecoration(
-                    hintText: 'Reference Number',
+                    hintText: languages.refNumber,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),

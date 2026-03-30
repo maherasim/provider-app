@@ -2480,7 +2480,200 @@ class LanguageDe extends Languages {
   
   @override
   String get waitingForProviderToMarkBidAsCompleted => 'Warten auf Anbieter zur Markierung des Gebots als abgeschlossen';
-  
+
+  @override
+  String get lblExtraChargesBreakdown => 'Aufschlüsselung zusätzlicher Gebühren';
+
+  @override
+  String get lblSplitPayment => 'Zahlung aufteilen';
+
+  @override
+  String get lblStartWork => 'Arbeit beginnen';
+
+  @override
+  String get lblMarkComplete => 'Abschließen';
+
+  @override
+  String get lblPlusExtraCharges => '+ Zusätzliche Gebühren';
+
+  @override
+  String get lblDownload => 'Herunterladen';
+
+  @override
+  String get lblEmployerReview => 'Arbeitgeber-Bewertung';
+
+  @override
+  String get lblCustomerReview => 'Kunden-Bewertung';
+
+  @override
+  String get lblRateUnitPrice => 'Satz (Stückpreis)';
+
+  @override
+  String get lblNetAmount => 'Nettobetrag';
+
+  @override
+  String get lblNetAmountFormula => '(Zwischensumme - Steuer)';
+
+  @override
+  String get lblGrandTotalAmount => 'Gesamtbetrag';
+
+  @override
+  String get lblDirectMessage => 'Direktnachricht';
+
+  @override
+  String get lblTotal => 'Gesamt';
+
+  @override
+  String get lblSearchLanguagesHint => 'Sprachen suchen';
+
+  @override
+  String get lblCompanyNameHint => 'Firmenname';
+
+  @override
+  String get lblVatNumberHint => 'USt-IdNr.';
+
+  @override
+  String get lblSelectAvailabilityHint => 'Verfügbarkeit wählen';
+
+  @override
+  String get lblSelectCountryTaxHint => 'Landessteuer wählen';
+
+  @override
+  String get lblMobilityHint => 'Mobilität (z. B. Auto, Fahrrad, ÖPNV)';
+
+  @override
+  String get lblExperienceDescHint => 'Erfahrung (beschreiben Sie Ihre Berufserfahrung)';
+
+  @override
+  String get lblCareerLevelHint => 'Karrierestufe';
+
+  @override
+  String get lblEducationHint => 'Ausbildung';
+
+  @override
+  String get lblYearsOfExperienceHint => 'Berufserfahrung (Jahre)';
+
+  @override
+  String get lblCertificationHint => 'Zertifikate (kommagetrennt)';
+
+  @override
+  String get lblSelectProviderHint => 'Anbieter wählen';
+
+  @override
+  String get lblRemoteWorkLevelHint => 'Remote-Arbeit';
+
+  @override
+  String get lblTravelRequiredHint => 'Reisebereitschaft';
+
+  @override
+  String get lblAccountHolderNameHint => 'Kontoinhaber';
+
+  @override
+  String get lblMobileNumberHint => 'Mobilnummer';
+
+  @override
+  String get lblIbanNumberHint => 'IBAN';
+
+  @override
+  String get lblBicSwiftHint => 'BIC / SWIFT-Code';
+
+  @override
+  String get lblStripeAccountHint => 'Stripe-Konto';
+
+  @override
+  String get lblRegularPayments => 'Reguläre Zahlungen';
+
+  @override
+  String get lblJobRequestPayments => 'Auftrags-Zahlungen';
+
+  @override
+  String get lblAttachment => 'Anhang';
+
+  @override
+  String get lblUpdateBid => 'Gebot aktualisieren';
+
+  @override
+  String get lblCompanyInformation => 'Firmeninformationen';
+
+  @override
+  String get lblProfessionalDetails => 'Berufliche Angaben';
+
+  @override
+  String get lblContactAndAddress => 'Kontakt & Adresse';
+
+  @override
+  String get lblLocationSection => 'Standort';
+
+  @override
+  String get lblLanguagesSection => 'Sprachen';
+
+  @override
+  String get lblAddLanguage => 'Sprache hinzufügen';
+
+  @override
+  String get lblEducationAndBio => 'Ausbildung & Kurzprofil';
+
+  @override
+  String get lblSkillsHint => 'Fähigkeiten';
+
+  @override
+  String get lblExperienceHint => 'Erfahrung';
+
+  @override
+  String get lblMobilityShortHint => 'Mobilität';
+
+  @override
+  String get lblCertificationShortHint => 'Zertifikate';
+
+  @override
+  String get lblHandymanCommissionHint => 'Handwerker-Provision (1–85)';
+
+  @override
+  String get lblAboutMeHint => 'Über mich';
+
+  @override
+  String get lblBidPriceLabel => 'Gebotspreis: ';
+
+  @override
+  String get lblRequirementsColon => 'Anforderungen:';
+
+  @override
+  String get lblJobType => 'Auftragsart';
+
+  @override
+  String get lblRateType => 'Preisart';
+
+  @override
+  String get lblTotalBudget => 'Gesamtbudget';
+
+  @override
+  String get lblProposals => 'Angebote';
+
+  @override
+  String get lblWorker => 'Ausführende Person';
+
+  @override
+  String get lblHybrid => 'Hybrid';
+
+  @override
+  String get lblBankTransferDetails => 'Banküberweisung – Details';
+
+  @override
+  String get lblBankTransfer => 'Banküberweisung';
+
+  @override
+  String get lblBankTransferInstructions =>
+      'Bitte überweisen Sie den Betrag auf das folgende Bankkonto:';
+
+  @override
+  String get lblCountry => 'Land';
+
+  @override
+  String get lblIban => 'IBAN';
+
+  @override
+  String get lblBicSwiftShort => 'BIC/SWIFT';
+
   @override
   String get invoice => 'Rechnung';
 }

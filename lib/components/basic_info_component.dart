@@ -504,12 +504,12 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
                   }
                   toast(languages.pleaseWaitWhileWeLoadChatDetails);
                   try {
-                    final res = await FrobsterChatApi.openWithUser(userId: receiverId, title: 'Direct Message');
+                    final res = await FrobsterChatApi.openWithUser(userId: receiverId, title: languages.lblDirectMessage);
                     Fluttertoast.cancel();
                     if (res.status && res.conversationId != 0) {
                       FrobsterChatThreadScreen(
                         conversationId: res.conversationId,
-                        title: 'Direct Message',
+                        title: languages.lblDirectMessage,
                         otherDisplayName: name,
                         otherAvatarUrl: profileUrl,
                       ).launch(context);

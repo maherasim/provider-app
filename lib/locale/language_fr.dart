@@ -2480,6 +2480,199 @@ class LanguageFr extends Languages {
   
   @override
   String get waitingForProviderToMarkBidAsCompleted => 'En attente du fournisseur pour marquer l\'offre comme terminée';
+
+  @override
+  String get lblExtraChargesBreakdown => 'Détail des frais supplémentaires';
+
+  @override
+  String get lblSplitPayment => 'Fractionner le paiement';
+
+  @override
+  String get lblStartWork => 'Commencer le travail';
+
+  @override
+  String get lblMarkComplete => 'Terminer';
+
+  @override
+  String get lblPlusExtraCharges => '+ Frais supplémentaires';
+
+  @override
+  String get lblDownload => 'Télécharger';
+
+  @override
+  String get lblEmployerReview => 'Avis employeur';
+
+  @override
+  String get lblCustomerReview => 'Avis client';
+
+  @override
+  String get lblRateUnitPrice => 'Tarif (prix unitaire)';
+
+  @override
+  String get lblNetAmount => 'Montant net';
+
+  @override
+  String get lblNetAmountFormula => '(Sous-total - Taxe)';
+
+  @override
+  String get lblGrandTotalAmount => 'Montant total général';
+
+  @override
+  String get lblDirectMessage => 'Message direct';
+
+  @override
+  String get lblTotal => 'Total';
+
+  @override
+  String get lblSearchLanguagesHint => 'Rechercher des langues';
+
+  @override
+  String get lblCompanyNameHint => 'Nom de l\'entreprise';
+
+  @override
+  String get lblVatNumberHint => 'Numéro de TVA';
+
+  @override
+  String get lblSelectAvailabilityHint => 'Sélectionner la disponibilité';
+
+  @override
+  String get lblSelectCountryTaxHint => 'Sélectionner la taxe pays';
+
+  @override
+  String get lblMobilityHint => 'Mobilité (ex. voiture, vélo, transports)';
+
+  @override
+  String get lblExperienceDescHint => 'Expérience (décrivez votre parcours)';
+
+  @override
+  String get lblCareerLevelHint => 'Niveau de carrière';
+
+  @override
+  String get lblEducationHint => 'Formation';
+
+  @override
+  String get lblYearsOfExperienceHint => 'Années d\'expérience';
+
+  @override
+  String get lblCertificationHint => 'Certifications (séparées par des virgules)';
+
+  @override
+  String get lblSelectProviderHint => 'Sélectionner un fournisseur';
+
+  @override
+  String get lblRemoteWorkLevelHint => 'Niveau de télétravail';
+
+  @override
+  String get lblTravelRequiredHint => 'Déplacements requis';
+
+  @override
+  String get lblAccountHolderNameHint => 'Nom du titulaire du compte';
+
+  @override
+  String get lblMobileNumberHint => 'Numéro de mobile';
+
+  @override
+  String get lblIbanNumberHint => 'Numéro IBAN';
+
+  @override
+  String get lblBicSwiftHint => 'Code BIC / SWIFT';
+
+  @override
+  String get lblStripeAccountHint => 'Compte Stripe';
+
+  @override
+  String get lblRegularPayments => 'Paiements réguliers';
+
+  @override
+  String get lblJobRequestPayments => 'Paiements des demandes d\'emploi';
+
+  @override
+  String get lblAttachment => 'Pièce jointe';
+
+  @override
+  String get lblUpdateBid => 'Mettre à jour l\'offre';
+
+  @override
+  String get lblCompanyInformation => 'Informations sur l\'entreprise';
+
+  @override
+  String get lblProfessionalDetails => 'Détails professionnels';
+
+  @override
+  String get lblContactAndAddress => 'Contact et adresse';
+
+  @override
+  String get lblLocationSection => 'Lieu';
+
+  @override
+  String get lblLanguagesSection => 'Langues';
+
+  @override
+  String get lblAddLanguage => 'Ajouter une langue';
+
+  @override
+  String get lblEducationAndBio => 'Formation et bio';
+
+  @override
+  String get lblSkillsHint => 'Compétences';
+
+  @override
+  String get lblExperienceHint => 'Expérience';
+
+  @override
+  String get lblMobilityShortHint => 'Mobilité';
+
+  @override
+  String get lblCertificationShortHint => 'Certification';
+
+  @override
+  String get lblHandymanCommissionHint => 'Commission prestataire (1-85)';
+
+  @override
+  String get lblAboutMeHint => 'À propos de moi';
+
+  @override
+  String get lblBidPriceLabel => 'Prix de l\'offre : ';
+
+  @override
+  String get lblRequirementsColon => 'Exigences :';
+
+  @override
+  String get lblJobType => 'Type de mission';
+
+  @override
+  String get lblRateType => 'Type de tarif';
+
+  @override
+  String get lblTotalBudget => 'Budget total';
+
+  @override
+  String get lblProposals => 'Propositions';
+
+  @override
+  String get lblWorker => 'Prestataire';
+
+  @override
+  String get lblHybrid => 'Hybride';
+
+  @override
+  String get lblBankTransferDetails => 'Détails du virement bancaire';
+
+  @override
+  String get lblBankTransfer => 'Virement bancaire';
+
+  @override
+  String get lblBankTransferInstructions =>
+      'Veuillez transférer le montant sur le compte bancaire suivant :';
+
+  @override
+  String get lblCountry => 'Pays';
+
+  @override
+  String get lblIban => 'IBAN';
+
+  @override
+  String get lblBicSwiftShort => 'BIC/Swift';
   
   @override
   String get invoice => 'Facture';

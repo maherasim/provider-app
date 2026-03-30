@@ -159,7 +159,7 @@ class PriceCommonWidget extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Quantity', style: secondaryTextStyle(size: 14))
+                        Text(languages.quantity, style: secondaryTextStyle(size: 14))
                             .flexible(fit: FlexFit.loose),
                         16.width,
                         Text('${bookingDetail.quantity}',
@@ -173,7 +173,7 @@ class PriceCommonWidget extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Text('Total', style: secondaryTextStyle(size: 14))
+                        Text(languages.lblTotal, style: secondaryTextStyle(size: 14))
                             .expand(),
                         16.width,
                         Marquee(

@@ -2475,6 +2475,199 @@ class LanguageEn extends Languages {
   
   @override
   String get waitingForProviderToMarkBidAsCompleted => 'Waiting for Employer to mark the bid as completed';
+
+  @override
+  String get lblExtraChargesBreakdown => 'Extra Charges Breakdown';
+
+  @override
+  String get lblSplitPayment => 'Split Payment';
+
+  @override
+  String get lblStartWork => 'Start Work';
+
+  @override
+  String get lblMarkComplete => 'Complete';
+
+  @override
+  String get lblPlusExtraCharges => '+ Extra Charges';
+
+  @override
+  String get lblDownload => 'Download';
+
+  @override
+  String get lblEmployerReview => 'Employer Review';
+
+  @override
+  String get lblCustomerReview => 'Customer Review';
+
+  @override
+  String get lblRateUnitPrice => 'Rate (Unit Price)';
+
+  @override
+  String get lblNetAmount => 'Net Amount';
+
+  @override
+  String get lblNetAmountFormula => '(Subtotal - Tax)';
+
+  @override
+  String get lblGrandTotalAmount => 'Grand Total Amount';
+
+  @override
+  String get lblDirectMessage => 'Direct Message';
+
+  @override
+  String get lblTotal => 'Total';
+
+  @override
+  String get lblSearchLanguagesHint => 'Search languages';
+
+  @override
+  String get lblCompanyNameHint => 'Company Name';
+
+  @override
+  String get lblVatNumberHint => 'VAT Number';
+
+  @override
+  String get lblSelectAvailabilityHint => 'Select Availability';
+
+  @override
+  String get lblSelectCountryTaxHint => 'Select Country tax';
+
+  @override
+  String get lblMobilityHint => 'Mobility (e.g., Car, Bike, Public Transport)';
+
+  @override
+  String get lblExperienceDescHint => 'Experience (describe your work experience)';
+
+  @override
+  String get lblCareerLevelHint => 'Career Level';
+
+  @override
+  String get lblEducationHint => 'Education';
+
+  @override
+  String get lblYearsOfExperienceHint => 'Years of Experience';
+
+  @override
+  String get lblCertificationHint => 'Certification (comma-separated)';
+
+  @override
+  String get lblSelectProviderHint => 'Select Provider';
+
+  @override
+  String get lblRemoteWorkLevelHint => 'Remote Work Level';
+
+  @override
+  String get lblTravelRequiredHint => 'Travel Required';
+
+  @override
+  String get lblAccountHolderNameHint => 'Account Holder Name';
+
+  @override
+  String get lblMobileNumberHint => 'Mobile Number';
+
+  @override
+  String get lblIbanNumberHint => 'IBAN Number';
+
+  @override
+  String get lblBicSwiftHint => 'BIC / SWIFT Code';
+
+  @override
+  String get lblStripeAccountHint => 'Stripe Account';
+
+  @override
+  String get lblRegularPayments => 'Regular Payments';
+
+  @override
+  String get lblJobRequestPayments => 'Job Request Payments';
+
+  @override
+  String get lblAttachment => 'Attachment';
+
+  @override
+  String get lblUpdateBid => 'Update Bid';
+
+  @override
+  String get lblCompanyInformation => 'Company Information';
+
+  @override
+  String get lblProfessionalDetails => 'Professional Details';
+
+  @override
+  String get lblContactAndAddress => 'Contact & Address';
+
+  @override
+  String get lblLocationSection => 'Location';
+
+  @override
+  String get lblLanguagesSection => 'Languages';
+
+  @override
+  String get lblAddLanguage => 'Add Language';
+
+  @override
+  String get lblEducationAndBio => 'Education & Bio';
+
+  @override
+  String get lblSkillsHint => 'Skills';
+
+  @override
+  String get lblExperienceHint => 'Experience';
+
+  @override
+  String get lblMobilityShortHint => 'Mobility';
+
+  @override
+  String get lblCertificationShortHint => 'Certification';
+
+  @override
+  String get lblHandymanCommissionHint => 'Handyman Commission (1-85)';
+
+  @override
+  String get lblAboutMeHint => 'About Me';
+
+  @override
+  String get lblBidPriceLabel => 'Bid Price: ';
+
+  @override
+  String get lblRequirementsColon => 'Requirements:';
+
+  @override
+  String get lblJobType => 'Job Type';
+
+  @override
+  String get lblRateType => 'Rate Type';
+
+  @override
+  String get lblTotalBudget => 'Total Budget';
+
+  @override
+  String get lblProposals => 'Proposals';
+
+  @override
+  String get lblWorker => 'Worker';
+
+  @override
+  String get lblHybrid => 'Hybrid';
+
+  @override
+  String get lblBankTransferDetails => 'Bank Transfer Details';
+
+  @override
+  String get lblBankTransfer => 'Bank Transfer';
+
+  @override
+  String get lblBankTransferInstructions =>
+      'Please transfer the amount to the following bank account:';
+
+  @override
+  String get lblCountry => 'Country';
+
+  @override
+  String get lblIban => 'IBAN';
+
+  @override
+  String get lblBicSwiftShort => 'BIC/Swift';
   
   @override
   String get invoice => 'Invoice';

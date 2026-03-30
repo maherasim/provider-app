@@ -234,7 +234,7 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
                                       if (!m.hidden && (m.message?.isNotEmpty == true))
                                         Text(m.message!, style: isMe ? primaryTextStyle(size: 14, color: white) : primaryTextStyle(size: 14)),
                                       if (!m.hidden && (m.attachment?.isNotEmpty == true))
-                                        Text('Attachment', style: secondaryTextStyle(size: 12, color: white)),
+                                        Text(languages.lblAttachment, style: secondaryTextStyle(size: 12, color: white)),
                                       4.height,
                                       Text(m.createdAt, style: secondaryTextStyle(size: 10, color: isMe ? white : null)),
                                     ],

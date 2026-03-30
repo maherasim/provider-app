@@ -1620,7 +1620,135 @@ abstract class Languages {
   String get waitingForProviderToResumeWork;
 
   String get waitingForProviderToMarkBidAsCompleted;
-  
+
+  String get lblExtraChargesBreakdown;
+
+  String get lblSplitPayment;
+
+  String get lblStartWork;
+
+  String get lblMarkComplete;
+
+  String get lblPlusExtraCharges;
+
+  String get lblDownload;
+
+  String get lblEmployerReview;
+
+  String get lblCustomerReview;
+
+  String get lblRateUnitPrice;
+
+  String get lblNetAmount;
+
+  String get lblNetAmountFormula;
+
+  String get lblGrandTotalAmount;
+
+  String get lblDirectMessage;
+
+  String get lblTotal;
+
+  String get lblSearchLanguagesHint;
+
+  String get lblCompanyNameHint;
+
+  String get lblVatNumberHint;
+
+  String get lblSelectAvailabilityHint;
+
+  String get lblSelectCountryTaxHint;
+
+  String get lblMobilityHint;
+
+  String get lblExperienceDescHint;
+
+  String get lblCareerLevelHint;
+
+  String get lblEducationHint;
+
+  String get lblYearsOfExperienceHint;
+
+  String get lblCertificationHint;
+
+  String get lblSelectProviderHint;
+
+  String get lblRemoteWorkLevelHint;
+
+  String get lblTravelRequiredHint;
+
+  String get lblAccountHolderNameHint;
+
+  String get lblMobileNumberHint;
+
+  String get lblIbanNumberHint;
+
+  String get lblBicSwiftHint;
+
+  String get lblStripeAccountHint;
+
+  String get lblRegularPayments;
+
+  String get lblJobRequestPayments;
+
+  String get lblAttachment;
+
+  String get lblUpdateBid;
+
+  String get lblCompanyInformation;
+
+  String get lblProfessionalDetails;
+
+  String get lblContactAndAddress;
+
+  String get lblLocationSection;
+
+  String get lblLanguagesSection;
+
+  String get lblAddLanguage;
+
+  String get lblEducationAndBio;
+
+  String get lblSkillsHint;
+
+  String get lblExperienceHint;
+
+  String get lblMobilityShortHint;
+
+  String get lblCertificationShortHint;
+
+  String get lblHandymanCommissionHint;
+
+  String get lblAboutMeHint;
+
+  String get lblBidPriceLabel;
+
+  String get lblRequirementsColon;
+
+  String get lblJobType;
+
+  String get lblRateType;
+
+  String get lblTotalBudget;
+
+  String get lblProposals;
+
+  String get lblWorker;
+
+  String get lblHybrid;
+
+  String get lblBankTransferDetails;
+
+  String get lblBankTransfer;
+
+  String get lblBankTransferInstructions;
+
+  String get lblCountry;
+
+  String get lblIban;
+
+  String get lblBicSwiftShort;
+
   String get doYouWantToHoldThisBid;
   
   String get updatePaymentSplit;

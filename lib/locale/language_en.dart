@@ -150,6 +150,9 @@ class LanguageEn extends Languages {
   String get notAvailable => 'Not Available';
 
   @override
+  String get lblNa => 'N/A';
+
+  @override
   String get lblGallery => "Gallery";
 
   @override
@@ -211,6 +214,9 @@ class LanguageEn extends Languages {
 
   @override
   String get lblBooking => 'Bookings';
+
+  @override
+  String get lblBookingsCount => 'Bookings';
 
   @override
   String get lblTotalBooking => 'Total Bookings';
@@ -2561,6 +2567,72 @@ class LanguageEn extends Languages {
   String get lblTravelRequiredHint => 'Travel Required';
 
   @override
+  String get lblRemoteWorkOnsite100 => 'Onsite (100%)';
+
+  @override
+  String get lblRemoteWork25 => '25% Remote';
+
+  @override
+  String get lblRemoteWork50 => '50% Remote';
+
+  @override
+  String get lblRemoteWork75 => '75% Remote';
+
+  @override
+  String get lblRemoteWork100 => '100% Remote';
+
+  @override
+  String get lblCareerNotSpecified => 'Not Specified';
+
+  @override
+  String get lblCareerEntryLevel => 'Entry Level';
+
+  @override
+  String get lblCareerIntermediateLevel => 'Intermediate Level';
+
+  @override
+  String get lblCareerExperienced => 'Experienced';
+
+  @override
+  String get lblCareerProfessional => 'Professional';
+
+  @override
+  String get lblCareerMiddleManagement => 'Middle Management';
+
+  @override
+  String get lblCareerExecutiveManagement => 'Executive Management';
+
+  @override
+  String get lblCareerSeniorManagement => 'Senior Management';
+
+  @override
+  String get lblCareerDirector => 'Director';
+
+  @override
+  String get lblCareerTechnician => 'Technician';
+
+  @override
+  String get lblCareerLeader => 'Leader';
+
+  @override
+  String get lblCareerManager => 'Manager';
+
+  @override
+  String get lblEduHighSchool => 'High School';
+
+  @override
+  String get lblEduAssociate => 'Associate Degree';
+
+  @override
+  String get lblEduUndergraduate => 'Undergraduate Degree';
+
+  @override
+  String get lblEduMasters => 'Graduate/Master\'s';
+
+  @override
+  String get lblEduDoctorate => 'Doctorate';
+
+  @override
   String get lblAccountHolderNameHint => 'Account Holder Name';
 
   @override
@@ -2668,6 +2740,58 @@ class LanguageEn extends Languages {
 
   @override
   String get lblBicSwiftShort => 'BIC/Swift';
+
+  @override
+  String get lblPremiumPlansSoon => 'Premium Plans Soon';
+
+  @override
+  String get lblPremiumPlansSoonSubtitle =>
+      "We're building something great for you. Stay tuned.";
+
+  @override
+  String get lblBudgetOrPrice => 'Budget / Price';
+
+  @override
+  String get lblTotalDays => 'Total Days';
+
+  @override
+  String get lblTotalHours => 'Total Hours';
+
+  @override
+  String get lblEducationLevel => 'Education Level';
+
+  @override
+  String get lblSkillsAndRequirements => 'Skills & Requirements';
+
+  @override
+  String get lblDutiesAndResponsibilities => 'Duties & Responsibilities';
+
+  @override
+  String get lblBenefits => 'Benefits';
+
+  @override
+  String get lblViewJob => 'View Job';
+
+  @override
+  String get lblBidDetails => 'Bid Details';
+
+  @override
+  String get lblWaitingForAdminApproval => 'Waiting for admin approval';
+
+  @override
+  String get lblThisBidWasCancelled => 'This bid was cancelled';
+
+  @override
+  String get lblProgressAdvance => 'Advance';
+
+  @override
+  String get lblProgressAdvancePaidShort => 'Advance P.';
+
+  @override
+  String get lblProgressLetsStart => "Let's start";
+
+  @override
+  String get lblProgressWork => 'Work';
   
   @override
   String get invoice => 'Invoice';

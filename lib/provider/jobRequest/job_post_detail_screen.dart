@@ -15,6 +15,7 @@ import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/extensions/num_extenstions.dart';
+import 'package:handyman_provider_flutter/utils/job_posting_enum_localizations.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../../components/base_scaffold_widget.dart';
@@ -133,12 +134,11 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
     String location = "${data.cityName ?? ''}${data.countryName.validate().isEmpty ? "" : "${data.cityName.validate().isEmpty ? "" :  " - "}${data.countryName}"}";
     
     // Get travel_required value - convert to display string
-    String travelRequiredValue = 'No'; // Default to "No"
+    String travelRequiredValue = languages.lblNo;
     if (data.travelRequired != null) {
-      travelRequiredValue = data.travelRequired!.displayName;
+      travelRequiredValue = data.travelRequired!.localizedLabel;
     } else {
-      // If null, check if we can infer from other data or default to "No"
-      travelRequiredValue = 'No';
+      travelRequiredValue = languages.lblNo;
     }
     
     // Debug: Log the travel_required value
@@ -163,7 +163,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
 
         // Simple key-value pairs
         _buildSimpleRow(
-          label: "Job Type",
+          label: languages.lblJobType,
           value: data.type?.displayName ?? '',
           valueBackgroundColor: data.type?.bgColor,
         ),
@@ -176,36 +176,36 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
           value: formatDate(data.endDate.validate()),
         ),
         _buildSimpleRow(
-          label: "Budget/Price",
+          label: languages.lblBudgetOrPrice,
           value: _formatPrice(data.price.validate(), data.priceType),
         ),
         _buildSimpleRow(
-          label: "Total Budget",
+          label: languages.lblTotalBudget,
           value: data.totalBudget.validate().toPriceFormat(),
         ),
         _buildSimpleRow(
-          label: "Total Days",
+          label: languages.lblTotalDays,
           value: data.totalDays?.toString() ?? '0',
         ),
         _buildSimpleRow(
-          label: "Total Hours",
+          label: languages.lblTotalHours,
           value: data.totalHours?.toString() ?? '0',
         ),
         _buildSimpleRow(
-          label: "Remote Work Level",
-          value: data.remoteWorkLevel?.displayName ?? '',
+          label: languages.lblRemoteWorkLevelHint,
+          value: data.remoteWorkLevel?.localizedLabel ?? '',
         ),
         _buildSimpleRow(
-          label: "Travel Required",
+          label: languages.lblTravelRequiredHint,
           value: travelRequiredValue,
         ),
         _buildSimpleRow(
-          label: "Career Level",
-          value: data.careerLevel?.displayName ?? '',
+          label: languages.lblCareerLevelHint,
+          value: data.careerLevel?.localizedLabel ?? '',
         ),
         _buildSimpleRow(
-          label: "Education Level",
-          value: data.educationLevel?.displayName ?? '',
+          label: languages.lblEducationLevel,
+          value: data.educationLevel?.localizedLabel ?? '',
         ),
 
         // Description, Requirements, Duties, Benefits - Simple sections
@@ -217,19 +217,19 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
         ],
         if (data.requirement.validate().isNotEmpty) ...[
           _buildSimpleSection(
-            title: "Skills & Requirements",
+            title: languages.lblSkillsAndRequirements,
             content: data.requirement.validate(),
           ),
         ],
         if (data.duties.validate().isNotEmpty) ...[
           _buildSimpleSection(
-            title: "Duties & Responsibilities",
+            title: languages.lblDutiesAndResponsibilities,
             content: data.duties.validate(),
           ),
         ],
         if (data.benefits.validate().isNotEmpty) ...[
           _buildSimpleSection(
-            title: "Benefits",
+            title: languages.lblBenefits,
             content: data.benefits.validate(),
           ),
         ],
@@ -411,7 +411,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                       child: AppButton(
                         padding: EdgeInsets.zero,
                         child: Text(
-                          'View Job',
+                          languages.lblViewJob,
                           style: boldTextStyle(color: white, size: 12),
                         ),
                         color: Colors.transparent,

@@ -24,6 +24,7 @@ import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
+import 'package:handyman_provider_flutter/utils/job_posting_enum_localizations.dart';
 import 'package:nb_utils/nb_utils.dart';
 import '../../components/chat_gpt_loder.dart';
 import '../../models/multi_language_request_model.dart';
@@ -919,7 +920,7 @@ class _AddServicesState extends State<AddServices> {
                     return DropdownMenuItem<RemoteWorkLevel>(
                       value: level,
                       child: Text(
-                        level.displayName,
+                        level.localizedLabel,
                         style: primaryTextStyle(),
                       ),
                     );
@@ -947,7 +948,7 @@ class _AddServicesState extends State<AddServices> {
                     return DropdownMenuItem<CareerLevel>(
                       value: level,
                       child: Text(
-                        level.displayName,
+                        level.localizedLabel,
                         style: primaryTextStyle(),
                       ),
                     );
@@ -975,7 +976,7 @@ class _AddServicesState extends State<AddServices> {
                     return DropdownMenuItem<TravelRequirement>(
                       value: req,
                       child: Text(
-                        req.displayName,
+                        req.localizedLabel,
                         style: primaryTextStyle(),
                       ),
                     );

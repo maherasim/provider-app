@@ -149,6 +149,9 @@ class LanguageDe extends Languages {
   String get notAvailable => 'Nicht verfügbar';
 
   @override
+  String get lblNa => 'k. A.';
+
+  @override
   String get lblGallery => 'Galerie';
 
   @override
@@ -210,6 +213,9 @@ class LanguageDe extends Languages {
 
   @override
   String get lblBooking => 'Buchung';
+
+  @override
+  String get lblBookingsCount => 'Buchungen';
 
   @override
   String get lblTotalBooking => 'Gesamtbuchungen';
@@ -2566,6 +2572,72 @@ class LanguageDe extends Languages {
   String get lblTravelRequiredHint => 'Reisebereitschaft';
 
   @override
+  String get lblRemoteWorkOnsite100 => 'Vor Ort (100 %)';
+
+  @override
+  String get lblRemoteWork25 => '25 % Remote';
+
+  @override
+  String get lblRemoteWork50 => '50 % Remote';
+
+  @override
+  String get lblRemoteWork75 => '75 % Remote';
+
+  @override
+  String get lblRemoteWork100 => '100 % Remote';
+
+  @override
+  String get lblCareerNotSpecified => 'Nicht angegeben';
+
+  @override
+  String get lblCareerEntryLevel => 'Einstiegsniveau';
+
+  @override
+  String get lblCareerIntermediateLevel => 'Mittleres Niveau';
+
+  @override
+  String get lblCareerExperienced => 'Erfahren';
+
+  @override
+  String get lblCareerProfessional => 'Fachkraft';
+
+  @override
+  String get lblCareerMiddleManagement => 'Mittleres Management';
+
+  @override
+  String get lblCareerExecutiveManagement => 'Führungsebene';
+
+  @override
+  String get lblCareerSeniorManagement => 'Senior Management';
+
+  @override
+  String get lblCareerDirector => 'Direktor/in';
+
+  @override
+  String get lblCareerTechnician => 'Techniker/in';
+
+  @override
+  String get lblCareerLeader => 'Teamleitung';
+
+  @override
+  String get lblCareerManager => 'Manager/in';
+
+  @override
+  String get lblEduHighSchool => 'Abitur / Sekundarabschluss';
+
+  @override
+  String get lblEduAssociate => 'Associate Degree';
+
+  @override
+  String get lblEduUndergraduate => 'Bachelor / Grundstudium';
+
+  @override
+  String get lblEduMasters => 'Master / akademischer Grad (Master\'s)';
+
+  @override
+  String get lblEduDoctorate => 'Promotion';
+
+  @override
   String get lblAccountHolderNameHint => 'Kontoinhaber';
 
   @override
@@ -2673,6 +2745,58 @@ class LanguageDe extends Languages {
 
   @override
   String get lblBicSwiftShort => 'BIC/SWIFT';
+
+  @override
+  String get lblPremiumPlansSoon => 'Premium-Tarife demnächst';
+
+  @override
+  String get lblPremiumPlansSoonSubtitle =>
+      'Wir entwickeln Großartiges für Sie. Bleiben Sie dran.';
+
+  @override
+  String get lblBudgetOrPrice => 'Budget / Preis';
+
+  @override
+  String get lblTotalDays => 'Gesamttage';
+
+  @override
+  String get lblTotalHours => 'Gesamtstunden';
+
+  @override
+  String get lblEducationLevel => 'Bildungsniveau';
+
+  @override
+  String get lblSkillsAndRequirements => 'Fähigkeiten & Anforderungen';
+
+  @override
+  String get lblDutiesAndResponsibilities => 'Aufgaben & Verantwortlichkeiten';
+
+  @override
+  String get lblBenefits => 'Vorteile';
+
+  @override
+  String get lblViewJob => 'Auftrag ansehen';
+
+  @override
+  String get lblBidDetails => 'Gebotsdetails';
+
+  @override
+  String get lblWaitingForAdminApproval => 'Warten auf Freigabe durch den Administrator';
+
+  @override
+  String get lblThisBidWasCancelled => 'Dieses Gebot wurde storniert';
+
+  @override
+  String get lblProgressAdvance => 'Anzahlung';
+
+  @override
+  String get lblProgressAdvancePaidShort => 'Anz. erhalten';
+
+  @override
+  String get lblProgressLetsStart => 'Start';
+
+  @override
+  String get lblProgressWork => 'Arbeit';
 
   @override
   String get invoice => 'Rechnung';

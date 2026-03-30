@@ -150,6 +150,9 @@ class LanguageHi extends Languages {
   String get notAvailable => 'उपलब्ध नहीं है';
 
   @override
+  String get lblNa => 'लागू नहीं';
+
+  @override
   String get lblGallery => 'गेलरी';
 
   @override
@@ -211,6 +214,9 @@ class LanguageHi extends Languages {
 
   @override
   String get lblBooking => 'बुकिंग';
+
+  @override
+  String get lblBookingsCount => 'बुकिंग';
 
   @override
   String get lblTotalBooking => 'कुल बुकिंग';
@@ -2566,6 +2572,72 @@ class LanguageHi extends Languages {
   String get lblTravelRequiredHint => 'यात्रा आवश्यक';
 
   @override
+  String get lblRemoteWorkOnsite100 => 'ऑन-साइट (100%)';
+
+  @override
+  String get lblRemoteWork25 => '25% दूरस्थ';
+
+  @override
+  String get lblRemoteWork50 => '50% दूरस्थ';
+
+  @override
+  String get lblRemoteWork75 => '75% दूरस्थ';
+
+  @override
+  String get lblRemoteWork100 => '100% दूरस्थ';
+
+  @override
+  String get lblCareerNotSpecified => 'निर्दिष्ट नहीं';
+
+  @override
+  String get lblCareerEntryLevel => 'प्रवेश स्तर';
+
+  @override
+  String get lblCareerIntermediateLevel => 'मध्यम स्तर';
+
+  @override
+  String get lblCareerExperienced => 'अनुभवी';
+
+  @override
+  String get lblCareerProfessional => 'पेशेवर';
+
+  @override
+  String get lblCareerMiddleManagement => 'मध्यम प्रबंधन';
+
+  @override
+  String get lblCareerExecutiveManagement => 'कार्यकारी प्रबंधन';
+
+  @override
+  String get lblCareerSeniorManagement => 'वरिष्ठ प्रबंधन';
+
+  @override
+  String get lblCareerDirector => 'निदेशक';
+
+  @override
+  String get lblCareerTechnician => 'तकनीशियन';
+
+  @override
+  String get lblCareerLeader => 'लीडर';
+
+  @override
+  String get lblCareerManager => 'प्रबंधक';
+
+  @override
+  String get lblEduHighSchool => 'हाई स्कूल';
+
+  @override
+  String get lblEduAssociate => 'सहयोगी डिग्री';
+
+  @override
+  String get lblEduUndergraduate => 'स्नातक';
+
+  @override
+  String get lblEduMasters => 'स्नातकोत्तर / मास्टर';
+
+  @override
+  String get lblEduDoctorate => 'डॉक्टरेट';
+
+  @override
   String get lblAccountHolderNameHint => 'खाताधारक का नाम';
 
   @override
@@ -2673,6 +2745,58 @@ class LanguageHi extends Languages {
 
   @override
   String get lblBicSwiftShort => 'BIC/Swift';
+
+  @override
+  String get lblPremiumPlansSoon => 'प्रीमियम प्लान जल्द ही';
+
+  @override
+  String get lblPremiumPlansSoonSubtitle =>
+      'हम आपके लिए कुछ बेहतरीन तैयार कर रहे हैं। जुड़े रहें।';
+
+  @override
+  String get lblBudgetOrPrice => 'बजट / मूल्य';
+
+  @override
+  String get lblTotalDays => 'कुल दिन';
+
+  @override
+  String get lblTotalHours => 'कुल घंटे';
+
+  @override
+  String get lblEducationLevel => 'शिक्षा स्तर';
+
+  @override
+  String get lblSkillsAndRequirements => 'कौशल और आवश्यकताएँ';
+
+  @override
+  String get lblDutiesAndResponsibilities => 'कर्तव्य और जिम्मेदारियाँ';
+
+  @override
+  String get lblBenefits => 'लाभ';
+
+  @override
+  String get lblViewJob => 'नौकरी देखें';
+
+  @override
+  String get lblBidDetails => 'बोली विवरण';
+
+  @override
+  String get lblWaitingForAdminApproval => 'व्यवस्थापक अनुमोदन की प्रतीक्षा';
+
+  @override
+  String get lblThisBidWasCancelled => 'यह बोली रद्द कर दी गई';
+
+  @override
+  String get lblProgressAdvance => 'अग्रिम';
+
+  @override
+  String get lblProgressAdvancePaidShort => 'अग्रिम सशुल्क';
+
+  @override
+  String get lblProgressLetsStart => 'शुरू करें';
+
+  @override
+  String get lblProgressWork => 'कार्य';
   
   @override
   String get invoice => 'चालान';

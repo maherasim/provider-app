@@ -5,7 +5,6 @@ import 'package:handyman_provider_flutter/components/price_widget.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/models/service_model.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
-import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../../components/social_icons_list.dart';
@@ -148,12 +147,12 @@ class ServiceComponent extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '${data.totalBookingCount?.validate() ?? 0} Bookings',
+                    '${data.totalBookingCount?.validate() ?? 0} ${languages.lblBookingsCount}',
                     style: primaryTextStyle(size: 10),
                   ),
-              Text(
-                    'Views: ${data.views?.validate() ?? 0}',
-                style: primaryTextStyle(size: 10),
+                  Text(
+                    '${languages.views}: ${data.views?.validate() ?? 0}',
+                    style: primaryTextStyle(size: 10),
                   ),
                 ],
               ).paddingSymmetric(horizontal: 16),

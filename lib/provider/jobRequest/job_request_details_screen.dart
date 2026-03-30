@@ -72,7 +72,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      appBarTitle: 'Bid Details',
+      appBarTitle: languages.lblBidDetails,
       body: SnapHelperWidget<JobRequestDetailResponse?>(
         future: future,
         onSuccess: (data) {
@@ -131,13 +131,13 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
         message = languages.jobCompletedWaitingForCustomer;
         break;
       case RequestStatus.remainingPaymentPending:
-        message = 'Waiting for admin approval';
+        message = languages.lblWaitingForAdminApproval;
         break;
       case RequestStatus.remainingPaid:
         message = languages.paymentCompletedDownloadInvoice;
         break;
       case RequestStatus.cancel:
-        message = "This bid was cancelled";
+        message = languages.lblThisBidWasCancelled;
         break;
     }
 
@@ -200,7 +200,13 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
 
     Widget _progressSteps() {
       final activeTill = currentStep();
-      final labels = ['Accept', 'Advance', 'Advance P.', "Let's Start", 'Work'];
+      final labels = [
+        languages.accept,
+        languages.lblProgressAdvance,
+        languages.lblProgressAdvancePaidShort,
+        languages.lblProgressLetsStart,
+        languages.lblProgressWork,
+      ];
       return Column(
         children: [
           Row(

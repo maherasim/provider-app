@@ -26,6 +26,7 @@ import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart
 import 'package:handyman_provider_flutter/utils/images.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
+import 'package:handyman_provider_flutter/utils/job_posting_enum_localizations.dart';
 import 'package:handyman_provider_flutter/utils/language_options.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
@@ -1212,7 +1213,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             return DropdownMenuItem<CareerLevel>(
                               value: level,
                               child: Text(
-                                level.displayName,
+                                level.localizedLabel,
                                 style: primaryTextStyle(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,

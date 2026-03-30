@@ -59,7 +59,9 @@ class _JobItemWidgetState extends State<JobItemWidget> {
                       borderRadius: radius(20),
                     ),
                     child: Text(
-                      widget.data.status == RequestStatus.confirmDone ? 'Completed' : widget.data.status.displayName,
+                      widget.data.status == RequestStatus.confirmDone
+                          ? languages.completed
+                          : widget.data.status.displayName,
                       style: boldTextStyle(color: Colors.white, size: 12),
                     ),
                   ),
@@ -154,7 +156,7 @@ class _JobItemWidgetState extends State<JobItemWidget> {
                           6.width,
                           Flexible(
                             child: Text(
-                              "Views: ${widget.data.totalViews ?? 0}",
+                              '${languages.views}: ${widget.data.totalViews ?? 0}',
                               style: secondaryTextStyle(),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -170,7 +172,7 @@ class _JobItemWidgetState extends State<JobItemWidget> {
                           6.width,
                           Flexible(
                             child: Text(
-                              "Proposals: ${widget.data.proposalsCount ?? 0}",
+                              '${languages.lblProposals}: ${widget.data.proposalsCount ?? 0}',
                               style: secondaryTextStyle(),
                               overflow: TextOverflow.ellipsis,
                             ),

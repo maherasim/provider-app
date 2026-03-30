@@ -149,6 +149,9 @@ class LanguageAr extends Languages {
   String get notAvailable => 'غير متوفر';
 
   @override
+  String get lblNa => 'غير متاح';
+
+  @override
   String get lblGallery => 'الصور';
 
   @override
@@ -210,6 +213,9 @@ class LanguageAr extends Languages {
 
   @override
   String get lblBooking => 'الحجز';
+
+  @override
+  String get lblBookingsCount => 'حجوزات';
 
   @override
   String get lblTotalBooking => 'مجموع حجوزات';
@@ -2566,6 +2572,72 @@ class LanguageAr extends Languages {
   String get lblTravelRequiredHint => 'السفر مطلوب';
 
   @override
+  String get lblRemoteWorkOnsite100 => 'في الموقع (100٪)';
+
+  @override
+  String get lblRemoteWork25 => 'عن بُعد 25٪';
+
+  @override
+  String get lblRemoteWork50 => 'عن بُعد 50٪';
+
+  @override
+  String get lblRemoteWork75 => 'عن بُعد 75٪';
+
+  @override
+  String get lblRemoteWork100 => 'عن بُعد 100٪';
+
+  @override
+  String get lblCareerNotSpecified => 'غير محدد';
+
+  @override
+  String get lblCareerEntryLevel => 'مستوى مبتدئ';
+
+  @override
+  String get lblCareerIntermediateLevel => 'مستوى متوسط';
+
+  @override
+  String get lblCareerExperienced => 'ذو خبرة';
+
+  @override
+  String get lblCareerProfessional => 'محترف';
+
+  @override
+  String get lblCareerMiddleManagement => 'إدارة متوسطة';
+
+  @override
+  String get lblCareerExecutiveManagement => 'إدارة تنفيذية';
+
+  @override
+  String get lblCareerSeniorManagement => 'إدارة عليا';
+
+  @override
+  String get lblCareerDirector => 'مدير';
+
+  @override
+  String get lblCareerTechnician => 'فني';
+
+  @override
+  String get lblCareerLeader => 'قائد';
+
+  @override
+  String get lblCareerManager => 'مدير';
+
+  @override
+  String get lblEduHighSchool => 'ثانوي';
+
+  @override
+  String get lblEduAssociate => 'درجة مشارك';
+
+  @override
+  String get lblEduUndergraduate => 'بكالوريوس';
+
+  @override
+  String get lblEduMasters => 'ماجستير / دراسات عليا';
+
+  @override
+  String get lblEduDoctorate => 'دكتوراه';
+
+  @override
   String get lblAccountHolderNameHint => 'اسم صاحب الحساب';
 
   @override
@@ -2673,6 +2745,58 @@ class LanguageAr extends Languages {
 
   @override
   String get lblBicSwiftShort => 'BIC/Swift';
+
+  @override
+  String get lblPremiumPlansSoon => 'خطط مميزة قريبًا';
+
+  @override
+  String get lblPremiumPlansSoonSubtitle =>
+      'نبني لك شيئًا رائعًا. ترقّب المزيد.';
+
+  @override
+  String get lblBudgetOrPrice => 'الميزانية / السعر';
+
+  @override
+  String get lblTotalDays => 'إجمالي الأيام';
+
+  @override
+  String get lblTotalHours => 'إجمالي الساعات';
+
+  @override
+  String get lblEducationLevel => 'المستوى التعليمي';
+
+  @override
+  String get lblSkillsAndRequirements => 'المهارات والمتطلبات';
+
+  @override
+  String get lblDutiesAndResponsibilities => 'الواجبات والمسؤوليات';
+
+  @override
+  String get lblBenefits => 'المزايا';
+
+  @override
+  String get lblViewJob => 'عرض الطلب';
+
+  @override
+  String get lblBidDetails => 'تفاصيل العرض';
+
+  @override
+  String get lblWaitingForAdminApproval => 'في انتظار موافقة المسؤول';
+
+  @override
+  String get lblThisBidWasCancelled => 'تم إلغاء هذا العرض';
+
+  @override
+  String get lblProgressAdvance => 'دفعة مقدمة';
+
+  @override
+  String get lblProgressAdvancePaidShort => 'تم الدفع المقدم';
+
+  @override
+  String get lblProgressLetsStart => 'لنبدأ';
+
+  @override
+  String get lblProgressWork => 'العمل';
   
   @override
   String get invoice => 'فاتورة';

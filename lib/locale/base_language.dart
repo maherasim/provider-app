@@ -101,6 +101,9 @@ abstract class Languages {
 
   String get notAvailable;
 
+  /// Short placeholder when a value is missing (e.g. location).
+  String get lblNa;
+
   String get lblGallery;
 
   String get cantLogin;
@@ -142,6 +145,9 @@ abstract class Languages {
   String get lblAddHandyman;
 
   String get lblBooking;
+
+  /// Plural/stat label for counts (e.g. list card "12 …").
+  String get lblBookingsCount;
 
   String get lblTotalBooking;
 
@@ -1677,6 +1683,34 @@ abstract class Languages {
 
   String get lblTravelRequiredHint;
 
+  /// Remote work level dropdown values (maps to [RemoteWorkLevel] enum).
+  String get lblRemoteWorkOnsite100;
+  String get lblRemoteWork25;
+  String get lblRemoteWork50;
+  String get lblRemoteWork75;
+  String get lblRemoteWork100;
+
+  /// Career level dropdown values (maps to [CareerLevel] enum).
+  String get lblCareerNotSpecified;
+  String get lblCareerEntryLevel;
+  String get lblCareerIntermediateLevel;
+  String get lblCareerExperienced;
+  String get lblCareerProfessional;
+  String get lblCareerMiddleManagement;
+  String get lblCareerExecutiveManagement;
+  String get lblCareerSeniorManagement;
+  String get lblCareerDirector;
+  String get lblCareerTechnician;
+  String get lblCareerLeader;
+  String get lblCareerManager;
+
+  /// Education level labels for job detail (maps to [EducationLevel] enum).
+  String get lblEduHighSchool;
+  String get lblEduAssociate;
+  String get lblEduUndergraduate;
+  String get lblEduMasters;
+  String get lblEduDoctorate;
+
   String get lblAccountHolderNameHint;
 
   String get lblMobileNumberHint;
@@ -1748,6 +1782,40 @@ abstract class Languages {
   String get lblIban;
 
   String get lblBicSwiftShort;
+
+  String get lblPremiumPlansSoon;
+
+  String get lblPremiumPlansSoonSubtitle;
+
+  String get lblBudgetOrPrice;
+
+  String get lblTotalDays;
+
+  String get lblTotalHours;
+
+  String get lblEducationLevel;
+
+  String get lblSkillsAndRequirements;
+
+  String get lblDutiesAndResponsibilities;
+
+  String get lblBenefits;
+
+  String get lblViewJob;
+
+  String get lblBidDetails;
+
+  String get lblWaitingForAdminApproval;
+
+  String get lblThisBidWasCancelled;
+
+  String get lblProgressAdvance;
+
+  String get lblProgressAdvancePaidShort;
+
+  String get lblProgressLetsStart;
+
+  String get lblProgressWork;
 
   String get doYouWantToHoldThisBid;
   

@@ -988,14 +988,14 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     12.height,
                     Text(languages.lblCompanyInformation, style: boldTextStyle(size: 16)),
                     12.height,
-                    // Company Name - Required
+                    // Company Name - Optional
                     AppTextField(
                       textFieldType: TextFieldType.NAME,
                       controller: companyNameCont,
                       focus: companyNameFocus,
                       nextFocus: vatNumberFocus,
                       enabled: true,
-                      isValidationRequired: true,
+                      isValidationRequired: false,
                       decoration: inputDecoration(
                         context,
                         hint: languages.lblCompanyNameHint,
@@ -1022,14 +1022,14 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     12.height,
                     Text(languages.lblProfessionalDetails, style: boldTextStyle(size: 16)),
                     12.height,
-                    // Skills - Text Input (Required)
+                    // Skills - Text Input (Optional)
                     AppTextField(
                       textFieldType: TextFieldType.NAME,
                       controller: skillsCont,
                       focus: skillsFocus,
                       nextFocus: experienceFocus,
                       enabled: true,
-                      isValidationRequired: true,
+                      isValidationRequired: false,
                       decoration: inputDecoration(
                         context,
                         hint: languages.lblSkillsHint,
@@ -1054,14 +1054,14 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       ),
                     ),
                     16.height,
-                    // Mobility - Text Input (Required)
+                    // Mobility - Text Input (Optional)
                     AppTextField(
                       textFieldType: TextFieldType.NAME,
                       controller: mobilityCont,
                       focus: mobilityFocus,
                       nextFocus: certificationFocus,
                       enabled: true,
-                      isValidationRequired: true,
+                      isValidationRequired: false,
                       decoration: inputDecoration(
                         context,
                         hint: languages.lblMobilityShortHint,
@@ -1069,14 +1069,14 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       ),
                     ),
                     16.height,
-                    // Certification - Text Input (Required)
+                    // Certification - Text Input (Optional)
                     AppTextField(
                       textFieldType: TextFieldType.NAME,
                       controller: certificationCont,
                       focus: certificationFocus,
                       nextFocus: mobileFocus,
                       enabled: true,
-                      isValidationRequired: true,
+                      isValidationRequired: false,
                       decoration: inputDecoration(
                         context,
                         hint: languages.lblCertificationShortHint,
@@ -1548,14 +1548,14 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     12.height,
                     Text(languages.lblEducationAndBio, style: boldTextStyle(size: 16)),
                     12.height,
-                    // Education - Text Input (Required)
+                    // Education - Text Input (Optional)
                     AppTextField(
                       textFieldType: TextFieldType.NAME,
                       controller: educationCont,
                       focus: educationFocus,
                       nextFocus: aboutMeFocus,
                       enabled: true,
-                      isValidationRequired: true,
+                      isValidationRequired: false,
                       decoration: inputDecoration(
                         context,
                         hint: languages.lblEducationHint,

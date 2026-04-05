@@ -995,7 +995,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       focus: companyNameFocus,
                       nextFocus: vatNumberFocus,
                       enabled: true,
-                      isValidationRequired: true,
+                      isValidationRequired: false,
                       decoration: inputDecoration(
                         context,
                         hint: 'Company Name',
@@ -1029,7 +1029,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       focus: skillsFocus,
                       nextFocus: experienceFocus,
                       enabled: true,
-                      isValidationRequired: true,
+                      isValidationRequired: false,
                       decoration: inputDecoration(
                         context,
                         hint: 'Skills',
@@ -1061,7 +1061,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       focus: mobilityFocus,
                       nextFocus: certificationFocus,
                       enabled: true,
-                      isValidationRequired: true,
+                      isValidationRequired: false,
                       decoration: inputDecoration(
                         context,
                         hint: 'Mobility',
@@ -1076,7 +1076,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       focus: certificationFocus,
                       nextFocus: mobileFocus,
                       enabled: true,
-                      isValidationRequired: true,
+                      isValidationRequired: false,
                       decoration: inputDecoration(
                         context,
                         hint: 'Certification',
@@ -1555,7 +1555,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       focus: educationFocus,
                       nextFocus: aboutMeFocus,
                       enabled: true,
-                      isValidationRequired: true,
+                      isValidationRequired: false,
                       decoration: inputDecoration(
                         context,
                         hint: 'Education',

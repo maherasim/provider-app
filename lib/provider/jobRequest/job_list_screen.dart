@@ -69,6 +69,10 @@ class _JobListScreenState extends State<JobListScreen> {
                 ),
                 itemBuilder: (_, i) => JobItemWidget(
                   data: data[i],
+                  onRefreshList: () {
+                    init();
+                    setState(() {});
+                  },
                   onBidTap: () async {
                     bool? res = await showInDialog(
                       context,

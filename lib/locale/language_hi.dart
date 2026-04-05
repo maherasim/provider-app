@@ -2800,4 +2800,48 @@ class LanguageHi extends Languages {
   
   @override
   String get invoice => 'चालान';
+
+  @override
+  String get lblReportJob => 'रिपोर्ट करें';
+
+  @override
+  String get lblBlock => 'ब्लॉक करें';
+
+  @override
+  String get lblBlockCustomer => 'ग्राहक को ब्लॉक करें';
+
+  @override
+  String get lblReportJobTitle => 'इस सूची की रिपोर्ट करें';
+
+  @override
+  String get lblReportDetailsHint =>
+      'मॉडरेटर्स के लिए अतिरिक्त विवरण (वैकल्पिक, अधिकतम 2000 अक्षर)';
+
+  @override
+  String get lblSubmitReport => 'रिपोर्ट भेजें';
+
+  @override
+  String get lblSelectReportReason => 'कारण';
+
+  @override
+  String get lblBlockCustomerConfirmTitle => 'इस ग्राहक को ब्लॉक करें?';
+
+  @override
+  String get lblBlockCustomerConfirmMessage =>
+      'जहाँ ब्लॉक समर्थित है, आपको इस व्यक्ति की नौकरी सूचियाँ अब दिखाई नहीं देंगी। गलती होने पर सहायता से संपर्क करें।';
+
+  @override
+  String get lblReportReasonSpam => 'स्पैम या भ्रामक';
+
+  @override
+  String get lblReportReasonHarassment => 'उत्पीड़न या दुरुपयोग';
+
+  @override
+  String get lblReportReasonInappropriate => 'अनुचित सामग्री';
+
+  @override
+  String get lblReportReasonFraud => 'घोटाला या धोखा';
+
+  @override
+  String get lblReportReasonOther => 'अन्य';
 }

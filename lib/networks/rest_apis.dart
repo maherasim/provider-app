@@ -26,7 +26,6 @@ import 'package:handyman_provider_flutter/models/login_response.dart';
 import 'package:handyman_provider_flutter/models/notification_list_response.dart';
 import 'package:handyman_provider_flutter/models/payment_history_response.dart';
 import 'package:handyman_provider_flutter/models/payment_list_reasponse.dart';
-import 'package:handyman_provider_flutter/models/post_job_payment_data.dart';
 import 'package:handyman_provider_flutter/models/plan_list_response.dart';
 import 'package:handyman_provider_flutter/models/plan_request_model.dart';
 import 'package:handyman_provider_flutter/models/profile_update_response.dart';
@@ -1535,6 +1534,35 @@ Future<List<PostJobData>> getProviderJobList(int page, {var perPage = PER_PAGE_I
   }
 
   return postJobList;
+}
+
+/// POST `/api/ugc/report-post-job`
+Future<BaseResponseModel> reportPostJob({
+  required int postJobId,
+  required String reason,
+  String? details,
+}) async {
+  final Map<String, dynamic> req = {
+    'post_job_id': postJobId,
+    'reason': reason,
+  };
+  if (details != null && details.isNotEmpty) {
+    req['details'] = details;
+  }
+  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse(
+    'ugc/report-post-job',
+    request: req,
+    method: HttpMethodType.POST,
+  )));
+}
+
+/// POST `/api/ugc/block` — [blockedUserId] is the customer's user id (job poster).
+Future<BaseResponseModel> blockPosterUser({required int blockedUserId}) async {
+  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse(
+    'ugc/block',
+    request: {'blocked_user_id': blockedUserId},
+    method: HttpMethodType.POST,
+  )));
 }
 
 Future<PostJobDetailResponse> getPostJobDetail(Map request) async {

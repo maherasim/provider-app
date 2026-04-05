@@ -1846,4 +1846,20 @@ abstract class Languages {
   String get whyChooseMe;
 
   String get invoice;
+
+  /// Provider job list — report / block (UGC APIs)
+  String get lblReportJob;
+  String get lblBlock;
+  String get lblBlockCustomer;
+  String get lblReportJobTitle;
+  String get lblReportDetailsHint;
+  String get lblSubmitReport;
+  String get lblSelectReportReason;
+  String get lblBlockCustomerConfirmTitle;
+  String get lblBlockCustomerConfirmMessage;
+  String get lblReportReasonSpam;
+  String get lblReportReasonHarassment;
+  String get lblReportReasonInappropriate;
+  String get lblReportReasonFraud;
+  String get lblReportReasonOther;
 }

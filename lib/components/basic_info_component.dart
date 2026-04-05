@@ -459,7 +459,7 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
                         final String country = customerData?.countryName.validate() ?? '';
                         final String locationText = [city, country].where((e) => e.isNotEmpty).join(' - ');
                         return Text(
-                          locationText.isNotEmpty ? locationText : widget.bookingDetail!.address.validate(),
+                          locationText.isNotEmpty ? locationText : languages.lblNa,
                           style: boldTextStyle(
                               size: 12,
                               color: appStore.isDarkMode ? white : textSecondaryColor,

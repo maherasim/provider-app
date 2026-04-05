@@ -150,6 +150,9 @@ class LanguageEn extends Languages {
   String get notAvailable => 'Not Available';
 
   @override
+  String get lblNa => 'N/A';
+
+  @override
   String get lblGallery => "Gallery";
 
   @override
@@ -292,6 +295,9 @@ class LanguageEn extends Languages {
 
   @override
   String get lblChat => 'Chat';
+
+  @override
+  String get lblDirectMessage => 'Direct message';
 
   @override
   String get lblJob => 'Jobs';

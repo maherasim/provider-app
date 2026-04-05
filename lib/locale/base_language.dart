@@ -101,6 +101,9 @@ abstract class Languages {
 
   String get notAvailable;
 
+  /// Short placeholder when a value is missing (e.g. city/country).
+  String get lblNa;
+
   String get lblGallery;
 
   String get cantLogin;
@@ -196,6 +199,10 @@ abstract class Languages {
   String get lblAllService;
 
   String get lblChat;
+
+  /// Chat thread title when opening DM with customer/provider.
+  String get lblDirectMessage;
+
   String get lblJob;
 
   String get selectAddress;

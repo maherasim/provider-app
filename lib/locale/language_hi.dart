@@ -150,6 +150,9 @@ class LanguageHi extends Languages {
   String get notAvailable => 'उपलब्ध नहीं है';
 
   @override
+  String get lblNa => 'लागू नहीं';
+
+  @override
   String get lblGallery => 'गेलरी';
 
   @override
@@ -292,6 +295,9 @@ class LanguageHi extends Languages {
 
   @override
   String get lblChat => 'चैट';
+
+  @override
+  String get lblDirectMessage => 'सीधा संदेश';
 
   @override
   String get lblJob => 'नौकरी';

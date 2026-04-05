@@ -149,6 +149,9 @@ class LanguageDe extends Languages {
   String get notAvailable => 'Nicht verfügbar';
 
   @override
+  String get lblNa => 'k. A.';
+
+  @override
   String get lblGallery => 'Galerie';
 
   @override
@@ -291,6 +294,9 @@ class LanguageDe extends Languages {
 
   @override
   String get lblChat => 'Plaudern';
+
+  @override
+  String get lblDirectMessage => 'Direktnachricht';
 
   @override
   String get lblJob => 'Arbeit';

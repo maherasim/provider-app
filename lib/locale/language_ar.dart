@@ -149,6 +149,9 @@ class LanguageAr extends Languages {
   String get notAvailable => 'غير متوفر';
 
   @override
+  String get lblNa => 'غير متاح';
+
+  @override
   String get lblGallery => 'الصور';
 
   @override
@@ -291,6 +294,9 @@ class LanguageAr extends Languages {
 
   @override
   String get lblChat => 'دردشة';
+
+  @override
+  String get lblDirectMessage => 'رسالة مباشرة';
 
   @override
   String get lblJob => 'وظائف';

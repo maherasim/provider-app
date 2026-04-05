@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:handyman_provider_flutter/main.dart';
+import 'package:handyman_provider_flutter/networks/rest_apis.dart';
+import 'package:handyman_provider_flutter/provider/jobRequest/components/job_report_dialog.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/job_request_details_screen.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -13,13 +15,69 @@ import '../models/post_job_data.dart';
 class JobItemWidget extends StatefulWidget {
   final PostJobData data;
   final Function()? onBidTap;
-  const JobItemWidget({required this.data, Key? key, this.onBidTap}) : super(key: key);
+  final VoidCallback? onRefreshList;
+
+  const JobItemWidget({
+    required this.data,
+    Key? key,
+    this.onBidTap,
+    this.onRefreshList,
+  }) : super(key: key);
 
   @override
   State<JobItemWidget> createState() => _JobItemWidgetState();
 }
 
 class _JobItemWidgetState extends State<JobItemWidget> {
+  Future<void> _openReportDialog() async {
+    final id = widget.data.id?.toInt();
+    if (id == null || id == 0) {
+      toast(errorSomethingWentWrong);
+      return;
+    }
+    await showInDialog(
+      context,
+      contentPadding: EdgeInsets.zero,
+      backgroundColor: Colors.transparent,
+      hideSoftKeyboard: true,
+      builder: (_) => JobReportDialog(postJobId: id),
+    );
+  }
+
+  void _confirmBlockCustomer() {
+    final raw = widget.data.customerId;
+    if (raw == null || raw.toInt() == 0) {
+      toast(errorSomethingWentWrong);
+      return;
+    }
+    final blockedUserId = raw.toInt();
+    showConfirmDialogCustom(
+      context,
+      title: languages.lblBlockCustomerConfirmTitle,
+      subTitle: languages.lblBlockCustomerConfirmMessage,
+      primaryColor: context.primaryColor,
+      positiveText: languages.lblBlock,
+      negativeText: languages.lblCancel,
+      onAccept: (ctx) async {
+        try {
+          final res = await blockPosterUser(blockedUserId: blockedUserId);
+          toast(res.message.validate());
+          widget.onRefreshList?.call();
+        } catch (e) {
+          toast(e.toString(), print: true);
+        }
+      },
+    );
+  }
+
+  void _onMenuSelected(String value) {
+    if (value == 'report') {
+      _openReportDialog();
+    } else if (value == 'block') {
+      _confirmBlockCustomer();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -84,6 +142,38 @@ class _JobItemWidgetState extends State<JobItemWidget> {
                           hourlyTextColor: Colors.white,
                           isFreeService: false,
                           size: 14,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Material(
+                    color: Colors.black.withValues(alpha: 0.42),
+                    borderRadius: BorderRadius.circular(20),
+                    clipBehavior: Clip.antiAlias,
+                    child: PopupMenuButton<String>(
+                      padding: EdgeInsets.zero,
+                      offset: Offset(0, 36),
+                      color: context.cardColor,
+                      icon: Icon(Icons.more_vert, color: Colors.white, size: 22),
+                      onSelected: _onMenuSelected,
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: 'report',
+                          child: Text(
+                            languages.lblReportJob,
+                            style: primaryTextStyle(),
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 'block',
+                          child: Text(
+                            languages.lblBlockCustomer,
+                            style: primaryTextStyle(),
+                          ),
                         ),
                       ],
                     ),

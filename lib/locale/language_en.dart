@@ -2458,5 +2458,47 @@ class LanguageEn extends Languages {
   @override
   String get invoice => 'Invoice';
 
+  @override
+  String get lblReportJob => 'Report';
 
+  @override
+  String get lblBlock => 'Block';
+
+  @override
+  String get lblBlockCustomer => 'Block customer';
+
+  @override
+  String get lblReportJobTitle => 'Report this listing';
+
+  @override
+  String get lblReportDetailsHint =>
+      'Additional details for moderators (optional, max 2000 characters)';
+
+  @override
+  String get lblSubmitReport => 'Submit report';
+
+  @override
+  String get lblSelectReportReason => 'Reason';
+
+  @override
+  String get lblBlockCustomerConfirmTitle => 'Block this customer?';
+
+  @override
+  String get lblBlockCustomerConfirmMessage =>
+      'You will stop seeing this person\'s job listings where blocking is supported. You can contact support if this was a mistake.';
+
+  @override
+  String get lblReportReasonSpam => 'Spam or misleading';
+
+  @override
+  String get lblReportReasonHarassment => 'Harassment or abuse';
+
+  @override
+  String get lblReportReasonInappropriate => 'Inappropriate content';
+
+  @override
+  String get lblReportReasonFraud => 'Scam or fraud';
+
+  @override
+  String get lblReportReasonOther => 'Other';
 }

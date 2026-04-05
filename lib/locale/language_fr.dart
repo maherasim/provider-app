@@ -2462,4 +2462,48 @@ class LanguageFr extends Languages {
   
   @override
   String get invoice => 'Facture';
+
+  @override
+  String get lblReportJob => 'Signaler';
+
+  @override
+  String get lblBlock => 'Bloquer';
+
+  @override
+  String get lblBlockCustomer => 'Bloquer le client';
+
+  @override
+  String get lblReportJobTitle => 'Signaler cette annonce';
+
+  @override
+  String get lblReportDetailsHint =>
+      'Détails supplémentaires pour la modération (facultatif, max 2000 caractères)';
+
+  @override
+  String get lblSubmitReport => 'Envoyer le signalement';
+
+  @override
+  String get lblSelectReportReason => 'Motif';
+
+  @override
+  String get lblBlockCustomerConfirmTitle => 'Bloquer ce client ?';
+
+  @override
+  String get lblBlockCustomerConfirmMessage =>
+      'Vous ne verrez plus les annonces de cette personne lorsque le blocage est pris en charge. Contactez le support en cas d\'erreur.';
+
+  @override
+  String get lblReportReasonSpam => 'Spam ou contenu trompeur';
+
+  @override
+  String get lblReportReasonHarassment => 'Harcèlement ou abus';
+
+  @override
+  String get lblReportReasonInappropriate => 'Contenu inapproprié';
+
+  @override
+  String get lblReportReasonFraud => 'Arnaque ou fraude';
+
+  @override
+  String get lblReportReasonOther => 'Autre';
 }

@@ -1537,6 +1537,35 @@ Future<List<PostJobData>> getProviderJobList(int page, {var perPage = PER_PAGE_I
   return postJobList;
 }
 
+/// POST `/api/ugc/report-post-job`
+Future<BaseResponseModel> reportPostJob({
+  required int postJobId,
+  required String reason,
+  String? details,
+}) async {
+  final Map<String, dynamic> req = {
+    'post_job_id': postJobId,
+    'reason': reason,
+  };
+  if (details != null && details.isNotEmpty) {
+    req['details'] = details;
+  }
+  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse(
+    'ugc/report-post-job',
+    request: req,
+    method: HttpMethodType.POST,
+  )));
+}
+
+/// POST `/api/ugc/block` — [blockedUserId] is the customer's user id (job poster).
+Future<BaseResponseModel> blockPosterUser({required int blockedUserId}) async {
+  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse(
+    'ugc/block',
+    request: {'blocked_user_id': blockedUserId},
+    method: HttpMethodType.POST,
+  )));
+}
+
 Future<PostJobDetailResponse> getPostJobDetail(Map request) async {
   try {
     var res = PostJobDetailResponse.fromJson(await handleResponse(await buildHttpResponse('get-post-job-detail', request: request, method: HttpMethodType.POST)));

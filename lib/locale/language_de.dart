@@ -2462,4 +2462,48 @@ class LanguageDe extends Languages {
   
   @override
   String get invoice => 'Rechnung';
+
+  @override
+  String get lblReportJob => 'Melden';
+
+  @override
+  String get lblBlock => 'Blockieren';
+
+  @override
+  String get lblBlockCustomer => 'Kunden blockieren';
+
+  @override
+  String get lblReportJobTitle => 'Dieses Inserat melden';
+
+  @override
+  String get lblReportDetailsHint =>
+      'Zusätzliche Details für Moderatoren (optional, max. 2000 Zeichen)';
+
+  @override
+  String get lblSubmitReport => 'Meldung senden';
+
+  @override
+  String get lblSelectReportReason => 'Grund';
+
+  @override
+  String get lblBlockCustomerConfirmTitle => 'Diesen Kunden blockieren?';
+
+  @override
+  String get lblBlockCustomerConfirmMessage =>
+      'Sie sehen die Stellenanzeigen dieser Person nicht mehr, wo Blockieren unterstützt wird. Bei Irrtum wenden Sie sich an den Support.';
+
+  @override
+  String get lblReportReasonSpam => 'Spam oder irreführend';
+
+  @override
+  String get lblReportReasonHarassment => 'Belästigung oder Missbrauch';
+
+  @override
+  String get lblReportReasonInappropriate => 'Unangemessene Inhalte';
+
+  @override
+  String get lblReportReasonFraud => 'Betrug oder Abzocke';
+
+  @override
+  String get lblReportReasonOther => 'Sonstiges';
 }

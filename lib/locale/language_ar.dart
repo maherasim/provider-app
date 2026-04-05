@@ -2463,4 +2463,47 @@ class LanguageAr extends Languages {
   @override
   String get invoice => 'فاتورة';
 
+  @override
+  String get lblReportJob => 'إبلاغ';
+
+  @override
+  String get lblBlock => 'حظر';
+
+  @override
+  String get lblBlockCustomer => 'حظر العميل';
+
+  @override
+  String get lblReportJobTitle => 'الإبلاغ عن هذا الإعلان';
+
+  @override
+  String get lblReportDetailsHint =>
+      'تفاصيل إضافية للمشرفين (اختياري، بحد أقصى 2000 حرف)';
+
+  @override
+  String get lblSubmitReport => 'إرسال البلاغ';
+
+  @override
+  String get lblSelectReportReason => 'السبب';
+
+  @override
+  String get lblBlockCustomerConfirmTitle => 'حظر هذا العميل؟';
+
+  @override
+  String get lblBlockCustomerConfirmMessage =>
+      'لن ترى بعد الآن قوائم وظائف هذا الشخص حيث يدعم التطبيق الحظر. تواصل مع الدعم في حال الخطأ.';
+
+  @override
+  String get lblReportReasonSpam => 'بريد مزعج أو مضلل';
+
+  @override
+  String get lblReportReasonHarassment => 'مضايقة أو إساءة';
+
+  @override
+  String get lblReportReasonInappropriate => 'محتوى غير لائق';
+
+  @override
+  String get lblReportReasonFraud => 'احتيال أو نصب';
+
+  @override
+  String get lblReportReasonOther => 'أخرى';
 }

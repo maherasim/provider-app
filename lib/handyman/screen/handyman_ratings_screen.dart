@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:handyman_provider_flutter/components/app_widgets.dart';
 import 'package:handyman_provider_flutter/components/back_widget.dart';
 import 'package:handyman_provider_flutter/components/cached_image_widget.dart';
+import 'package:handyman_provider_flutter/components/review_report_dialog.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/models/handyman_rating_model.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
@@ -29,6 +30,19 @@ class _HandymanRatingsScreenState extends State<HandymanRatingsScreen> {
   void initState() {
     super.initState();
     init();
+  }
+
+  Future<void> _openReviewReportDialog({required int reviewId}) async {
+    await showInDialog(
+      context,
+      contentPadding: EdgeInsets.zero,
+      backgroundColor: Colors.transparent,
+      hideSoftKeyboard: true,
+      builder: (_) => ReviewReportDialog(
+        reviewId: reviewId,
+        reviewType: 'booking_rating',
+      ),
+    );
   }
 
   void init() async {
@@ -203,16 +217,30 @@ class _HandymanRatingsScreenState extends State<HandymanRatingsScreen> {
           Divider(color: context.dividerColor, height: 20, thickness: 1),
           // Rating and Review Section
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Star Rating
               _buildStarRating(data.rating.validate()),
               8.width,
-              // Booking ID
               Text(
                 '#${data.bookingId.validate()}',
                 style: secondaryTextStyle(size: 12),
               ),
+              const Spacer(),
+              if (data.id != null)
+                IconButton(
+                  tooltip: languages.lblReportReviewTitle,
+                  padding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
+                  constraints:
+                      const BoxConstraints(minWidth: 32, minHeight: 32),
+                  icon: Icon(
+                    Icons.flag_outlined,
+                    color: Colors.red,
+                    size: 20,
+                  ),
+                  onPressed: () =>
+                      _openReviewReportDialog(reviewId: data.id!),
+                ),
             ],
           ),
           12.height,

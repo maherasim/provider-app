@@ -2844,4 +2844,14 @@ class LanguageAr extends Languages {
 
   @override
   String get lblReportReasonOther => 'أخرى';
+
+  @override
+  String get lblReportProfileTitle => 'الإبلاغ عن الملف الشخصي';
+
+  @override
+  String get lblReportProfileNoReasons =>
+      'لا تتوفر أسباب للإبلاغ. يُرجى المحاولة لاحقًا.';
+
+  @override
+  String get lblReportReviewTitle => 'الإبلاغ عن التقييم';
 }

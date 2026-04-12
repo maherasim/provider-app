@@ -1862,4 +1862,9 @@ abstract class Languages {
   String get lblReportReasonInappropriate;
   String get lblReportReasonFraud;
   String get lblReportReasonOther;
+
+  /// UGC profile / review reporting
+  String get lblReportProfileTitle;
+  String get lblReportProfileNoReasons;
+  String get lblReportReviewTitle;
 }

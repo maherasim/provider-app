@@ -2839,4 +2839,14 @@ class LanguageEn extends Languages {
 
   @override
   String get lblReportReasonOther => 'Other';
+
+  @override
+  String get lblReportProfileTitle => 'Report profile';
+
+  @override
+  String get lblReportProfileNoReasons =>
+      'No report reasons are available. Please try again later.';
+
+  @override
+  String get lblReportReviewTitle => 'Report review';
 }

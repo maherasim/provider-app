@@ -5,6 +5,8 @@ import 'package:handyman_provider_flutter/components/base_scaffold_widget.dart';
 import 'package:handyman_provider_flutter/components/disabled_rating_bar_widget.dart';
 import 'package:handyman_provider_flutter/components/empty_error_state_widget.dart';
 import 'package:handyman_provider_flutter/components/price_widget.dart';
+import 'package:handyman_provider_flutter/components/profile_report_dialog.dart';
+import 'package:handyman_provider_flutter/components/review_report_dialog.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/components/extra_charges_dialog.dart';
@@ -51,8 +53,36 @@ class JobRequestDetailsScreen extends StatefulWidget {
 }
 
 class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
+  /// Customer-authored review (`post_job_bid_customer_ratings`) — provider reports from Employer Review.
+  static const String _ugcReviewTypePostJobBidCustomerRating =
+      'post_job_bid_customer_rating';
+
   Future<JobRequestDetailResponse?>? future;
   JobRequestDetailResponse? postJobDetail;
+
+  Future<void> _openProfileReportDialog(int reportedUserId) async {
+    await showInDialog(
+      context,
+      contentPadding: EdgeInsets.zero,
+      backgroundColor: Colors.transparent,
+      hideSoftKeyboard: true,
+      builder: (_) => ProfileReportDialog(reportedUserId: reportedUserId),
+    );
+  }
+
+  Future<void> _openReviewReportDialog({
+    required int reviewId,
+    required String reviewType,
+  }) async {
+    await showInDialog(
+      context,
+      contentPadding: EdgeInsets.zero,
+      backgroundColor: Colors.transparent,
+      hideSoftKeyboard: true,
+      builder: (_) =>
+          ReviewReportDialog(reviewId: reviewId, reviewType: reviewType),
+    );
+  }
 
   @override
   void initState() {
@@ -331,7 +361,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                 crossAxisCount: 2,
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                childAspectRatio: 2.2,
+                childAspectRatio: 1.92,
                 crossAxisSpacing: 8,
                 mainAxisSpacing: 8,
                 children: [
@@ -391,12 +421,14 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                     iconColor: Colors.indigo,
                     title: languages.lblWorker,
                     value: postJobDetail!.provider?.displayName.validate() ?? '',
+                    profileUserIdToReport: postJobDetail!.provider?.id,
                   ),
                   _buildInfoCard(
                     icon: Icons.person_outline,
                     iconColor: Colors.green,
                     title: languages.customer,
                     value:  postJobDetail!.customer?.displayName.validate() ?? '',
+                    profileUserIdToReport: postJobDetail!.customer?.id,
                   ),
                 ],
               ),
@@ -483,11 +515,20 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               // Extra Charges Breakdown
               _buildExtraChargesBreakdown(),
 
-              // Employer Review (reviews from customer about provider)
-              _buildReviewSection(languages.lblEmployerReview, postJobDetail!.providerReview),
+              // Employer Review — provider can report customer-authored review
+              _buildReviewSection(
+                languages.lblEmployerReview,
+                postJobDetail!.providerReview,
+                reviewReportType: _ugcReviewTypePostJobBidCustomerRating,
+                showReportOnReviews:
+                    appStore.userId == postJobDetail?.providerId,
+              ),
 
-              // Customer Review (reviews from provider about customer / employer)
-              _buildReviewSection(languages.lblCustomerReview, postJobDetail!.customerReview),
+              // Customer Review (provider-authored; no self-report flag here)
+              _buildReviewSection(
+                languages.lblCustomerReview,
+                postJobDetail!.customerReview,
+              ),
 
               24.height,
 
@@ -1088,7 +1129,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
     );
   }
 
-  Widget _buildReviewSection(String title, List<BidReviewItem> reviews) {
+  Widget _buildReviewSection(
+    String title,
+    List<BidReviewItem> reviews, {
+    String? reviewReportType,
+    bool showReportOnReviews = false,
+  }) {
     if (reviews.isEmpty) return SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1096,12 +1142,25 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
         24.height,
         Text(title, style: boldTextStyle(size: LABEL_TEXT_SIZE)),
         16.height,
-        ...reviews.map((r) => _buildReviewCard(r)).toList(),
+        ...reviews.map(
+          (r) => _buildReviewCard(
+            r,
+            reviewReportType: reviewReportType,
+            showReportReview: showReportOnReviews &&
+                reviewReportType != null &&
+                r.id != null &&
+                r.id! > 0,
+          ),
+        ).toList(),
       ],
     );
   }
 
-  Widget _buildReviewCard(BidReviewItem r) {
+  Widget _buildReviewCard(
+    BidReviewItem r, {
+    String? reviewReportType,
+    bool showReportReview = false,
+  }) {
     final rating = (r.rating ?? 0).toDouble();
     final dateStr = r.createdAt != null && r.createdAt!.isNotEmpty
         ? formatDate(r.createdAt, format: DATE_FORMAT_2)
@@ -1117,11 +1176,32 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            r.raterName?.validate() ?? '',
-            style: boldTextStyle(size: 14),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  r.raterName?.validate() ?? '',
+                  style: boldTextStyle(size: 14),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (showReportReview && reviewReportType != null && r.id != null)
+                IconButton(
+                  tooltip: languages.lblReportReviewTitle,
+                  padding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
+                  constraints:
+                      BoxConstraints(minWidth: 32, minHeight: 32),
+                  icon: Icon(Icons.flag_outlined,
+                      color: Colors.red, size: 20),
+                  onPressed: () => _openReviewReportDialog(
+                    reviewId: r.id!,
+                    reviewType: reviewReportType,
+                  ),
+                ),
+            ],
           ),
           if (dateStr.isNotEmpty) ...[
             4.height,
@@ -1224,9 +1304,13 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
     required String value,
     bool isDate = false,
     Color? cardBackgroundColor,
+    int? profileUserIdToReport,
   }) {
+    final bool showProfileFlag = profileUserIdToReport != null &&
+        profileUserIdToReport != appStore.userId;
+
     return Container(
-      padding: EdgeInsets.all(8),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: boxDecorationWithRoundedCorners(
         backgroundColor: cardBackgroundColor ?? context.cardColor,
         borderRadius: BorderRadius.circular(10),
@@ -1236,7 +1320,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, color: iconColor, size: 18),
-          4.height,
+          3.height,
           Text(
             title,
             style: secondaryTextStyle(size: 10),
@@ -1245,16 +1329,41 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
             overflow: TextOverflow.ellipsis,
           ),
           2.height,
-          Flexible(
-            child: Text(
-              value,
-              style: boldTextStyle(
-                size: isDate ? 8 : 11,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Text(
+                  value,
+                  style: boldTextStyle(
+                    size: isDate ? 8 : 11,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
+              if (showProfileFlag) ...[
+                4.width,
+                Tooltip(
+                  message: languages.lblReportProfileTitle,
+                  child: InkWell(
+                    onTap: () =>
+                        _openProfileReportDialog(profileUserIdToReport),
+                    borderRadius: BorderRadius.circular(4),
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 1),
+                      child: Icon(
+                        Icons.flag_outlined,
+                        color: Colors.red,
+                        size: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ],
           ),
         ],
       ),

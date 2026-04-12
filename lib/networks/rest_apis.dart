@@ -11,6 +11,7 @@ import 'package:handyman_provider_flutter/components/app_widgets.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/models/package_response.dart';
 import 'package:handyman_provider_flutter/models/base_response.dart';
+import 'package:handyman_provider_flutter/models/report_profile_reason_model.dart';
 import 'package:handyman_provider_flutter/models/booking_detail_response.dart';
 import 'package:handyman_provider_flutter/models/booking_list_response.dart';
 import 'package:handyman_provider_flutter/models/booking_status_response.dart';
@@ -1561,6 +1562,69 @@ Future<BaseResponseModel> blockPosterUser({required int blockedUserId}) async {
   return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse(
     'ugc/block',
     request: {'blocked_user_id': blockedUserId},
+    method: HttpMethodType.POST,
+  )));
+}
+
+/// GET `/api/ugc/report-reasons` — public; use [ReportProfileReason.value] when reporting.
+Future<List<ReportProfileReason>> getReportProfileReasons() async {
+  final dynamic raw = await handleResponse(
+      await buildHttpResponse('ugc/report-reasons', method: HttpMethodType.GET));
+  if (raw is! Map) return [];
+  final list = raw['reasons'];
+  if (list is! List) return [];
+  return list
+      .map((e) {
+        if (e is Map<String, dynamic>) {
+          return ReportProfileReason.fromJson(e);
+        }
+        if (e is Map) {
+          return ReportProfileReason.fromJson(Map<String, dynamic>.from(e));
+        }
+        return ReportProfileReason(value: '', label: '');
+      })
+      .where((r) => r.value.isNotEmpty)
+      .toList();
+}
+
+/// POST `/api/ugc/report-profile` — requires auth (Sanctum).
+Future<BaseResponseModel> reportUserProfile({
+  required int reportedUserId,
+  required String reason,
+  String? details,
+}) async {
+  final Map<String, dynamic> req = {
+    'reported_user_id': reportedUserId,
+    'reason': reason,
+  };
+  if (details != null && details.isNotEmpty) {
+    req['details'] = details;
+  }
+  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse(
+    'ugc/report-profile',
+    request: req,
+    method: HttpMethodType.POST,
+  )));
+}
+
+/// POST `/api/ugc/report-review` — flag another user's review (requires auth).
+Future<BaseResponseModel> reportReview({
+  required int reviewId,
+  required String reason,
+  String reviewType = 'booking_rating',
+  String? details,
+}) async {
+  final Map<String, dynamic> req = {
+    'review_id': reviewId,
+    'reason': reason,
+    'review_type': reviewType,
+  };
+  if (details != null && details.isNotEmpty) {
+    req['details'] = details;
+  }
+  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse(
+    'ugc/report-review',
+    request: req,
     method: HttpMethodType.POST,
   )));
 }

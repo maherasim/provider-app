@@ -7,18 +7,17 @@ import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:nb_utils/nb_utils.dart';
 
-/// Report dialog for POST `/api/ugc/report-post-job`.
-/// Reasons from GET `/api/ugc/report-reasons`.
-class JobReportDialog extends StatefulWidget {
-  final int postJobId;
+/// Report dialog for POST `/api/ugc/report-profile` with reasons from GET `/api/ugc/report-reasons`.
+class ProfileReportDialog extends StatefulWidget {
+  final int reportedUserId;
 
-  const JobReportDialog({super.key, required this.postJobId});
+  const ProfileReportDialog({super.key, required this.reportedUserId});
 
   @override
-  State<JobReportDialog> createState() => _JobReportDialogState();
+  State<ProfileReportDialog> createState() => _ProfileReportDialogState();
 }
 
-class _JobReportDialogState extends State<JobReportDialog> {
+class _ProfileReportDialogState extends State<ProfileReportDialog> {
   List<ReportProfileReason> _reasons = [];
   String? _selectedValue;
   final TextEditingController _detailsCont = TextEditingController();
@@ -69,8 +68,8 @@ class _JobReportDialogState extends State<JobReportDialog> {
     setState(() => _submitting = true);
     try {
       final details = _detailsCont.text.trim();
-      final res = await reportPostJob(
-        postJobId: widget.postJobId,
+      final res = await reportUserProfile(
+        reportedUserId: widget.reportedUserId,
         reason: _selectedValue!,
         details: details.isEmpty ? null : details,
       );
@@ -105,7 +104,7 @@ class _JobReportDialogState extends State<JobReportDialog> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                languages.lblReportJobTitle,
+                languages.lblReportProfileTitle,
                 style: boldTextStyle(size: 18),
               ),
               8.height,
@@ -121,8 +120,7 @@ class _JobReportDialogState extends State<JobReportDialog> {
                     child: SizedBox(
                       width: 28,
                       height: 28,
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2, color: primaryColor),
+                      child: CircularProgressIndicator(strokeWidth: 2, color: primaryColor),
                     ),
                   ),
                 )
@@ -172,10 +170,7 @@ class _JobReportDialogState extends State<JobReportDialog> {
                 maxLength: 2000,
                 minLines: 3,
                 maxLines: 6,
-                enabled: !_submitting &&
-                    !_loadingReasons &&
-                    _loadError == null &&
-                    _reasons.isNotEmpty,
+                enabled: !_submitting && !_loadingReasons && _loadError == null && _reasons.isNotEmpty,
                 decoration: inputDecoration(
                   context,
                   hint: languages.lblReportDetailsHint,

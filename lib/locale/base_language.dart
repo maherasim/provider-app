@@ -1659,4 +1659,9 @@ abstract class Languages {
   String get lblReportReasonInappropriate;
   String get lblReportReasonFraud;
   String get lblReportReasonOther;
+
+  /// Profile report (UGC `/ugc/report-profile`)
+  String get lblReportProfileTitle;
+  String get lblReportProfileNoReasons;
+  String get lblReportReviewTitle;
 }

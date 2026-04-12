@@ -7,18 +7,23 @@ import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:nb_utils/nb_utils.dart';
 
-/// Report dialog for POST `/api/ugc/report-post-job`.
-/// Reasons from GET `/api/ugc/report-reasons` ([ReportProfileReason.value] / [ReportProfileReason.label]).
-class JobReportDialog extends StatefulWidget {
-  final int postJobId;
+/// Report dialog for POST `/api/ugc/report-review` with reasons from GET `/api/ugc/report-reasons`.
+/// Provider → customer review on booking: [reviewType] `booking_rating` (default).
+class ReviewReportDialog extends StatefulWidget {
+  final int reviewId;
+  final String reviewType;
 
-  const JobReportDialog({super.key, required this.postJobId});
+  const ReviewReportDialog({
+    super.key,
+    required this.reviewId,
+    this.reviewType = 'booking_rating',
+  });
 
   @override
-  State<JobReportDialog> createState() => _JobReportDialogState();
+  State<ReviewReportDialog> createState() => _ReviewReportDialogState();
 }
 
-class _JobReportDialogState extends State<JobReportDialog> {
+class _ReviewReportDialogState extends State<ReviewReportDialog> {
   List<ReportProfileReason> _reasons = [];
   String? _selectedValue;
   final TextEditingController _detailsCont = TextEditingController();
@@ -69,9 +74,10 @@ class _JobReportDialogState extends State<JobReportDialog> {
     setState(() => _submitting = true);
     try {
       final details = _detailsCont.text.trim();
-      final res = await reportPostJob(
-        postJobId: widget.postJobId,
+      final res = await reportReview(
+        reviewId: widget.reviewId,
         reason: _selectedValue!,
+        reviewType: widget.reviewType,
         details: details.isEmpty ? null : details,
       );
       if (mounted) {
@@ -105,7 +111,7 @@ class _JobReportDialogState extends State<JobReportDialog> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                languages.lblReportJobTitle,
+                languages.lblReportReviewTitle,
                 style: boldTextStyle(size: 18),
               ),
               8.height,
@@ -121,8 +127,7 @@ class _JobReportDialogState extends State<JobReportDialog> {
                     child: SizedBox(
                       width: 28,
                       height: 28,
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2, color: primaryColor),
+                      child: CircularProgressIndicator(strokeWidth: 2, color: primaryColor),
                     ),
                   ),
                 )
@@ -172,10 +177,7 @@ class _JobReportDialogState extends State<JobReportDialog> {
                 maxLength: 2000,
                 minLines: 3,
                 maxLines: 6,
-                enabled: !_submitting &&
-                    !_loadingReasons &&
-                    _loadError == null &&
-                    _reasons.isNotEmpty,
+                enabled: !_submitting && !_loadingReasons && _loadError == null && _reasons.isNotEmpty,
                 decoration: inputDecoration(
                   context,
                   hint: languages.lblReportDetailsHint,

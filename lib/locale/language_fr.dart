@@ -2512,4 +2512,14 @@ class LanguageFr extends Languages {
 
   @override
   String get lblReportReasonOther => 'Autre';
+
+  @override
+  String get lblReportProfileTitle => 'Signaler le profil';
+
+  @override
+  String get lblReportProfileNoReasons =>
+      'Aucun motif de signalement disponible. Réessayez plus tard.';
+
+  @override
+  String get lblReportReviewTitle => 'Signaler l\'avis';
 }

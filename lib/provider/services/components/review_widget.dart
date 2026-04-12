@@ -13,8 +13,15 @@ class ReviewWidget extends StatelessWidget {
   final RatingData data;
   final bool isCustomer;
   final bool showServiceName;
+  /// When set, shows a report flag (e.g. provider reporting a customer review).
+  final VoidCallback? onReportPressed;
 
-  ReviewWidget({required this.data, this.isCustomer = false, this.showServiceName = false});
+  ReviewWidget({
+    required this.data,
+    this.isCustomer = false,
+    this.showServiceName = false,
+    this.onReportPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,16 +51,30 @@ class ReviewWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('${data.customerName.validate()}', style: boldTextStyle(size: 14), maxLines: 1, overflow: TextOverflow.ellipsis).flexible(),
-                        Container(
-                          decoration: boxDecorationDefault(color: context.scaffoldBackgroundColor),
-                          padding: EdgeInsets.symmetric(horizontal: 6,vertical: 4),
-                          child: Row(
-                            children: [
-                              Image.asset(ic_star_fill, height: 16, color: rattingColor),
-                              4.width,
-                              Text('${data.rating.validate().toStringAsFixed(1).toString()}', style: primaryTextStyle()),
-                            ],
-                          ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (onReportPressed != null)
+                              IconButton(
+                                tooltip: languages.lblReportReviewTitle,
+                                padding: EdgeInsets.zero,
+                                visualDensity: VisualDensity.compact,
+                                constraints: BoxConstraints(minWidth: 32, minHeight: 32),
+                                icon: Icon(Icons.flag_outlined, color: Colors.red, size: 20),
+                                onPressed: onReportPressed,
+                              ),
+                            Container(
+                              decoration: boxDecorationDefault(color: context.scaffoldBackgroundColor),
+                              padding: EdgeInsets.symmetric(horizontal: 6,vertical: 4),
+                              child: Row(
+                                children: [
+                                  Image.asset(ic_star_fill, height: 16, color: rattingColor),
+                                  4.width,
+                                  Text('${data.rating.validate().toStringAsFixed(1).toString()}', style: primaryTextStyle()),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

@@ -17,6 +17,8 @@ import 'package:handyman_provider_flutter/components/cached_image_widget.dart';
 import 'package:handyman_provider_flutter/components/countdown_widget.dart';
 import 'package:handyman_provider_flutter/components/price_common_widget.dart';
 import 'package:handyman_provider_flutter/components/price_widget.dart';
+import 'package:handyman_provider_flutter/components/profile_report_dialog.dart';
+import 'package:handyman_provider_flutter/components/review_report_dialog.dart';
 import 'package:handyman_provider_flutter/components/provider_rating_dialog.dart';
 import 'package:handyman_provider_flutter/components/review_list_view_component.dart';
 import 'package:handyman_provider_flutter/components/view_all_label_component.dart';
@@ -195,6 +197,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
       },
     ).launch(context);
   }
+
 
   Future<void> updateBooking(BookingDetailResponse bookDetail, String updateReason, String updatedStatus) async {
     DateTime now = DateTime.now();
@@ -991,6 +994,11 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
           ratings: bookingDetailResponse.ratingData!,
           padding: EdgeInsets.symmetric(vertical: 6),
           physics: NeverScrollableScrollPhysics(),
+          showReportReview: isUserTypeProvider,
+          onReportReviewTap: (rating) {
+            if (rating.id == null) return;
+            _openReviewReportDialog(reviewId: rating.id!.toInt());
+          },
         ),
       ],
     )
@@ -1811,6 +1819,31 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
     );
   }
 
+  Future<void> _openProfileReportDialog(int reportedUserId) async {
+    await showInDialog(
+      context,
+      contentPadding: EdgeInsets.zero,
+      backgroundColor: Colors.transparent,
+      hideSoftKeyboard: true,
+      builder: (_) => ProfileReportDialog(reportedUserId: reportedUserId),
+    );
+  }
+
+  /// Provider reports a customer's review (`booking_ratings` → `booking_rating`).
+  Future<void> _openReviewReportDialog({
+    required int reviewId,
+    String reviewType = 'booking_rating',
+  }) async {
+    await showInDialog(
+      context,
+      contentPadding: EdgeInsets.zero,
+      backgroundColor: Colors.transparent,
+      hideSoftKeyboard: true,
+      builder: (_) =>
+          ReviewReportDialog(reviewId: reviewId, reviewType: reviewType),
+    );
+  }
+
   Future<void> _showHoldReasonDialog(BookingDetailResponse res) async {
     final TextEditingController reasonController = TextEditingController();
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -2238,29 +2271,48 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                             Text(languages.lblAboutHandyman,
                                 style: boldTextStyle(size: LABEL_TEXT_SIZE)),
                             Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: res.data!.handymanData!.map(
                                 (e) {
-                                  return Text(
-                                    "View Detail", // Todo Language
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color:
-                                          primaryColor, // Adjust color as needed
-                                    ),
-                                  )
-                                      .visible(res.data!.bookingDetail!
-                                              .canCustomerContact &&
+                                  return Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (isUserTypeProvider &&
                                           e.id != appStore.userId)
-                                      .onTap(() {
-                                    {
-                                      HandymanInfoScreen(
-                                              handymanId: e.id,
-                                              service: res.data!.service)
-                                          .launch(context)
-                                          .then((value) => null);
-                                    }
-                                  });
+                                        IconButton(
+                                          tooltip: languages.lblReportProfileTitle,
+                                          padding: EdgeInsets.zero,
+                                          constraints: BoxConstraints(
+                                              minWidth: 36, minHeight: 36),
+                                          icon: Icon(Icons.flag_outlined,
+                                              color: Colors.red, size: 22),
+                                          onPressed: () =>
+                                              _openProfileReportDialog(
+                                                  e.id.validate()),
+                                        ),
+                                      Text(
+                                        "View Detail", // Todo Language
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color:
+                                              primaryColor, // Adjust color as needed
+                                        ),
+                                      )
+                                          .visible(res.data!.bookingDetail!
+                                                  .canCustomerContact &&
+                                              e.id != appStore.userId)
+                                          .onTap(() {
+                                        {
+                                          HandymanInfoScreen(
+                                                  handymanId: e.id,
+                                                  service: res.data!.service)
+                                              .launch(context)
+                                              .then((value) => null);
+                                        }
+                                      }),
+                                    ],
+                                  );
                                 },
                               ).toList(),
                             ),
@@ -2311,7 +2363,22 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                         24.height,
                       aboutCustomerWidget(
                           context: context,
-                          bookingDetail: res.data!.bookingDetail),
+                          bookingDetail: res.data!.bookingDetail,
+                          reportProfileAction: isUserTypeProvider &&
+                                  res.data!.customer != null &&
+                                  res.data!.customer!.id != null &&
+                                  res.data!.customer!.id != appStore.userId
+                              ? IconButton(
+                                  tooltip: languages.lblReportProfileTitle,
+                                  padding: EdgeInsets.zero,
+                                  constraints: BoxConstraints(
+                                      minWidth: 36, minHeight: 36),
+                                  icon: Icon(Icons.flag_outlined,
+                                      color: Colors.red, size: 22),
+                                  onPressed: () => _openProfileReportDialog(
+                                      res.data!.customer!.id!.validate()),
+                                )
+                              : null),
                       16.height,
                       Container(
                         decoration:

@@ -2512,4 +2512,14 @@ class LanguageHi extends Languages {
 
   @override
   String get lblReportReasonOther => 'अन्य';
+
+  @override
+  String get lblReportProfileTitle => 'प्रोफ़ाइल की रिपोर्ट करें';
+
+  @override
+  String get lblReportProfileNoReasons =>
+      'कोई रिपोर्ट कारण उपलब्ध नहीं है। कृपया बाद में पुनः प्रयास करें।';
+
+  @override
+  String get lblReportReviewTitle => 'समीक्षा की रिपोर्ट करें';
 }

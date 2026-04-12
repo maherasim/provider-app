@@ -9,6 +9,9 @@ class ReviewListViewComponent extends StatelessWidget {
   final ScrollPhysics? physics;
   final bool isCustomer;
   final bool showServiceName;
+  /// When true and [onReportReviewTap] is set, shows report on rows with a non-null [RatingData.id].
+  final bool showReportReview;
+  final void Function(RatingData rating)? onReportReviewTap;
 
   ReviewListViewComponent({
     required this.ratings,
@@ -16,6 +19,8 @@ class ReviewListViewComponent extends StatelessWidget {
     this.physics,
     this.isCustomer = false,
     this.showServiceName = false,
+    this.showReportReview = false,
+    this.onReportReviewTap,
   });
 
   @override
@@ -28,11 +33,20 @@ class ReviewListViewComponent extends StatelessWidget {
       listAnimationType: ListAnimationType.FadeIn,
       fadeInConfiguration: FadeInConfiguration(duration: 2.seconds),
       slideConfiguration: SlideConfiguration(delay: 50.milliseconds),
-      itemBuilder: (context, index) => ReviewWidget(
-        data: ratings[index],
-        isCustomer: isCustomer,
-        showServiceName: showServiceName,
-      ),
+      itemBuilder: (context, index) {
+        final r = ratings[index];
+        final VoidCallback? reportCb = showReportReview &&
+                onReportReviewTap != null &&
+                r.id != null
+            ? () => onReportReviewTap!(r)
+            : null;
+        return ReviewWidget(
+          data: r,
+          isCustomer: isCustomer,
+          showServiceName: showServiceName,
+          onReportPressed: reportCb,
+        );
+      },
     );
   }
 }

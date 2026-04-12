@@ -2512,4 +2512,14 @@ class LanguageDe extends Languages {
 
   @override
   String get lblReportReasonOther => 'Sonstiges';
+
+  @override
+  String get lblReportProfileTitle => 'Profil melden';
+
+  @override
+  String get lblReportProfileNoReasons =>
+      'Es sind keine Meldegründe verfügbar. Bitte versuchen Sie es später erneut.';
+
+  @override
+  String get lblReportReviewTitle => 'Bewertung melden';
 }

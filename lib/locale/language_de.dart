@@ -2698,7 +2698,7 @@ class LanguageDe extends Languages {
   String get lblCertificationShortHint => 'Zertifikate';
 
   @override
-  String get lblHandymanCommissionHint => 'Handwerker-Provision (1–85)';
+  String get lblHandymanCommissionHint => 'Handwerker-Provision (1–99)';
 
   @override
   String get lblAboutMeHint => 'Über mich';

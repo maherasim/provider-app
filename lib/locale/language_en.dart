@@ -2693,7 +2693,7 @@ class LanguageEn extends Languages {
   String get lblCertificationShortHint => 'Certification';
 
   @override
-  String get lblHandymanCommissionHint => 'Handyman Commission (1-85)';
+  String get lblHandymanCommissionHint => 'Handyman Commission (1-99)';
 
   @override
   String get lblAboutMeHint => 'About Me';

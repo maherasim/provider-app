@@ -2698,7 +2698,7 @@ class LanguageAr extends Languages {
   String get lblCertificationShortHint => 'الشهادات';
 
   @override
-  String get lblHandymanCommissionHint => 'عمولة الحرفي (1-85)';
+  String get lblHandymanCommissionHint => 'عمولة الحرفي (1-99)';
 
   @override
   String get lblAboutMeHint => 'نبذة عني';

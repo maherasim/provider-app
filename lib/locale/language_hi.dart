@@ -2698,7 +2698,7 @@ class LanguageHi extends Languages {
   String get lblCertificationShortHint => 'प्रमाणपत्र';
 
   @override
-  String get lblHandymanCommissionHint => 'हैंडीमैन कमीशन (1-85)';
+  String get lblHandymanCommissionHint => 'हैंडीमैन कमीशन (1-99)';
 
   @override
   String get lblAboutMeHint => 'मेरे बारे में';

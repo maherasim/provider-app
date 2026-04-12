@@ -5,11 +5,9 @@ import 'package:handyman_provider_flutter/components/handyman_name_widget.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/models/user_data.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
-import 'package:handyman_provider_flutter/screens/chat/user_chat_screen.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
-import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -122,73 +120,74 @@ class _HandymanWidgetState extends State<HandymanWidget> {
                       }),
                     ],
                   ),
-                  16.height,
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (widget.data!.contactNumber.validate().isNotEmpty)
-                        TextIcon(
-                          onTap: () {
-                            launchCall(widget.data!.contactNumber.validate());
-                          },
-                          prefix: Container(
-                            padding: EdgeInsets.all(8),
-                            decoration: boxDecorationWithRoundedCorners(
-                              boxShape: BoxShape.circle,
-                              backgroundColor:
-                                  primaryColor.withValues(alpha: 0.1),
-                            ),
-                            child: Image.asset(calling,
-                                color: primaryColor, height: 14, width: 14),
-                          ),
-                        ),
-                      if (widget.data!.contactNumber.validate().isNotEmpty) 12.width,
-                      // if (widget.data!.email.validate().isNotEmpty)
-                      //   TextIcon(
-                      //     onTap: () {
-                      //       launchMail(widget.data!.email.validate());
-                      //     },
-                      //     prefix: Container(
-                      //       padding: EdgeInsets.all(8),
-                      //       decoration: boxDecorationWithRoundedCorners(
-                      //         boxShape: BoxShape.circle,
-                      //         backgroundColor:
-                      //             primaryColor.withValues(alpha: 0.1),
-                      //       ),
-                      //       child: ic_message.iconImage(
-                      //           size: 14, color: primaryColor),
-                      //     ),
-                      //   ),
-                      if (widget.data!.contactNumber.validate().isNotEmpty)
-                        TextIcon(
-                          onTap: () async {
-                            toast(languages.pleaseWaitWhileWeLoadChatDetails);
-                            UserData? user = await userService.getUserNull(
-                                email: widget.data!.email.validate());
-                            if (user != null) {
-                              Fluttertoast.cancel();
-                              UserChatScreen(receiverUser: user)
-                                  .launch(context);
-                            } else {
-                              Fluttertoast.cancel();
-                              toast(
-                                  "${widget.data!.firstName.validate()} ${languages.isNotAvailableForChat}");
-                            }
-                          },
-                          prefix: Container(
-                            padding: EdgeInsets.all(8),
-                            decoration: boxDecorationWithRoundedCorners(
-                              boxShape: BoxShape.circle,
-                              backgroundColor:
-                                  primaryColor.withValues(alpha: 0.1),
-                            ),
-                            child: Image.asset(textMsg,
-                                color: primaryColor, height: 14, width: 14),
-                          ),
-                        ),
-                    ],
-                  ).fit(),
+                  // Phone + message shortcuts (hidden per product request; keep for restore)
+                  // 16.height,
+                  // Row(
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     if (widget.data!.contactNumber.validate().isNotEmpty)
+                  //       TextIcon(
+                  //         onTap: () {
+                  //           launchCall(widget.data!.contactNumber.validate());
+                  //         },
+                  //         prefix: Container(
+                  //           padding: EdgeInsets.all(8),
+                  //           decoration: boxDecorationWithRoundedCorners(
+                  //             boxShape: BoxShape.circle,
+                  //             backgroundColor:
+                  //                 primaryColor.withValues(alpha: 0.1),
+                  //           ),
+                  //           child: Image.asset(calling,
+                  //               color: primaryColor, height: 14, width: 14),
+                  //         ),
+                  //       ),
+                  //     if (widget.data!.contactNumber.validate().isNotEmpty) 12.width,
+                  //     // if (widget.data!.email.validate().isNotEmpty)
+                  //     //   TextIcon(
+                  //     //     onTap: () {
+                  //     //       launchMail(widget.data!.email.validate());
+                  //     //     },
+                  //     //     prefix: Container(
+                  //     //       padding: EdgeInsets.all(8),
+                  //     //       decoration: boxDecorationWithRoundedCorners(
+                  //     //         boxShape: BoxShape.circle,
+                  //     //         backgroundColor:
+                  //     //             primaryColor.withValues(alpha: 0.1),
+                  //     //       ),
+                  //     //       child: ic_message.iconImage(
+                  //     //           size: 14, color: primaryColor),
+                  //     //     ),
+                  //     //   ),
+                  //     if (widget.data!.contactNumber.validate().isNotEmpty)
+                  //       TextIcon(
+                  //         onTap: () async {
+                  //           toast(languages.pleaseWaitWhileWeLoadChatDetails);
+                  //           UserData? user = await userService.getUserNull(
+                  //               email: widget.data!.email.validate());
+                  //           if (user != null) {
+                  //             Fluttertoast.cancel();
+                  //             UserChatScreen(receiverUser: user)
+                  //                 .launch(context);
+                  //           } else {
+                  //             Fluttertoast.cancel();
+                  //             toast(
+                  //                 "${widget.data!.firstName.validate()} ${languages.isNotAvailableForChat}");
+                  //           }
+                  //         },
+                  //         prefix: Container(
+                  //           padding: EdgeInsets.all(8),
+                  //           decoration: boxDecorationWithRoundedCorners(
+                  //             boxShape: BoxShape.circle,
+                  //             backgroundColor:
+                  //                 primaryColor.withValues(alpha: 0.1),
+                  //           ),
+                  //           child: Image.asset(textMsg,
+                  //               color: primaryColor, height: 14, width: 14),
+                  //         ),
+                  //       ),
+                  //   ],
+                  // ).fit(),
                 ],
               ).paddingSymmetric(vertical: 16),
             ],

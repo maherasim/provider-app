@@ -2698,7 +2698,7 @@ class LanguageFr extends Languages {
   String get lblCertificationShortHint => 'Certification';
 
   @override
-  String get lblHandymanCommissionHint => 'Commission prestataire (1-85)';
+  String get lblHandymanCommissionHint => 'Commission prestataire (1-99)';
 
   @override
   String get lblAboutMeHint => 'À propos de moi';

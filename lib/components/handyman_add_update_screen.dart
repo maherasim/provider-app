@@ -1178,8 +1178,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                           if (commission == null) {
                             return 'Please enter a valid number';
                           }
-                          if (commission < 1 || commission > 85) {
-                            return 'Commission must be between 1 and 85';
+                          if (commission < 1 || commission > 99) {
+                            return 'Commission must be between 1 and 99';
                           }
                         }
                         return null;

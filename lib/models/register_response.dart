@@ -1,4 +1,5 @@
 import 'package:handyman_provider_flutter/models/user_data.dart';
+import 'package:handyman_provider_flutter/utils/common.dart';
 
 class RegisterResponse {
   UserData? data;
@@ -9,7 +10,7 @@ class RegisterResponse {
   factory RegisterResponse.fromJson(Map<String, dynamic> json) {
     return RegisterResponse(
       data: json['data'] != null ? UserData.fromJson(json['data']) : null,
-      message: json['message'],
+      message: apiJsonValueToNullableString(json['message']),
     );
   }
 

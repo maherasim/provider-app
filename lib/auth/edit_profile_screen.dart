@@ -433,6 +433,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> update() async {
+    if (!formKey.currentState!.validate()) return;
+    hideKeyboard(context);
+
     MultipartRequest multiPartRequest =
         await getMultiPartRequest('update-profile');
     multiPartRequest.fields[UserKeys.id] = appStore.userId.toString();
@@ -923,11 +926,20 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                         16.height,
                         AppTextField(
-                          textFieldType: TextFieldType.NUMBER,
+                          textFieldType: TextFieldType.NAME,
                           controller: vatNumCont,
                           focus: vatNumFocus,
                           nextFocus: designationFocus,
-                          decoration:inputDecoration(context, hint: languages.lblVatNumberHint),
+                          isValidationRequired: false,
+                          decoration: inputDecoration(
+                            context,
+                            hint: languages.lblVatNumberHint,
+                            prefixIcon: Icon(
+                              Icons.receipt_long_outlined,
+                              size: 20,
+                              color: context.iconColor,
+                            ),
+                          ),
                         ),
                         16.height,
                         AppTextField(

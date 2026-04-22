@@ -13,7 +13,6 @@ import 'package:handyman_provider_flutter/utils/model_keys.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../../components/disabled_rating_bar_widget.dart';
-import '../../components/social_icons_list.dart';
 
 class HandymanWidget extends StatefulWidget {
   final double width;
@@ -78,116 +77,42 @@ class _HandymanWidgetState extends State<HandymanWidget> {
               ),
               Column(
                 children: [
-                  Column(
-                    children: [
-                      SocialIconsList(spacing: 5).center(),
-                      5.height,
-                      DisabledRatingBarWidget(
-                        rating: widget.data!.handymanRating.validate(),
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        size: 14,
-                      ),
-                      5.height,
-                      HandymanNameWidget(
-                        name: widget.data!.displayName.validate(),
-                        isHandymanAvailable: widget.data!.isHandymanAvailable,
-                        size: 14,
-                      ).center(),
-                      // City - Address line (fallback 'n/a')
-                      5.height,
-                      Builder(builder: (context) {
-                        final city = widget.data?.cityName.validate() ?? '';
-                        final country = widget.data?.countryName.validate() ?? '';
-                        final addr = cleanedAddress;
-                        String display = '';
-                        if (city.isNotEmpty && country.isNotEmpty) {
-                          display = '$city - $country';
-                        } else if (city.isNotEmpty) {
-                          display = city;
-                        } else if (country.isNotEmpty) {
-                          display = country;
-                        } else if (addr.isNotEmpty) {
-                          display = addr;
-                        } else {
-                          display = 'n/a';
-                        }
-                        return Text(
-                          display,
-                          style: primaryTextStyle(size: 10),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ).center();
-                      }),
-                    ],
+                  DisabledRatingBarWidget(
+                    rating: widget.data!.handymanRating.validate(),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    size: 14,
                   ),
-                  // Phone + message shortcuts (hidden per product request; keep for restore)
-                  // 16.height,
-                  // Row(
-                  //   crossAxisAlignment: CrossAxisAlignment.start,
-                  //   mainAxisAlignment: MainAxisAlignment.center,
-                  //   children: [
-                  //     if (widget.data!.contactNumber.validate().isNotEmpty)
-                  //       TextIcon(
-                  //         onTap: () {
-                  //           launchCall(widget.data!.contactNumber.validate());
-                  //         },
-                  //         prefix: Container(
-                  //           padding: EdgeInsets.all(8),
-                  //           decoration: boxDecorationWithRoundedCorners(
-                  //             boxShape: BoxShape.circle,
-                  //             backgroundColor:
-                  //                 primaryColor.withValues(alpha: 0.1),
-                  //           ),
-                  //           child: Image.asset(calling,
-                  //               color: primaryColor, height: 14, width: 14),
-                  //         ),
-                  //       ),
-                  //     if (widget.data!.contactNumber.validate().isNotEmpty) 12.width,
-                  //     // if (widget.data!.email.validate().isNotEmpty)
-                  //     //   TextIcon(
-                  //     //     onTap: () {
-                  //     //       launchMail(widget.data!.email.validate());
-                  //     //     },
-                  //     //     prefix: Container(
-                  //     //       padding: EdgeInsets.all(8),
-                  //     //       decoration: boxDecorationWithRoundedCorners(
-                  //     //         boxShape: BoxShape.circle,
-                  //     //         backgroundColor:
-                  //     //             primaryColor.withValues(alpha: 0.1),
-                  //     //       ),
-                  //     //       child: ic_message.iconImage(
-                  //     //           size: 14, color: primaryColor),
-                  //     //     ),
-                  //     //   ),
-                  //     if (widget.data!.contactNumber.validate().isNotEmpty)
-                  //       TextIcon(
-                  //         onTap: () async {
-                  //           toast(languages.pleaseWaitWhileWeLoadChatDetails);
-                  //           UserData? user = await userService.getUserNull(
-                  //               email: widget.data!.email.validate());
-                  //           if (user != null) {
-                  //             Fluttertoast.cancel();
-                  //             UserChatScreen(receiverUser: user)
-                  //                 .launch(context);
-                  //           } else {
-                  //             Fluttertoast.cancel();
-                  //             toast(
-                  //                 "${widget.data!.firstName.validate()} ${languages.isNotAvailableForChat}");
-                  //           }
-                  //         },
-                  //         prefix: Container(
-                  //           padding: EdgeInsets.all(8),
-                  //           decoration: boxDecorationWithRoundedCorners(
-                  //             boxShape: BoxShape.circle,
-                  //             backgroundColor:
-                  //                 primaryColor.withValues(alpha: 0.1),
-                  //           ),
-                  //           child: Image.asset(textMsg,
-                  //               color: primaryColor, height: 14, width: 14),
-                  //         ),
-                  //       ),
-                  //   ],
-                  // ).fit(),
+                  5.height,
+                  HandymanNameWidget(
+                    name: widget.data!.displayName.validate(),
+                    isHandymanAvailable: widget.data!.isHandymanAvailable,
+                    size: 14,
+                  ).center(),
+                  // City - Address line (fallback 'n/a')
+                  5.height,
+                  Builder(builder: (context) {
+                    final city = widget.data?.cityName.validate() ?? '';
+                    final country = widget.data?.countryName.validate() ?? '';
+                    final addr = cleanedAddress;
+                    String display = '';
+                    if (city.isNotEmpty && country.isNotEmpty) {
+                      display = '$city - $country';
+                    } else if (city.isNotEmpty) {
+                      display = city;
+                    } else if (country.isNotEmpty) {
+                      display = country;
+                    } else if (addr.isNotEmpty) {
+                      display = addr;
+                    } else {
+                      display = 'n/a';
+                    }
+                    return Text(
+                      display,
+                      style: primaryTextStyle(size: 10),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ).center();
+                  }),
                 ],
               ).paddingSymmetric(vertical: 16),
             ],

@@ -1,4 +1,5 @@
 import 'package:handyman_provider_flutter/models/user_data.dart';
+import 'package:handyman_provider_flutter/utils/common.dart';
 
 class CommonResponseModel {
   UserData? data;
@@ -8,7 +9,7 @@ class CommonResponseModel {
 
   CommonResponseModel.fromJson(Map<String, dynamic> json) {
     data = json['data'] != null ? new UserData.fromJson(json['data']) : null;
-    message = json['message'];
+    message = apiJsonValueToNullableString(json['message']);
   }
 
   Map<String, dynamic> toJson() {

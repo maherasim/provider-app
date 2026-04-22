@@ -13,6 +13,14 @@ import 'package:nb_utils/nb_utils.dart';
 
 import '../utils/model_keys.dart';
 
+/// [message] from APIs may be String or structured JSON (validation errors).
+String _throwableApiMessage(dynamic message) {
+  if (message == null) return errorSomethingWentWrong;
+  if (message is Map || message is List) return jsonEncode(message);
+  if (message is String) return parseHtmlString(message);
+  return message.toString();
+}
+
 Map<String, String> buildHeaderTokens() {
   Map<String, String> header = {};
 
@@ -130,12 +138,12 @@ Future handleResponse(Response response,
             body.containsKey('status') &&
             body['status'] is bool &&
             !body['status']) {
-          throw parseHtmlString(body['message'] ?? errorSomethingWentWrong);
+          throw _throwableApiMessage(body['message']);
         } else {
           return body;
         }
       } else {
-        throw parseHtmlString(body['message'] ?? errorSomethingWentWrong);
+        throw _throwableApiMessage(body['message']);
       }
     } else {
       throw errorSomethingWentWrong;

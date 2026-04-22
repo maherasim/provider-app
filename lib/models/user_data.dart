@@ -213,21 +213,25 @@ class UserData {
     apiToken = json['api_token'];
     profileImage = json['profile_image'];
     description = json['description'];
-    // Handle known_languages - can be List or String
+    // Handle known_languages - can be List, Map, or String
     if (json['known_languages'] != null) {
       if (json['known_languages'] is List) {
         knownLanguages = jsonEncode(json['known_languages']);
+      } else if (json['known_languages'] is Map) {
+        knownLanguages = jsonEncode(json['known_languages']);
       } else {
-        knownLanguages = json['known_languages'];
+        knownLanguages = json['known_languages']?.toString();
       }
     }
     whyChooseMe = json['why_choose_me'];
-    // Handle skills - can be List or String
+    // Handle skills - can be List, Map, or String
     if (json['skills'] != null) {
       if (json['skills'] is List) {
         skills = jsonEncode(json['skills']);
+      } else if (json['skills'] is Map) {
+        skills = jsonEncode(json['skills']);
       } else {
-        skills = json['skills'];
+        skills = json['skills']?.toString();
       }
     }
     uid = json['uid'];
@@ -251,8 +255,8 @@ class UserData {
     handymanCommission = json['handyman_commission'];
     isHandymanAvailable = json['isHandymanAvailable'] != null ? json['isHandymanAvailable'] == 1 : false;
     loginType = json['login_type'];
-    companyName = json['company_name'];
-    vatNumber = json['vat_number'];
+    companyName = json['company_name']?.toString();
+    vatNumber = json['vat_number']?.toString();
     experience = json['experience'];
     mobility = json['mobility'];
     certification = json['certification'];
@@ -262,10 +266,13 @@ class UserData {
     careerLevel = json['career_level']?.toString();
     yearsOfExperience = json['years_of_experience']?.toString();
 
-    // Handle languages - can be array or JSON string
+    // Handle languages - can be array, map, or JSON string
     if (json['languages'] != null) {
       if (json['languages'] is List) {
         languagesArray = (json['languages'] as List).map((e) => e.toString()).toList();
+      } else if (json['languages'] is Map) {
+        languagesArray =
+            (json['languages'] as Map).values.map((e) => e.toString()).toList();
       } else if (json['languages'] is String && json['languages'].toString().isJson()) {
         Iterable it = jsonDecode(json['languages']);
         languagesArray = it.map((e) => e.toString()).toList();

@@ -8,6 +8,7 @@ import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/models/service_model.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/components/bid_price_dialog.dart';
+import 'package:handyman_provider_flutter/provider/jobRequest/components/job_report_dialog.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/job_request_details_screen.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/models/post_job_detail_response.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
@@ -44,6 +45,20 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
   void init() async {
     future = getPostJobDetail(
         {PostJob.postRequestId: widget.postJobData.id.validate()});
+  }
+
+  Future<void> _openJobReportDialog(int postJobId) async {
+    if (postJobId == 0) {
+      toast(errorSomethingWentWrong);
+      return;
+    }
+    await showInDialog(
+      context,
+      contentPadding: EdgeInsets.zero,
+      backgroundColor: Colors.transparent,
+      hideSoftKeyboard: true,
+      builder: (_) => JobReportDialog(postJobId: postJobId),
+    );
   }
 
   Widget _buildSimpleRow({
@@ -147,10 +162,38 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Job Title
-        Text(
-          data.title.validate(),
-          style: boldTextStyle(size: 18),
+        // Job title + report (same flow as list card menu, without block on this screen)
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Text(
+                data.title.validate(),
+                style: boldTextStyle(size: 18),
+              ),
+            ),
+            IconButton(
+              tooltip: languages.lblReportJob,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(
+                minWidth: 40,
+                minHeight: 40,
+              ),
+              icon: const Icon(
+                Icons.flag_outlined,
+                color: Colors.red,
+                size: 22,
+              ),
+              onPressed: () {
+                final id = data.id?.toInt();
+                if (id == null || id == 0) {
+                  toast(errorSomethingWentWrong);
+                  return;
+                }
+                _openJobReportDialog(id);
+              },
+            ),
+          ],
         ),
         8.height,
         

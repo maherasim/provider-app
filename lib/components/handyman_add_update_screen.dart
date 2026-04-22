@@ -458,7 +458,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
           // Include existing profile image URL when updating without new image
           if (isUpdate && widget.data != null && widget.data!.profileImage.validate().isNotEmpty)
             'profile_image_url': widget.data!.profileImage.validate(),
-          // New fields from documentation (required fields)
+          // New fields from documentation
           'company_name': companyNameCont.text.trim(),
           'vat_number': vatNumberCont.text.trim(),
           if (skillsCont.text.trim().isNotEmpty) 'skills': skillsCont.text.trim(),
@@ -529,7 +529,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
     if (!isUpdate) multiPartRequest.fields[UserKeys.password] = passwordCont.text;
     if (isUpdate) multiPartRequest.fields[CommonKeys.id] = widget.data!.id.toString();
     
-    // New fields from documentation (required fields)
+    // New fields from documentation
     multiPartRequest.fields['company_name'] = companyNameCont.text.trim();
     multiPartRequest.fields['vat_number'] = vatNumberCont.text.trim();
     if (skillsCont.text.trim().isNotEmpty) multiPartRequest.fields['skills'] = skillsCont.text.trim();
@@ -1003,18 +1003,25 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       ),
                     ),
                     16.height,
-                    // VAT Number - Required
+                    // VAT number — optional (company / professional / skills are all optional here)
+                    Text(languages.lblVatNumberHint, style: secondaryTextStyle()),
+                    8.height,
                     AppTextField(
                       textFieldType: TextFieldType.NAME,
                       controller: vatNumberCont,
                       focus: vatNumberFocus,
                       nextFocus: skillsFocus,
                       enabled: true,
-                      isValidationRequired: true,
+                      isValidationRequired: false,
                       decoration: inputDecoration(
                         context,
                         hint: languages.lblVatNumberHint,
                         fillColor: context.scaffoldBackgroundColor,
+                        prefixIcon: Icon(
+                          Icons.receipt_long_outlined,
+                          size: 20,
+                          color: context.iconColor,
+                        ),
                       ),
                     ),
                     16.height,

@@ -1,3 +1,5 @@
+import 'package:handyman_provider_flutter/utils/common.dart';
+
 class BaseResponseModel {
   String? message;
   bool? status;
@@ -6,7 +8,7 @@ class BaseResponseModel {
 
   factory BaseResponseModel.fromJson(Map<String, dynamic> json) {
     return BaseResponseModel(
-      message: json['message'],
+      message: apiJsonValueToNullableString(json['message']),
       status: json['status'],
     );
   }

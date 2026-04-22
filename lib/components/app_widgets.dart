@@ -38,12 +38,10 @@ class LoaderWidget extends StatelessWidget {
 Widget aboutCustomerWidget({
   BuildContext? context,
   BookingData? bookingDetail,
-  Widget? reportProfileAction,
 }) {
   return Row(
     children: [
       Text(languages.lblAboutCustomer, style: boldTextStyle(size: LABEL_TEXT_SIZE)).expand(),
-      if (reportProfileAction != null) reportProfileAction,
       if (bookingDetail!.canCustomerContact && 
           bookingDetail.status != BookingStatusKeys.complete && 
           bookingDetail.status != BookingStatusKeys.cancelled &&

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -201,6 +202,19 @@ InputDecoration inputDecoration(
 
 String parseHtmlString(String? htmlString) {
   return parse(parse(htmlString).body!.text).documentElement!.text;
+}
+
+/// API `message` (and similar) fields are often a [String], but may be a [Map] / [List]
+/// (e.g. validation errors). Coerce to a display-safe string for models and toasts.
+String? apiJsonValueToNullableString(dynamic value) {
+  if (value == null) return null;
+  if (value is String) return value;
+  if (value is Map || value is List) return jsonEncode(value);
+  return value.toString();
+}
+
+String apiJsonValueToString(dynamic value, [String fallback = '']) {
+  return apiJsonValueToNullableString(value) ?? fallback;
 }
 
 String formatDate(String? dateTime,

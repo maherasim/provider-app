@@ -10,6 +10,7 @@ import 'package:handyman_provider_flutter/components/review_report_dialog.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/components/extra_charges_dialog.dart';
+import 'package:handyman_provider_flutter/provider/jobRequest/components/job_report_dialog.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/components/hold_dialog.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/components/post_job_bid_rating_dialog.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/components/split_payment.dart';
@@ -82,6 +83,31 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
       builder: (_) =>
           ReviewReportDialog(reviewId: reviewId, reviewType: reviewType),
     );
+  }
+
+  Future<void> _openJobPostReportDialog(int postJobId) async {
+    if (postJobId == 0) {
+      toast(errorSomethingWentWrong);
+      return;
+    }
+    await showInDialog(
+      context,
+      contentPadding: EdgeInsets.zero,
+      backgroundColor: Colors.transparent,
+      hideSoftKeyboard: true,
+      builder: (_) => JobReportDialog(postJobId: postJobId),
+    );
+  }
+
+  /// Post job listing id for `/api/ugc/report-post-job` (not the bid id).
+  int _intPostJobIdForUgcReport() {
+    final d = postJobDetail;
+    if (d == null) return 0;
+    final nested = d.postRequest?.id;
+    if (nested != null && nested > 0) return nested;
+    final top = d.postRequestId;
+    if (top != null && top > 0) return top;
+    return 0;
   }
 
   @override
@@ -364,7 +390,10 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                     icon: Icons.h_mobiledata,
                     iconColor: gradientBlue,
                     title: 'Title',
-                    value: postJobDetail!.postRequest?.title?.validate() ?? '',
+                    value: postJobDetail!.postRequest?.title?.validate() ??
+                        postJobDetail!.title?.validate() ??
+                        '',
+                    postJobIdToReport: _intPostJobIdForUgcReport(),
                   ),
                   _buildInfoCard(
                     icon: Icons.location_on,
@@ -1297,9 +1326,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
     bool isDate = false,
     Color? cardBackgroundColor,
     int? profileUserIdToReport,
+    int? postJobIdToReport,
   }) {
     final bool showProfileFlag = profileUserIdToReport != null &&
         profileUserIdToReport != appStore.userId;
+    final int jobReportId = postJobIdToReport ?? 0;
+    final bool showJobPostFlag = jobReportId > 0;
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -1343,6 +1375,24 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   child: InkWell(
                     onTap: () =>
                         _openProfileReportDialog(profileUserIdToReport),
+                    borderRadius: BorderRadius.circular(4),
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 1),
+                      child: Icon(
+                        Icons.flag_outlined,
+                        color: Colors.red,
+                        size: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+              if (showJobPostFlag) ...[
+                4.width,
+                Tooltip(
+                  message: languages.lblReportJob,
+                  child: InkWell(
+                    onTap: () => _openJobPostReportDialog(jobReportId),
                     borderRadius: BorderRadius.circular(4),
                     child: Padding(
                       padding: EdgeInsets.only(top: 1),

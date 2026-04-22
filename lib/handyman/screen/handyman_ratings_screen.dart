@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:handyman_provider_flutter/components/app_widgets.dart';
 import 'package:handyman_provider_flutter/components/back_widget.dart';
 import 'package:handyman_provider_flutter/components/cached_image_widget.dart';
+import 'package:handyman_provider_flutter/components/review_report_dialog.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/models/handyman_rating_model.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
@@ -29,6 +30,23 @@ class _HandymanRatingsScreenState extends State<HandymanRatingsScreen> {
   void initState() {
     super.initState();
     init();
+  }
+
+  Future<void> _openReviewReportDialog({required int reviewId}) async {
+    if (reviewId <= 0) {
+      toast(errorSomethingWentWrong);
+      return;
+    }
+    await showInDialog(
+      context,
+      contentPadding: EdgeInsets.zero,
+      backgroundColor: Colors.transparent,
+      hideSoftKeyboard: true,
+      builder: (_) => ReviewReportDialog(
+        reviewId: reviewId,
+        reviewType: 'booking_rating',
+      ),
+    );
   }
 
   void init() async {
@@ -216,11 +234,39 @@ class _HandymanRatingsScreenState extends State<HandymanRatingsScreen> {
             ],
           ),
           12.height,
-          // Review Text
-          if (data.review.validate().isNotEmpty)
-            Text(
-              data.review.validate(),
-              style: primaryTextStyle(),
+          // Review text + report flag
+          if (data.review.validate().isNotEmpty ||
+              (data.id != null && data.id! > 0))
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (data.review.validate().isNotEmpty)
+                  Expanded(
+                    child: Text(
+                      data.review.validate(),
+                      style: primaryTextStyle(),
+                    ),
+                  )
+                else
+                  const Spacer(),
+                if (data.id != null && data.id! > 0)
+                  IconButton(
+                    tooltip: languages.lblReportReviewTitle,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(
+                      minWidth: 40,
+                      minHeight: 36,
+                    ),
+                    icon: const Icon(
+                      Icons.flag_outlined,
+                      color: Colors.red,
+                      size: 22,
+                    ),
+                    onPressed: () => _openReviewReportDialog(
+                      reviewId: data.id!,
+                    ),
+                  ),
+              ],
             ),
           // Date
           if (data.createdAt.validate().isNotEmpty) ...[

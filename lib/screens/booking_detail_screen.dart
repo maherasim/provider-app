@@ -2265,8 +2265,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                             BookingStatusKeys.pending)
                           24.height,
                         Row(
-                          mainAxisAlignment: MainAxisAlignment
-                              .spaceBetween, // Space between items
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(languages.lblAboutHandyman,
                                 style: boldTextStyle(size: LABEL_TEXT_SIZE)),
@@ -2274,45 +2273,24 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: res.data!.handymanData!.map(
                                 (e) {
-                                  return Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      if (isUserTypeProvider &&
+                                  return Text(
+                                    languages.viewDetail,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: primaryColor,
+                                    ),
+                                  )
+                                      .visible(res.data!.bookingDetail!
+                                              .canCustomerContact &&
                                           e.id != appStore.userId)
-                                        IconButton(
-                                          tooltip: languages.lblReportProfileTitle,
-                                          padding: EdgeInsets.zero,
-                                          constraints: BoxConstraints(
-                                              minWidth: 36, minHeight: 36),
-                                          icon: Icon(Icons.flag_outlined,
-                                              color: Colors.red, size: 22),
-                                          onPressed: () =>
-                                              _openProfileReportDialog(
-                                                  e.id.validate()),
-                                        ),
-                                      Text(
-                                        "View Detail", // Todo Language
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color:
-                                              primaryColor, // Adjust color as needed
-                                        ),
-                                      )
-                                          .visible(res.data!.bookingDetail!
-                                                  .canCustomerContact &&
-                                              e.id != appStore.userId)
-                                          .onTap(() {
-                                        {
-                                          HandymanInfoScreen(
-                                                  handymanId: e.id,
-                                                  service: res.data!.service)
-                                              .launch(context)
-                                              .then((value) => null);
-                                        }
-                                      }),
-                                    ],
-                                  );
+                                      .onTap(() {
+                                    HandymanInfoScreen(
+                                            handymanId: e.id,
+                                            service: res.data!.service)
+                                        .launch(context)
+                                        .then((value) => null);
+                                  });
                                 },
                               ).toList(),
                             ),
@@ -2335,6 +2313,27 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                                   service: res.data!.service,
                                   bookingDetail: res.data!.bookingDetail!,
                                   bookingInfo: res.data!,
+                                  reportProfileAction: isUserTypeProvider &&
+                                          e.id != appStore.userId
+                                      ? IconButton(
+                                          tooltip: languages
+                                              .lblReportProfileTitle,
+                                          padding: EdgeInsets.zero,
+                                          constraints: const BoxConstraints(
+                                            minWidth: 36,
+                                            minHeight: 36,
+                                          ),
+                                          icon: const Icon(
+                                            Icons.flag_outlined,
+                                            color: Colors.red,
+                                            size: 22,
+                                          ),
+                                          onPressed: () =>
+                                              _openProfileReportDialog(
+                                                e.id.validate(),
+                                              ),
+                                        )
+                                      : null,
                                 ).onTap(() {
                                   if (res.data!.bookingDetail!
                                           .canCustomerContact &&
@@ -2362,23 +2361,9 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                           BookingStatusKeys.pending)
                         24.height,
                       aboutCustomerWidget(
-                          context: context,
-                          bookingDetail: res.data!.bookingDetail,
-                          reportProfileAction: isUserTypeProvider &&
-                                  res.data!.customer != null &&
-                                  res.data!.customer!.id != null &&
-                                  res.data!.customer!.id != appStore.userId
-                              ? IconButton(
-                                  tooltip: languages.lblReportProfileTitle,
-                                  padding: EdgeInsets.zero,
-                                  constraints: BoxConstraints(
-                                      minWidth: 36, minHeight: 36),
-                                  icon: Icon(Icons.flag_outlined,
-                                      color: Colors.red, size: 22),
-                                  onPressed: () => _openProfileReportDialog(
-                                      res.data!.customer!.id!.validate()),
-                                )
-                              : null),
+                        context: context,
+                        bookingDetail: res.data!.bookingDetail,
+                      ),
                       16.height,
                       Container(
                         decoration:
@@ -2389,6 +2374,27 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                           customerData: res.data!.customer,
                           service: res.data!.service,
                           bookingDetail: res.data!.bookingDetail,
+                          reportProfileAction: isUserTypeProvider &&
+                                  res.data!.customer != null &&
+                                  res.data!.customer!.id != null &&
+                                  res.data!.customer!.id != appStore.userId
+                              ? IconButton(
+                                  tooltip: languages.lblReportProfileTitle,
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(
+                                    minWidth: 36,
+                                    minHeight: 36,
+                                  ),
+                                  icon: const Icon(
+                                    Icons.flag_outlined,
+                                    color: Colors.red,
+                                    size: 22,
+                                  ),
+                                  onPressed: () => _openProfileReportDialog(
+                                    res.data!.customer!.id!.validate(),
+                                  ),
+                                )
+                              : null,
                         ),
                       ),
 

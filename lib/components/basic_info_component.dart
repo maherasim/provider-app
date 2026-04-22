@@ -33,13 +33,17 @@ class BasicInfoComponent extends StatefulWidget {
   final int flag;
   final BookingData? bookingDetail;
 
+  /// Shown to the right of the person's name (e.g. report profile).
+  final Widget? reportProfileAction;
+
   BasicInfoComponent(this.flag,
       {this.customerData,
       this.handymanData,
       this.providerData,
       this.service,
       this.bookingDetail,
-      this.bookingInfo});
+      this.bookingInfo,
+      this.reportProfileAction});
 
   @override
   BasicInfoComponentState createState() => BasicInfoComponentState();
@@ -384,12 +388,15 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     HandymanNameWidget(
                       name: name.validate(),
                       size: 14,
                       showVerifiedBadge: showVerifiedBadge,
                     ).flexible(),
+                    if (widget.reportProfileAction != null)
+                      widget.reportProfileAction!,
                   ],
                 ),
                 if (widget.flag == 1)

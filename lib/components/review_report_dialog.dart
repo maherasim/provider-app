@@ -34,7 +34,6 @@ class _ReviewReportDialogState extends State<ReviewReportDialog> {
   @override
   void initState() {
     super.initState();
-    _detailsCont.addListener(() => setState(() {}));
     _fetchReasons();
   }
 
@@ -93,8 +92,6 @@ class _ReviewReportDialogState extends State<ReviewReportDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final len = _detailsCont.text.length;
-
     return Dialog(
       insetPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       shape: RoundedRectangleBorder(borderRadius: radius(16)),
@@ -182,13 +179,6 @@ class _ReviewReportDialogState extends State<ReviewReportDialog> {
                   context,
                   hint: languages.lblReportDetailsHint,
                   fillColor: context.scaffoldBackgroundColor,
-                ),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  '$len/2000',
-                  style: secondaryTextStyle(size: 11),
                 ),
               ),
               16.height,

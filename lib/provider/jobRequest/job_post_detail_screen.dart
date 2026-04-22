@@ -4,10 +4,12 @@ import 'package:handyman_provider_flutter/components/app_widgets.dart';
 import 'package:handyman_provider_flutter/components/cached_image_widget.dart';
 import 'package:handyman_provider_flutter/components/disabled_rating_bar_widget.dart';
 import 'package:handyman_provider_flutter/components/price_widget.dart';
+import 'package:handyman_provider_flutter/components/profile_report_dialog.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/models/service_model.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/components/bid_price_dialog.dart';
+import 'package:handyman_provider_flutter/provider/jobRequest/components/job_report_dialog.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/job_request_details_screen.dart';
 import 'package:handyman_provider_flutter/provider/jobRequest/models/post_job_detail_response.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
@@ -43,6 +45,30 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
   void init() async {
     future = getPostJobDetail(
         {PostJob.postRequestId: widget.postJobData.id.validate()});
+  }
+
+  Future<void> _openJobReportDialog(int postJobId) async {
+    if (postJobId == 0) {
+      toast(errorSomethingWentWrong);
+      return;
+    }
+    await showInDialog(
+      context,
+      contentPadding: EdgeInsets.zero,
+      backgroundColor: Colors.transparent,
+      hideSoftKeyboard: true,
+      builder: (_) => JobReportDialog(postJobId: postJobId),
+    );
+  }
+
+  Future<void> _openProfileReportDialog(int reportedUserId) async {
+    await showInDialog(
+      context,
+      contentPadding: EdgeInsets.zero,
+      backgroundColor: Colors.transparent,
+      hideSoftKeyboard: true,
+      builder: (_) => ProfileReportDialog(reportedUserId: reportedUserId),
+    );
   }
 
   Widget _buildSimpleRow({
@@ -147,10 +173,35 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Job Title
-        Text(
-          data.title.validate(),
-          style: boldTextStyle(size: 18),
+        // Job title + report (list screen ⋮ has report/block; detail: report only, next to name)
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Text(
+                data.title.validate(),
+                style: boldTextStyle(size: 18),
+              ),
+            ),
+            IconButton(
+              tooltip: languages.lblReportJob,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+              icon: const Icon(
+                Icons.flag_outlined,
+                color: Colors.red,
+                size: 22,
+              ),
+              onPressed: () {
+                final id = data.id?.toInt();
+                if (id == null || id == 0) {
+                  toast(errorSomethingWentWrong);
+                  return;
+                }
+                _openJobReportDialog(id);
+              },
+            ),
+          ],
         ),
         8.height,
         
@@ -472,6 +523,12 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
     );
   }
   Widget customerWidget(PostJobData? data) {
+    final d = data!;
+    final int? customerUserId = d.customerId?.toInt();
+    final bool showReportCustomer = customerUserId != null &&
+        customerUserId > 0 &&
+        customerUserId != appStore.userId.validate().toInt();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -487,9 +544,10 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
               backgroundColor: context.cardColor,
               borderRadius: BorderRadius.all(Radius.circular(16))),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CachedImageWidget(
-                url: data!.customerProfile.validate(),
+                url: d.customerProfile.validate(),
                 fit: BoxFit.cover,
                 height: 60,
                 width: 60,
@@ -499,20 +557,42 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Marquee(
                         directionMarguee: DirectionMarguee.oneDirection,
                         child: Text(
-                          data.customerName.validate(),
+                          d.customerName.validate(),
                           style: boldTextStyle(size: 14),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      4.height,
-                      Text(
-                        "${data.cityName ?? ''}${data.countryName.validate().isEmpty ? "" : "${data.cityName.validate().isEmpty ? "" :  " - "}${data.countryName}"}",
-                        style: secondaryTextStyle(size: 12),
-                      ),
+                      ).expand(),
+                      if (showReportCustomer)
+                        IconButton(
+                          tooltip: languages.lblReportProfileTitle,
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(
+                            minWidth: 40,
+                            minHeight: 40,
+                          ),
+                          icon: const Icon(
+                            Icons.flag_outlined,
+                            color: Colors.red,
+                            size: 22,
+                          ),
+                          onPressed: () => _openProfileReportDialog(
+                            customerUserId!,
+                          ),
+                        ),
+                    ],
+                  ),
+                  4.height,
+                  Text(
+                    "${d.cityName ?? ''}${d.countryName.validate().isEmpty ? "" : "${d.cityName.validate().isEmpty ? "" : " - "}${d.countryName}"}",
+                    style: secondaryTextStyle(size: 12),
+                  ),
                 ],
               ).expand(),
             ],

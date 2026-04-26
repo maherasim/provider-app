@@ -200,8 +200,13 @@ void main() async {
 
   localeLanguageList = languageList();
 
-  appStore.setLanguage(
-      getStringAsync(SELECTED_LANGUAGE_CODE, defaultValue: DEFAULT_LANGUAGE));
+  String initialLang = getStringAsync(SELECTED_LANGUAGE_CODE,
+      defaultValue: DEFAULT_LANGUAGE);
+  if (!LanguageDataModel.languages().contains(initialLang)) {
+    initialLang = DEFAULT_LANGUAGE;
+    setValue(SELECTED_LANGUAGE_CODE, initialLang);
+  }
+  appStore.setLanguage(initialLang);
 
   runApp(MyApp());
 }

@@ -48,6 +48,8 @@ class UserData {
   String? mobility;
   String? certification;
   String? aboutMe;
+  /// Provider "Why choose me" rich textarea (`profile_form` / Quill).
+  String? aboutDescription;
   String? availability;
   String? education;
   String? careerLevel;
@@ -221,7 +223,7 @@ class UserData {
         knownLanguages = json['known_languages'];
       }
     }
-    whyChooseMe = json['why_choose_me'];
+    whyChooseMe = _coerceUserDataString(json['why_choose_me']);
     // Handle skills - can be List or String
     if (json['skills'] != null) {
       if (json['skills'] is List) {
@@ -234,8 +236,8 @@ class UserData {
     subscription = json['subscription'] != null ? ProviderSubscriptionModel.fromJson(json['subscription']) : null;
     isSubscribe = json['is_subscribe'];
     designation = json['designation'];
-    cityName = json['city_name'] ?? json["city"];
-    countryName = json['country_name'] ?? json["country"];
+    cityName = _coerceUserDataString(json['city_name']) ?? _coerceUserDataString(json['city']);
+    countryName = _coerceUserDataString(json['country_name']) ?? _coerceUserDataString(json['country']);
     taxCountryId = json['tax_country_id'] is int ? json['tax_country_id'] : int.tryParse(json['tax_country_id']?.toString() ?? '');
     customerRating = json['customer_rating'];
     customerTotalRatings = json['customer_total_ratings'];
@@ -257,6 +259,7 @@ class UserData {
     mobility = json['mobility'];
     certification = json['certification'];
     aboutMe = json['about_me'];
+    aboutDescription = json['about_description']?.toString();
     availability = json['availability'];
     education = json['education'];
     careerLevel = json['career_level']?.toString();
@@ -321,6 +324,8 @@ class UserData {
     if (this.apiToken != null) data['api_token'] = this.apiToken;
     if (this.profileImage != null) data['profile_image'] = this.profileImage;
     if (this.description != null) data['description'] = this.description;
+    if (this.aboutMe != null) data['about_me'] = this.aboutMe;
+    if (this.aboutDescription != null) data['about_description'] = this.aboutDescription;
     if (this.knownLanguages != null) data['known_languages'] = this.knownLanguages;
     if (this.whyChooseMe != null) data['why_choose_me'] = this.whyChooseMe;
     if (this.skills != null) data['skills'] = this.skills;
@@ -360,6 +365,33 @@ class UserData {
   }
 }
 
+List<String> _parseWhyChooseReasonList(dynamic raw) {
+  if (raw == null) return [];
+  if (raw is List) {
+    return raw.map((x) => x.toString()).toList();
+  }
+  if (raw is String) {
+    final s = raw.trim();
+    if (s.isEmpty) return [];
+    if (s.isJson()) {
+      try {
+        final decoded = jsonDecode(s);
+        if (decoded is List) {
+          return decoded.map((e) => e.toString()).toList();
+        }
+      } catch (_) {}
+    }
+    return [s];
+  }
+  return [];
+}
+
+String _parseWhyChooseTitle(Map<String, dynamic> json) {
+  final t = json['title'] ?? json['why_choose_me_title'];
+  if (t == null) return '';
+  return t.toString();
+}
+
 class WhyChooseMe {
   String title;
   List<String> reason;
@@ -370,9 +402,13 @@ class WhyChooseMe {
   });
 
   factory WhyChooseMe.fromJson(Map<String, dynamic> json) {
+    var reasons = _parseWhyChooseReasonList(json['reason']);
+    if (reasons.isEmpty) {
+      reasons = _parseWhyChooseReasonList(json['why_choose_me_reason']);
+    }
     return WhyChooseMe(
-      title: json['why_choose_me_title'] is String ? json['why_choose_me_title'] : "",
-      reason: json['reason'] is List ? List<String>.from(json['reason'].map((x) => x)) : [],
+      title: _parseWhyChooseTitle(json),
+      reason: reasons,
     );
   }
 
@@ -382,6 +418,22 @@ class WhyChooseMe {
       'why_choose_me_reason': reason.map((e) => e).toList(),
     };
   }
+}
+
+/// API may return a plain string or a nested map (e.g. `city` / `country` objects).
+String? _coerceUserDataString(dynamic value) {
+  if (value == null) return null;
+  if (value is String) return value;
+  if (value is num || value is bool) return value.toString();
+  if (value is Map) {
+    final m = Map<String, dynamic>.from(value);
+    if (m['name'] != null) return m['name'].toString();
+    if (m['city_name'] != null) return m['city_name'].toString();
+    if (m['country_name'] != null) return m['country_name'].toString();
+    return jsonEncode(m);
+  }
+  if (value is List) return jsonEncode(value);
+  return value.toString();
 }
 
 class CustomerReview {

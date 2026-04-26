@@ -41,6 +41,7 @@ import 'package:handyman_provider_flutter/models/service_detail_response.dart';
 import 'package:handyman_provider_flutter/models/service_model.dart';
 import 'package:handyman_provider_flutter/models/service_response.dart';
 import 'package:handyman_provider_flutter/models/service_review_response.dart';
+import 'package:handyman_provider_flutter/models/spoken_languages_response.dart';
 import 'package:handyman_provider_flutter/models/state_list_response.dart';
 import 'package:handyman_provider_flutter/models/subscription_history_model.dart';
 import 'package:handyman_provider_flutter/models/tax_list_response.dart';
@@ -277,6 +278,14 @@ Future<UserInfoResponse> getUserDetail(int id) async {
   UserInfoResponse res = UserInfoResponse.fromJson(await handleResponse(await buildHttpResponse('user-detail?id=$id', method: HttpMethodType.GET)));
   appStore.setLoading(false);
   return res;
+}
+
+Future<SpokenLanguagesResponse> getSpokenLanguages() async {
+  final body = await handleResponse(await buildHttpResponse('spoken-languages', method: HttpMethodType.GET));
+  if (body is Map) {
+    return SpokenLanguagesResponse.fromJson(Map<String, dynamic>.from(body));
+  }
+  return SpokenLanguagesResponse(options: {});
 }
 
 Future<HandymanInfoResponse> getProviderDetail(int id) async {

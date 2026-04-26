@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart';
@@ -38,8 +37,11 @@ class _SwitchPushNotificationSubscriptionComponentState extends State<SwitchPush
       trailing: Transform.scale(
         scale: appStore.userType == USER_TYPE_PROVIDER ? 0.6 : 0.7,
         child: Observer(builder: (context) {
+          // Match UI to [appStore] only. FCM topics use [appStore.userId]; Firebase Auth
+          // is often null when API login did not run anonymous/email Firebase sign-in, which
+          // made the switch look OFF while "enabled" toasts and prefs were true.
           return Switch.adaptive(
-            value: FirebaseAuth.instance.currentUser != null && appStore.isSubscribedForPushNotification,
+            value: appStore.isLoggedIn && appStore.isSubscribedForPushNotification,
             onChanged: (v) async {
               if (appStore.isLoading) return;
               appStore.setLoading(true);

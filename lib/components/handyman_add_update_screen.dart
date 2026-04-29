@@ -23,13 +23,14 @@ import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
+import 'package:handyman_provider_flutter/utils/language_options.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../provider/earning/handyman_payout_list_screen.dart';
-import 'add_reasons_component.dart';
+import '../provider/jobRequest/models/post_job_data.dart';
 
 class HandymanAddUpdateScreen extends StatefulWidget {
   final String? userType;
@@ -88,9 +89,11 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
 
   Country selectedCountry = defaultCountry();
 
-  // Languages - changed to multi-select dropdown
-  final List<String> languageOptions = ['English', 'French', 'Chinese', 'Urdu', 'Spanish', 'German'];
+  /// Selected codes from [knownLanguageOptions] (server + fallback).
   List<String> selectedLanguages = [];
+
+  /// Code → label from [getSpokenLanguages], else [kLanguageOptions] fallback.
+  Map<String, String> knownLanguageOptions = Map<String, String>.from(kLanguageOptions);
   
   // Skills, Certification, Mobility - changed to text inputs (keeping lists for backward compatibility during migration)
   final List<String> skills = [];
@@ -200,17 +203,6 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
       // Initialize status
       selectedStatus = widget.data!.status == 1 ? '1' : '0';
       
-      // Initialize languages - check both languagesArray and knownLanguagesArray
-      if (widget.data!.languagesArray != null && widget.data!.languagesArray!.isNotEmpty) {
-        selectedLanguages = List<String>.from(widget.data!.languagesArray!);
-      } else if (widget.data!.knownLanguages != null && widget.data!.knownLanguages!.isNotEmpty) {
-        try {
-          selectedLanguages = widget.data!.knownLanguagesArray;
-        } catch (e) {
-          selectedLanguages = [];
-        }
-      }
-      
       // Initialize handyman commission
       if (widget.data!.handymanCommission != null) {
         handymanCommissionCont.text = widget.data!.handymanCommission.toString();
@@ -253,6 +245,10 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
   }
 
   Future<void> init() async {
+    await _loadKnownLanguageOptions();
+    if (widget.data != null) {
+      _initKnownLanguagesFromHandymanData();
+    }
     getAddressList();
     getCommissionList();
     getCountryList();
@@ -260,7 +256,180 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
       loadProviderList();
     }
   }
-  
+
+  Future<void> _loadKnownLanguageOptions() async {
+    knownLanguageOptions = Map<String, String>.from(kLanguageOptions);
+    try {
+      final res = await getSpokenLanguages();
+      if (res.options.isNotEmpty) {
+        knownLanguageOptions = Map<String, String>.from(res.options);
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    if (mounted) setState(() {});
+  }
+
+  /// Same key normalization as [EditProfileScreen._languageStringToValue].
+  String _languageStringToValue(String s) {
+    if (s.isEmpty) return '';
+    String normalized = s.toLowerCase().trim();
+    String withUnderscore = normalized.replaceAll(' ', '_');
+    if (knownLanguageOptions.containsKey(normalized)) return normalized;
+    if (knownLanguageOptions.containsKey(withUnderscore)) return withUnderscore;
+    for (var e in knownLanguageOptions.entries) {
+      if (e.value.toLowerCase() == s.toLowerCase()) return e.key;
+    }
+    return withUnderscore.isNotEmpty ? withUnderscore : normalized;
+  }
+
+  void _parsePlainLanguageString(String knownLanguagesStr) {
+    List<String> parts =
+        knownLanguagesStr.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+    for (String part in parts) {
+      String value = _languageStringToValue(part);
+      if (value.isNotEmpty && !selectedLanguages.contains(value)) {
+        selectedLanguages.add(value);
+      }
+    }
+  }
+
+  void _initKnownLanguagesFromHandymanData() {
+    if (widget.data == null) return;
+    selectedLanguages = [];
+    final d = widget.data!;
+    if (d.languagesArray != null && d.languagesArray!.isNotEmpty) {
+      for (var e in d.languagesArray!) {
+        String s = e.toString().trim();
+        if (s.isEmpty) continue;
+        String value = _languageStringToValue(s);
+        if (value.isNotEmpty && knownLanguageOptions.containsKey(value) && !selectedLanguages.contains(value)) {
+          selectedLanguages.add(value);
+        }
+      }
+    } else {
+      String? knownLanguagesStr = d.knownLanguages;
+      if (knownLanguagesStr != null && knownLanguagesStr.isNotEmpty) {
+        if (knownLanguagesStr.isJson()) {
+          try {
+            Iterable it = jsonDecode(knownLanguagesStr);
+            for (var e in it) {
+              String s = e.toString().trim();
+              if (s.isEmpty) continue;
+              String value = _languageStringToValue(s);
+              if (value.isNotEmpty && !selectedLanguages.contains(value)) {
+                selectedLanguages.add(value);
+              }
+            }
+          } catch (_) {
+            _parsePlainLanguageString(knownLanguagesStr);
+          }
+        } else {
+          _parsePlainLanguageString(knownLanguagesStr);
+        }
+      }
+    }
+    selectedLanguages.removeWhere((k) => !knownLanguageOptions.containsKey(k));
+  }
+
+  void _showLanguageMultiSelect(BuildContext context) {
+    List<String> tempSelected = List<String>.from(selectedLanguages);
+    TextEditingController searchCont = TextEditingController();
+    ValueNotifier<String> searchNotifier = ValueNotifier('');
+    showModalBottomSheet<List<String>?>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: context.cardColor,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return DraggableScrollableSheet(
+              initialChildSize: 0.6,
+              minChildSize: 0.3,
+              maxChildSize: 0.95,
+              expand: false,
+              builder: (_, scrollController) => Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: AppTextField(
+                            controller: searchCont,
+                            textFieldType: TextFieldType.OTHER,
+                            decoration:
+                                inputDecoration(context, hint: languages.lblSearchLanguagesHint),
+                            onChanged: (v) {
+                              searchNotifier.value = v;
+                            },
+                          ),
+                        ),
+                        8.width,
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(ctx).pop(List<String>.from(tempSelected));
+                          },
+                          child: Text(languages.done, style: boldTextStyle(color: primaryColor)),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(height: 1),
+                  Expanded(
+                    child: ValueListenableBuilder<String>(
+                      valueListenable: searchNotifier,
+                      builder: (_, query, __) {
+                        String q = query.toLowerCase().trim();
+                        var entries = knownLanguageOptions.entries
+                            .where((e) =>
+                                e.key.contains(q) || e.value.toLowerCase().contains(q))
+                            .toList();
+                        return ListView.builder(
+                          controller: scrollController,
+                          itemCount: entries.length,
+                          itemBuilder: (_, i) {
+                            String value = entries[i].key;
+                            String label = entries[i].value;
+                            bool checked = tempSelected.contains(value);
+                            return CheckboxListTile(
+                              value: checked,
+                              onChanged: (v) {
+                                if (v == true) {
+                                  if (!tempSelected.contains(value)) tempSelected.add(value);
+                                } else {
+                                  tempSelected.remove(value);
+                                }
+                                setModalState(() {});
+                              },
+                              title: Text(label, style: primaryTextStyle(size: 14)),
+                              controlAffinity: ListTileControlAffinity.leading,
+                              activeColor: primaryColor,
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    ).then((List<String>? result) {
+      final selected = result != null ? List<String>.from(result) : null;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        searchCont.dispose();
+        searchNotifier.dispose();
+        if (selected != null && mounted) {
+          selectedLanguages = selected;
+          setState(() {});
+        }
+      });
+    });
+  }
+
   bool _isAdminUser() {
     return appStore.userType == 'admin' || appStore.userType == 'demo_admin';
   }
@@ -425,6 +594,10 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
   /// Register the Handyman
   Future<void> register() async {
     if (formKey.currentState!.validate()) {
+      if (selectedLanguages.isEmpty) {
+        toast(languages.pleaseAddKnownLanguage);
+        return;
+      }
       // Commission selection is now optional - user can use manual handyman_commission field instead
       formKey.currentState!.save();
       hideKeyboard(context);
@@ -468,8 +641,10 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
           if (experienceCont.text.trim().isNotEmpty) 'experience': experienceCont.text.trim(),
           if (aboutMeCont.text.trim().isNotEmpty) 'about_me': aboutMeCont.text.trim(),
           if (selectedAvailability.isNotEmpty) 'availability': selectedAvailability,
-          if (selectedLanguages.isNotEmpty) 'languages': jsonEncode(selectedLanguages),
-          if (selectedLanguages.isNotEmpty) 'known_languages': jsonEncode(selectedLanguages),
+          UserKeys.knownLanguages: jsonEncode(selectedLanguages),
+          for (int i = 0; i < selectedLanguages.length; i++) 'languages[$i]': selectedLanguages[i],
+          'career_level': CareerLevel.notSpecified.backendValue,
+          'years_of_experience': YearsOfExperience.lessThan1Year.backendValue,
           if (handymanCommissionCont.text.isNotEmpty)
             'handyman_commission': handymanCommissionCont.text.validate(),
           if (countryId != null) CommonKeys.countryId: countryId,
@@ -511,7 +686,12 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
     
     log('Creating multipart request for ${isUpdate ? 'update-profile' : 'register'}');
     log('profileImageFile is null: ${profileImageFile == null}');
-    
+
+    // Same as [EditProfileScreen.update]: API persists [profile_image] with these fields.
+    multiPartRequest.fields['profile'] = 'profile';
+    multiPartRequest.fields[UserKeys.displayName] =
+        '${fNameCont.text.validate().trim()} ${lNameCont.text.validate().trim()}'.trim();
+
     multiPartRequest.fields[UserKeys.firstName] = fNameCont.text;
     multiPartRequest.fields[UserKeys.lastName] = lNameCont.text;
     multiPartRequest.fields[UserKeys.userName] = userNameCont.text;
@@ -539,10 +719,13 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
     if (experienceCont.text.trim().isNotEmpty) multiPartRequest.fields['experience'] = experienceCont.text.trim();
     if (aboutMeCont.text.trim().isNotEmpty) multiPartRequest.fields['about_me'] = aboutMeCont.text.trim();
     if (selectedAvailability.isNotEmpty) multiPartRequest.fields['availability'] = selectedAvailability;
-    if (selectedLanguages.isNotEmpty) {
-      multiPartRequest.fields['languages'] = jsonEncode(selectedLanguages);
-      multiPartRequest.fields['known_languages'] = jsonEncode(selectedLanguages);
+    multiPartRequest.fields[UserKeys.knownLanguages] = jsonEncode(selectedLanguages);
+    for (var i = 0; i < selectedLanguages.length; i++) {
+      multiPartRequest.fields['languages[$i]'] = selectedLanguages[i];
     }
+    multiPartRequest.fields['career_level'] = CareerLevel.notSpecified.backendValue;
+    multiPartRequest.fields['years_of_experience'] =
+        YearsOfExperience.lessThan1Year.backendValue;
     if (handymanCommissionCont.text.isNotEmpty)
       multiPartRequest.fields['handyman_commission'] = handymanCommissionCont.text.validate();
     if (countryId != null) multiPartRequest.fields[CommonKeys.countryId] = countryId.toString();
@@ -572,12 +755,20 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
         // Get file info before adding
         int fileSize = await profileImageFile!.length();
         String fileName = profileImageFile!.path.split('/').last;
-        String fileExtension = fileName.split('.').last.toLowerCase();
+        String fileExtension = fileName.contains('.')
+            ? fileName.split('.').last.toLowerCase()
+            : '';
         log('Adding profile image file: ${profileImageFile!.path}');
         log('File size: $fileSize bytes, File name: $fileName, Extension: $fileExtension');
         
-        // Determine content type based on file extension (allow all image types)
-        String? contentType;
+        // Laravel/API only accepts PNG, GIF, JPG, JPEG (see server error: "Bild muss ...")
+        const allowedExts = {'jpg', 'jpeg', 'png', 'gif'};
+        if (!allowedExts.contains(fileExtension)) {
+          toast('Please choose a PNG, GIF, JPG, or JPEG image.');
+          appStore.setLoading(false);
+          return;
+        }
+        final String contentType;
         switch (fileExtension) {
           case 'jpg':
           case 'jpeg':
@@ -589,38 +780,15 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
           case 'gif':
             contentType = 'image/gif';
             break;
-          case 'webp':
-            contentType = 'image/webp';
-            break;
-          case 'bmp':
-            contentType = 'image/bmp';
-            break;
-          case 'svg':
-            contentType = 'image/svg+xml';
-            break;
-          case 'tiff':
-          case 'tif':
-            contentType = 'image/tiff';
-            break;
-          case 'ico':
-            contentType = 'image/x-icon';
-            break;
-          case 'heic':
-          case 'heif':
-            contentType = 'image/heic';
-            break;
           default:
-            // Default to image/jpeg for unknown extensions, or let it be auto-detected
-            contentType = null; // Let multipart auto-detect
-            log('Unknown image extension: $fileExtension, using auto-detect');
+            contentType = 'image/jpeg';
         }
         
-        // Create multipart file - allow all image types
         MultipartFile multipartFile = await MultipartFile.fromPath(
-          'profile_image',
+          UserKeys.profileImage,
           profileImageFile!.path,
           filename: fileName,
-          contentType: contentType != null ? MediaType.parse(contentType) : null,
+          contentType: MediaType.parse(contentType),
         );
         
         log('MultipartFile created - field: ${multipartFile.field}, filename: ${multipartFile.filename}, length: ${multipartFile.length}, contentType: ${multipartFile.contentType}');
@@ -1166,7 +1334,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     12.height,
                     Text(languages.commission, style: boldTextStyle(size: 16)),
                     12.height,
-                    // Handyman Commission - Number input (1-85)
+                    // Handyman Commission - Number input (1-99)
                     AppTextField(
                       textFieldType: TextFieldType.PHONE,
                       controller: handymanCommissionCont,
@@ -1394,29 +1562,18 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       },
                     ).visible(!isUpdate),
                     16.height,
-                    if (isUpdate)
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                              '${widget.data!.displayName} ${languages.lblRegistered} ${DateTime.parse(widget.data!.createdAt!).timeAgo}\n${formatBookingDate(widget.data!.createdAt!)}',
-                              style: secondaryTextStyle()),
-                          if (widget.data!.emailVerifiedAt
-                              .validate()
-                              .isNotEmpty)
-                            TextIcon(
-                              text: '${languages.lblEmailIsVerified}',
-                              textStyle: primaryTextStyle(color: Colors.green),
-                              prefix: Container(
-                                child: Icon(Icons.check,
-                                    color: Colors.white, size: 14),
-                                padding: EdgeInsets.all(2),
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.green),
-                              ),
-                            ).paddingTop(8),
-                        ],
+                    if (isUpdate &&
+                        widget.data!.emailVerifiedAt.validate().isNotEmpty)
+                      TextIcon(
+                        text: '${languages.lblEmailIsVerified}',
+                        textStyle: primaryTextStyle(color: Colors.green),
+                        prefix: Container(
+                          child: Icon(Icons.check,
+                              color: Colors.white, size: 14),
+                          padding: EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle, color: Colors.green),
+                        ),
                       ),
                     // Availability dropdown - full_time/part_time
                     DropdownButtonFormField<String>(
@@ -1471,85 +1628,59 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     8.height,
                     Text(languages.knownLanguages, style: secondaryTextStyle()),
                     8.height,
-                    // Languages - Multi-select dropdown
-                    Container(
-                      decoration: BoxDecoration(
-                        color: context.scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: context.dividerColor),
-                      ),
-                      child: Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: languageOptions.map((lang) {
-                          bool isSelected = selectedLanguages.contains(lang);
-                          return FilterChip(
-                            label: Text(lang),
-                            selected: isSelected,
-                            onSelected: (selected) {
-                              if (selected) {
-                                selectedLanguages.add(lang);
-                              } else {
-                                selectedLanguages.remove(lang);
-                              }
-                              setState(() {});
-                            },
-                            selectedColor: gradientBlue.withOpacity(0.2),
-                            checkmarkColor: gradientBlue,
-                          );
-                        }).toList(),
-                      ).paddingAll(12),
-                    ),
-                    16.height,
-                    // Keep old language list display for backward compatibility
-                    Wrap(
-                      children: selectedLanguages.map((e) {
-                        return Stack(
+                    InkWell(
+                      onTap: () => _showLanguageMultiSelect(context),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: context.cardColor,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: context.dividerColor),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              decoration: boxDecorationWithRoundedCorners(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(16)),
-                                backgroundColor: appStore.isDarkMode
-                                    ? cardDarkColor
-                                    : gradientBlue.withValues(alpha: 0.1),
+                            Row(
+                              children: [
+                                Icon(Icons.language, size: 20, color: context.iconColor),
+                                8.width,
+                                Text(
+                                  selectedLanguages.isEmpty
+                                      ? 'Select languages'
+                                      : '${selectedLanguages.length} selected',
+                                  style: selectedLanguages.isEmpty
+                                      ? secondaryTextStyle()
+                                      : primaryTextStyle(size: 14),
+                                ),
+                                Spacer(),
+                                Icon(Icons.arrow_drop_down, color: context.iconColor),
+                              ],
+                            ),
+                            if (selectedLanguages.isNotEmpty) ...[
+                              8.height,
+                              Wrap(
+                                spacing: 6,
+                                runSpacing: 6,
+                                children: selectedLanguages.map((value) {
+                                  String label = knownLanguageOptions[value] ?? value;
+                                  return Chip(
+                                    label: Text(label, style: primaryTextStyle(size: 12)),
+                                    deleteIcon:
+                                        Icon(Icons.close, size: 16, color: context.iconColor),
+                                    onDeleted: () {
+                                      selectedLanguages.remove(value);
+                                      setState(() {});
+                                    },
+                                    backgroundColor: context.scaffoldBackgroundColor,
+                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  );
+                                }).toList(),
                               ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              margin: EdgeInsets.all(4),
-                              child: Text(e, style: primaryTextStyle()),
-                            ),
-                            Positioned(
-                              right: 1,
-                              child: Icon(
-                                Icons.cancel,
-                                color: Colors.red,
-                              ).onTap(() {
-                                selectedLanguages.remove(e);
-                                setState(() {});
-                              }),
-                            ),
+                            ],
                           ],
-                        );
-                      }).toList(),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        String? res = await showInDialog(
-                          context,
-                          contentPadding: EdgeInsets.zero,
-                          builder: (p0) {
-                            return AddReasonsComponent();
-                          },
-                        );
-
-                        if (res != null && !selectedLanguages.contains(res.trim())) {
-                          selectedLanguages.add(res.trim());
-                          setState(() {});
-                        }
-                      },
-                      child: Text(languages.lblAddLanguage,
-                          style: primaryTextStyle(color: gradientBlue)),
+                        ),
+                      ),
                     ),
                     Divider(),
                     12.height,

@@ -46,6 +46,7 @@ import 'package:handyman_provider_flutter/models/tax_list_response.dart';
 import 'package:handyman_provider_flutter/models/total_earning_response.dart';
 import 'package:handyman_provider_flutter/models/update_location_response.dart';
 import 'package:handyman_provider_flutter/models/user_data.dart';
+import 'package:handyman_provider_flutter/models/spoken_languages_response.dart';
 import 'package:handyman_provider_flutter/models/user_info_response.dart';
 import 'package:handyman_provider_flutter/models/user_list_response.dart';
 import 'package:handyman_provider_flutter/models/user_type_response.dart';
@@ -276,6 +277,16 @@ Future<UserInfoResponse> getUserDetail(int id) async {
   UserInfoResponse res = UserInfoResponse.fromJson(await handleResponse(await buildHttpResponse('user-detail?id=$id', method: HttpMethodType.GET)));
   appStore.setLoading(false);
   return res;
+}
+
+/// Known-language labels keyed by option id (e.g. `english` → `English`). Drives profile + handyman multiselect.
+Future<SpokenLanguagesResponse> getSpokenLanguages() async {
+  final body = await handleResponse(
+      await buildHttpResponse('spoken-languages', method: HttpMethodType.GET));
+  if (body is Map<String, dynamic>) {
+    return SpokenLanguagesResponse.fromJson(body);
+  }
+  return SpokenLanguagesResponse(options: {});
 }
 
 Future<HandymanInfoResponse> getProviderDetail(int id) async {

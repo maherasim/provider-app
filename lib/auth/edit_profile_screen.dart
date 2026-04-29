@@ -63,6 +63,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   /// Selected language values for Known Languages multi-select (e.g. ['english', 'german']).
   List<String> selectedLanguages = [];
 
+  /// Code → label: filled from [getSpokenLanguages], with [kLanguageOptions] as fallback if the API fails.
+  Map<String, String> knownLanguageOptions = Map<String, String>.from(kLanguageOptions);
+
   List<AddressResponse> serviceAddressList = [];
   AddressResponse? selectedAddress;
 
@@ -73,12 +76,13 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   CountryListResponse? selectedTaxCountry;
   int taxCountryId = 0;
 
-  List<String> availabilityList = <String>['Full Time', 'Hybrid'];
-  String selectedAvailability = 'Full Time';
+  static const List<String> _availabilityKeys = <String>['full_time', 'part_time'];
+  String selectedAvailability = 'full_time';
+  int profileStatus = 1;
 
   CareerLevel? selectedCareerLevel = CareerLevel.notSpecified;
-  ProfileEducationLevel? selectedEducation = ProfileEducationLevel.notSpecified;
-  YearsOfExperience? selectedYearsOfExperience = YearsOfExperience.lessThan1Year;
+  ProfileEducationLevel? selectedEducation = ProfileEducationLevel.unselected;
+  YearsOfExperience? selectedYearsOfExperience = YearsOfExperience.unselected;
 
   TextEditingController fNameCont = TextEditingController();
   TextEditingController lNameCont = TextEditingController();
@@ -132,6 +136,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> init() async {
+    await _loadKnownLanguageOptions();
+
     afterBuildCreated(() {
       setStatusBarColor(context.primaryColor);
       appStore.setLoading(true);
@@ -182,17 +188,41 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
-  /// Normalize API string to language option value (key in kLanguageOptions).
+  Future<void> _loadKnownLanguageOptions() async {
+    knownLanguageOptions = Map<String, String>.from(kLanguageOptions);
+    try {
+      final res = await getSpokenLanguages();
+      if (res.options.isNotEmpty) {
+        knownLanguageOptions = Map<String, String>.from(res.options);
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    if (mounted) setState(() {});
+  }
+
+  /// Normalize API string to language option value (key in [knownLanguageOptions]).
   String _languageStringToValue(String s) {
     if (s.isEmpty) return '';
     String normalized = s.toLowerCase().trim();
     String withUnderscore = normalized.replaceAll(' ', '_');
-    if (kLanguageOptions.containsKey(normalized)) return normalized;
-    if (kLanguageOptions.containsKey(withUnderscore)) return withUnderscore;
-    for (var e in kLanguageOptions.entries) {
+    if (knownLanguageOptions.containsKey(normalized)) return normalized;
+    if (knownLanguageOptions.containsKey(withUnderscore)) return withUnderscore;
+    for (var e in knownLanguageOptions.entries) {
       if (e.value.toLowerCase() == s.toLowerCase()) return e.key;
     }
     return withUnderscore.isNotEmpty ? withUnderscore : normalized;
+  }
+
+  String _availabilityLabel(String code) {
+    switch (code) {
+      case 'full_time':
+        return JobSchedule.fullTime.displayName;
+      case 'part_time':
+        return JobSchedule.partTime.displayName;
+      default:
+        return code;
+    }
   }
 
   void _parsePlainLanguageString(String knownLanguagesStr) {
@@ -242,6 +272,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
           _parsePlainLanguageString(knownLanguagesStr);
         }
       }
+      selectedLanguages.removeWhere((k) => !knownLanguageOptions.containsKey(k));
       knownLanguages = List<String>.from(selectedLanguages);
 
       // Load skills - handle JSON string (from model) or plain string
@@ -275,28 +306,60 @@ class EditProfileScreenState extends State<EditProfileScreen> {
           selectedCareerLevel = CareerLevel.notSpecified;
         }
       }
-      if (value.data!.education != null && value.data!.education!.isNotEmpty) {
-        try {
-          selectedEducation = ProfileEducationLevel.values.firstWhere(
-            (e) => e.backendValue == value.data!.education,
-            orElse: () => ProfileEducationLevel.notSpecified,
-          );
-        } catch (_) {
-          selectedEducation = ProfileEducationLevel.notSpecified;
+      {
+        String? ed = value.data!.education;
+        if (ed == null || ed.trim().isEmpty || ed.trim() == 'not_specified') {
+          selectedEducation = ProfileEducationLevel.unselected;
+        } else {
+          try {
+            selectedEducation = ProfileEducationLevel.values.firstWhere(
+              (e) => e.backendValue == ed.trim(),
+              orElse: () => ProfileEducationLevel.unselected,
+            );
+          } catch (_) {
+            selectedEducation = ProfileEducationLevel.unselected;
+          }
         }
       }
-      if (value.data!.yearsOfExperience != null && value.data!.yearsOfExperience!.isNotEmpty) {
+      if (value.data!.yearsOfExperience != null && value.data!.yearsOfExperience!.trim().isNotEmpty) {
+        final y = value.data!.yearsOfExperience!.trim();
         try {
           selectedYearsOfExperience = YearsOfExperience.values.firstWhere(
-            (e) => e.backendValue == value.data!.yearsOfExperience,
-            orElse: () => YearsOfExperience.lessThan1Year,
+            (e) => e.backendValue == y,
+            orElse: () => YearsOfExperience.unselected,
           );
         } catch (_) {
-          selectedYearsOfExperience = YearsOfExperience.lessThan1Year;
+          selectedYearsOfExperience = YearsOfExperience.unselected;
+        }
+      } else {
+        selectedYearsOfExperience = YearsOfExperience.unselected;
+      }
+
+      if (value.data!.status != null) {
+        profileStatus = value.data!.status == 1 ? 1 : 0;
+      }
+
+      {
+        String? av = value.data!.availability;
+        if (av == null || av.trim().isEmpty) {
+          selectedAvailability = 'full_time';
+        } else {
+          final a = av.trim().toLowerCase();
+          if (a == 'full_time' || a == 'part_time') {
+            selectedAvailability = a;
+          } else if (a == 'hybrid' || a.contains('part') || a == 'part time') {
+            selectedAvailability = 'part_time';
+          } else {
+            selectedAvailability = 'full_time';
+          }
         }
       }
-      
-      descriptionCont.text = value.data!.description.validate();
+
+      {
+        String about = _safeStringFromValue(value.data!.aboutMe);
+        String desc = _safeStringFromValue(value.data!.description);
+        descriptionCont.text = about.isNotEmpty ? about : desc;
+      }
       addressCont.text = value.data!.address.validate();
 
       taxCountryId = value.data!.taxCountryId ?? countryId;
@@ -436,8 +499,25 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     if (!formKey.currentState!.validate()) return;
     hideKeyboard(context);
 
+    if (selectedLanguages.isEmpty) {
+      toast('${languages.knownLanguages}: ${languages.hintRequired}');
+      return;
+    }
+    if ((isUserTypeProvider || isUserTypeHandyman) &&
+        vatNumCont.text.trim().isEmpty) {
+      toast('${languages.lblVatNumberHint} — ${languages.hintRequired}');
+      return;
+    }
+    if (isUserTypeHandyman &&
+        serviceAddressList.isNotEmpty &&
+        (serviceAddressId == null || serviceAddressId == 0)) {
+      toast(languages.lblSelectAddress);
+      return;
+    }
+
     MultipartRequest multiPartRequest =
         await getMultiPartRequest('update-profile');
+    multiPartRequest.fields['profile'] = 'profile';
     multiPartRequest.fields[UserKeys.id] = appStore.userId.toString();
     multiPartRequest.fields[UserKeys.firstName] = fNameCont.text;
     multiPartRequest.fields[UserKeys.lastName] = lNameCont.text;
@@ -452,21 +532,27 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     multiPartRequest.fields[CommonKeys.cityId] = cityId.toString();
     multiPartRequest.fields['tax_country_id'] = taxCountryId.toString();
     multiPartRequest.fields[CommonKeys.address] = addressCont.text.validate();
-    multiPartRequest.fields[UserKeys.designation] =
-        designationCont.text.validate();
+    if (isUserTypeProvider) {
+      multiPartRequest.fields[UserKeys.designation] =
+          designationCont.text.trim();
+    }
     multiPartRequest.fields['company_name'] = cNameCont.text.trim();
     multiPartRequest.fields['vat_number'] = vatNumCont.text.trim();
-    // Send languages - multi-select values as JSON array (known_languages / languages[])
-    if (selectedLanguages.isNotEmpty) {
-      multiPartRequest.fields[UserKeys.knownLanguages] = jsonEncode(selectedLanguages);
+    multiPartRequest.fields[UserKeys.status] = profileStatus.toString();
+    multiPartRequest.fields['availability'] = selectedAvailability;
+
+    for (int i = 0; i < selectedLanguages.length; i++) {
+      multiPartRequest.fields['languages[$i]'] = selectedLanguages[i];
     }
-    
-    // Send skills as string (comma-separated or plain text)
+    if (selectedLanguages.isNotEmpty) {
+      multiPartRequest.fields[UserKeys.knownLanguages] =
+          jsonEncode(selectedLanguages);
+    }
+
     if (skillsCont.text.trim().isNotEmpty) {
       multiPartRequest.fields[UserKeys.skills] = skillsCont.text.trim();
     }
-    
-    // Send experience, mobility, certification, education as strings
+
     if (experienceCont.text.trim().isNotEmpty) {
       multiPartRequest.fields['experience'] = experienceCont.text.trim();
     }
@@ -476,21 +562,29 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     if (certificationCont.text.trim().isNotEmpty) {
       multiPartRequest.fields['certification'] = certificationCont.text.trim();
     }
-    multiPartRequest.fields['education'] = selectedEducation?.backendValue ?? ProfileEducationLevel.notSpecified.backendValue;
-    multiPartRequest.fields['career_level'] = selectedCareerLevel?.backendValue ?? CareerLevel.notSpecified.backendValue;
-    multiPartRequest.fields['years_of_experience'] = selectedYearsOfExperience?.backendValue ?? YearsOfExperience.lessThan1Year.backendValue;
-    multiPartRequest.fields[UserKeys.whyChooseReason] =
-        jsonEncode(whyChooseMeReasons);
-    multiPartRequest.fields[UserKeys.whyChooseTitle] =
-        whyChooseMeCont.text.trim();
-    multiPartRequest.fields[UserKeys.description] =
-        descriptionCont.text.validate();
+    multiPartRequest.fields['education'] =
+        selectedEducation?.backendValue ?? '';
+    multiPartRequest.fields['career_level'] =
+        selectedCareerLevel?.backendValue ?? CareerLevel.notSpecified.backendValue;
+    multiPartRequest.fields['years_of_experience'] =
+        selectedYearsOfExperience?.backendValue ?? '';
+    if (isUserTypeProvider) {
+      multiPartRequest.fields[UserKeys.whyChooseReason] =
+          jsonEncode(whyChooseMeReasons);
+      multiPartRequest.fields[UserKeys.whyChooseTitle] =
+          whyChooseMeCont.text.trim();
+    }
+    multiPartRequest.fields['about_me'] = descriptionCont.text.trim();
+    multiPartRequest.fields[UserKeys.description] = descriptionCont.text.trim();
     multiPartRequest.fields[UserKeys.displayName] =
         '${fNameCont.text.validate() + " " + lNameCont.text.validate()}';
 
-    if (isUserTypeHandyman && serviceAddressId != null)
+    if (isUserTypeHandyman) {
       multiPartRequest.fields[UserKeys.serviceAddressId] =
-          serviceAddressId == 0 ? '' : serviceAddressId.toString();
+          (serviceAddressId == null || serviceAddressId == 0)
+              ? ''
+              : serviceAddressId.toString();
+    }
     if (imageFile != null) {
       multiPartRequest.files.add(
           await MultipartFile.fromPath(UserKeys.profileImage, imageFile!.path));
@@ -667,7 +761,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       valueListenable: searchNotifier,
                       builder: (_, query, __) {
                         String q = query.toLowerCase().trim();
-                        var entries = kLanguageOptions.entries.where((e) =>
+                        var entries = knownLanguageOptions.entries.where((e) =>
                             e.key.contains(q) || e.value.toLowerCase().contains(q)).toList();
                         return ListView.builder(
                           controller: scrollController,
@@ -925,12 +1019,53 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           ],
                         ),
                         16.height,
+                        Row(
+                          children: [
+                            DropdownButtonFormField<int>(
+                              decoration: inputDecoration(
+                                context,
+                                hint: languages.lblStatus,
+                              ),
+                              isExpanded: true,
+                              value: profileStatus,
+                              dropdownColor: context.cardColor,
+                              items: [
+                                DropdownMenuItem(
+                                  value: 1,
+                                  child: Text(
+                                    languages.active,
+                                    style: primaryTextStyle(),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: 0,
+                                  child: Text(
+                                    languages.inactive,
+                                    style: primaryTextStyle(),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                              onChanged: (int? v) {
+                                if (v != null) {
+                                  profileStatus = v;
+                                  setState(() {});
+                                }
+                              },
+                            ).expand(),
+                          ],
+                        ),
+                        16.height,
                         AppTextField(
                           textFieldType: TextFieldType.NAME,
                           controller: vatNumCont,
                           focus: vatNumFocus,
-                          nextFocus: designationFocus,
-                          isValidationRequired: false,
+                          nextFocus: isUserTypeProvider ? designationFocus : null,
+                          isValidationRequired:
+                              isUserTypeProvider || isUserTypeHandyman,
                           decoration: inputDecoration(
                             context,
                             hint: languages.lblVatNumberHint,
@@ -942,43 +1077,17 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           ),
                         ),
                         16.height,
-                        AppTextField(
-                          textFieldType: TextFieldType.NAME,
-                          controller: designationCont,
-                          isValidationRequired: false,
-                          focus: designationFocus,
-                          decoration: inputDecoration(context,
-                              hint: languages.lblDesignation),
-                        ),
-                        16.height,
-                        Row(
-                          children: [
-                            DropdownButtonFormField<String>(
-                              decoration: inputDecoration(context,
-                                  hint: languages.lblSelectAvailabilityHint),
-                              isExpanded: true,
-                              value: selectedAvailability,
-                              dropdownColor: context.cardColor,
-                              items: availabilityList.map((String e) {
-                                return DropdownMenuItem<String>(
-                                  value: e,
-                                  child: Text(
-                                    e,
-                                    style: primaryTextStyle(),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (String? value) async {
-                                hideKeyboard(context);
-                                selectedAvailability = value ?? 'Full Times';
-                                setState(() {});
-                              },
-                            ).expand(),
-                          ],
-                        ),
-                        16.height,
+                        if (isUserTypeProvider) ...[
+                          AppTextField(
+                            textFieldType: TextFieldType.NAME,
+                            controller: designationCont,
+                            isValidationRequired: false,
+                            focus: designationFocus,
+                            decoration: inputDecoration(context,
+                                hint: languages.lblDesignation),
+                          ),
+                          16.height,
+                        ],
                         Row(
                           children: [
                             DropdownButtonFormField<CountryListResponse>(
@@ -1121,6 +1230,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           maxLines: 5,
                           focus: addressFocus,
                           minLines: 3,
+                          isValidationRequired: true,
                           decoration: inputDecoration(context,
                               hint: languages.hintAddress),
                         ),
@@ -1162,7 +1272,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                     spacing: 6,
                                     runSpacing: 6,
                                     children: selectedLanguages.map((value) {
-                                      String label = kLanguageOptions[value] ?? value;
+                                      String label = knownLanguageOptions[value] ?? value;
                                       return Chip(
                                         label: Text(label, style: primaryTextStyle(size: 12)),
                                         deleteIcon: Icon(Icons.close, size: 16, color: context.iconColor),
@@ -1292,41 +1402,74 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           textFieldType: TextFieldType.NAME,
                           controller: certificationCont,
                           focus: certificationFocus,
-                          nextFocus: descriptionFocus,
+                          nextFocus: isUserTypeProvider ? null : descriptionFocus,
                           decoration: inputDecoration(context,
                               hint: languages.lblCertificationHint),
                           suffix: Icon(Icons.verified, size: 18, color: context.iconColor).paddingAll(14),
                         ),
                         16.height,
-                        AppTextField(
-                          controller: whyChooseMeCont,
-                          textFieldType: TextFieldType.NAME,
-                          maxLines: 3,
-                          focus: whyChooseMeFocus,
-                          minLines: 2,
-                          maxLength: 120,
-                          enableChatGPT: appConfigurationStore.chatGPTStatus,
-                          promptFieldInputDecorationChatGPT:
-                              inputDecoration(context).copyWith(
-                            hintText: languages.writeHere,
-                            fillColor: context.scaffoldBackgroundColor,
-                            filled: true,
-                          ),
-                          testWithoutKeyChatGPT:
-                              appConfigurationStore.testWithoutKey,
-                          loaderWidgetForChatGPT: const ChatGPTLoadingWidget(),
-                          decoration: inputDecoration(context,
-                              hint: languages.writeShortLineAbout),
-                          isValidationRequired: false,
+                        Row(
+                          children: [
+                            DropdownButtonFormField<String>(
+                              decoration: inputDecoration(context,
+                                  hint: languages.lblSelectAvailabilityHint),
+                              isExpanded: true,
+                              value: _availabilityKeys
+                                      .contains(selectedAvailability)
+                                  ? selectedAvailability
+                                  : 'full_time',
+                              dropdownColor: context.cardColor,
+                              items: _availabilityKeys.map((String k) {
+                                return DropdownMenuItem<String>(
+                                  value: k,
+                                  child: Text(
+                                    _availabilityLabel(k),
+                                    style: primaryTextStyle(),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (String? value) {
+                                hideKeyboard(context);
+                                selectedAvailability = value ?? 'full_time';
+                                setState(() {});
+                              },
+                            ).expand(),
+                          ],
                         ),
                         16.height,
+                        if (isUserTypeProvider) ...[
+                          AppTextField(
+                            controller: whyChooseMeCont,
+                            textFieldType: TextFieldType.NAME,
+                            maxLines: 3,
+                            focus: whyChooseMeFocus,
+                            minLines: 2,
+                            maxLength: 120,
+                            enableChatGPT: appConfigurationStore.chatGPTStatus,
+                            promptFieldInputDecorationChatGPT:
+                                inputDecoration(context).copyWith(
+                              hintText: languages.writeHere,
+                              fillColor: context.scaffoldBackgroundColor,
+                              filled: true,
+                            ),
+                            testWithoutKeyChatGPT:
+                                appConfigurationStore.testWithoutKey,
+                            loaderWidgetForChatGPT: const ChatGPTLoadingWidget(),
+                            decoration: inputDecoration(context,
+                                hint: languages.writeShortLineAbout),
+                            isValidationRequired: false,
+                            nextFocus: descriptionFocus,
+                          ),
+                          16.height,
+                        ],
                         AppTextField(
                           controller: descriptionCont,
                           textFieldType: TextFieldType.MULTILINE,
                           maxLines: 5,
                           minLines: 3,
                           focus: descriptionFocus,
-                          nextFocus: whyChooseMeFocus,
                           enableChatGPT: appConfigurationStore.chatGPTStatus,
                           promptFieldInputDecorationChatGPT:
                               inputDecoration(context).copyWith(
@@ -1341,60 +1484,64 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               hint: languages.aboutYou),
                           isValidationRequired: false,
                         ),
-                        16.height,
-                        Text(languages.reasonsToChooseYour,
-                            style: secondaryTextStyle()),
-                        8.height,
-                        Wrap(
-                          children: whyChooseMeReasons.map((e) {
-                            return Stack(
-                              children: [
-                                Container(
-                                  decoration: boxDecorationWithRoundedCorners(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(16)),
-                                    backgroundColor: appStore.isDarkMode
-                                        ? cardDarkColor
-                                        : primaryColor.withValues(alpha: 0.1),
+                        if (isUserTypeProvider) ...[
+                          16.height,
+                          Text(languages.reasonsToChooseYour,
+                              style: secondaryTextStyle()),
+                          8.height,
+                          Wrap(
+                            children: whyChooseMeReasons.map((e) {
+                              return Stack(
+                                children: [
+                                  Container(
+                                    decoration: boxDecorationWithRoundedCorners(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(16)),
+                                      backgroundColor: appStore.isDarkMode
+                                          ? cardDarkColor
+                                          : primaryColor.withValues(
+                                              alpha: 0.1,
+                                            ),
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 8),
+                                    margin: EdgeInsets.all(4),
+                                    child: Text(e, style: primaryTextStyle()),
                                   ),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
-                                  margin: EdgeInsets.all(4),
-                                  child: Text(e, style: primaryTextStyle()),
-                                ),
-                                Positioned(
-                                  right: 1,
-                                  child: Icon(
-                                    Icons.cancel,
-                                    color: Colors.red,
-                                  ).onTap(() {
-                                    whyChooseMeReasons.remove(e);
-                                    setState(() {});
-                                  }),
-                                ),
-                              ],
-                            );
-                          }).toList(),
-                        ),
-                        TextButton(
-                          onPressed: () async {
-                            String? res = await showInDialog(
-                              context,
-                              contentPadding: EdgeInsets.zero,
-                              builder: (p0) {
-                                return AddReasonsComponent();
-                              },
-                            );
+                                  Positioned(
+                                    right: 1,
+                                    child: Icon(
+                                      Icons.cancel,
+                                      color: Colors.red,
+                                    ).onTap(() {
+                                      whyChooseMeReasons.remove(e);
+                                      setState(() {});
+                                    }),
+                                  ),
+                                ],
+                              );
+                            }).toList(),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              String? res = await showInDialog(
+                                context,
+                                contentPadding: EdgeInsets.zero,
+                                builder: (p0) {
+                                  return AddReasonsComponent();
+                                },
+                              );
 
-                            if (res != null) {
-                              whyChooseMeReasons.add(res.trim());
-                              setState(() {});
-                            }
-                          },
-                          child: Text(languages.addReasons,
-                              style: primaryTextStyle(
-                                  color: context.primaryColor)),
-                        ),
+                              if (res != null) {
+                                whyChooseMeReasons.add(res.trim());
+                                setState(() {});
+                              }
+                            },
+                            child: Text(languages.addReasons,
+                                style: primaryTextStyle(
+                                    color: context.primaryColor)),
+                          ),
+                        ],
                         28.height,
                         Observer(
                           builder: (context) => DecoratedBox(

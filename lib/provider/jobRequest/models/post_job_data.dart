@@ -374,7 +374,8 @@ enum EducationLevel {
 
 /// Profile Education (edit profile dropdown)
 enum ProfileEducationLevel {
-  notSpecified("Not Specified", "not_specified"),
+  /// First option in blade: empty string (nullable on server).
+  unselected("—", ""),
   anyGraduate("Any Graduate", "any_graduate"),
   apprenticeshipDegree("Apprenticeship Degree", "apprenticeship_degree"),
   traineeshipDegree("Traineeship Degree", "traineeship_degree"),
@@ -397,7 +398,9 @@ enum ProfileEducationLevel {
 
 /// Years of Experience (edit profile dropdown).
 /// API expects string: e.g. 1_to_3, 5_to_8, more_than_10 (dropdown value).
+/// First option in blade: empty (optional on server).
 enum YearsOfExperience {
+  unselected("—", ""),
   lessThan1Year("Less than 1 Year", "less_than_1"),
   oneTo3Years("1 to 3 Years", "1_to_3"),
   threeTo5Years("3 to 5 Years", "3_to_5"),

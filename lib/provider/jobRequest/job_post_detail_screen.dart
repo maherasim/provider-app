@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:handyman_provider_flutter/components/app_widgets.dart';
 import 'package:handyman_provider_flutter/components/cached_image_widget.dart';
 import 'package:handyman_provider_flutter/components/disabled_rating_bar_widget.dart';
+import 'package:handyman_provider_flutter/components/profile_report_dialog.dart';
 import 'package:handyman_provider_flutter/components/price_widget.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/models/service_model.dart';
@@ -58,6 +59,21 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
       backgroundColor: Colors.transparent,
       hideSoftKeyboard: true,
       builder: (_) => JobReportDialog(postJobId: postJobId),
+    );
+  }
+
+  /// POST `ugc/report-profile` via [ProfileReportDialog] (customer user id from job).
+  Future<void> _openCustomerProfileReportDialog(int reportedUserId) async {
+    if (reportedUserId == 0) {
+      toast(errorSomethingWentWrong);
+      return;
+    }
+    await showInDialog(
+      context,
+      contentPadding: EdgeInsets.zero,
+      backgroundColor: Colors.transparent,
+      hideSoftKeyboard: true,
+      builder: (_) => ProfileReportDialog(reportedUserId: reportedUserId),
     );
   }
 
@@ -515,6 +531,9 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
     );
   }
   Widget customerWidget(PostJobData? data) {
+    if (data == null) return const SizedBox.shrink();
+    final int customerUserId = (data.customerId ?? 0).toInt();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -532,7 +551,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
           child: Row(
             children: [
               CachedImageWidget(
-                url: data!.customerProfile.validate(),
+                url: data.customerProfile.validate(),
                 fit: BoxFit.cover,
                 height: 60,
                 width: 60,
@@ -542,6 +561,9 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
                       Marquee(
                         directionMarguee: DirectionMarguee.oneDirection,
                         child: Text(
@@ -550,12 +572,30 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
+                      ).expand(),
+                      IconButton(
+                        tooltip: languages.lblReportProfileTitle,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(
+                          minWidth: 40,
+                          minHeight: 40,
+                        ),
+                        icon: const Icon(
+                          Icons.flag_outlined,
+                          color: Colors.red,
+                          size: 22,
+                        ),
+                        onPressed: () {
+                          _openCustomerProfileReportDialog(customerUserId);
+                        },
                       ),
-                      4.height,
-                      Text(
-                        "${data.cityName ?? ''}${data.countryName.validate().isEmpty ? "" : "${data.cityName.validate().isEmpty ? "" :  " - "}${data.countryName}"}",
-                        style: secondaryTextStyle(size: 12),
-                      ),
+                    ],
+                  ),
+                  4.height,
+                  Text(
+                    "${data.cityName ?? ''}${data.countryName.validate().isEmpty ? "" : "${data.cityName.validate().isEmpty ? "" :  " - "}${data.countryName}"}",
+                    style: secondaryTextStyle(size: 12),
+                  ),
                 ],
               ).expand(),
             ],

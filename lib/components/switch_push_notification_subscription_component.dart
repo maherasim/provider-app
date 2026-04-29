@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart';
@@ -38,8 +37,10 @@ class _SwitchPushNotificationSubscriptionComponentState extends State<SwitchPush
       trailing: Transform.scale(
         scale: appStore.userType == USER_TYPE_PROVIDER ? 0.6 : 0.7,
         child: Observer(builder: (context) {
+          // Must use app session (isLoggedIn), not FirebaseAuth — backend login
+          // may leave FirebaseAuth.currentUser null so the switch would stay off.
           return Switch.adaptive(
-            value: FirebaseAuth.instance.currentUser != null && appStore.isSubscribedForPushNotification,
+            value: appStore.isLoggedIn && appStore.isSubscribedForPushNotification,
             onChanged: (v) async {
               if (appStore.isLoading) return;
               appStore.setLoading(true);

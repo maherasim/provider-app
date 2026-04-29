@@ -139,10 +139,6 @@ class _AddAddonServiceScreenState extends State<AddAddonServiceScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           8.height,
-          MultiLanguageWidget(onTap: (LanguageDataModel code) {
-            checkValidation(isSave: false,code: code);
-          }),
-          8.height,
               SingleChildScrollView(
                 padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 90),
                 child: Column(

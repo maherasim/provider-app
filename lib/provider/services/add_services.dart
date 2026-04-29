@@ -1535,11 +1535,6 @@ class _AddServicesState extends State<AddServices> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               8.height,
-              MultiLanguageWidget(onTap: (LanguageDataModel code) {
-                log("langaugeCode ==> ${code.languageCode}");
-                checkValidation(isSave: false, code: code);
-              }),
-              8.height,
               Expanded(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.symmetric(vertical: 16.0),

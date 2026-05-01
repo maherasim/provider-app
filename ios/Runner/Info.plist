@@ -97,9 +97,6 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Handyman Service for Provider app requires access to the photo library to upload
 			your profile photo.</string>
-	<key>Privacy-Location Usage Description</key>
-	<string>Handyman Service for Provider app requires address permission access to get the
-			current location of the user instead of typing address manually. </string>
 	<key>SKAdNetworkItems</key>
 	<array>
 		<dict>

@@ -1,5 +1,7 @@
 // ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
 
+import 'dart:convert';
+
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -588,6 +590,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
+  /// Backend requires known spoken languages (`known_languages` / `languages[]`) like the profile form;
+  /// we default to one language derived from the app UI locale — no signup UI field needed.
+  String _defaultSpokenLanguageKey() {
+    switch (appStore.selectedLanguageCode.toLowerCase()) {
+      case 'de':
+        return 'german';
+      case 'fr':
+        return 'french';
+      case 'it':
+        return 'italian';
+      case 'es':
+        return 'spanish';
+      case 'ar':
+        return 'arabic';
+      case 'hi':
+        return 'hindi';
+      default:
+        return 'english';
+    }
+  }
+
   // Sign up user
   void saveUser() async {
     if (selectedUserTypeValue == USER_TYPE_HANDYMAN) {
@@ -630,6 +653,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         UserKeys.password: passwordCont.text.trim(),
         UserKeys.designation: designationCont.text.trim(),
         UserKeys.status: 0,
+        UserKeys.knownLanguages: jsonEncode([_defaultSpokenLanguageKey()]),
+        'languages[0]': _defaultSpokenLanguageKey(),
       };
       print(request);
       if (selectedProvider != null) {

@@ -9,17 +9,14 @@ import 'package:handyman_provider_flutter/auth/sign_in_screen.dart';
 import 'package:handyman_provider_flutter/components/app_widgets.dart';
 import 'package:handyman_provider_flutter/components/selected_item_widget.dart';
 import 'package:handyman_provider_flutter/main.dart';
-import 'package:handyman_provider_flutter/models/user_type_response.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
-import 'package:handyman_provider_flutter/utils/extensions/num_extenstions.dart';
 import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:url_launcher/url_launcher.dart' as launch;
 
 import '../components/back_widget.dart';
 import '../components/cached_image_widget.dart';
@@ -46,6 +43,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController mobileCont = TextEditingController();
   TextEditingController passwordCont = TextEditingController();
   TextEditingController designationCont = TextEditingController();
+  /// Commission % (1–99) for handyman after a provider is selected — no dropdown.
+  TextEditingController handymanCommissionCont = TextEditingController();
 
   /// FocusNodes
   FocusNode fNameFocus = FocusNode();
@@ -57,12 +56,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   FocusNode typeFocus = FocusNode();
   FocusNode passwordFocus = FocusNode();
   FocusNode designationFocus = FocusNode();
+  FocusNode handymanCommissionFocus = FocusNode();
 
   String? selectedUserTypeValue;
-
-  List<UserTypeData> commissionTypeList = [UserTypeData(name: languages.lblSelectCommission, id: -1)];
-
-  UserTypeData? selectedUserCommissionType;
 
   bool isAcceptedTc = false;
   Country selectedCountry = defaultCountry();
@@ -84,6 +80,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     mobileCont.dispose();
     passwordCont.dispose();
     designationCont.dispose();
+    handymanCommissionCont.dispose();
 
     fNameFocus.dispose();
     lNameFocus.dispose();
@@ -94,6 +91,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     typeFocus.dispose();
     passwordFocus.dispose();
     designationFocus.dispose();
+    handymanCommissionFocus.dispose();
   }
 
   //----------------------------------- UI -----------------------------------//
@@ -300,136 +298,128 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 setState(() {});
               }
 
-              commissionTypeList.clear();
-              selectedUserCommissionType = null;
+              handymanCommissionCont.clear();
 
-              getCommissionType(type: selectedUserTypeValue!).then((value) {
-                commissionTypeList = value.userTypeData.validate();
-
-                _valueNotifier.notifyListeners();
-              }).catchError((e) {
-                commissionTypeList = [UserTypeData(name: languages.lblSelectCommission, id: -1)];
-                log(e.toString());
-              });
+              _valueNotifier.notifyListeners();
             },
           ),
         ),
         if (selectedUserTypeValue != USER_TYPE_HANDYMAN) 16.height,
         if (selectedUserTypeValue == USER_TYPE_HANDYMAN)
           Container(
+            width: double.infinity,
             decoration: boxDecorationDefault(color: context.cardColor, borderRadius: radius()),
             padding: EdgeInsets.only(
-              top: selectedProvider != null ? 16 : 0,
-              bottom: selectedProvider != null ? 16 : 0,
-              left: selectedProvider != null ? 16 : 0,
-              right: 4,
+              top: selectedProvider != null ? 16 : 12,
+              bottom: selectedProvider != null ? 16 : 12,
+              left: selectedProvider != null ? 16 : 12,
+              right: selectedProvider != null ? 4 : 12,
             ),
             margin: EdgeInsets.symmetric(vertical: 16),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (selectedProvider != null)
-                  GestureDetector(
-                    onTap: () {
-                      pickProvider();
-                    },
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(languages.selectedProvider, style: secondaryTextStyle()).paddingOnly(bottom: 8),
-                        Row(
-                          children: [
-                            CachedImageWidget(
-                              url: selectedProvider!.profileImage.validate(),
-                              height: 24,
-                              circle: true,
-                              fit: BoxFit.cover,
-                            ),
-                            8.width,
-                            Text(
-                              selectedProvider!.displayName.validate(),
-                              style: primaryTextStyle(size: 12),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ],
+                if (selectedProvider != null) ...[
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        pickProvider();
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(languages.selectedProvider, style: secondaryTextStyle())
+                              .paddingOnly(bottom: 8),
+                          Row(
+                            children: [
+                              CachedImageWidget(
+                                url: selectedProvider!.profileImage.validate(),
+                                height: 24,
+                                width: 24,
+                                circle: true,
+                                fit: BoxFit.cover,
+                              ),
+                              8.width,
+                              Expanded(
+                                child: Text(
+                                  selectedProvider!.displayName.validate(),
+                                  style: primaryTextStyle(size: 12),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ).expand(),
-                if (selectedProvider != null)
+                  ),
                   IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
                     onPressed: () {
                       selectedProvider = null;
                       setState(() {});
 
-                      commissionTypeList.clear();
-                      selectedUserCommissionType = null;
+                      handymanCommissionCont.clear();
 
-                      getCommissionType(type: selectedUserTypeValue!).then((value) {
-                        commissionTypeList = value.userTypeData.validate();
-
-                        _valueNotifier.notifyListeners();
-                      }).catchError((e) {
-                        commissionTypeList = [UserTypeData(name: languages.lblSelectCommission, id: -1)];
-                        log(e.toString());
-                      });
+                      _valueNotifier.notifyListeners();
                     },
                     icon: Icon(Icons.close),
-                  )
-                else
-                  TextButton(
-                    onPressed: () async {
-                      pickProvider();
-                    },
-                    child: Text(languages.pickAProviderYou),
+                  ),
+                ] else
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () async {
+                        pickProvider();
+                      },
+                      style: TextButton.styleFrom(
+                        alignment: AlignmentDirectional.centerStart,
+                        padding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                      ),
+                      child: Text(
+                        languages.pickAProviderYou,
+                        style: primaryTextStyle(),
+                        textAlign: TextAlign.start,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                   ),
               ],
             ),
           ),
-        // Select user type text field...
-        ValueListenableBuilder(
-          valueListenable: _valueNotifier,
-          builder: (context, value, child) => DropdownButtonFormField<UserTypeData>(
-            onChanged: (UserTypeData? val) {
-              selectedUserCommissionType = val;
-              _valueNotifier.notifyListeners();
-            },
-            validator: selectedUserCommissionType == null
-                ? (c) {
-                    if (c == null) return errorThisFieldRequired;
-                    return null;
-                  }
-                : null,
-            value: selectedUserCommissionType,
-            dropdownColor: context.cardColor,
-            decoration: inputDecoration(context, hint: languages.lblSelectCommission),
-            items: List.generate(
-              commissionTypeList.length,
-              (index) {
-                UserTypeData data = commissionTypeList[index];
-
-                return DropdownMenuItem<UserTypeData>(
-                  child: Row(
-                    children: [
-                      Text(data.name.toString(), style: primaryTextStyle()),
-                      4.width,
-                      if (data.type == COMMISSION_TYPE_PERCENT)
-                        Text(
-                          '(${data.commission.toString()}%)',
-                          style: primaryTextStyle(),
-                        )
-                      else if (data.type == COMMISSION_TYPE_FIXED)
-                        Text('(${data.commission.validate().toPriceFormat()})', style: primaryTextStyle()),
-                    ],
-                  ),
-                  value: data,
-                );
-              },
+        if (selectedUserTypeValue == USER_TYPE_HANDYMAN &&
+            selectedProvider != null) ...[
+          AppTextField(
+            textFieldType: TextFieldType.NUMBER,
+            controller: handymanCommissionCont,
+            focus: handymanCommissionFocus,
+            nextFocus: passwordFocus,
+            errorThisFieldRequired: languages.hintRequired,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            maxLength: 2,
+            decoration: inputDecoration(
+              context,
+              hint:
+                  '${languages.handymanCommission} — ${languages.percentage} (1–99)',
+              counterText: '',
             ),
+            validator: (s) {
+              if (s == null || s.trim().isEmpty) {
+                return languages.hintRequired;
+              }
+              final v = int.tryParse(s.trim());
+              if (v == null) return languages.enterValidCommissionValue;
+              if (v < 1 || v > 99) {
+                return languages.advancePercentageShouldBeBetween;
+              }
+              return null;
+            },
           ),
-        ),
-        16.height,
+          16.height,
+        ],
         // Password text field...
         AppTextField(
           textFieldType: TextFieldType.PASSWORD,
@@ -491,19 +481,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (user != null) {
       selectedProvider = user;
       selectedProviderId = user.id.validate();
+      handymanCommissionCont.clear();
       setState(() {});
 
-      commissionTypeList.clear();
-      selectedUserCommissionType = null;
-
-      getCommissionType(type: selectedUserTypeValue!, providerId: selectedProviderId).then((value) {
-        commissionTypeList = value.userTypeData.validate();
-
-        _valueNotifier.notifyListeners();
-      }).catchError((e) {
-        commissionTypeList = [UserTypeData(name: languages.lblSelectCommission, id: -1)];
-        log(e.toString());
-      });
+      _valueNotifier.notifyListeners();
     }
   }
 
@@ -608,8 +589,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // Sign up user
   void saveUser() async {
     if (formKey.currentState!.validate()) {
-      if (selectedUserCommissionType == null || selectedUserCommissionType!.id == -1) {
-        return toast(languages.pleaseSelectCommission);
+      if (selectedUserTypeValue == USER_TYPE_HANDYMAN) {
+        if (selectedProvider == null) {
+          toast(languages.pickAProviderYou);
+          return;
+        }
+        final c = handymanCommissionCont.text.trim();
+        final v = int.tryParse(c);
+        if (c.isEmpty ||
+            v == null ||
+            v < 1 ||
+            v > 99) {
+          toast(languages.advancePercentageShouldBeBetween);
+          return;
+        }
       }
 
       formKey.currentState!.save();
@@ -635,10 +628,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
           request.putIfAbsent(UserKeys.providerId, () => selectedProviderId);
         }
 
-        if (selectedUserTypeValue == USER_TYPE_PROVIDER) {
-          request.putIfAbsent(UserKeys.providerTypeId, () => selectedUserCommissionType!.id.toString());
-        } else {
-          request.putIfAbsent(UserKeys.handymanTypeId, () => selectedUserCommissionType!.id.toString());
+        if (selectedUserTypeValue == USER_TYPE_HANDYMAN) {
+          request.putIfAbsent(
+            CommissionKey.commission,
+            () => handymanCommissionCont.text.trim(),
+          );
         }
 
         log(request);

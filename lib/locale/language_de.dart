@@ -2191,7 +2191,7 @@ class LanguageDe extends Languages {
   String get completedBookings => 'Abgeschlossene Buchungen';
 
   @override
-  String get pickAProviderYou => 'Wählen Sie einen Anbieter aus, mit dem Sie zusammenarbeiten möchten';
+  String get pickAProviderYou => 'Anbieter auswählen';
 
   @override
   String get selectedProvider => 'Ausgewählter Anbieter';

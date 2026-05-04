@@ -2088,7 +2088,7 @@ class LanguageEn extends Languages {
   String get lbMinutes => "Minutes";
 
   @override
-  String get handymanCommission => 'Handyman Commission';
+  String get handymanCommission => 'worker Commission';
 
   @override
   String get commission => 'Commission';

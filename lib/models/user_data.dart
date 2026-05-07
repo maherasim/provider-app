@@ -369,24 +369,56 @@ class UserData {
 
 class WhyChooseMe {
   String title;
+  /// Quill/HTML or plain text stored in `why_choose_me` JSON as `about_description`.
+  String aboutDescription;
   List<String> reason;
 
   WhyChooseMe({
     this.title = "",
+    this.aboutDescription = "",
     this.reason = const <String>[],
   });
 
   factory WhyChooseMe.fromJson(Map<String, dynamic> json) {
+    String readTitle() {
+      if (json['title'] != null && json['title'].toString().trim().isNotEmpty) {
+        return json['title'].toString();
+      }
+      final t = json['why_choose_me_title'];
+      return t is String ? t : "";
+    }
+
+    String readAboutDescription() {
+      final d = json['about_description'];
+      return d == null ? "" : d.toString();
+    }
+
+    List<String> readReason() {
+      if (json['reason'] is List) {
+        return List<String>.from(
+            (json['reason'] as List).map((x) => x.toString()));
+      }
+      if (json['why_choose_me_reason'] is List) {
+        return List<String>.from(
+            (json['why_choose_me_reason'] as List).map((x) => x.toString()));
+      }
+      return [];
+    }
+
     return WhyChooseMe(
-      title: json['why_choose_me_title'] is String ? json['why_choose_me_title'] : "",
-      reason: json['reason'] is List ? List<String>.from(json['reason'].map((x) => x)) : [],
+      title: readTitle(),
+      aboutDescription: readAboutDescription(),
+      reason: readReason(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      'title': title,
+      'about_description': aboutDescription,
       'why_choose_me_title': title,
       'why_choose_me_reason': reason.map((e) => e).toList(),
+      'reason': reason,
     };
   }
 }

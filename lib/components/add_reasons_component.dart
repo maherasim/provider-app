@@ -3,7 +3,6 @@ import 'package:nb_utils/nb_utils.dart';
 
 import '../main.dart';
 import '../utils/common.dart';
-import '../utils/configs.dart';
 import '../utils/colors.dart';
 
 class AddReasonsComponent extends StatefulWidget {
@@ -33,9 +32,10 @@ class _AddReasonsComponentState extends State<AddReasonsComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: context.width(),
-      color: Colors.transparent,
+    return Material(
+      color: context.cardColor,
+      borderRadius: BorderRadius.circular(8),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -43,13 +43,15 @@ class _AddReasonsComponentState extends State<AddReasonsComponent> {
             width: context.width(),
             decoration: BoxDecoration(
               gradient: kAppPrimaryGradient,
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8), topRight: Radius.circular(8)),
             ),
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(languages.addReason, style: boldTextStyle(color: white)).expand(),
+                Text(languages.addReason, style: boldTextStyle(color: white))
+                    .expand(),
                 CloseButton(color: Colors.white),
               ],
             ),
@@ -57,7 +59,9 @@ class _AddReasonsComponentState extends State<AddReasonsComponent> {
           AppTextField(
             textFieldType: TextFieldType.NAME,
             controller: reasonsCont,
-            decoration: inputDecoration(context, hint: languages.writeReason,fillColor: Colors.black),
+            decoration: inputDecoration(context,
+                hint: languages.writeReason,
+                fillColor: context.scaffoldBackgroundColor),
           ).paddingAll(16),
           DecoratedBox(
             decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),

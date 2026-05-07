@@ -44,6 +44,7 @@ class UserKeys {
   static String displayName = 'display_name';
   static String whyChooseReason = 'reason';
   static String whyChooseTitle = 'title';
+  static String whyChooseAboutDescription = 'about_description';
   static String isDefault = 'is_default';
 }
 

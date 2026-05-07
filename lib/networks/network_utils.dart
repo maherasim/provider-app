@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
+import 'package:handyman_provider_flutter/utils/app_check_utils.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
@@ -24,19 +25,44 @@ String _throwableApiMessage(dynamic message) {
 Map<String, String> buildHeaderTokens() {
   Map<String, String> header = {};
 
-  if (appStore.isLoggedIn)
+  if (appStore.isLoggedIn) {
     header.putIfAbsent(
-        HttpHeaders.authorizationHeader, () => 'Bearer ${appStore.token}');
+      HttpHeaders.authorizationHeader,
+      () => 'Bearer ${appStore.token}',
+    );
+  }
   header.putIfAbsent(
-      HttpHeaders.contentTypeHeader, () => 'application/json; charset=utf-8');
+    HttpHeaders.contentTypeHeader,
+    () => 'application/json; charset=utf-8',
+  );
   header.putIfAbsent(
-      HttpHeaders.acceptHeader, () => 'application/json; charset=utf-8');
+    HttpHeaders.acceptHeader,
+    () => 'application/json; charset=utf-8',
+  );
   header.putIfAbsent(
-      CustomHeader.LanguageCode, () => appStore.selectedLanguageCode);
+    CustomHeader.LanguageCode,
+    () => appStore.selectedLanguageCode,
+  );
+
+  final appCheckToken = cachedAppCheckToken;
+  if (appCheckToken != null && appCheckToken.isNotEmpty) {
+    header.putIfAbsent('X-Firebase-AppCheck', () => appCheckToken);
+  }
+
   header.addAll(defaultHeaders());
 
   log(jsonEncode(header));
   return header;
+}
+
+Future<Map<String, String>> buildHeaderTokensWithAppCheck({
+  bool refreshAppCheck = false,
+}) async {
+  if (!isWeb) {
+    await refreshAppCheckToken(forceRefresh: refreshAppCheck);
+  }
+
+  return buildHeaderTokens();
 }
 
 Uri buildBaseUrl(String endPoint) {
@@ -54,14 +80,13 @@ Future<Response> buildHttpResponse(
   Map? request,
   Map<String, String>? header,
 }) async {
-  var headers = header ?? buildHeaderTokens();
+  var headers = header ?? await buildHeaderTokensWithAppCheck();
   Uri url = buildBaseUrl(endPoint);
 
   Response response;
 
   try {
     if (method == HttpMethodType.POST) {
-      // log('Request: ${jsonEncode(request)}');
       response =
           await http.post(url, body: jsonEncode(request), headers: headers);
     } else if (method == HttpMethodType.DELETE) {
@@ -82,14 +107,17 @@ Future<Response> buildHttpResponse(
       responseBody: response.body,
       methodtype: method.name,
     );
-    // log('Response (${method.name}) ${response.statusCode}: ${response.body}');
 
     if (appStore.isLoggedIn &&
         response.statusCode == 401 &&
         !endPoint.startsWith('http')) {
       return await reGenerateToken().then((value) async {
-        return await buildHttpResponse(endPoint,
-            method: method, request: request, header: header);
+        return await buildHttpResponse(
+          endPoint,
+          method: method,
+          request: request,
+          header: header,
+        );
       }).catchError((e) {
         throw errorSomethingWentWrong;
       });
@@ -101,16 +129,15 @@ Future<Response> buildHttpResponse(
   } on TimeoutException catch (_) {
     throw errorInternetNotAvailable;
   } on Exception catch (e) {
-    // Other errors (SSL, format, etc.) – don't report as "offline"
     log('buildHttpResponse error: $e');
     throw errorSomethingWentWrong;
   }
 }
 
-Future handleResponse(Response response,
-    {HttpResponseType httpResponseType = HttpResponseType.JSON}) async {
-  // We already have a response, so network was available; skip connectivity check
-  // to avoid false "offline" when connectivity_plus is wrong or delayed.
+Future handleResponse(
+  Response response, {
+  HttpResponseType httpResponseType = HttpResponseType.JSON,
+}) async {
   if (response.statusCode == 400) {
     throw '${languages.badRequest}';
   } else if (response.statusCode == 403) {
@@ -191,23 +218,29 @@ Future<void> reGenerateToken() async {
 Future<MultipartRequest> getMultiPartRequest(String endPoint,
     {String? baseUrl}) async {
   String url = '${baseUrl ?? buildBaseUrl(endPoint).toString()}';
-  return MultipartRequest('POST', Uri.parse(url));
+  MultipartRequest request = MultipartRequest('POST', Uri.parse(url));
+  request.headers.addAll(await buildHeaderTokensWithAppCheck());
+  return request;
 }
 
-Future<void> sendMultiPartRequest(MultipartRequest multiPartRequest,
-    {Function(dynamic)? onSuccess, Function(dynamic)? onError}) async {
+Future<void> sendMultiPartRequest(
+  MultipartRequest multiPartRequest, {
+  Function(dynamic)? onSuccess,
+  Function(dynamic)? onError,
+}) async {
   try {
     http.Response response =
         await http.Response.fromStream(await multiPartRequest.send());
 
     apiPrint(
-        url: multiPartRequest.url.toString(),
-        headers: jsonEncode(multiPartRequest.headers),
-        request: jsonEncode(multiPartRequest.fields),
-        hasRequest: true,
-        statusCode: response.statusCode,
-        responseBody: response.body,
-        methodtype: "MultiPart");
+      url: multiPartRequest.url.toString(),
+      headers: jsonEncode(multiPartRequest.headers),
+      request: jsonEncode(multiPartRequest.fields),
+      hasRequest: true,
+      statusCode: response.statusCode,
+      responseBody: response.body,
+      methodtype: 'MultiPart',
+    );
 
     if (response.statusCode.isSuccessful()) {
       if (response.body.isJson()) {
@@ -233,31 +266,34 @@ Future<void> sendMultiPartRequest(MultipartRequest multiPartRequest,
 }
 
 void apiPrint({
-  String url = "",
-  String endPoint = "",
-  String headers = "",
-  String request = "",
+  String url = '',
+  String endPoint = '',
+  String headers = '',
+  String request = '',
   int statusCode = 0,
-  String responseBody = "",
-  String methodtype = "",
+  String responseBody = '',
+  String methodtype = '',
   bool hasRequest = false,
 }) {
-  log("┌───────────────────────────────────────────────────────────────────────────────────────────────────────");
-  log("\u001b[93mUrl: \u001B[39m $url");
-  log("\u001b[93mHeader: \u001B[39m \u001b[96m$headers\u001B[39m");
-  if (request.isNotEmpty)
-    log("\u001b[93mRequest: \u001B[39m \u001b[96m$request\u001B[39m");
+  log('----------------------------------------------------------------');
+  log('Url: $url');
+  log('Header: $headers');
+  if (request.isNotEmpty) log('Request: $request');
   log('Response ($methodtype) $statusCode: $responseBody');
-  log("└───────────────────────────────────────────────────────────────────────────────────────────────────────");
+  log('----------------------------------------------------------------');
 }
 
 Map<String, String> buildHeaderForStripe(String stripeKeyPayment) {
   Map<String, String> header = defaultHeaders();
 
   header.putIfAbsent(
-      HttpHeaders.contentTypeHeader, () => 'application/x-www-form-urlencoded');
+    HttpHeaders.contentTypeHeader,
+    () => 'application/x-www-form-urlencoded',
+  );
   header.putIfAbsent(
-      HttpHeaders.authorizationHeader, () => 'Bearer $stripeKeyPayment');
+    HttpHeaders.authorizationHeader,
+    () => 'Bearer $stripeKeyPayment',
+  );
 
   return header;
 }
@@ -266,8 +302,9 @@ Map<String, String> buildHeaderForSadad({String? sadadToken}) {
   Map<String, String> header = defaultHeaders();
 
   header.putIfAbsent(HttpHeaders.contentTypeHeader, () => 'application/json');
-  if (sadadToken != null)
+  if (sadadToken != null) {
     header.putIfAbsent(HttpHeaders.authorizationHeader, () => sadadToken);
+  }
 
   return header;
 }
@@ -276,21 +313,30 @@ Map<String, String> buildHeaderForFlutterWave(String flutterWaveSecretKey) {
   Map<String, String> header = defaultHeaders();
 
   header.putIfAbsent(
-      HttpHeaders.authorizationHeader, () => "Bearer $flutterWaveSecretKey");
+    HttpHeaders.authorizationHeader,
+    () => 'Bearer $flutterWaveSecretKey',
+  );
 
   return header;
 }
 
 Map<String, String> buildHeaderForAirtelMoney(
-    String accessToken, String XCountry, String XCurrency) {
+  String accessToken,
+  String xCountry,
+  String xCurrency,
+) {
   Map<String, String> header = defaultHeaders();
 
   header.putIfAbsent(
-      HttpHeaders.contentTypeHeader, () => 'application/json; charset=utf-8');
+    HttpHeaders.contentTypeHeader,
+    () => 'application/json; charset=utf-8',
+  );
   header.putIfAbsent(
-      HttpHeaders.authorizationHeader, () => 'Bearer $accessToken');
-  header.putIfAbsent('X-Country', () => '$XCountry');
-  header.putIfAbsent('X-Currency', () => '$XCurrency');
+    HttpHeaders.authorizationHeader,
+    () => 'Bearer $accessToken',
+  );
+  header.putIfAbsent('X-Country', () => xCountry);
+  header.putIfAbsent('X-Currency', () => xCurrency);
 
   return header;
 }

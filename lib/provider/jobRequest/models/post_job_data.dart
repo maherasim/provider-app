@@ -275,9 +275,9 @@ class PostJobData {
 
 /// Price Type
 enum PriceType {
-  hourly("Hourly", "hourly"),
-  fixed("Fixed", "fixed"),
-  daily("Daily", "daily");
+  hourly("Stündlich", "hourly"),
+  fixed("Festpreis", "fixed"),
+  daily("Täglich", "daily");
 
   final String displayName;
   final String backendValue;
@@ -287,7 +287,7 @@ enum PriceType {
 
 /// Job Type – each has a distinct bg color for quick visibility
 enum JobType {
-  onSite("On Site", "onsite", Color(0xFFBBDEFB)),   // light blue
+  onSite("Vor Ort", "onsite", Color(0xFFBBDEFB)),   // light blue
   hybrid("Hybrid", "hybrid", Color(0xFFFFE0B2)),   // orange
   remote("Remote", "remote", Color(0xFFC8E6C9));    // green
 
@@ -300,11 +300,11 @@ enum JobType {
 
 /// Job Schedule
 enum JobSchedule {
-  fullTime("Full-time", "full_time"),
-  partTime("Part-time", "part_time"),
-  contract("Contract", "contract"),
-  temporary("Temporary", "temporary"),
-  internship("Internship", "internship");
+fullTime("Vollzeit", "full_time"),
+partTime("Teilzeit", "part_time"),
+contract("Vertrag", "contract"),
+temporary("Befristet", "temporary"),
+internship("Praktikum", "internship");
 
   final String displayName;
   final String backendValue;
@@ -314,7 +314,7 @@ enum JobSchedule {
 
 /// Remote Work Level
 enum RemoteWorkLevel {
-  onsite0("Onsite (100%)", "onsite"),
+  onsite0("Vor Ort (100%)", "onsite"),
   remote25("25% Remote", "25_remote"),
   remote50("50% Remote", "50_remote"),
   remote75("75% Remote", "75_remote"),
@@ -328,17 +328,17 @@ enum RemoteWorkLevel {
 
 /// Career Level
 enum CareerLevel {
-  notSpecified("Not Specified", "not_specified"),
-  entryLevel("Entry Level", "entry_level"),
-  intermediateLevel("Intermediate Level", "intermediate_level"),
-  experienced("Experienced", "experienced"),
-  professional("Professional", "professional"),
-  middleManagement("Middle Management", "middle_management"),
-  executiveManagement("Executive Management", "executive_management"),
-  seniorManagement("Senior Management", "senior_management"),
-  director("Director", "director"),
-  technician("Technician", "technician"),
-  leader("Leader", "leader"),
+  notSpecified("Nicht angegeben", "not_specified"),
+  entryLevel("Berufseinsteiger", "entry_level"),
+  intermediateLevel("Mittlere Ebene", "intermediate_level"),
+  experienced("Erfahren", "experienced"),
+  professional("Fachkraft", "professional"),
+  middleManagement("Mittleres Management", "middle_management"),
+  executiveManagement("Unternehmensleitung", "executive_management"),
+  seniorManagement("Oberes Management", "senior_management"),
+  director("Direktor", "director"),
+  technician("Techniker", "technician"),
+  leader("Teamleiter", "leader"),
   manager("Manager", "manager");
 
   final String displayName;
@@ -349,8 +349,8 @@ enum CareerLevel {
 
 /// Travel Requirement
 enum TravelRequirement {
-  no("No", "0"),
-  yes("Yes", "1");
+  no("Nein", "0"),
+  yes("Ja", "1");
 
   final String displayName;
   final String backendValue;
@@ -360,11 +360,11 @@ enum TravelRequirement {
 
 /// Education Level
 enum EducationLevel {
-  highSchool("High School", "high_school"),
-  associate("Associate Degree", "associate"),
-  undergraduate("Undergraduate Degree", "undergraduate"),
-  masters("Graduate/Master's", "masters"),
-  doctorate("Doctorate", "doctorate");
+  highSchool("Schulabschluss", "high_school"),
+  associate("Associate-Abschluss", "associate"),
+  undergraduate("Bachelor-Abschluss", "undergraduate"),
+  masters("Master-Abschluss", "masters"),
+  doctorate("Promotion", "doctorate");
 
   final String displayName;
   final String backendValue;
@@ -373,24 +373,24 @@ enum EducationLevel {
 }
 
 /// Profile Education (edit profile dropdown)
-enum ProfileEducationLevel {
-  /// First option in blade: empty string (nullable on server).
-  unselected("—", ""),
-  anyGraduate("Any Graduate", "any_graduate"),
-  apprenticeshipDegree("Apprenticeship Degree", "apprenticeship_degree"),
-  traineeshipDegree("Traineeship Degree", "traineeship_degree"),
-  secondaryDegree("Secondary Degree", "secondary_degree"),
-  undergraduateDiploma("Undergraduate Diploma", "undergraduate_diploma"),
-  highSchoolGraduate("High school graduate", "high_school_graduate"),
-  associateDegree("Associate degree", "associate_degree"),
-  collegeDegree("College Degree", "college_degree"),
-  universityDegree("University Degree", "university_degree"),
-  bachelorsDegree("Bachelor's Degree", "bachelors_degree"),
-  mastersDegree("Master's Degree", "masters_degree"),
-  doctorateDegree("Doctorate Degree", "doctorate_degree"),
-  professionalDegree("Professional Degree", "professional_degree");
+enum ProfileEducationLevel {// First option in blade: empty string (nullable on server).
+ // First option in blade: empty string (nullable on server).
+unselected("—", ""),
+anyGraduate("Beliebiger Abschluss", "any_graduate"),
+apprenticeshipDegree("Ausbildung", "apprenticeship_degree"),
+traineeshipDegree("Praktikum", "traineeship_degree"),
+secondaryDegree("Mittlere Reife", "secondary_degree"),
+undergraduateDiploma("Diplom", "undergraduate_diploma"),
+highSchoolGraduate("Abitur", "high_school_graduate"),
+associateDegree("Associate-Abschluss", "associate_degree"),
+collegeDegree("Hochschulabschluss", "college_degree"),
+universityDegree("Universitätsabschluss", "university_degree"),
+bachelorsDegree("Bachelorabschluss", "bachelors_degree"),
+mastersDegree("Masterabschluss", "masters_degree"),
+doctorateDegree("Doktorgrad (PhD)", "doctorate_degree"),
+professionalDegree("Berufsqualifikation", "professional_degree");
 
-  final String displayName;
+final String displayName;
   final String backendValue;
 
   const ProfileEducationLevel(this.displayName, this.backendValue);
@@ -401,12 +401,12 @@ enum ProfileEducationLevel {
 /// First option in blade: empty (optional on server).
 enum YearsOfExperience {
   unselected("—", ""),
-  lessThan1Year("Less than 1 Year", "less_than_1"),
-  oneTo3Years("1 to 3 Years", "1_to_3"),
-  threeTo5Years("3 to 5 Years", "3_to_5"),
-  fiveTo8Years("5 to 8 Years", "5_to_8"),
-  eightTo10Years("8 to 10 Years", "8_to_10"),
-  moreThan10Years("More than 10 Years", "more_than_10");
+  lessThan1Year("Weniger als 1 Jahr", "less_than_1"),
+  oneTo3Years("1 bis 3 Jahre", "1_to_3"),
+  threeTo5Years("3 bis 5 Jahre", "3_to_5"),
+  fiveTo8Years("5 bis 8 Jahre", "5_to_8"),
+  eightTo10Years("8 bis 10 Jahre", "8_to_10"),
+  moreThan10Years("Mehr als 10 Jahre", "more_than_10");
 
   final String displayName;
   final String backendValue;
@@ -416,20 +416,20 @@ enum YearsOfExperience {
 
 /// Education Level
 enum RequestStatus {
-  requested('Requested','requested',defaultStatus),
-  accepted('Accepted','accepted',accept),
-  pendingAdvance('Advance Payment Pending','advance_payment_pending',primaryColorWithOpacity),
-  advancePaid('Advance Paid','advance_paid',primaryColorWithOpacity),
-  inProcess('In Process','in_process',primaryColorWithOpacity),
-  inProgress('In Progress','in_progress',primaryColorWithOpacity),
-  hold('Hold','hold',primaryColorWithOpacity),
-  done('Done','done',primaryColorWithOpacity),
-  confirmDone( 'Confirm Done','confirm_done',primaryColorWithOpacity),
-  completed( 'Completed','completed',primaryColorWithOpacity),
-  remainingPaymentPending('Waiting for admin approval','remaining_payment_pending',primaryColorWithOpacity),
-  remainingPaid( 'Remaining Paid','remaining_paid',primaryColorWithOpacity),
+  requested('Angefragt', 'requested', defaultStatus),
+  accepted('Akzeptiert', 'accepted', accept),
+  pendingAdvance('Anzahlung ausstehend', 'advance_payment_pending', primaryColorWithOpacity),
+  advancePaid('Anzahlung geleistet', 'advance_paid', primaryColorWithOpacity),
+  inProcess('In Bearbeitung', 'in_process', primaryColorWithOpacity),
+  inProgress('In Ausführung', 'in_progress', primaryColorWithOpacity),
+  hold('Angehalten', 'hold', primaryColorWithOpacity),
+  done('Erledigt', 'done', primaryColorWithOpacity),
+  confirmDone('Erledigung bestätigt', 'confirm_done', primaryColorWithOpacity),
+  completed('Abgeschlossen', 'completed', primaryColorWithOpacity),
+  remainingPaymentPending('Wartet auf Admin-Bestätigung', 'remaining_payment_pending', primaryColorWithOpacity),
+  remainingPaid('Restzahlung geleistet', 'remaining_paid', primaryColorWithOpacity),
 
-  cancel( 'Cancelled','cancelled',cancelled);
+  cancel('Storniert', 'cancelled', cancelled);
   final String displayName;
   final String backendValue;
   final Color bgColor;

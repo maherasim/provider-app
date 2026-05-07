@@ -1377,6 +1377,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           textFieldType: TextFieldType.NAME,
                           controller: cNameCont,
                           focus: cNameFocus,
+                          isValidationRequired: false,
                           decoration: inputDecoration(context,
                               hint: languages.lblCompanyNameHint),
                         ),
@@ -1407,6 +1408,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           controller: skillsCont,
                           focus: skillsFocus,
                           nextFocus: certificationFocus,
+                          isValidationRequired: false,
                           decoration: inputDecoration(context,
                               hint: languages.essentialSkills +
                                   ' (comma-separated)'),
@@ -1497,6 +1499,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           controller: certificationCont,
                           focus: certificationFocus,
                           nextFocus: mobilityFocus,
+                          isValidationRequired: false,
                           decoration: inputDecoration(context,
                               hint: languages.lblCertificationHint),
                           suffix: Icon(Icons.verified,
@@ -1542,6 +1545,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           nextFocus: isUserTypeProvider
                               ? designationFocus
                               : experienceFocus,
+                          isValidationRequired: false,
                           decoration: inputDecoration(context,
                               hint: languages.lblMobilityHint),
                           suffix: Icon(Icons.directions_car,
@@ -1566,6 +1570,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           controller: experienceCont,
                           focus: experienceFocus,
                           nextFocus: descriptionFocus,
+                          isValidationRequired: false,
                           minLines: 3,
                           maxLines: 5,
                           decoration: inputDecoration(context,

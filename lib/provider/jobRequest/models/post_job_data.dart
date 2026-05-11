@@ -7,7 +7,6 @@ import 'package:handyman_provider_flutter/utils/colors.dart';
 import '../../../models/service_model.dart';
 
 class PostJobData {
-
   String? reason;
   num? providerId;
   num? customerId;
@@ -51,13 +50,11 @@ class PostJobData {
 
   String? customerName;
 
-
   String? date;
   String? image;
   DateTime? updatedAt;
   // UserData? customer;
   Category? category;
-
 
   List<String> images;
   String? jobPrice;
@@ -110,18 +107,13 @@ class PostJobData {
     this.duties,
     this.benefits,
     this.totalBudget,
-
     this.type,
-
     this.customerName,
-
     this.date,
     this.image,
     this.updatedAt,
     // this.customer,
     this.category,
-
-
     required this.images,
     this.jobPrice,
     this.acceptedBidId,
@@ -135,142 +127,176 @@ class PostJobData {
   });
 
   factory PostJobData.fromJson(Map<String, dynamic> json) => PostJobData(
-    id: json["id"],
-    title: json["title"],
-    description: json["description"],
-    reason: json["reason"],
-    price: json["price"],
-    providerId: json["provider_id"],
-    customerId: json["customer_id"],
-    customerProfile: json["customer_profile"],
-    canBid: json["can_bid"],
-    service: json["service"] == null ? [] : List<ServiceData>.from(json["service"]!.map((x) => ServiceData.fromJson(x))),
-    createdAt: json["created_at"],
-    categoryId: json["category_id"],
-    subCategoryId: json["sub_category_id"],
-    countryId: json["country_id"],
-    stateId: json["state_id"],
-    cityId: json["city_id"],
-    startDate: json["start_date"],
-    endDate: json["end_date"],
-    totalDays: json["total_days"],
-    totalHours: json["total_hours"],
-    requirement: json["requirement"],
-    latitude: json["latitude"]?.toDouble(),
-    longitude: json["longitude"]?.toDouble(),
-    status: RequestStatus.fromJson(json["status"]),
-    priceType: (json["price_type"] ?? json["job_price"]) == null ? null : PriceType.values.firstWhere((e) => e.backendValue == (json["price_type"] ?? json["job_price"]), orElse: () => PriceType.fixed),
-    type: json["type"] == null ? null : JobType.values.firstWhere((e) => e.backendValue == json["type"], orElse: () => JobType.onSite),
-    jobSchedule: json["job_schedule"] == null ? null : JobSchedule.values.firstWhere((e) => e.backendValue == json["job_schedule"], orElse: () => JobSchedule.fullTime),
-    remoteWorkLevel: json["remote_work_level"] == null ? null : RemoteWorkLevel.values.firstWhere((e) => e.backendValue == json["remote_work_level"], orElse: () => RemoteWorkLevel.onsite0),
-    careerLevel: json["career_level"] == null ? null : CareerLevel.values.firstWhere((e) => e.backendValue == json["career_level"], orElse: () => CareerLevel.notSpecified),
-    educationLevel: json["education_level"] == null ? null : EducationLevel.values.firstWhere((e) => e.backendValue == json["education_level"], orElse: () => EducationLevel.highSchool),
-    travelRequired: () {
-      if (json["travel_required"] == null) return null;
-      final rawValue = json["travel_required"];
-      final stringValue = rawValue.toString().trim();
-      developer.log('Parsing travel_required - Raw: $rawValue, String: $stringValue');
-      
-      // Direct comparison with enum backend values
-      if (stringValue == "1" || stringValue == "yes") {
-        developer.log('Travel Required: YES');
-        return TravelRequirement.yes;
-      } else if (stringValue == "0" || stringValue == "no") {
-        developer.log('Travel Required: NO');
-        return TravelRequirement.no;
-      }
-      
-      // Try to find in enum
-      try {
-        final result = TravelRequirement.values.firstWhere(
-          (e) => e.backendValue == stringValue,
-        );
-        developer.log('Travel Required found in enum: ${result.displayName}');
-        return result;
-      } catch (e) {
-        developer.log('Travel Required not found in enum, defaulting to NO');
-        return TravelRequirement.no;
-      }
-    }(),
-    streetAddress: json["street_address"],
-    houseNumber: json["house_number"],
-    workingAddress: json["working_address"],
-    duties: json["duties"],
-    benefits: json["benefits"],
-    totalBudget: json["total_budget"],
-    customerName: json["customer_name"],
-    date: json["date"],
-    image: json["image"],
-    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
-    // customer: json["customer"] == null ? null : UserData.fromJson(json["customer"]),
-    category: json["category"] == null ? null : Category.fromJson(json["category"]),
+        id: json["id"],
+        title: json["title"],
+        description: json["description"],
+        reason: json["reason"],
+        price: json["price"],
+        providerId: json["provider_id"],
+        customerId: json["customer_id"],
+        customerProfile: json["customer_profile"],
+        canBid: json["can_bid"],
+        service: json["service"] == null
+            ? []
+            : List<ServiceData>.from(
+                json["service"]!.map((x) => ServiceData.fromJson(x))),
+        createdAt: json["created_at"],
+        categoryId: json["category_id"],
+        subCategoryId: json["sub_category_id"],
+        countryId: json["country_id"],
+        stateId: json["state_id"],
+        cityId: json["city_id"],
+        startDate: json["start_date"],
+        endDate: json["end_date"],
+        totalDays: json["total_days"],
+        totalHours: json["total_hours"],
+        requirement: json["requirement"],
+        latitude: json["latitude"]?.toDouble(),
+        longitude: json["longitude"]?.toDouble(),
+        status: RequestStatus.fromJson(json["status"]),
+        priceType: (json["price_type"] ?? json["job_price"]) == null
+            ? null
+            : PriceType.values.firstWhere(
+                (e) =>
+                    e.backendValue == (json["price_type"] ?? json["job_price"]),
+                orElse: () => PriceType.fixed),
+        type: json["type"] == null
+            ? null
+            : JobType.values.firstWhere((e) => e.backendValue == json["type"],
+                orElse: () => JobType.onSite),
+        jobSchedule: json["job_schedule"] == null
+            ? null
+            : JobSchedule.values.firstWhere(
+                (e) => e.backendValue == json["job_schedule"],
+                orElse: () => JobSchedule.fullTime),
+        remoteWorkLevel: json["remote_work_level"] == null
+            ? null
+            : RemoteWorkLevel.values.firstWhere(
+                (e) => e.backendValue == json["remote_work_level"],
+                orElse: () => RemoteWorkLevel.onsite0),
+        careerLevel: json["career_level"] == null
+            ? null
+            : CareerLevel.values.firstWhere(
+                (e) => e.backendValue == json["career_level"],
+                orElse: () => CareerLevel.notSpecified),
+        educationLevel: json["education_level"] == null
+            ? null
+            : EducationLevel.values.firstWhere(
+                (e) => e.backendValue == json["education_level"],
+                orElse: () => EducationLevel.highSchool),
+        travelRequired: () {
+          if (json["travel_required"] == null) return null;
+          final rawValue = json["travel_required"];
+          final stringValue = rawValue.toString().trim();
+          developer.log(
+              'Parsing travel_required - Raw: $rawValue, String: $stringValue');
 
+          // Direct comparison with enum backend values
+          if (stringValue == "1" || stringValue == "yes") {
+            developer.log('Travel Required: YES');
+            return TravelRequirement.yes;
+          } else if (stringValue == "0" || stringValue == "no") {
+            developer.log('Travel Required: NO');
+            return TravelRequirement.no;
+          }
 
-    images: json["images"] == null ? [] : List<String>.from(json["images"]!.map((x) => x)),
-    totalViews: json["total_views"],
-    jobPrice: json["job_price"],
-    acceptedBidId: json["accepted_bid_id"]??json["cancel_bid_id"],
-    advancePercent: json["advance_percent"],
-    remainingPercent: json["remaining_percent"],
-    proposalsCount: json["proposals_count"],
-    countryName: json["country_name"] ?? json["country"],
-    stateName: json["state_name"],
-    cityName: json["city_name"] ?? json["city"],
-  );
+          // Try to find in enum
+          try {
+            final result = TravelRequirement.values.firstWhere(
+              (e) => e.backendValue == stringValue,
+            );
+            developer
+                .log('Travel Required found in enum: ${result.displayName}');
+            return result;
+          } catch (e) {
+            developer
+                .log('Travel Required not found in enum, defaulting to NO');
+            return TravelRequirement.no;
+          }
+        }(),
+        streetAddress: json["street_address"],
+        houseNumber: json["house_number"],
+        workingAddress: json["working_address"],
+        duties: json["duties"],
+        benefits: json["benefits"],
+        totalBudget: json["total_budget"],
+        customerName: json["customer_name"],
+        date: json["date"],
+        image: json["image"],
+        updatedAt: json["updated_at"] == null
+            ? null
+            : DateTime.parse(json["updated_at"]),
+        // customer: json["customer"] == null ? null : UserData.fromJson(json["customer"]),
+        category: json["category"] == null
+            ? null
+            : Category.fromJson(json["category"]),
 
+        images: json["images"] == null
+            ? []
+            : List<String>.from(json["images"]!.map((x) => x)),
+        totalViews: json["total_views"],
+        jobPrice: json["job_price"],
+        acceptedBidId: json["accepted_bid_id"] ?? json["cancel_bid_id"],
+        advancePercent: json["advance_percent"],
+        remainingPercent: json["remaining_percent"],
+        proposalsCount: json["proposals_count"],
+        countryName: json["country_name"] ?? json["country"],
+        stateName: json["state_name"],
+        cityName: json["city_name"] ?? json["city"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "title": title,
-    "description": description,
-    "reason": reason,
-    "price": price,
-    "provider_id": providerId,
-    "customer_id": customerId,
-    "customer_profile": customerProfile,
-    "status": status,
-    "can_bid": canBid,
-    "service": service?.map((e) => e.toJson()).toList(),
-    "created_at": createdAt,
-    "category_id": categoryId,
-    "sub_category_id": subCategoryId,
-    "country_id": countryId,
-    "state_id": stateId,
-    "city_id": cityId,
-    "start_date": startDate,
-    "end_date": endDate,
-    "total_days": totalDays,
-    "total_hours": totalHours,
-    "requirement": requirement,
-    "latitude": latitude,
-    "longitude": longitude,
-    "price_type": priceType?.backendValue,
-    "type": type?.backendValue,
-    "job_schedule": jobSchedule?.backendValue,
-    "remote_work_level": remoteWorkLevel?.backendValue,
-    "career_level": careerLevel?.backendValue,
-    "education_level": educationLevel?.backendValue,
-    "travel_required": travelRequired?.backendValue,
-    "street_address": streetAddress,
-    "house_number": houseNumber,
-    "working_address": workingAddress,
-    "duties": duties,
-    "benefits": benefits,
-    "total_budget": totalBudget,
-    "customer_name": customerName,
-    "date": date,
-    "image": image,
-    "updated_at": updatedAt?.toIso8601String(),
-    // "customer": customer?.toJson(),
-    "category": category?.toJson(),
+        "id": id,
+        "title": title,
+        "description": description,
+        "reason": reason,
+        "price": price,
+        "provider_id": providerId,
+        "customer_id": customerId,
+        "customer_profile": customerProfile,
+        "status": status,
+        "can_bid": canBid,
+        "service": service?.map((e) => e.toJson()).toList(),
+        "created_at": createdAt,
+        "category_id": categoryId,
+        "sub_category_id": subCategoryId,
+        "country_id": countryId,
+        "state_id": stateId,
+        "city_id": cityId,
+        "start_date": startDate,
+        "end_date": endDate,
+        "total_days": totalDays,
+        "total_hours": totalHours,
+        "requirement": requirement,
+        "latitude": latitude,
+        "longitude": longitude,
+        "price_type": priceType?.backendValue,
+        "type": type?.backendValue,
+        "job_schedule": jobSchedule?.backendValue,
+        "remote_work_level": remoteWorkLevel?.backendValue,
+        "career_level": careerLevel?.backendValue,
+        "education_level": educationLevel?.backendValue,
+        "travel_required": travelRequired?.backendValue,
+        "street_address": streetAddress,
+        "house_number": houseNumber,
+        "working_address": workingAddress,
+        "duties": duties,
+        "benefits": benefits,
+        "total_budget": totalBudget,
+        "customer_name": customerName,
+        "date": date,
+        "image": image,
+        "updated_at": updatedAt?.toIso8601String(),
+        // "customer": customer?.toJson(),
+        "category": category?.toJson(),
 
-    "images": List<dynamic>.from(images!.map((x) => x)),
-    "job_price": jobPrice,
-    "accepted_bid_id": acceptedBidId,
-    "total_views": totalViews,
-    "advance_percent": advancePercent,
-    "remaining_percent": remainingPercent,
-  };
+        "images": List<dynamic>.from(images!.map((x) => x)),
+        "job_price": jobPrice,
+        "accepted_bid_id": acceptedBidId,
+        "total_views": totalViews,
+        "advance_percent": advancePercent,
+        "remaining_percent": remainingPercent,
+      };
 }
 
 /// Price Type
@@ -287,9 +313,9 @@ enum PriceType {
 
 /// Job Type – each has a distinct bg color for quick visibility
 enum JobType {
-  onSite("Vor Ort", "onsite", Color(0xFFBBDEFB)),   // light blue
-  hybrid("Hybrid", "hybrid", Color(0xFFFFE0B2)),   // orange
-  remote("Remote", "remote", Color(0xFFC8E6C9));    // green
+  onSite("Vor Ort", "onsite", Color(0xFFBBDEFB)), // light blue
+  hybrid("Hybrid", "hybrid", Color(0xFFFFE0B2)), // orange
+  remote("Remote", "remote", Color(0xFFC8E6C9)); // green
 
   final String displayName;
   final String backendValue;
@@ -300,11 +326,11 @@ enum JobType {
 
 /// Job Schedule
 enum JobSchedule {
-fullTime("Vollzeit", "full_time"),
-partTime("Teilzeit", "part_time"),
-contract("Vertrag", "contract"),
-temporary("Befristet", "temporary"),
-internship("Praktikum", "internship");
+  fullTime("Vollzeit", "full_time"),
+  partTime("Teilzeit", "part_time"),
+  contract("Vertrag", "contract"),
+  temporary("Befristet", "temporary"),
+  internship("Praktikum", "internship");
 
   final String displayName;
   final String backendValue;
@@ -328,18 +354,18 @@ enum RemoteWorkLevel {
 
 /// Career Level
 enum CareerLevel {
-  notSpecified("Nicht angegeben", "not_specified"),
+  notSpecified("Nicht Relevant", "not_specified"),
   entryLevel("Berufseinsteiger", "entry_level"),
-  intermediateLevel("Mittlere Ebene", "intermediate_level"),
-  experienced("Erfahren", "experienced"),
+  intermediateLevel("Werkstudent", "intermediate_level"),
+  experienced("Mit Berufserfahrung", "experienced"),
   professional("Fachkraft", "professional"),
-  middleManagement("Mittleres Management", "middle_management"),
-  executiveManagement("Unternehmensleitung", "executive_management"),
-  seniorManagement("Oberes Management", "senior_management"),
-  director("Direktor", "director"),
-  technician("Techniker", "technician"),
-  leader("Teamleiter", "leader"),
-  manager("Manager", "manager");
+  middleManagement("Spezialist", "middle_management"),
+  executiveManagement("Meister", "executive_management"),
+  seniorManagement("Leiter", "senior_management"),
+  director("Manager", "director"),
+  technician("Führungsebene", "technician"),
+  leader("Geschäftsführer", "leader"),
+  manager("C-Level", "manager");
 
   final String displayName;
   final String backendValue;
@@ -373,24 +399,24 @@ enum EducationLevel {
 }
 
 /// Profile Education (edit profile dropdown)
-enum ProfileEducationLevel {// First option in blade: empty string (nullable on server).
- // First option in blade: empty string (nullable on server).
-unselected("—", ""),
-anyGraduate("Beliebiger Abschluss", "any_graduate"),
-apprenticeshipDegree("Ausbildung", "apprenticeship_degree"),
-traineeshipDegree("Praktikum", "traineeship_degree"),
-secondaryDegree("Mittlere Reife", "secondary_degree"),
-undergraduateDiploma("Diplom", "undergraduate_diploma"),
-highSchoolGraduate("Abitur", "high_school_graduate"),
-associateDegree("Associate-Abschluss", "associate_degree"),
-collegeDegree("Hochschulabschluss", "college_degree"),
-universityDegree("Universitätsabschluss", "university_degree"),
-bachelorsDegree("Bachelorabschluss", "bachelors_degree"),
-mastersDegree("Masterabschluss", "masters_degree"),
-doctorateDegree("Doktorgrad (PhD)", "doctorate_degree"),
-professionalDegree("Berufsqualifikation", "professional_degree");
+enum ProfileEducationLevel {
+  // First option in blade: empty string (nullable on server).
+  unselected("—", ""),
+  anyGraduate("Kein Schulabschluss", "any_graduate"),
+  apprenticeshipDegree("Grundschule", "apprenticeship_degree"),
+  traineeshipDegree("Gesamtschule", "traineeship_degree"),
+  secondaryDegree("Hauptschulabschluss", "secondary_degree"),
+  undergraduateDiploma("Realschulabschluss", "undergraduate_diploma"),
+  professionalDegree("Abitur", "professional_degree"),
+  highSchoolGraduate("Berufsschule", "high_school_graduate"),
+  associateDegree("Fachschule", "associate_degree"),
+  collegeDegree("Fachhochschulreife", "college_degree"),
+  universityDegree("Uni-Abschluss", "university_degree"),
+  bachelorsDegree("Bachelorabschluss", "bachelors_degree"),
+  mastersDegree("Masterabschluss", "masters_degree"),
+  doctorateDegree("Promotion (Doktor)", "doctorate_degree");
 
-final String displayName;
+  final String displayName;
   final String backendValue;
 
   const ProfileEducationLevel(this.displayName, this.backendValue);
@@ -418,7 +444,8 @@ enum YearsOfExperience {
 enum RequestStatus {
   requested('Angefragt', 'requested', defaultStatus),
   accepted('Akzeptiert', 'accepted', accept),
-  pendingAdvance('Anzahlung ausstehend', 'advance_payment_pending', primaryColorWithOpacity),
+  pendingAdvance('Anzahlung ausstehend', 'advance_payment_pending',
+      primaryColorWithOpacity),
   advancePaid('Anzahlung geleistet', 'advance_paid', primaryColorWithOpacity),
   inProcess('In Bearbeitung', 'in_process', primaryColorWithOpacity),
   inProgress('In Ausführung', 'in_progress', primaryColorWithOpacity),
@@ -426,14 +453,17 @@ enum RequestStatus {
   done('Erledigt', 'done', primaryColorWithOpacity),
   confirmDone('Erledigung bestätigt', 'confirm_done', primaryColorWithOpacity),
   completed('Abgeschlossen', 'completed', primaryColorWithOpacity),
-  remainingPaymentPending('Wartet auf Admin-Bestätigung', 'remaining_payment_pending', primaryColorWithOpacity),
-  remainingPaid('Restzahlung geleistet', 'remaining_paid', primaryColorWithOpacity),
+  remainingPaymentPending('Wartet auf Admin-Bestätigung',
+      'remaining_payment_pending', primaryColorWithOpacity),
+  remainingPaid(
+      'Restzahlung geleistet', 'remaining_paid', primaryColorWithOpacity),
 
   cancel('Storniert', 'cancelled', cancelled);
+
   final String displayName;
   final String backendValue;
   final Color bgColor;
-  const RequestStatus(this.displayName,this.backendValue,this.bgColor);
+  const RequestStatus(this.displayName, this.backendValue, this.bgColor);
 
   /// Parses status from API. Accepts snake_case and "Display Form" for pending statuses.
   static RequestStatus fromJson(dynamic value) {
@@ -441,12 +471,21 @@ enum RequestStatus {
     final s = value.toString().trim();
     final sLower = s.toLowerCase();
     final sNormalized = sLower.replaceAll(' ', '_');
-    if (s == 'Advance Payment Pending' || sNormalized == 'advance_payment_pending') return RequestStatus.pendingAdvance;
-    if (s == 'Remaining Payment Pending' || sNormalized == 'remaining_payment_pending' || sLower == 'remaining payment pending') return RequestStatus.remainingPaymentPending;
-    return RequestStatus.values.firstWhere((e) => e.backendValue == s || e.backendValue == sLower || e.backendValue == sNormalized, orElse: () => RequestStatus.requested);
+    if (s == 'Advance Payment Pending' ||
+        sNormalized == 'advance_payment_pending')
+      return RequestStatus.pendingAdvance;
+    if (s == 'Remaining Payment Pending' ||
+        sNormalized == 'remaining_payment_pending' ||
+        sLower == 'remaining payment pending')
+      return RequestStatus.remainingPaymentPending;
+    return RequestStatus.values.firstWhere(
+        (e) =>
+            e.backendValue == s ||
+            e.backendValue == sLower ||
+            e.backendValue == sNormalized,
+        orElse: () => RequestStatus.requested);
   }
 }
-
 
 class Category {
   int? id;
@@ -472,26 +511,30 @@ class Category {
   });
 
   factory Category.fromJson(Map<String, dynamic> json) => Category(
-    id: json["id"],
-    name: json["name"],
-    description: json["description"],
-    color: json["color"],
-    status: json["status"],
-    isFeatured: json["is_featured"],
-    deletedAt: json["deleted_at"],
-    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
-    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
-  );
+        id: json["id"],
+        name: json["name"],
+        description: json["description"],
+        color: json["color"],
+        status: json["status"],
+        isFeatured: json["is_featured"],
+        deletedAt: json["deleted_at"],
+        createdAt: json["created_at"] == null
+            ? null
+            : DateTime.parse(json["created_at"]),
+        updatedAt: json["updated_at"] == null
+            ? null
+            : DateTime.parse(json["updated_at"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "description": description,
-    "color": color,
-    "status": status,
-    "is_featured": isFeatured,
-    "deleted_at": deletedAt,
-    "created_at": createdAt?.toIso8601String(),
-    "updated_at": updatedAt?.toIso8601String(),
-  };
+        "id": id,
+        "name": name,
+        "description": description,
+        "color": color,
+        "status": status,
+        "is_featured": isFeatured,
+        "deleted_at": deletedAt,
+        "created_at": createdAt?.toIso8601String(),
+        "updated_at": updatedAt?.toIso8601String(),
+      };
 }

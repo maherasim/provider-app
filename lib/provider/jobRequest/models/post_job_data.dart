@@ -401,20 +401,30 @@ enum EducationLevel {
 /// Profile Education (edit profile dropdown)
 enum ProfileEducationLevel {
   // First option in blade: empty string (nullable on server).
-  unselected("—", ""),
-  anyGraduate("Kein Schulabschluss", "any_graduate"),
-  apprenticeshipDegree("Grundschule", "apprenticeship_degree"),
-  traineeshipDegree("Gesamtschule", "traineeship_degree"),
-  secondaryDegree("Hauptschulabschluss", "secondary_degree"),
-  undergraduateDiploma("Realschulabschluss", "undergraduate_diploma"),
-  professionalDegree("Abitur", "professional_degree"),
-  highSchoolGraduate("Berufsschule", "high_school_graduate"),
-  associateDegree("Fachschule", "associate_degree"),
-  collegeDegree("Fachhochschulreife", "college_degree"),
-  universityDegree("Uni-Abschluss", "university_degree"),
-  bachelorsDegree("Bachelorabschluss", "bachelors_degree"),
-  mastersDegree("Masterabschluss", "masters_degree"),
-  doctorateDegree("Promotion (Doktor)", "doctorate_degree");
+  
+ 
+unselected("—", ""),
+anyGraduate("Grundschule", "any_graduate"),
+apprenticeshipDegree("Hauptschule", "apprenticeship_degree"),
+traineeshipDegree("Realschule", "traineeship_degree"),
+secondaryDegree("Gesamtschule", "secondary_degree"),
+undergraduateDiploma("Gymnasium", "undergraduate_diploma"),
+professionalDegree("Hauptschulabschluss", "professional_degree"),
+highSchoolGraduate("Realschulabschluss (Mittlere Reife)", "high_school_graduate"),
+associateDegree("Fachhochschulreife (Fachabitur)", "associate_degree"),
+collegeDegree("Allgemeine Hochschulreife (Abitur)", "college_degree"),
+universityDegree("Berufsausbildung / Ausbildung", "university_degree"),
+bachelorsDegree("Berufsschule", "bachelors_degree"),
+mastersDegree("Fachschule", "masters_degree"),
+doctorateDegree("Fachhochschule", "doctorate_degree"),
+stateExamDegree("Universität", "state_exam_degree"),
+promotionDegree("Bachelor", "promotion_degree"),
+habilitationDegree("Master", "habilitation_degree"),
+professurDegree("Staatsexamen", "professur_degree"),
+additionalDegreeOne("Promotion (Doktor)", "additional_degree_one"),
+additionalDegreeTwo("Habilitation", "additional_degree_two"),
+additionalDegreeThree("Professur", "additional_degree_three");
+
 
   final String displayName;
   final String backendValue;

@@ -8,6 +8,7 @@ import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/provider/components/service_widget.dart';
 import 'package:handyman_provider_flutter/provider/services/add_services.dart';
 import 'package:handyman_provider_flutter/provider/services/service_detail_screen.dart';
+import 'package:handyman_provider_flutter/auth/edit_profile_screen.dart';
 import 'package:handyman_provider_flutter/provider/services/shimmer/service_list_shimmer.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
@@ -27,6 +28,7 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
   List<ServiceData> services = [];
   Future<List<ServiceData>>? future;
 
+  int? providerProfileComplete;
   int page = 1;
 
   bool changeListType = false;
@@ -39,13 +41,19 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
   }
 
   Future<void> init() async {
-    future = getSearchList(page,
-        search: searchList.text,
-        perPage: 10,
-        providerId: appStore.userId,
-        services: services, lastPageCallback: (b) {
-      isLastPage = b;
-    });
+    future = getSearchList(
+      page,
+      search: searchList.text,
+      perPage: 10,
+      providerId: appStore.userId,
+      services: services,
+      lastPageCallback: (b) {
+        isLastPage = b;
+      },
+      providerProfileCompleteCallback: (value) {
+        providerProfileComplete = value;
+      },
+    );
   }
 
   void setPageToOne() {
@@ -77,7 +85,8 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: BackWidget(color: Colors.white),
-        flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
+        flexibleSpace: Container(
+            decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
         actions: [
           IconButton(
             onPressed: () {
@@ -89,6 +98,24 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
           ),
           IconButton(
             onPressed: () async {
+              // Check if provider profile is complete before allowing service creation.
+              int? profileComplete = providerProfileComplete;
+              if (profileComplete == null) {
+                for (var service in services) {
+                  if (service.providerProfileComplete != null) {
+                    profileComplete = service.providerProfileComplete;
+                    break;
+                  }
+                }
+              }
+
+              if (profileComplete == 0) {
+                toast('Please complete your profile first');
+                EditProfileScreen().launch(context,
+                    pageRouteAnimation: PageRouteAnimation.Fade);
+                return;
+              }
+
               bool? res;
 
               res = await AddServices()

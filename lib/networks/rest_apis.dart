@@ -94,7 +94,8 @@ Future<void> logout(BuildContext context) async {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset(logout_logo, width: context.width(), fit: BoxFit.cover),
+              Image.asset(logout_logo,
+                  width: context.width(), fit: BoxFit.cover),
               32.height,
               Text(languages.lblDeleteTitle, style: boldTextStyle(size: 18)),
               16.height,
@@ -104,7 +105,9 @@ Future<void> logout(BuildContext context) async {
                 children: [
                   AppButton(
                     child: Text(languages.lblNo, style: boldTextStyle()),
-                    color: appStore.isDarkMode ? context.scaffoldBackgroundColor : context.cardColor,
+                    color: appStore.isDarkMode
+                        ? context.scaffoldBackgroundColor
+                        : context.cardColor,
                     elevation: 0,
                     onTap: () {
                       finish(context);
@@ -112,9 +115,11 @@ Future<void> logout(BuildContext context) async {
                   ).expand(),
                   16.width,
                   DecoratedBox(
-                    decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                    decoration: BoxDecoration(
+                        gradient: kAppPrimaryGradient, borderRadius: radius(8)),
                     child: AppButton(
-                      child: Text(languages.lblYes, style: boldTextStyle(color: white)),
+                      child: Text(languages.lblYes,
+                          style: boldTextStyle(color: white)),
                       color: Color(0x00000000),
                       elevation: 0,
                       onTap: () async {
@@ -122,7 +127,8 @@ Future<void> logout(BuildContext context) async {
                           appStore.setLoading(true);
                           // Unregister FCM token from backend first (best-effort)
                           try {
-                            final token = await FirebaseMessaging.instance.getToken();
+                            final token =
+                                await FirebaseMessaging.instance.getToken();
                             if (token != null) {
                               await PushApi.unregister(token: token);
                             }
@@ -137,7 +143,9 @@ Future<void> logout(BuildContext context) async {
 
                           appStore.setLoading(false);
 
-                          SignInScreen().launch(context, isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+                          SignInScreen().launch(context,
+                              isNewTask: true,
+                              pageRouteAnimation: PageRouteAnimation.Fade);
                         } else {
                           toast(errorInternetNotAvailable);
                         }
@@ -148,7 +156,10 @@ Future<void> logout(BuildContext context) async {
               ),
             ],
           ).paddingSymmetric(horizontal: 16, vertical: 24),
-          Observer(builder: (_) => LoaderWidget().withSize(width: 60, height: 60).visible(appStore.isLoading)),
+          Observer(
+              builder: (_) => LoaderWidget()
+                  .withSize(width: 60, height: 60)
+                  .visible(appStore.isLoading)),
         ],
       );
     },
@@ -190,7 +201,8 @@ Future<void> clearPreferences() async {
   await appStore.setPlanEndDate('');
   await appStore.setTester(false);
   await appStore.setActiveRevenueCatIdentifier('');
-  await appStore.setProviderCurrentSubscriptionPlan(ProviderSubscriptionModel());
+  await appStore
+      .setProviderCurrentSubscriptionPlan(ProviderSubscriptionModel());
   await removeKey(IS_SUBSCRIBED_FOR_PUSH_NOTIFICATION);
 
   appStore.setUserWalletAmount();
@@ -203,20 +215,27 @@ Future<void> clearPreferences() async {
 }
 
 Future<void> logoutApi() async {
-  return await handleResponse(await buildHttpResponse('logout', method: HttpMethodType.GET));
+  return await handleResponse(
+      await buildHttpResponse('logout', method: HttpMethodType.GET));
 }
 
 Future<RegisterResponse> registerUser(Map request) async {
-  return RegisterResponse.fromJson(await (handleResponse(await buildHttpResponse('register', request: request, method: HttpMethodType.POST))));
+  return RegisterResponse.fromJson(await (handleResponse(
+      await buildHttpResponse('register',
+          request: request, method: HttpMethodType.POST))));
 }
 
 Future changeLanguage(Map request) async {
-  return RegisterResponse.fromJson(await (handleResponse(await buildHttpResponse('switch-language', request: request, method: HttpMethodType.POST))));
+  return RegisterResponse.fromJson(await (handleResponse(
+      await buildHttpResponse('switch-language',
+          request: request, method: HttpMethodType.POST))));
 }
 
 Future<UserData> loginUser(Map request) async {
   try {
-    LoginResponse res = LoginResponse.fromJson(await (handleResponse(await buildHttpResponse('login', request: request, method: HttpMethodType.POST))));
+    LoginResponse res = LoginResponse.fromJson(await (handleResponse(
+        await buildHttpResponse('login',
+            request: request, method: HttpMethodType.POST))));
 
     if (res.data != null) {
       return res.data!;
@@ -241,12 +260,14 @@ Future<void> saveUserData(UserData data) async {
     await appStore.setCountryId(data.countryId.validate());
     await appStore.setStateId(data.stateId.validate());
     await appStore.setDesignation(data.designation.validate());
-    await appStore.setAddress(data.address.validate().isNotEmpty ? data.address.validate() : '');
+    await appStore.setAddress(
+        data.address.validate().isNotEmpty ? data.address.validate() : '');
 
     await appStore.setCityId(data.cityId.validate());
     await appStore.setProviderId(data.providerId.validate());
 
-    if (data.serviceAddressId != null) await appStore.setServiceAddressId(data.serviceAddressId!);
+    if (data.serviceAddressId != null)
+      await appStore.setServiceAddressId(data.serviceAddressId!);
 
     await appStore.setCreatedAt(data.createdAt.validate());
 
@@ -269,12 +290,16 @@ Future<void> saveUserData(UserData data) async {
 }
 
 Future<BaseResponseModel> changeUserPassword(Map request) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('change-password', request: request, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('change-password',
+          request: request, method: HttpMethodType.POST)));
 }
 
 Future<UserInfoResponse> getUserDetail(int id) async {
   appStore.setLoading(true);
-  UserInfoResponse res = UserInfoResponse.fromJson(await handleResponse(await buildHttpResponse('user-detail?id=$id', method: HttpMethodType.GET)));
+  UserInfoResponse res = UserInfoResponse.fromJson(await handleResponse(
+      await buildHttpResponse('user-detail?id=$id',
+          method: HttpMethodType.GET)));
   appStore.setLoading(false);
   return res;
 }
@@ -290,37 +315,48 @@ Future<SpokenLanguagesResponse> getSpokenLanguages() async {
 }
 
 Future<HandymanInfoResponse> getProviderDetail(int id) async {
-  return HandymanInfoResponse.fromJson(await handleResponse(await buildHttpResponse('user-detail?id=$id', method: HttpMethodType.GET)));
+  return HandymanInfoResponse.fromJson(await handleResponse(
+      await buildHttpResponse('user-detail?id=$id',
+          method: HttpMethodType.GET)));
 }
 
 Future<BaseResponseModel> forgotPassword(Map request) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('forgot-password', request: request, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('forgot-password',
+          request: request, method: HttpMethodType.POST)));
 }
 
 Future<CommonResponseModel> updateProfile(Map request) async {
-  return CommonResponseModel.fromJson(await handleResponse(await buildHttpResponse('update-profile', request: request, method: HttpMethodType.POST)));
+  return CommonResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('update-profile',
+          request: request, method: HttpMethodType.POST)));
 }
 
 Future<VerificationModel> verifyUserEmail(String userEmail) async {
   Map<String, dynamic> request = {'email': userEmail};
-  return VerificationModel.fromJson(await handleResponse(await buildHttpResponse('user-email-verify', request: request, method: HttpMethodType.POST)));
+  return VerificationModel.fromJson(await handleResponse(
+      await buildHttpResponse('user-email-verify',
+          request: request, method: HttpMethodType.POST)));
 }
 
 //endregion
 
 //region Country API
 Future<List<CountryListResponse>> getCountryList() async {
-  Iterable res = await (handleResponse(await buildHttpResponse('country-list', method: HttpMethodType.POST)));
+  Iterable res = await (handleResponse(
+      await buildHttpResponse('country-list', method: HttpMethodType.POST)));
   return res.map((e) => CountryListResponse.fromJson(e)).toList();
 }
 
 Future<List<StateListResponse>> getStateList(Map request) async {
-  Iterable res = await (handleResponse(await buildHttpResponse('state-list', request: request, method: HttpMethodType.POST)));
+  Iterable res = await (handleResponse(await buildHttpResponse('state-list',
+      request: request, method: HttpMethodType.POST)));
   return res.map((e) => StateListResponse.fromJson(e)).toList();
 }
 
 Future<List<CityListResponse>> getCityList(Map request) async {
-  Iterable res = await (handleResponse(await buildHttpResponse('city-list', request: request, method: HttpMethodType.POST)));
+  Iterable res = await (handleResponse(await buildHttpResponse('city-list',
+      request: request, method: HttpMethodType.POST)));
   return res.map((e) => CityListResponse.fromJson(e)).toList();
 }
 
@@ -332,45 +368,67 @@ Future<List<CountryListResponse>> getUpdatedCountryList() async {
 }
 
 Future<List<StateListResponse>> getUpdatedStateList(int? countryId) async {
-  Map res = await (handleResponse(await buildHttpResponse('countries/$countryId/states',method: HttpMethodType.GET)));
+  Map res = await (handleResponse(await buildHttpResponse(
+      'countries/$countryId/states',
+      method: HttpMethodType.GET)));
   Iterable data = res['states'] ?? res['data'] ?? [];
-  return (data as List).map((e) => StateListResponse.fromJson(Map<String, dynamic>.from(e is Map ? e : {}))).toList();
+  return (data as List)
+      .map((e) => StateListResponse.fromJson(
+          Map<String, dynamic>.from(e is Map ? e : {})))
+      .toList();
 }
 
 Future<List<CityListResponse>> getUpdatedCityList(int? stateId) async {
-  Map res = await (handleResponse(await buildHttpResponse('states/$stateId/cities',method: HttpMethodType.GET)));
+  Map res = await (handleResponse(await buildHttpResponse(
+      'states/$stateId/cities',
+      method: HttpMethodType.GET)));
   Iterable data = res['cities'] ?? res['data'] ?? [];
-  return (data as List).map((e) => CityListResponse.fromJson(Map<String, dynamic>.from(e is Map ? e : {}))).toList();
+  return (data as List)
+      .map((e) => CityListResponse.fromJson(
+          Map<String, dynamic>.from(e is Map ? e : {})))
+      .toList();
 }
 
 //endregion
 
 //region Category API
 Future<CategoryResponse> getCategoryList({String perPage = ''}) async {
-  return CategoryResponse.fromJson(await handleResponse(await buildHttpResponse('category-list?per_page=$perPage', method: HttpMethodType.GET)));
+  return CategoryResponse.fromJson(await handleResponse(await buildHttpResponse(
+      'category-list?per_page=$perPage',
+      method: HttpMethodType.GET)));
 }
 //endregion
 
 //region SubCategory Api
 Future<CategoryResponse> getSubCategoryList({required int catId}) async {
   String categoryId = catId != -1 ? "category_id=$catId" : "";
-  String perPage = catId != -1 ? '&per_page=$PER_PAGE_ITEM_ALL' : '?per_page=$PER_PAGE_ITEM_ALL';
-  return CategoryResponse.fromJson(await handleResponse(await buildHttpResponse('subcategory-list?$categoryId$perPage', method: HttpMethodType.GET)));
+  String perPage = catId != -1
+      ? '&per_page=$PER_PAGE_ITEM_ALL'
+      : '?per_page=$PER_PAGE_ITEM_ALL';
+  return CategoryResponse.fromJson(await handleResponse(await buildHttpResponse(
+      'subcategory-list?$categoryId$perPage',
+      method: HttpMethodType.GET)));
 }
 //endregion
 
 //region Configuration API
-Future<void> getAppConfigurations({bool isCurrentLocation = false, double? lat, double? long}) async {
+Future<void> getAppConfigurations(
+    {bool isCurrentLocation = false, double? lat, double? long}) async {
   DateTime currentTimeStamp = DateTime.timestamp();
-  DateTime lastSyncedTimeStamp = DateTime.fromMillisecondsSinceEpoch(getIntAsync(LAST_APP_CONFIGURATION_SYNCED_TIME));
+  DateTime lastSyncedTimeStamp = DateTime.fromMillisecondsSinceEpoch(
+      getIntAsync(LAST_APP_CONFIGURATION_SYNCED_TIME));
   lastSyncedTimeStamp = lastSyncedTimeStamp.add(Duration(minutes: 5));
 
   if (lastSyncedTimeStamp.isAfter(currentTimeStamp)) {
     log('App Configurations was synced recently');
   } else {
     try {
-      AppConfigurationModel? res = AppConfigurationModel.fromJsonMap(await handleResponse(await buildHttpResponse('configurations?is_authenticated=${appStore.isLoggedIn.getIntBool()}',
-          method: HttpMethodType.POST, request: appStore.isLoggedIn ? {'user_id': appStore.userId} : null)));
+      AppConfigurationModel? res = AppConfigurationModel.fromJsonMap(
+          await handleResponse(await buildHttpResponse(
+              'configurations?is_authenticated=${appStore.isLoggedIn.getIntBool()}',
+              method: HttpMethodType.POST,
+              request:
+                  appStore.isLoggedIn ? {'user_id': appStore.userId} : null)));
 
       await setAppConfigurations(res);
     } catch (e) {
@@ -382,11 +440,14 @@ Future<void> getAppConfigurations({bool isCurrentLocation = false, double? lat, 
 //endregion
 
 //region Provider API
-Future<DashboardResponse> providerDashboard({bool forceSyncAppConfigurations = false}) async {
+Future<DashboardResponse> providerDashboard(
+    {bool forceSyncAppConfigurations = false}) async {
   final completer = Completer<DashboardResponse>();
 
   try {
-    final data = DashboardResponse.fromJson(await handleResponse(await buildHttpResponse('provider-dashboard', method: HttpMethodType.GET)));
+    final data = DashboardResponse.fromJson(await handleResponse(
+        await buildHttpResponse('provider-dashboard',
+            method: HttpMethodType.GET)));
 
     completer.complete(data);
 
@@ -414,7 +475,8 @@ Future<DashboardResponse> providerDashboard({bool forceSyncAppConfigurations = f
     }
 
     // Sync new configurations for secret keys
-    if (forceSyncAppConfigurations) await setValue(LAST_APP_CONFIGURATION_SYNCED_TIME, 0);
+    if (forceSyncAppConfigurations)
+      await setValue(LAST_APP_CONFIGURATION_SYNCED_TIME, 0);
     getAppConfigurations();
 
     appStore.setLoading(false);
@@ -427,21 +489,28 @@ Future<DashboardResponse> providerDashboard({bool forceSyncAppConfigurations = f
 }
 
 Future<ProviderDocumentListResponse> getProviderDoc() async {
-  return ProviderDocumentListResponse.fromJson(await handleResponse(await buildHttpResponse('provider-document-list', method: HttpMethodType.GET)));
+  return ProviderDocumentListResponse.fromJson(await handleResponse(
+      await buildHttpResponse('provider-document-list',
+          method: HttpMethodType.GET)));
 }
 
 Future<CommonResponseModel> deleteProviderDoc(int? id) async {
-  return CommonResponseModel.fromJson(await handleResponse(await buildHttpResponse('provider-document-delete/$id', method: HttpMethodType.POST)));
+  return CommonResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('provider-document-delete/$id',
+          method: HttpMethodType.POST)));
 }
 //endregion
 
 //region Handyman API
-Future<HandymanDashBoardResponse> handymanDashboard({bool forceSyncAppConfigurations = false}) async {
+Future<HandymanDashBoardResponse> handymanDashboard(
+    {bool forceSyncAppConfigurations = false}) async {
   final completer = Completer<HandymanDashBoardResponse>();
 
   try {
-    final response = await buildHttpResponse('handyman-dashboard', method: HttpMethodType.GET);
-    final data = HandymanDashBoardResponse.fromJson(await handleResponse(response));
+    final response = await buildHttpResponse('handyman-dashboard',
+        method: HttpMethodType.GET);
+    final data =
+        HandymanDashBoardResponse.fromJson(await handleResponse(response));
 
     cachedHandymanDashboardResponse = data;
 
@@ -457,7 +526,8 @@ Future<HandymanDashBoardResponse> handymanDashboard({bool forceSyncAppConfigurat
     }
 
     // Sync new configurations for secret keys
-    if (forceSyncAppConfigurations) await setValue(LAST_APP_CONFIGURATION_SYNCED_TIME, 0);
+    if (forceSyncAppConfigurations)
+      await setValue(LAST_APP_CONFIGURATION_SYNCED_TIME, 0);
     getAppConfigurations();
 
     appStore.setLoading(false);
@@ -471,14 +541,23 @@ Future<HandymanDashBoardResponse> handymanDashboard({bool forceSyncAppConfigurat
 }
 
 Future<BaseResponseModel> updateHandymanStatus(Map request) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('user-update-status', request: request, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('user-update-status',
+          request: request, method: HttpMethodType.POST)));
 }
 
-Future<List<UserData>> getHandyman({int? page, String providerId = '', String? userTypeHandyman = "handyman", required List<UserData> list, Function(bool)? lastPageCallback}) async {
+Future<List<UserData>> getHandyman(
+    {int? page,
+    String providerId = '',
+    String? userTypeHandyman = "handyman",
+    required List<UserData> list,
+    Function(bool)? lastPageCallback}) async {
   String providerIds = providerId.isNotEmpty ? '&provider_id=$providerId' : '';
   try {
     var res = UserListResponse.fromJson(
-      await handleResponse(await buildHttpResponse('user-list?user_type=$userTypeHandyman$providerIds&per_page=$PER_PAGE_ITEM&page=$page', method: HttpMethodType.GET)),
+      await handleResponse(await buildHttpResponse(
+          'user-list?user_type=$userTypeHandyman$providerIds&per_page=$PER_PAGE_ITEM&page=$page',
+          method: HttpMethodType.GET)),
     );
 
     if (page == 1) list.clear();
@@ -508,10 +587,13 @@ Future<List<UserData>> getProviderList({
 }) async {
   try {
     String search = keyword.validate().isNotEmpty ? '&keyword=$keyword' : '';
-    String providerStatus = status.validate().isNotEmpty ? "&status=$status" : "";
+    String providerStatus =
+        status.validate().isNotEmpty ? "&status=$status" : "";
 
     var res = UserListResponse.fromJson(
-      await handleResponse(await buildHttpResponse('user-list?user_type=provider$search$providerStatus&per_page=$perPage&page=$page', method: HttpMethodType.GET)),
+      await handleResponse(await buildHttpResponse(
+          'user-list?user_type=provider$search$providerStatus&per_page=$perPage&page=$page',
+          method: HttpMethodType.GET)),
     );
 
     if (page == 1) list.clear();
@@ -529,10 +611,16 @@ Future<List<UserData>> getProviderList({
   return list;
 }
 
-Future<List<UserData>> getAllHandyman({int? page, int? serviceAddressId, required List<UserData> userData, Function(bool)? lastPageCallback}) async {
+Future<List<UserData>> getAllHandyman(
+    {int? page,
+    int? serviceAddressId,
+    required List<UserData> userData,
+    Function(bool)? lastPageCallback}) async {
   try {
     UserListResponse res = UserListResponse.fromJson(
-      await handleResponse(await buildHttpResponse('user-list?user_type=handyman&provider_id=${appStore.userId}&per_page=$PER_PAGE_ITEM&page=$page', method: HttpMethodType.GET)),
+      await handleResponse(await buildHttpResponse(
+          'user-list?user_type=handyman&provider_id=${appStore.userId}&per_page=$PER_PAGE_ITEM&page=$page',
+          method: HttpMethodType.GET)),
     );
 
     if (page == 1) userData.clear();
@@ -551,25 +639,37 @@ Future<List<UserData>> getAllHandyman({int? page, int? serviceAddressId, require
 }
 
 Future<UserData> deleteHandyman(int id) async {
-  return UserData.fromJson(await handleResponse(await buildHttpResponse('handyman-delete/$id', method: HttpMethodType.POST)));
+  return UserData.fromJson(await handleResponse(await buildHttpResponse(
+      'handyman-delete/$id',
+      method: HttpMethodType.POST)));
 }
 
 Future<BaseResponseModel> restoreHandyman(Map request) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('handyman-action', request: request, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('handyman-action',
+          request: request, method: HttpMethodType.POST)));
 }
 
 //endregion
 
 //region Service API
-Future<ServiceResponse> getServiceList(int page, int providerId, {String? searchTxt, bool isSearch = false, int? categoryId, bool isCategoryWise = false}) async {
+Future<ServiceResponse> getServiceList(int page, int providerId,
+    {String? searchTxt,
+    bool isSearch = false,
+    int? categoryId,
+    bool isCategoryWise = false}) async {
   if (isCategoryWise) {
-    return ServiceResponse.fromJson(
-        await handleResponse(await buildHttpResponse('service-list?per_page=$PER_PAGE_ITEM&category_id=$categoryId&page=$page&provider_id=$providerId', method: HttpMethodType.GET)));
+    return ServiceResponse.fromJson(await handleResponse(await buildHttpResponse(
+        'service-list?per_page=$PER_PAGE_ITEM&category_id=$categoryId&page=$page&provider_id=$providerId',
+        method: HttpMethodType.GET)));
   } else if (isSearch) {
-    return ServiceResponse.fromJson(
-        await handleResponse(await buildHttpResponse('service-list?per_page=$PER_PAGE_ITEM&page=$page&search=$searchTxt&provider_id=$providerId', method: HttpMethodType.GET)));
+    return ServiceResponse.fromJson(await handleResponse(await buildHttpResponse(
+        'service-list?per_page=$PER_PAGE_ITEM&page=$page&search=$searchTxt&provider_id=$providerId',
+        method: HttpMethodType.GET)));
   } else {
-    return ServiceResponse.fromJson(await handleResponse(await buildHttpResponse('service-list?per_page=$PER_PAGE_ITEM&page=$page&provider_id=$providerId', method: HttpMethodType.GET)));
+    return ServiceResponse.fromJson(await handleResponse(await buildHttpResponse(
+        'service-list?per_page=$PER_PAGE_ITEM&page=$page&provider_id=$providerId',
+        method: HttpMethodType.GET)));
   }
 }
 
@@ -582,27 +682,33 @@ Future<ServiceDetailResponse> getServiceDetail(Map request) async {
   print('📋 Method: POST');
   print('📤 Request: ${jsonEncode(request)}');
   print('───────────────────────────────────────────────────────────');
-  
-  ServiceDetailResponse res = ServiceDetailResponse.fromJson(await handleResponse(await buildHttpResponse('service-detail', request: request, method: HttpMethodType.POST)));
-  
+
+  ServiceDetailResponse res = ServiceDetailResponse.fromJson(
+      await handleResponse(await buildHttpResponse('service-detail',
+          request: request, method: HttpMethodType.POST)));
+
   // Log the received data
   if (res.serviceDetail != null) {
     final serviceData = res.serviceDetail!;
     print('📥 RESPONSE DATA RECEIVED:');
     print('───────────────────────────────────────────────────────────');
     print('🔍 IMPORTANT FIELDS (checking for empty values):');
-    
+
     // Check important fields
     // Name can be in translations or direct property
     String name = serviceData.name ?? '';
-    if (name.isEmpty && serviceData.translations != null && serviceData.translations!.isNotEmpty) {
+    if (name.isEmpty &&
+        serviceData.translations != null &&
+        serviceData.translations!.isNotEmpty) {
       final enTranslation = serviceData.translations!['en'];
       name = enTranslation?.name ?? '';
     }
-    
+
     // Description can be in translations or direct property
     String description = serviceData.description ?? '';
-    if (description.isEmpty && serviceData.translations != null && serviceData.translations!.isNotEmpty) {
+    if (description.isEmpty &&
+        serviceData.translations != null &&
+        serviceData.translations!.isNotEmpty) {
       final enTranslation = serviceData.translations!['en'];
       description = enTranslation?.description ?? '';
     }
@@ -610,14 +716,20 @@ Future<ServiceDetailResponse> getServiceDetail(Map request) async {
     final stateId = serviceData.stateId;
     final cityId = serviceData.cityId;
     final advancePaymentAmount = serviceData.advancePaymentAmount;
-    
-    print('   ${name.isEmpty ? "❌" : "✅"} name = "${name.isEmpty ? "EMPTY" : name}" ${name.isEmpty ? "⚠️ EMPTY!" : ""}');
-    print('   ${description.isEmpty ? "❌" : "✅"} description = "${description.isEmpty ? "EMPTY" : (description.length > 50 ? description.substring(0, 50) + "..." : description)}" ${description.isEmpty ? "⚠️ EMPTY!" : ""}');
-    print('   ${countryId == null || countryId == 0 ? "❌" : "✅"} country_id = "$countryId" ${countryId == null || countryId == 0 ? "⚠️ EMPTY!" : ""}');
-    print('   ${stateId == null || stateId == 0 ? "❌" : "✅"} state_id = "$stateId" ${stateId == null || stateId == 0 ? "⚠️ EMPTY!" : ""}');
-    print('   ${cityId == null || cityId == 0 ? "❌" : "✅"} city_id = "$cityId" ${cityId == null || cityId == 0 ? "⚠️ EMPTY!" : ""}');
-    print('   ${advancePaymentAmount == null || advancePaymentAmount == 0 ? "❌" : "✅"} advance_payment_amount = "$advancePaymentAmount" ${advancePaymentAmount == null || advancePaymentAmount == 0 ? "⚠️ EMPTY!" : ""}');
-    
+
+    print(
+        '   ${name.isEmpty ? "❌" : "✅"} name = "${name.isEmpty ? "EMPTY" : name}" ${name.isEmpty ? "⚠️ EMPTY!" : ""}');
+    print(
+        '   ${description.isEmpty ? "❌" : "✅"} description = "${description.isEmpty ? "EMPTY" : (description.length > 50 ? description.substring(0, 50) + "..." : description)}" ${description.isEmpty ? "⚠️ EMPTY!" : ""}');
+    print(
+        '   ${countryId == null || countryId == 0 ? "❌" : "✅"} country_id = "$countryId" ${countryId == null || countryId == 0 ? "⚠️ EMPTY!" : ""}');
+    print(
+        '   ${stateId == null || stateId == 0 ? "❌" : "✅"} state_id = "$stateId" ${stateId == null || stateId == 0 ? "⚠️ EMPTY!" : ""}');
+    print(
+        '   ${cityId == null || cityId == 0 ? "❌" : "✅"} city_id = "$cityId" ${cityId == null || cityId == 0 ? "⚠️ EMPTY!" : ""}');
+    print(
+        '   ${advancePaymentAmount == null || advancePaymentAmount == 0 ? "❌" : "✅"} advance_payment_amount = "$advancePaymentAmount" ${advancePaymentAmount == null || advancePaymentAmount == 0 ? "⚠️ EMPTY!" : ""}');
+
     print('');
     print('📋 OTHER FIELDS:');
     print('   id = ${serviceData.id}');
@@ -635,11 +747,13 @@ Future<ServiceDetailResponse> getServiceDetail(Map request) async {
     print('❌ ERROR: Response data is NULL');
     print('═══════════════════════════════════════════════════════════');
   }
-  
-  if (!listOfCachedData.any((element) => element?.$1 == request['service_id'])) {
+
+  if (!listOfCachedData
+      .any((element) => element?.$1 == request['service_id'])) {
     listOfCachedData.add((request['service_id'], res));
   } else {
-    int index = listOfCachedData.indexWhere((element) => element?.$1 == request['service_id']);
+    int index = listOfCachedData
+        .indexWhere((element) => element?.$1 == request['service_id']);
     listOfCachedData[index] = (request['service_id'], res);
   }
 
@@ -647,63 +761,72 @@ Future<ServiceDetailResponse> getServiceDetail(Map request) async {
 }
 
 Future<CommonResponseModel> deleteService(int id) async {
-  return CommonResponseModel.fromJson(await handleResponse(await buildHttpResponse('service-delete/$id', method: HttpMethodType.POST)));
+  return CommonResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('service-delete/$id',
+          method: HttpMethodType.POST)));
 }
 
 Future<BaseResponseModel> deleteImage(Map request) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('remove-file', request: request, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('remove-file',
+          request: request, method: HttpMethodType.POST)));
 }
 
-Future<void> addServiceMultiPart({required Map<String, dynamic> value, List<int>? serviceAddressList, List<File>? imageFile}) async {
+Future<void> addServiceMultiPart(
+    {required Map<String, dynamic> value,
+    List<int>? serviceAddressList,
+    List<File>? imageFile}) async {
   MultipartRequest multiPartRequest = await getMultiPartRequest('service-save');
 
   multiPartRequest.fields.addAll(await getMultipartFields(val: value));
 
   if (serviceAddressList.validate().isNotEmpty) {
     for (int i = 0; i < serviceAddressList!.length; i++) {
-      multiPartRequest.fields[AddServiceKey.providerAddressId + '[$i]'] = serviceAddressList[i].toString().validate();
+      multiPartRequest.fields[AddServiceKey.providerAddressId + '[$i]'] =
+          serviceAddressList[i].toString().validate();
     }
   }
 
   // Add files to request
   // Backend expects: service_attachment_0, service_attachment_1, etc.
   int validFileCount = 0;
-  
+
   print('🔵 FILE UPLOAD DEBUG: imageFile=${imageFile?.length ?? 'null'} files');
-  
+
   if (imageFile != null && imageFile.isNotEmpty) {
     print('🔵 FILE UPLOAD: Processing ${imageFile.length} files');
-    
+
     for (int i = 0; i < imageFile.length; i++) {
       File file = imageFile[i];
       print('🔵 FILE $i: Starting processing, path="${file.path}"');
-      
+
       try {
         // Check if file exists
         final exists = await file.exists();
         print('🔵 FILE $i: exists=$exists');
-        
+
         if (!exists) {
           print('⚠️ FILE $i: Does not exist, skipping');
           log('Skipping non-existent file: ${file.path}');
           continue;
         }
-        
+
         // Validate file path
         final filePath = file.path.trim();
         print('🔵 FILE $i: path="$filePath"');
-        
+
         if (filePath.isEmpty || filePath == '/' || filePath == '\\') {
           print('⚠️ FILE $i: Invalid path, skipping');
           log('Skipping invalid file path: "$filePath"');
           continue;
         }
-        
+
         // Field name MUST be exactly: service_attachment_0, service_attachment_1, etc.
         // Backend checks: $request->hasFile("service_attachment_0")
-        String fieldName = '${AddServiceKey.serviceAttachment}$i'; // Results in: service_attachment_0
+        String fieldName =
+            '${AddServiceKey.serviceAttachment}$i'; // Results in: service_attachment_0
         print('🔵 FILE $i: fieldName="$fieldName"');
-        
+
         // Use fromPath() - same as gallery uploads (which work)
         // Extract filename from path
         String filename = filePath.split(RegExp(r'[/\\]')).last;
@@ -711,7 +834,7 @@ Future<void> addServiceMultiPart({required Map<String, dynamic> value, List<int>
           filename = 'image_${DateTime.now().millisecondsSinceEpoch}_$i.jpg';
         }
         print('🔵 FILE $i: filename="$filename", using fromPath()');
-        
+
         // Create MultipartFile from path (same approach as working gallery uploads)
         print('🔵 FILE $i: Creating MultipartFile from path...');
         final multipartFile = await MultipartFile.fromPath(
@@ -719,21 +842,23 @@ Future<void> addServiceMultiPart({required Map<String, dynamic> value, List<int>
           file.path,
           filename: filename,
         );
-        print('🔵 FILE $i: MultipartFile created - length=${multipartFile.length}, field=${multipartFile.field}');
-        
+        print(
+            '🔵 FILE $i: MultipartFile created - length=${multipartFile.length}, field=${multipartFile.field}');
+
         // Verify file was created
         if (multipartFile.length == 0) {
           print('⚠️ FILE $i: MultipartFile has 0 length, skipping');
           log('MultipartFile has 0 length, skipping');
           continue;
         }
-        
+
         // Add to request
         print('🔵 FILE $i: Adding to multiPartRequest.files...');
         multiPartRequest.files.add(multipartFile);
         validFileCount++;
-        print('✅ FILE $i: Successfully added! Total files in request: ${multiPartRequest.files.length}');
-        
+        print(
+            '✅ FILE $i: Successfully added! Total files in request: ${multiPartRequest.files.length}');
+
         log('Added file: field=${multipartFile.field}, filename=${multipartFile.filename}, size=${multipartFile.length} bytes');
       } catch (e, stackTrace) {
         print('❌ FILE $i: ERROR - $e');
@@ -745,10 +870,12 @@ Future<void> addServiceMultiPart({required Map<String, dynamic> value, List<int>
   } else {
     print('⚠️ FILE UPLOAD: No files provided (imageFile is null or empty)');
   }
-  
+
   // attachment_count MUST match number of files
-  multiPartRequest.fields[AddServiceKey.attachmentCount] = validFileCount.toString();
-  print('🔵 FILE UPLOAD: attachment_count set to $validFileCount, files in request: ${multiPartRequest.files.length}');
+  multiPartRequest.fields[AddServiceKey.attachmentCount] =
+      validFileCount.toString();
+  print(
+      '🔵 FILE UPLOAD: attachment_count set to $validFileCount, files in request: ${multiPartRequest.files.length}');
 
   log("Fields: ${multiPartRequest.fields}");
 
@@ -757,9 +884,9 @@ Future<void> addServiceMultiPart({required Map<String, dynamic> value, List<int>
   headers.remove('content-type');
   headers.remove('Content-Type');
   headers.remove(HttpHeaders.contentTypeHeader);
-  
+
   multiPartRequest.headers.addAll(headers);
-  
+
   // Double-check: Remove Content-Type if it was added (CRITICAL - breaks multipart boundary)
   multiPartRequest.headers.remove('content-type');
   multiPartRequest.headers.remove('Content-Type');
@@ -774,7 +901,7 @@ Future<void> addServiceMultiPart({required Map<String, dynamic> value, List<int>
   print('');
   print('📦 ALL REQUEST FIELDS:');
   print('───────────────────────────────────────────────────────────');
-  
+
   // Log all fields with special attention to the fields user mentioned
   final allFields = multiPartRequest.fields;
   final importantFields = [
@@ -791,15 +918,16 @@ Future<void> addServiceMultiPart({required Map<String, dynamic> value, List<int>
     AddServiceKey.price,
     AddServiceKey.discountPrice,
   ];
-  
+
   // Log important fields first
   print('🔍 IMPORTANT FIELDS (checking for empty values):');
   for (var key in importantFields) {
     final value = allFields[key];
     final isEmpty = value == null || value.toString().trim().isEmpty;
-    print('   ${isEmpty ? "❌" : "✅"} $key = "${value ?? "NULL"}" ${isEmpty ? "⚠️ EMPTY!" : ""}');
+    print(
+        '   ${isEmpty ? "❌" : "✅"} $key = "${value ?? "NULL"}" ${isEmpty ? "⚠️ EMPTY!" : ""}');
   }
-  
+
   print('');
   print('📋 ALL OTHER FIELDS:');
   for (var entry in allFields.entries) {
@@ -807,17 +935,19 @@ Future<void> addServiceMultiPart({required Map<String, dynamic> value, List<int>
       print('   ${entry.key} = "${entry.value}"');
     }
   }
-  
+
   print('');
   print('📎 FILES:');
   print('   Files count: ${multiPartRequest.files.length}');
-  print('   attachment_count: ${allFields[AddServiceKey.attachmentCount] ?? "NOT SET"}');
+  print(
+      '   attachment_count: ${allFields[AddServiceKey.attachmentCount] ?? "NOT SET"}');
   for (var file in multiPartRequest.files) {
-    print('   - ${file.field}: ${file.filename ?? "null"} (${file.length} bytes)');
+    print(
+        '   - ${file.field}: ${file.filename ?? "null"} (${file.length} bytes)');
   }
-  
+
   print('═══════════════════════════════════════════════════════════');
-  
+
   // Also log as JSON for easy copying
   log("Multi Part Request Fields (JSON): ${jsonEncode(multiPartRequest.fields)}");
   log("Multi Part Request Files: ${multiPartRequest.files.map((e) => '${e.field}: ${e.filename ?? 'null'}').join(', ')}");
@@ -834,10 +964,11 @@ Future<void> addServiceMultiPart({required Map<String, dynamic> value, List<int>
   }, onError: (error) {
     String errorMessage = error.toString();
     log('Upload error: $errorMessage');
-    if (errorMessage.contains("File `/` does not exist") || 
+    if (errorMessage.contains("File `/` does not exist") ||
         errorMessage.contains("FileDoesNotExist") ||
         errorMessage.contains("does not exist")) {
-      errorMessage = 'Image upload failed. Please try selecting the image again.';
+      errorMessage =
+          'Image upload failed. Please try selecting the image again.';
     }
     toast(errorMessage, print: true);
     appStore.setLoading(false);
@@ -845,10 +976,11 @@ Future<void> addServiceMultiPart({required Map<String, dynamic> value, List<int>
     appStore.setLoading(false);
     String errorMessage = e.toString();
     log('Upload exception: $errorMessage');
-    if (errorMessage.contains("File `/` does not exist") || 
+    if (errorMessage.contains("File `/` does not exist") ||
         errorMessage.contains("FileDoesNotExist") ||
         errorMessage.contains("does not exist")) {
-      errorMessage = 'Image upload failed. Please try selecting the image again.';
+      errorMessage =
+          'Image upload failed. Please try selecting the image again.';
     }
     toast(errorMessage);
   });
@@ -856,26 +988,36 @@ Future<void> addServiceMultiPart({required Map<String, dynamic> value, List<int>
 //endregion
 
 //region Booking API
-Future<List<BookingStatusResponse>> bookingStatus({required List<BookingStatusResponse> list}) async {
-  Iterable res = await (handleResponse(await buildHttpResponse('booking-status', method: HttpMethodType.GET)));
+Future<List<BookingStatusResponse>> bookingStatus(
+    {required List<BookingStatusResponse> list}) async {
+  Iterable res = await (handleResponse(
+      await buildHttpResponse('booking-status', method: HttpMethodType.GET)));
   list = res.map((e) => BookingStatusResponse.fromJson(e)).toList();
   cachedBookingStatusDropdown = list;
   return list;
 }
 
-Future<UpdateLocationResponse> updateLocation(int bookingId, String latitude, String longitude) async {
-  return UpdateLocationResponse.fromJson(await handleResponse(await buildHttpResponse("update-location?booking_id=$bookingId&latitude=$latitude&longitude=$longitude", method: HttpMethodType.POST)
-      .timeout(Duration(seconds: GET_LOCATION_API_TIMEOUT_SECOND))));
+Future<UpdateLocationResponse> updateLocation(
+    int bookingId, String latitude, String longitude) async {
+  return UpdateLocationResponse.fromJson(await handleResponse(
+      await buildHttpResponse(
+              "update-location?booking_id=$bookingId&latitude=$latitude&longitude=$longitude",
+              method: HttpMethodType.POST)
+          .timeout(Duration(seconds: GET_LOCATION_API_TIMEOUT_SECOND))));
 }
 
 Future<UpdateLocationResponse> getHandymanLocation(int bookingId) async {
-  return UpdateLocationResponse.fromJson(
-      await handleResponse(await buildHttpResponse("get-location?booking_id=$bookingId", method: HttpMethodType.GET).timeout(Duration(seconds: GET_LOCATION_API_TIMEOUT_SECOND))));
+  return UpdateLocationResponse.fromJson(await handleResponse(
+      await buildHttpResponse("get-location?booking_id=$bookingId",
+              method: HttpMethodType.GET)
+          .timeout(Duration(seconds: GET_LOCATION_API_TIMEOUT_SECOND))));
 }
 
 Future<num> getUserWalletBalance() async {
   try {
-    var res = WalletResponse.fromJson(await handleResponse(await buildHttpResponse('user-wallet-balance', method: HttpMethodType.GET)));
+    var res = WalletResponse.fromJson(await handleResponse(
+        await buildHttpResponse('user-wallet-balance',
+            method: HttpMethodType.GET)));
 
     return res.balance.validate();
   } catch (e) {
@@ -900,38 +1042,50 @@ Future<List<BookingData>> getBookingList(
   String searchText = '',
   required List<BookingData> bookings,
   Function(bool)? lastPageCallback,
-  Function(String totalEarning, PaymentBreakdown paymentBreakdown)? paymentBreakdownCallBack,
+  Function(String totalEarning, PaymentBreakdown paymentBreakdown)?
+      paymentBreakdownCallBack,
 }) async {
   try {
     BookingListResponse res;
     String serviceIds = serviceId.isNotEmpty ? 'service_id=$serviceId&' : '';
     String dateStart = dateFrom.isNotEmpty ? 'date_from=$dateFrom&' : '';
     String dateEnd = dateTo.isNotEmpty ? '&date_to=$dateTo&' : '';
-    String customerIds = customerId.isNotEmpty ? 'customer_id=$customerId&' : '';
-    String providerIds = providerId.isNotEmpty ? 'provider_id=$providerId&' : '';
-    String handymanIds = handymanId.isNotEmpty ? 'handyman_id=$handymanId&' : '';
+    String customerIds =
+        customerId.isNotEmpty ? 'customer_id=$customerId&' : '';
+    String providerIds =
+        providerId.isNotEmpty ? 'provider_id=$providerId&' : '';
+    String handymanIds =
+        handymanId.isNotEmpty ? 'handyman_id=$handymanId&' : '';
     String status = bookingStatus.isNotEmpty ? 'status=$bookingStatus&' : '';
-    String paymentStatuss = paymentStatus.isNotEmpty ? 'payment_status=$paymentStatus&' : '';
-    String paymentTypes = paymentType.isNotEmpty ? 'payment_type=$paymentType&' : '';
+    String paymentStatuss =
+        paymentStatus.isNotEmpty ? 'payment_status=$paymentStatus&' : '';
+    String paymentTypes =
+        paymentType.isNotEmpty ? 'payment_type=$paymentType&' : '';
     String searchParam = searchText.isNotEmpty ? '&search=$searchText&' : '';
 
     String perPageItem = 'per_page=$perPage&';
     String pageCount = 'page=$page';
 
     if (status == BOOKING_PAYMENT_STATUS_ALL) {
-      res = BookingListResponse.fromJson(await handleResponse(await buildHttpResponse('booking-list?per_page=$perPage&page=$page$searchParam', method: HttpMethodType.GET)));
+      res = BookingListResponse.fromJson(await handleResponse(
+          await buildHttpResponse(
+              'booking-list?per_page=$perPage&page=$page$searchParam',
+              method: HttpMethodType.GET)));
     } else {
-      res = BookingListResponse.fromJson(await handleResponse(await buildHttpResponse(
-          'booking-list?$serviceIds$dateStart$dateEnd$customerIds$providerIds$handymanIds$status$paymentStatuss$paymentTypes$perPageItem$pageCount$searchParam',
-          method: HttpMethodType.GET)));
+      res = BookingListResponse.fromJson(await handleResponse(
+          await buildHttpResponse(
+              'booking-list?$serviceIds$dateStart$dateEnd$customerIds$providerIds$handymanIds$status$paymentStatuss$paymentTypes$perPageItem$pageCount$searchParam',
+              method: HttpMethodType.GET)));
     }
 
     if (page == 1) bookings.clear();
     bookings.addAll(res.data.validate());
     lastPageCallback?.call(res.data.validate().length != PER_PAGE_ITEM);
 
-    if (res.totalEarning.validate().isNotEmpty && res.paymentBreakdown != null) {
-      paymentBreakdownCallBack?.call(res.totalEarning.validate(), res.paymentBreakdown!);
+    if (res.totalEarning.validate().isNotEmpty &&
+        res.paymentBreakdown != null) {
+      paymentBreakdownCallBack?.call(
+          res.totalEarning.validate(), res.paymentBreakdown!);
     }
 
     cachedBookingList = bookings;
@@ -947,32 +1101,49 @@ Future<List<BookingData>> getBookingList(
 }
 
 //region All Service List API
-Future<ServiceResponse> getAllServiceList({int? providerId, String perPage = ''}) async {
-  String providerIds = appStore.isLoggedIn ? 'provider_id=${appStore.userId}' : '';
-  return ServiceResponse.fromJson(await handleResponse(await buildHttpResponse('search-list?$providerIds&per_page=$perPage', method: HttpMethodType.GET)));
+Future<ServiceResponse> getAllServiceList(
+    {int? providerId, String perPage = ''}) async {
+  String providerIds =
+      appStore.isLoggedIn ? 'provider_id=${appStore.userId}' : '';
+  return ServiceResponse.fromJson(await handleResponse(await buildHttpResponse(
+      'search-list?$providerIds&per_page=$perPage',
+      method: HttpMethodType.GET)));
 }
 //endregion
 
 //region All Customer List API
-Future<UserListResponse> getAllUserList({String userType = "", String perPage = ''}) async {
+Future<UserListResponse> getAllUserList(
+    {String userType = "", String perPage = ''}) async {
   String userTypes = userType.isNotEmpty ? 'user_type=$userType' : '';
 
-  return UserListResponse.fromJson(await handleResponse(await buildHttpResponse('user-list?$userTypes&per_page=$perPage', method: HttpMethodType.GET)));
+  return UserListResponse.fromJson(await handleResponse(await buildHttpResponse(
+      'user-list?$userTypes&per_page=$perPage',
+      method: HttpMethodType.GET)));
 }
 //endregion
 
-Future<SearchListResponse> getServicesList(int page, {var perPage = PER_PAGE_ITEM, int? categoryId = -1, int? subCategoryId = -1, int? providerId, String? search, String? type}) async {
+Future<SearchListResponse> getServicesList(int page,
+    {var perPage = PER_PAGE_ITEM,
+    int? categoryId = -1,
+    int? subCategoryId = -1,
+    int? providerId,
+    String? search,
+    String? type}) async {
   String? req;
   String categoryIds = categoryId != -1 ? 'category_id=$categoryId&' : '';
   String searchPara = search.validate().isNotEmpty ? 'search=$search&' : '';
-  String subCategorys = subCategoryId != -1 ? 'subcategory_id=$subCategoryId&' : '';
+  String subCategorys =
+      subCategoryId != -1 ? 'subcategory_id=$subCategoryId&' : '';
   String pages = 'page=$page&';
   String perPages = 'per_page=$PER_PAGE_ITEM';
-  String providerIds = appStore.isLoggedIn ? 'provider_id=${appStore.userId}&' : '';
+  String providerIds =
+      appStore.isLoggedIn ? 'provider_id=${appStore.userId}&' : '';
   String serviceType = type.validate().isNotEmpty ? 'type=$type&' : "";
 
-  req = '?$categoryIds$providerIds$subCategorys$serviceType$searchPara$pages$perPages';
-  return SearchListResponse.fromJson(await handleResponse(await buildHttpResponse('search-list$req', method: HttpMethodType.GET)));
+  req =
+      '?$categoryIds$providerIds$subCategorys$serviceType$searchPara$pages$perPages';
+  return SearchListResponse.fromJson(await handleResponse(
+      await buildHttpResponse('search-list$req', method: HttpMethodType.GET)));
 }
 
 Future<List<ServiceData>> getSearchList(
@@ -985,6 +1156,7 @@ Future<List<ServiceData>> getSearchList(
   String? type,
   required List<ServiceData> services,
   Function(bool)? lastPageCallback,
+  Function(int?)? providerProfileCompleteCallback,
 }) async {
   try {
     appStore.setLoading(true);
@@ -993,14 +1165,20 @@ Future<List<ServiceData>> getSearchList(
     String? req;
     String categoryIds = categoryId != -1 ? 'category_id=$categoryId&' : '';
     String searchPara = search.validate().isNotEmpty ? 'search=$search&' : '';
-    String subCategorys = subCategoryId != -1 ? 'subcategory_id=$subCategoryId&' : '';
+    String subCategorys =
+        subCategoryId != -1 ? 'subcategory_id=$subCategoryId&' : '';
     String pages = 'page=$page&';
     String perPages = 'per_page=$perPage';
     String providerIds = providerId != -1 ? 'provider_id=$providerId&' : '';
     String serviceType = type.validate().isNotEmpty ? 'type=$type&' : "";
 
-    req = '?$categoryIds$providerIds$subCategorys$serviceType$searchPara$pages$perPages';
-    res = SearchListResponse.fromJson(await handleResponse(await buildHttpResponse('search-list$req', method: HttpMethodType.GET)));
+    req =
+        '?$categoryIds$providerIds$subCategorys$serviceType$searchPara$pages$perPages';
+    res = SearchListResponse.fromJson(await handleResponse(
+        await buildHttpResponse('search-list$req',
+            method: HttpMethodType.GET)));
+
+    providerProfileCompleteCallback?.call(res.providerProfileComplete);
 
     if (page == 1) services.clear();
     services.addAll(res.data.validate());
@@ -1015,22 +1193,31 @@ Future<List<ServiceData>> getSearchList(
   }
 }
 
-Future<BookingDetailResponse> bookingDetail(Map request, {Function(String, int)? callbackForStatus}) async {
+Future<BookingDetailResponse> bookingDetail(Map request,
+    {Function(String, int)? callbackForStatus}) async {
   BookingDetailResponse bookingDetailResponse = BookingDetailResponse.fromJson(
-    await handleResponse(await buildHttpResponse('booking-detail', request: request, method: HttpMethodType.POST)),
+    await handleResponse(await buildHttpResponse('booking-detail',
+        request: request, method: HttpMethodType.POST)),
   );
-  callbackForStatus?.call(bookingDetailResponse.bookingDetail!.status.validate(),
-      bookingDetailResponse.handymanData?.isNotEmpty ?? false ? bookingDetailResponse.handymanData!.firstOrNull!.id.validate() : bookingDetailResponse.providerData!.id.validate());
+  callbackForStatus?.call(
+      bookingDetailResponse.bookingDetail!.status.validate(),
+      bookingDetailResponse.handymanData?.isNotEmpty ?? false
+          ? bookingDetailResponse.handymanData!.firstOrNull!.id.validate()
+          : bookingDetailResponse.providerData!.id.validate());
   appStore.setLoading(false);
-  if (cachedBookingDetailList.any((element) => element.bookingDetail!.id == bookingDetailResponse.bookingDetail!.id)) {
-    cachedBookingDetailList.removeWhere((element) => element.bookingDetail!.id == bookingDetailResponse.bookingDetail!.id);
+  if (cachedBookingDetailList.any((element) =>
+      element.bookingDetail!.id == bookingDetailResponse.bookingDetail!.id)) {
+    cachedBookingDetailList.removeWhere((element) =>
+        element.bookingDetail!.id == bookingDetailResponse.bookingDetail!.id);
   }
   cachedBookingDetailList.add(bookingDetailResponse);
   return bookingDetailResponse;
 }
 
 Future<BaseResponseModel> bookingUpdate(Map request) async {
-  var res = BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('booking-update', request: request, method: HttpMethodType.POST)));
+  var res = BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('booking-update',
+          request: request, method: HttpMethodType.POST)));
   LiveStream().emit(LIVESTREAM_UPDATE_BOOKINGS);
 
   appStore.setLoading(false);
@@ -1039,13 +1226,17 @@ Future<BaseResponseModel> bookingUpdate(Map request) async {
 }
 
 Future<BaseResponseModel> assignBooking(Map request) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('booking-assigned', request: request, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('booking-assigned',
+          request: request, method: HttpMethodType.POST)));
 }
 //endregion
 
 //region Address API
 Future<ServiceAddressesResponse> getAddresses({int? providerId}) async {
-  return ServiceAddressesResponse.fromJson(await handleResponse(await buildHttpResponse('provideraddress-list?provider_id=$providerId', method: HttpMethodType.GET)));
+  return ServiceAddressesResponse.fromJson(await handleResponse(
+      await buildHttpResponse('provideraddress-list?provider_id=$providerId',
+          method: HttpMethodType.GET)));
 }
 
 Future<List<AddressResponse>> getAddressesWithPagination({
@@ -1056,14 +1247,17 @@ Future<List<AddressResponse>> getAddressesWithPagination({
   Function(bool)? lastPageCallback,
 }) async {
   try {
-    ServiceAddressesResponse res =
-        ServiceAddressesResponse.fromJson(await handleResponse(await buildHttpResponse('provideraddress-list?provider_id=$providerId&per_page=$perPage&page=$page', method: HttpMethodType.GET)));
+    ServiceAddressesResponse res = ServiceAddressesResponse.fromJson(
+        await handleResponse(await buildHttpResponse(
+            'provideraddress-list?provider_id=$providerId&per_page=$perPage&page=$page',
+            method: HttpMethodType.GET)));
 
     if (page == 1) addressList.clear();
 
     addressList.addAll(res.addressResponse.validate());
 
-    lastPageCallback?.call(res.addressResponse.validate().length != PER_PAGE_ITEM);
+    lastPageCallback
+        ?.call(res.addressResponse.validate().length != PER_PAGE_ITEM);
 
     appStore.setLoading(false);
   } catch (e) {
@@ -1074,25 +1268,35 @@ Future<List<AddressResponse>> getAddressesWithPagination({
 }
 
 Future<BaseResponseModel> addAddresses(Map request) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('save-provideraddress', request: request, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('save-provideraddress',
+          request: request, method: HttpMethodType.POST)));
 }
 
 Future<BaseResponseModel> removeAddress(int? id) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('provideraddress-delete/$id', method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('provideraddress-delete/$id',
+          method: HttpMethodType.POST)));
 }
 //endregion
 
 //region Reviews API
 Future<List<RatingData>> serviceReviews(Map request) async {
-  ServiceReviewResponse res =
-      ServiceReviewResponse.fromJson(await handleResponse(await buildHttpResponse('service-reviews?per_page=$PER_PAGE_ITEM_ALL', request: request, method: HttpMethodType.POST)));
+  ServiceReviewResponse res = ServiceReviewResponse.fromJson(
+      await handleResponse(await buildHttpResponse(
+          'service-reviews?per_page=$PER_PAGE_ITEM_ALL',
+          request: request,
+          method: HttpMethodType.POST)));
 
   return res.data.validate();
 }
 
 Future<List<RatingData>> handymanReviews(Map request) async {
-  ServiceReviewResponse res =
-      ServiceReviewResponse.fromJson(await handleResponse(await buildHttpResponse('handyman-reviews?per_page=$PER_PAGE_ITEM_ALL', request: request, method: HttpMethodType.POST)));
+  ServiceReviewResponse res = ServiceReviewResponse.fromJson(
+      await handleResponse(await buildHttpResponse(
+          'handyman-reviews?per_page=$PER_PAGE_ITEM_ALL',
+          request: request,
+          method: HttpMethodType.POST)));
   return res.data.validate();
 }
 //endregion
@@ -1100,7 +1304,8 @@ Future<List<RatingData>> handymanReviews(Map request) async {
 //region Subscription API
 Future<List<ProviderSubscriptionModel>> getPricingPlanList() async {
   try {
-    PlanListResponse res = PlanListResponse.fromJson(await handleResponse(await buildHttpResponse('plan-list', method: HttpMethodType.GET)));
+    PlanListResponse res = PlanListResponse.fromJson(await handleResponse(
+        await buildHttpResponse('plan-list', method: HttpMethodType.GET)));
 
     appStore.setLoading(false);
 
@@ -1115,18 +1320,23 @@ Future<List<ProviderSubscriptionModel>> getPricingPlanList() async {
 
 Future<Map<String, dynamic>> saveSubscription(Map request) async {
   final raw = await handleResponse(
-    await buildHttpResponse('save-subscription', request: request, method: HttpMethodType.POST),
+    await buildHttpResponse('save-subscription',
+        request: request, method: HttpMethodType.POST),
   );
   // API returns { message: string, data: { ...subscription... } }
-  final ProviderSubscriptionModel model = ProviderSubscriptionModel.fromJson(raw is Map && raw.containsKey('data') ? raw['data'] : raw);
+  final ProviderSubscriptionModel model = ProviderSubscriptionModel.fromJson(
+      raw is Map && raw.containsKey('data') ? raw['data'] : raw);
   return {
-    'message': (raw is Map && raw['message'] != null) ? raw['message'].toString() : '',
+    'message':
+        (raw is Map && raw['message'] != null) ? raw['message'].toString() : '',
     'data': model,
   };
 }
 
 Future<BaseResponseModel> bankTransferSubscription(Map request) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('subscription/bank-transfer', request: request, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('subscription/bank-transfer',
+          request: request, method: HttpMethodType.POST)));
 }
 
 Future<List<ProviderSubscriptionModel>> getSubscriptionHistory({
@@ -1136,7 +1346,8 @@ Future<List<ProviderSubscriptionModel>> getSubscriptionHistory({
   Function(bool)? lastPageCallback,
 }) async {
   try {
-    SubscriptionHistoryResponse res = SubscriptionHistoryResponse.fromJson(await handleResponse(await buildHttpResponse(
+    SubscriptionHistoryResponse res = SubscriptionHistoryResponse.fromJson(
+        await handleResponse(await buildHttpResponse(
       'subscription-history?per_page=$perPage&page=$page&orderby=desc',
       method: HttpMethodType.GET,
     )));
@@ -1157,7 +1368,8 @@ Future<List<ProviderSubscriptionModel>> getSubscriptionHistory({
 }
 
 Future<void> cancelSubscription(Map request) async {
-  return await handleResponse(await buildHttpResponse('cancel-subscription', request: request, method: HttpMethodType.POST));
+  return await handleResponse(await buildHttpResponse('cancel-subscription',
+      request: request, method: HttpMethodType.POST));
 }
 
 Future<void> savePayment({
@@ -1188,9 +1400,12 @@ Future<void> savePayment({
 
     await saveSubscription(planRequestModel.toJson()).then((value) async {
       final String msg = (value['message']?.toString() ?? '').trim();
-      toast(msg.isNotEmpty ? msg : "${data.title.validate()} ${languages.successfullyActivated}");
+      toast(msg.isNotEmpty
+          ? msg
+          : "${data.title.validate()} ${languages.successfullyActivated}");
       await setValue(LAST_APP_CONFIGURATION_SYNCED_TIME, 0);
-      push(ProviderDashboardScreen(index: 0), isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+      push(ProviderDashboardScreen(index: 0),
+          isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
     }).catchError((e) {
       log(e.toString());
     }).whenComplete(() => appStore.setLoading(false));
@@ -1206,7 +1421,9 @@ Future<List<WalletHistory>> getWalletHistory({
 }) async {
   try {
     WalletHistoryListResponse res = WalletHistoryListResponse.fromJson(
-      await handleResponse(await buildHttpResponse('wallet-history?per_page=$perPage&page=$page&orderby=desc', method: HttpMethodType.GET)),
+      await handleResponse(await buildHttpResponse(
+          'wallet-history?per_page=$perPage&page=$page&orderby=desc',
+          method: HttpMethodType.GET)),
     );
     if (page == 1) list.clear();
     list.addAll(res.data.validate());
@@ -1235,7 +1452,9 @@ Future<List<BankHistory>> getBankListDetail({
   // Filter by provider_id so logged-in id matches; request uses Bearer token via buildHttpResponse
   final int filterId = providerId ?? userId;
   BankListResponse res = BankListResponse.fromJson(
-    await handleResponse(await buildHttpResponse('user-bank-detail?per_page=$perPage&page=$page&user_id=$userId&provider_id=$filterId', method: HttpMethodType.GET)),
+    await handleResponse(await buildHttpResponse(
+        'user-bank-detail?per_page=$perPage&page=$page&user_id=$userId&provider_id=$filterId',
+        method: HttpMethodType.GET)),
   );
 
   if (page == 1) list.clear();
@@ -1251,37 +1470,56 @@ Future<List<BankHistory>> getBankListDetail({
 }
 
 Future<BaseResponseModel> chooseDefaulBank({required int bankId}) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('default-bank?id=$bankId', request: {}, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('default-bank?id=$bankId',
+          request: {}, method: HttpMethodType.POST)));
 }
 
 Future<BaseResponseModel> deleteBank({int? bankId}) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('delete-bank/$bankId', request: {}, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('delete-bank/$bankId',
+          request: {}, method: HttpMethodType.POST)));
 }
 
-Future<BaseResponseModel> updateHandymanAvailabilityApi({required Map request}) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('handyman-update-available-status', request: request, method: HttpMethodType.POST)));
+Future<BaseResponseModel> updateHandymanAvailabilityApi(
+    {required Map request}) async {
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('handyman-update-available-status',
+          request: request, method: HttpMethodType.POST)));
 }
 
 Future<BaseResponseModel> peoviderWithdrawMoney({required Map request}) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('withdraw-money', request: request, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('withdraw-money',
+          request: request, method: HttpMethodType.POST)));
 }
 
 //endregion
 
 //region Payment API
 
-Future<List<PaymentSetting>> getPaymentGateways({bool isAdvancePayment = false, bool requireCOD = true, bool requireWallet = true, bool isAddWallet = false}) async {
+Future<List<PaymentSetting>> getPaymentGateways(
+    {bool isAdvancePayment = false,
+    bool requireCOD = true,
+    bool requireWallet = true,
+    bool isAddWallet = false}) async {
   String isAddWalletStatus = isAddWallet ? '?is_add_wallet=$isAddWallet' : '';
 
   try {
-    Iterable it = await handleResponse(await buildHttpResponse('payment-gateways$isAddWalletStatus', method: HttpMethodType.GET));
-    List<PaymentSetting> res = it.map((e) => PaymentSetting.fromJson(e)).toList();
+    Iterable it = await handleResponse(await buildHttpResponse(
+        'payment-gateways$isAddWalletStatus',
+        method: HttpMethodType.GET));
+    List<PaymentSetting> res =
+        it.map((e) => PaymentSetting.fromJson(e)).toList();
 
-    if (!requireCOD) res.removeWhere((element) => element.type == PAYMENT_METHOD_COD);
-    if (!requireWallet) res.removeWhere((element) => element.type == PAYMENT_METHOD_FROM_WALLET);
+    if (!requireCOD)
+      res.removeWhere((element) => element.type == PAYMENT_METHOD_COD);
+    if (!requireWallet)
+      res.removeWhere((element) => element.type == PAYMENT_METHOD_FROM_WALLET);
 
     if (!appConfigurationStore.onlinePaymentStatus) {
-      res.removeWhere((element) => onlinePaymentGateways.contains(element.type));
+      res.removeWhere(
+          (element) => onlinePaymentGateways.contains(element.type));
     }
     return res;
   } catch (e) {
@@ -1289,13 +1527,20 @@ Future<List<PaymentSetting>> getPaymentGateways({bool isAdvancePayment = false, 
   }
 }
 
-Future<PaymentListResponse> getPaymentList(int page, {var perPage = PER_PAGE_ITEM}) async {
-  return PaymentListResponse.fromJson(await handleResponse(await buildHttpResponse('payment-list?per_page=$perPage&page=$page', method: HttpMethodType.GET)));
+Future<PaymentListResponse> getPaymentList(int page,
+    {var perPage = PER_PAGE_ITEM}) async {
+  return PaymentListResponse.fromJson(await handleResponse(
+      await buildHttpResponse('payment-list?per_page=$perPage&page=$page',
+          method: HttpMethodType.GET)));
 }
 
-Future<List<PaymentData>> getPaymentAPI(int page, List<PaymentData> list, Function(bool)? lastPageCallback, {var perPage = PER_PAGE_ITEM}) async {
+Future<List<PaymentData>> getPaymentAPI(
+    int page, List<PaymentData> list, Function(bool)? lastPageCallback,
+    {var perPage = PER_PAGE_ITEM}) async {
   try {
-    var res = PaymentListResponse.fromJson(await handleResponse(await buildHttpResponse('payment-list?per_page=$perPage&page=$page', method: HttpMethodType.GET)));
+    var res = PaymentListResponse.fromJson(await handleResponse(
+        await buildHttpResponse('payment-list?per_page=$perPage&page=$page',
+            method: HttpMethodType.GET)));
 
     if (page == 1) list.clear();
     list.addAll(res.data.validate());
@@ -1314,9 +1559,13 @@ Future<List<PaymentData>> getPaymentAPI(int page, List<PaymentData> list, Functi
   }
 }
 
-Future<List<PaymentData>> getUserPaymentList(int page, int? id, List<PaymentData> list, Function(bool)? lastPageCallback) async {
+Future<List<PaymentData>> getUserPaymentList(int page, int? id,
+    List<PaymentData> list, Function(bool)? lastPageCallback) async {
   appStore.setLoading(true);
-  var res = PaymentListResponse.fromJson(await handleResponse(await buildHttpResponse('payment-list?${id != null ? 'booking_id=$id&' : ''}page=$page', method: HttpMethodType.GET)));
+  var res = PaymentListResponse.fromJson(await handleResponse(
+      await buildHttpResponse(
+          'payment-list?${id != null ? 'booking_id=$id&' : ''}page=$page',
+          method: HttpMethodType.GET)));
 
   if (page == 1) list.clear();
   list.addAll(res.data.validate());
@@ -1328,27 +1577,32 @@ Future<List<PaymentData>> getUserPaymentList(int page, int? id, List<PaymentData
   return list;
 }
 
-Future<List<PaymentData>> getPaymentHistory(int page, List<PaymentData> list, Function(bool)? lastPageCallback) async {
+Future<List<PaymentData>> getPaymentHistory(
+    int page, List<PaymentData> list, Function(bool)? lastPageCallback) async {
   appStore.setLoading(true);
-  var res = paymentHistoryResponseFromJson(await handleResponse(await buildHttpResponse('payment-list-all?page=$page', method: HttpMethodType.GET)));
+  var res = paymentHistoryResponseFromJson(await handleResponse(
+      await buildHttpResponse('payment-list-all?page=$page',
+          method: HttpMethodType.GET)));
 
   if (page == 1) list.clear();
-  
+
   // Add regular payments
   list.addAll(res.data.payments.data.validate());
-  
+
   // Convert and add post job payments
-  if (res.data.postJobPayments.postJobData != null && res.data.postJobPayments.postJobData!.isNotEmpty) {
+  if (res.data.postJobPayments.postJobData != null &&
+      res.data.postJobPayments.postJobData!.isNotEmpty) {
     for (var postJobPayment in res.data.postJobPayments.postJobData!) {
       // Split customer name into first and last name
       String? firstName;
       String? lastName;
-      if (postJobPayment.customerName != null && postJobPayment.customerName!.isNotEmpty) {
+      if (postJobPayment.customerName != null &&
+          postJobPayment.customerName!.isNotEmpty) {
         final nameParts = postJobPayment.customerName!.trim().split(' ');
         firstName = nameParts.isNotEmpty ? nameParts.first : null;
         lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : null;
       }
-      
+
       // Create UserData for customer
       UserData? customerData;
       if (postJobPayment.customerId != null) {
@@ -1358,13 +1612,14 @@ Future<List<PaymentData>> getPaymentHistory(int page, List<PaymentData> list, Fu
           lastName: lastName,
         );
       }
-      
+
       // Create ServiceData with job title
       ServiceData? serviceData;
-      if (postJobPayment.jobTitle != null && postJobPayment.jobTitle!.isNotEmpty) {
+      if (postJobPayment.jobTitle != null &&
+          postJobPayment.jobTitle!.isNotEmpty) {
         serviceData = ServiceData(name: postJobPayment.jobTitle);
       }
-      
+
       // Create BookingData with service
       BookingData? bookingData;
       if (serviceData != null) {
@@ -1375,7 +1630,7 @@ Future<List<PaymentData>> getPaymentHistory(int page, List<PaymentData> list, Fu
           bookingType: BOOKING_TYPE_USER_POST_JOB, // Mark as post job payment
         );
       }
-      
+
       // Convert PostJobPaymentData to PaymentData format
       PaymentData paymentData = PaymentData(
         id: postJobPayment.id,
@@ -1396,7 +1651,7 @@ Future<List<PaymentData>> getPaymentHistory(int page, List<PaymentData> list, Fu
         booking: bookingData,
         customer: customerData,
       );
-      
+
       list.add(paymentData);
     }
   }
@@ -1404,15 +1659,20 @@ Future<List<PaymentData>> getPaymentHistory(int page, List<PaymentData> list, Fu
   appStore.setLoading(false);
 
   // Check if last page (both payments and post_job_payments)
-  bool isLastPage = res.data.payments.data.validate().length < PER_PAGE_ITEM && 
-                    (res.data.postJobPayments.postJobData == null || res.data.postJobPayments.postJobData!.isEmpty || res.data.postJobPayments.postJobData!.length < PER_PAGE_ITEM);
+  bool isLastPage = res.data.payments.data.validate().length < PER_PAGE_ITEM &&
+      (res.data.postJobPayments.postJobData == null ||
+          res.data.postJobPayments.postJobData!.isEmpty ||
+          res.data.postJobPayments.postJobData!.length < PER_PAGE_ITEM);
   lastPageCallback?.call(isLastPage);
 
   return list;
 }
 
-Future<List<RequestListModel>> getRequestList(int page, int id, List<RequestListModel> list, Function(bool)? lastPageCallback) async {
-  var res = RequestListResponse.fromJson(await handleResponse(await buildHttpResponse('provider-payout-list?provider_id=$id&page=$page', method: HttpMethodType.GET)));
+Future<List<RequestListModel>> getRequestList(int page, int id,
+    List<RequestListModel> list, Function(bool)? lastPageCallback) async {
+  var res = RequestListResponse.fromJson(await handleResponse(
+      await buildHttpResponse('provider-payout-list?provider_id=$id&page=$page',
+          method: HttpMethodType.GET)));
 
   if (page == 1) list.clear();
 
@@ -1432,7 +1692,8 @@ Future<List<TaxData>> getTaxList({
 }) async {
   try {
     TaxListResponse res = TaxListResponse.fromJson(
-      await (handleResponse(await buildHttpResponse('tax-list', method: HttpMethodType.GET))),
+      await (handleResponse(
+          await buildHttpResponse('tax-list', method: HttpMethodType.GET))),
     );
 
     if (page == 1) list.clear();
@@ -1449,15 +1710,24 @@ Future<List<TaxData>> getTaxList({
 }
 
 //notification
-Future<List<NotificationData>> getNotification(Map request, {int? page = 1, required List<NotificationData> notificationList, var perPage = PER_PAGE_ITEM, Function(bool)? lastPageCallback}) async {
+Future<List<NotificationData>> getNotification(Map request,
+    {int? page = 1,
+    required List<NotificationData> notificationList,
+    var perPage = PER_PAGE_ITEM,
+    Function(bool)? lastPageCallback}) async {
   try {
-    var res = NotificationListResponse.fromJson(await handleResponse(await buildHttpResponse('notification-list?per_page=$perPage&page=$page', request: request, method: HttpMethodType.POST)));
+    var res = NotificationListResponse.fromJson(await handleResponse(
+        await buildHttpResponse(
+            'notification-list?per_page=$perPage&page=$page',
+            request: request,
+            method: HttpMethodType.POST)));
 
     if (page == 1) {
       notificationList.clear();
     }
 
-    lastPageCallback?.call(res.notificationData.validate().length != PER_PAGE_ITEM);
+    lastPageCallback
+        ?.call(res.notificationData.validate().length != PER_PAGE_ITEM);
 
     notificationList.addAll(res.notificationData.validate());
     cachedNotifications = notificationList;
@@ -1472,13 +1742,18 @@ Future<List<NotificationData>> getNotification(Map request, {int? page = 1, requ
 }
 
 Future<DocumentListResponse> getDocList() async {
-  return DocumentListResponse.fromJson(await handleResponse(await buildHttpResponse('document-list', method: HttpMethodType.GET)));
+  return DocumentListResponse.fromJson(await handleResponse(
+      await buildHttpResponse('document-list', method: HttpMethodType.GET)));
 }
 
-Future<List<TotalData>> getTotalEarningList(int page, List<TotalData> list, Function(bool)? lastPageCallback, {var perPage = PER_PAGE_ITEM}) async {
+Future<List<TotalData>> getTotalEarningList(
+    int page, List<TotalData> list, Function(bool)? lastPageCallback,
+    {var perPage = PER_PAGE_ITEM}) async {
   try {
     var res = TotalEarningResponse.fromJson(
-      await handleResponse(await buildHttpResponse('${isUserTypeProvider ? 'provider-payout-list' : 'handyman-payout-list'}?per_page=$perPage&page=$page', method: HttpMethodType.GET)),
+      await handleResponse(await buildHttpResponse(
+          '${isUserTypeProvider ? 'provider-payout-list' : 'handyman-payout-list'}?per_page=$perPage&page=$page',
+          method: HttpMethodType.GET)),
     );
 
     if (page == 1) list.clear();
@@ -1496,21 +1771,30 @@ Future<List<TotalData>> getTotalEarningList(int page, List<TotalData> list, Func
   }
 }
 
-Future<UserTypeResponse> getCommissionType({String type = USER_TYPE_PROVIDER, int? providerId, bool? isDelete}) async {
+Future<UserTypeResponse> getCommissionType(
+    {String type = USER_TYPE_PROVIDER, int? providerId, bool? isDelete}) async {
   String providerUserId = providerId != null ? "&provider_id=$providerId" : '';
   String isDeleteFlag = isDelete ?? false ? "&is_delete=true" : "";
-  return UserTypeResponse.fromJson(await handleResponse(await buildHttpResponse('type-list?type=$type$providerUserId$isDeleteFlag')));
+  return UserTypeResponse.fromJson(await handleResponse(await buildHttpResponse(
+      'type-list?type=$type$providerUserId$isDeleteFlag')));
 }
 
 Future<BaseResponseModel> deleteAccountCompletely() async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('delete-account', request: {}, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('delete-account',
+          request: {}, method: HttpMethodType.POST)));
 }
 //endregion
 
 //region Post Job Request
-Future<List<PostJobData>> getPostJobList(int page, {var perPage = PER_PAGE_ITEM, required List<PostJobData> postJobList, Function(bool)? lastPageCallback}) async {
+Future<List<PostJobData>> getPostJobList(int page,
+    {var perPage = PER_PAGE_ITEM,
+    required List<PostJobData> postJobList,
+    Function(bool)? lastPageCallback}) async {
   try {
-    var res = PostJobResponse.fromJson(await handleResponse(await buildHttpResponse('get-post-job?per_page=$perPage&page=$page', method: HttpMethodType.GET)));
+    var res = PostJobResponse.fromJson(await handleResponse(
+        await buildHttpResponse('get-post-job?per_page=$perPage&page=$page',
+            method: HttpMethodType.GET)));
 
     if (page == 1) {
       postJobList.clear();
@@ -1528,9 +1812,14 @@ Future<List<PostJobData>> getPostJobList(int page, {var perPage = PER_PAGE_ITEM,
   return postJobList;
 }
 
-Future<List<PostJobData>> getProviderJobList(int page, {var perPage = PER_PAGE_ITEM, required List<PostJobData> postJobList, Function(bool)? lastPageCallback}) async {
+Future<List<PostJobData>> getProviderJobList(int page,
+    {var perPage = PER_PAGE_ITEM,
+    required List<PostJobData> postJobList,
+    Function(bool)? lastPageCallback}) async {
   try {
-    var res = jobRequestResponseFromJson(await handleResponse(await buildHttpResponse('job-requests/provider?page=$page', method: HttpMethodType.GET)));
+    var res = jobRequestResponseFromJson(await handleResponse(
+        await buildHttpResponse('job-requests/provider?page=$page',
+            method: HttpMethodType.GET)));
 
     if (page == 1) {
       postJobList.clear();
@@ -1561,7 +1850,8 @@ Future<BaseResponseModel> reportPostJob({
   if (details != null && details.isNotEmpty) {
     req['details'] = details;
   }
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse(
+  return BaseResponseModel.fromJson(
+      await handleResponse(await buildHttpResponse(
     'ugc/report-post-job',
     request: req,
     method: HttpMethodType.POST,
@@ -1570,7 +1860,8 @@ Future<BaseResponseModel> reportPostJob({
 
 /// POST `/api/ugc/block` — [blockedUserId] is the customer's user id (job poster).
 Future<BaseResponseModel> blockPosterUser({required int blockedUserId}) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse(
+  return BaseResponseModel.fromJson(
+      await handleResponse(await buildHttpResponse(
     'ugc/block',
     request: {'blocked_user_id': blockedUserId},
     method: HttpMethodType.POST,
@@ -1579,8 +1870,9 @@ Future<BaseResponseModel> blockPosterUser({required int blockedUserId}) async {
 
 /// GET `/api/ugc/report-reasons` — public; use [ReportProfileReason.value] when reporting.
 Future<List<ReportProfileReason>> getReportProfileReasons() async {
-  final dynamic raw = await handleResponse(
-      await buildHttpResponse('ugc/report-reasons', method: HttpMethodType.GET));
+  final dynamic raw = await handleResponse(await buildHttpResponse(
+      'ugc/report-reasons',
+      method: HttpMethodType.GET));
   if (raw is! Map) return [];
   final list = raw['reasons'];
   if (list is! List) return [];
@@ -1611,7 +1903,8 @@ Future<BaseResponseModel> reportUserProfile({
   if (details != null && details.isNotEmpty) {
     req['details'] = details;
   }
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse(
+  return BaseResponseModel.fromJson(
+      await handleResponse(await buildHttpResponse(
     'ugc/report-profile',
     request: req,
     method: HttpMethodType.POST,
@@ -1633,7 +1926,8 @@ Future<BaseResponseModel> reportReview({
   if (details != null && details.isNotEmpty) {
     req['details'] = details;
   }
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse(
+  return BaseResponseModel.fromJson(
+      await handleResponse(await buildHttpResponse(
     'ugc/report-review',
     request: req,
     method: HttpMethodType.POST,
@@ -1642,14 +1936,21 @@ Future<BaseResponseModel> reportReview({
 
 Future<PostJobDetailResponse> getPostJobDetail(Map request) async {
   try {
-    var res = PostJobDetailResponse.fromJson(await handleResponse(await buildHttpResponse('get-post-job-detail', request: request, method: HttpMethodType.POST)));
+    var res = PostJobDetailResponse.fromJson(await handleResponse(
+        await buildHttpResponse('get-post-job-detail',
+            request: request, method: HttpMethodType.POST)));
     appStore.setLoading(false);
 
-    if (!cachedPostJobList.any((element) => element?.$1 == request[PostJob.postRequestId])) {
-      cachedPostJobList.add((request[PostJob.postRequestId].toString().toInt().validate(), res));
+    if (!cachedPostJobList
+        .any((element) => element?.$1 == request[PostJob.postRequestId])) {
+      cachedPostJobList.add(
+          (request[PostJob.postRequestId].toString().toInt().validate(), res));
     } else {
-      int index = cachedPostJobList.indexWhere((element) => element?.$1 == request[PostJob.postRequestId].toString().toInt().validate());
-      cachedPostJobList[index] = (request[PostJob.postRequestId].toString().toInt().validate(), res);
+      int index = cachedPostJobList.indexWhere((element) =>
+          element?.$1 ==
+          request[PostJob.postRequestId].toString().toInt().validate());
+      cachedPostJobList[index] =
+          (request[PostJob.postRequestId].toString().toInt().validate(), res);
     }
 
     log(cachedPostJobList.map((e) => e));
@@ -1663,13 +1964,16 @@ Future<PostJobDetailResponse> getPostJobDetail(Map request) async {
 
 Future<JobRequestDetailResponse?> getPostJobDetailByBid(num bidId) async {
   try {
-    var res = await handleResponse(await buildHttpResponse('post-job-bid/by-bid/$bidId', method: HttpMethodType.GET));
+    var res = await handleResponse(await buildHttpResponse(
+        'post-job-bid/by-bid/$bidId',
+        method: HttpMethodType.GET));
 
     JobRequestDetailResponse? job;
-    if(res["success"] == true) {
+    if (res["success"] == true) {
       res["data"]["tax_percent"] = res["tax_percent"];
       res["data"]["provider_rating_exists"] = res["provider_rating_exists"];
-      res["data"]["show_rate_customer_button"] = res["show_rate_customer_button"];
+      res["data"]["show_rate_customer_button"] =
+          res["show_rate_customer_button"];
       print(res["data"]);
       job = JobRequestDetailResponse.fromJson(res["data"]);
     }
@@ -1682,36 +1986,53 @@ Future<JobRequestDetailResponse?> getPostJobDetailByBid(num bidId) async {
   }
 }
 
-Future<BaseResponseModel> bidUpdate(num id,Map request) async {
-  var res = BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('post-job-request/$id/status', request: request, method: HttpMethodType.POST)));
+Future<BaseResponseModel> bidUpdate(num id, Map request) async {
+  var res = BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('post-job-request/$id/status',
+          request: request, method: HttpMethodType.POST)));
 
   appStore.setLoading(false);
 
   return res;
 }
 
-Future<BaseResponseModel> addExtraCharges(num id,Map request) async {
-  var res = BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse("postjob-bid/$id/extra-charges", request: request, method: HttpMethodType.POST)));
+Future<BaseResponseModel> addExtraCharges(num id, Map request) async {
+  var res = BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse("postjob-bid/$id/extra-charges",
+          request: request, method: HttpMethodType.POST)));
   appStore.setLoading(false);
 
   return res;
 }
 
 Future<BaseResponseModel> saveBid(Map request) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('save-bid', request: request, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('save-bid',
+          request: request, method: HttpMethodType.POST)));
 }
 
-Future<BaseResponseModel> splitPayment(num id,Map request) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('adjustpayment/$id/split-advance', request: request, method: HttpMethodType.POST)));
+Future<BaseResponseModel> splitPayment(num id, Map request) async {
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('adjustpayment/$id/split-advance',
+          request: request, method: HttpMethodType.POST)));
 }
 
 Future<BaseResponseModel> downloadBidInvoice(num id) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse("post-job-request/$id/invoice",method: HttpMethodType.GET)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse("post-job-request/$id/invoice",
+          method: HttpMethodType.GET)));
 }
 
-Future<List<BidderData>> getBidList({int page = 1, var perPage = PER_PAGE_ITEM, required List<BidderData> bidList, Function(bool)? lastPageCallback}) async {
+Future<List<BidderData>> getBidList(
+    {int page = 1,
+    var perPage = PER_PAGE_ITEM,
+    required List<BidderData> bidList,
+    Function(bool)? lastPageCallback}) async {
   try {
-    var res = MyBidResponse.fromJson(await handleResponse(await buildHttpResponse('get-bid-list?orderby=desc&per_page=$perPage&page=$page', method: HttpMethodType.GET)));
+    var res = MyBidResponse.fromJson(await handleResponse(
+        await buildHttpResponse(
+            'get-bid-list?orderby=desc&per_page=$perPage&page=$page',
+            method: HttpMethodType.GET)));
 
     if (page == 1) {
       bidList.clear();
@@ -1730,17 +2051,23 @@ Future<List<BidderData>> getBidList({int page = 1, var perPage = PER_PAGE_ITEM, 
 //endregion
 
 // region Addons service API
-Future<List<ServiceAddon>> getAddonsServiceList({int? page, required List<ServiceAddon> addonServiceData, Function(bool)? lastPageCallback}) async {
+Future<List<ServiceAddon>> getAddonsServiceList(
+    {int? page,
+    required List<ServiceAddon> addonServiceData,
+    Function(bool)? lastPageCallback}) async {
   try {
     AddonsServiceResponse res = AddonsServiceResponse.fromJson(
-      await handleResponse(await buildHttpResponse('service-addon-list?per_page=$PER_PAGE_ITEM&page=$page', method: HttpMethodType.GET)),
+      await handleResponse(await buildHttpResponse(
+          'service-addon-list?per_page=$PER_PAGE_ITEM&page=$page',
+          method: HttpMethodType.GET)),
     );
 
     if (page == 1) addonServiceData.clear();
 
     addonServiceData.addAll(res.addonsServiceList.validate());
 
-    lastPageCallback?.call(res.addonsServiceList.validate().length != PER_PAGE_ITEM);
+    lastPageCallback
+        ?.call(res.addonsServiceList.validate().length != PER_PAGE_ITEM);
 
     appStore.setLoading(false);
 
@@ -1752,13 +2079,16 @@ Future<List<ServiceAddon>> getAddonsServiceList({int? page, required List<Servic
   }
 }
 
-Future<void> addAddonMultiPart({required Map<String, dynamic> value, File? imageFile}) async {
-  MultipartRequest multiPartRequest = await getMultiPartRequest('service-addon-save');
+Future<void> addAddonMultiPart(
+    {required Map<String, dynamic> value, File? imageFile}) async {
+  MultipartRequest multiPartRequest =
+      await getMultiPartRequest('service-addon-save');
 
   multiPartRequest.fields.addAll(await getMultipartFields(val: value));
 
   if (imageFile != null) {
-    multiPartRequest.files.add(await MultipartFile.fromPath(AddonServiceKey.serviceAddonImage, imageFile.path));
+    multiPartRequest.files.add(await MultipartFile.fromPath(
+        AddonServiceKey.serviceAddonImage, imageFile.path));
   }
 
   log("${multiPartRequest.fields}");
@@ -1787,15 +2117,22 @@ Future<void> addAddonMultiPart({required Map<String, dynamic> value, File? image
 }
 
 Future<CommonResponseModel> deleteAddonService(int id) async {
-  return CommonResponseModel.fromJson(await handleResponse(await buildHttpResponse('service-addon-delete/$id', method: HttpMethodType.POST)));
+  return CommonResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('service-addon-delete/$id',
+          method: HttpMethodType.POST)));
 }
 //endregion
 
 // region Package service API
-Future<List<PackageData>> getAllPackageList({int? page, required List<PackageData> packageData, Function(bool)? lastPageCallback}) async {
+Future<List<PackageData>> getAllPackageList(
+    {int? page,
+    required List<PackageData> packageData,
+    Function(bool)? lastPageCallback}) async {
   try {
     PackageResponse res = PackageResponse.fromJson(
-      await handleResponse(await buildHttpResponse('package-list?per_page=$PER_PAGE_ITEM&page=$page', method: HttpMethodType.GET)),
+      await handleResponse(await buildHttpResponse(
+          'package-list?per_page=$PER_PAGE_ITEM&page=$page',
+          method: HttpMethodType.GET)),
     );
 
     if (page == 1) packageData.clear();
@@ -1814,14 +2151,17 @@ Future<List<PackageData>> getAllPackageList({int? page, required List<PackageDat
   }
 }
 
-Future<void> addPackageMultiPart({required Map<String, dynamic> value, List<File>? imageFile}) async {
+Future<void> addPackageMultiPart(
+    {required Map<String, dynamic> value, List<File>? imageFile}) async {
   MultipartRequest multiPartRequest = await getMultiPartRequest('package-save');
 
   multiPartRequest.fields.addAll(await getMultipartFields(val: value));
 
   if (imageFile.validate().isNotEmpty) {
-    multiPartRequest.files.addAll(await getMultipartImages(files: imageFile.validate(), name: PackageKey.packageAttachment));
-    multiPartRequest.fields[AddServiceKey.attachmentCount] = imageFile.validate().length.toString();
+    multiPartRequest.files.addAll(await getMultipartImages(
+        files: imageFile.validate(), name: PackageKey.packageAttachment));
+    multiPartRequest.fields[AddServiceKey.attachmentCount] =
+        imageFile.validate().length.toString();
   }
 
   log("${multiPartRequest.fields}");
@@ -1850,42 +2190,59 @@ Future<void> addPackageMultiPart({required Map<String, dynamic> value, List<File
 }
 
 Future<CommonResponseModel> deletePackage(int id) async {
-  return CommonResponseModel.fromJson(await handleResponse(await buildHttpResponse('package-delete/$id', method: HttpMethodType.POST)));
+  return CommonResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('package-delete/$id',
+          method: HttpMethodType.POST)));
 }
 //endregion
 
 //region FlutterWave Verify Transaction API
-Future<VerifyTransactionResponse> verifyPayment({required String transactionId, required String flutterWaveSecretKey}) async {
+Future<VerifyTransactionResponse> verifyPayment(
+    {required String transactionId,
+    required String flutterWaveSecretKey}) async {
   return VerifyTransactionResponse.fromJson(
-    await handleResponse(await buildHttpResponse("https://api.flutterwave.com/v3/transactions/$transactionId/verify", header: buildHeaderForFlutterWave(flutterWaveSecretKey))),
+    await handleResponse(await buildHttpResponse(
+        "https://api.flutterwave.com/v3/transactions/$transactionId/verify",
+        header: buildHeaderForFlutterWave(flutterWaveSecretKey))),
   );
 }
 //endregion
 
 //region TimeSlots
 Future<BaseResponseModel> updateAllServicesApi({required Map request}) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('provider-all-services-timeslots', request: request, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('provider-all-services-timeslots',
+          request: request, method: HttpMethodType.POST)));
 }
 
 Future<List<SlotData>> getProviderSlot({int? val}) async {
   String providerId = val != null ? "?provider_id=$val" : '';
-  Iterable res = await handleResponse(await buildHttpResponse('get-provider-slot$providerId', method: HttpMethodType.GET));
+  Iterable res = await handleResponse(await buildHttpResponse(
+      'get-provider-slot$providerId',
+      method: HttpMethodType.GET));
   return res.map((e) => SlotData.fromJson(e)).toList();
 }
 
-Future<List<SlotData>> getProviderServiceSlot({int? providerId, int? serviceId}) async {
+Future<List<SlotData>> getProviderServiceSlot(
+    {int? providerId, int? serviceId}) async {
   String pId = providerId != null ? "?provider_id=$providerId" : '';
   String sId = serviceId != null ? "&service_id=$serviceId" : '';
-  Iterable res = await handleResponse(await buildHttpResponse('get-service-slot$pId$sId', method: HttpMethodType.GET));
+  Iterable res = await handleResponse(await buildHttpResponse(
+      'get-service-slot$pId$sId',
+      method: HttpMethodType.GET));
   return res.map((e) => SlotData.fromJson(e)).toList();
 }
 
 Future<BaseResponseModel> saveProviderSlot(Map request) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('save-provider-slot', request: request, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('save-provider-slot',
+          request: request, method: HttpMethodType.POST)));
 }
 
 Future<BaseResponseModel> saveServiceSlot(Map request) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('save-service-slot', request: request, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('save-service-slot',
+          request: request, method: HttpMethodType.POST)));
 }
 
 //endregion
@@ -1939,7 +2296,7 @@ Future<List<HandymanRatingModel>> getHandymanRatingsList({
     if (orderDir != null && orderDir.isNotEmpty) {
       queryParams += '&order_dir=$orderDir';
     }
-    
+
     var response = await handleResponse(
       await buildHttpResponse(
         'handyman-ratings-list?$queryParams',
@@ -1971,16 +2328,21 @@ Future<List<HandymanRatingModel>> getHandymanRatingsList({
 }
 
 Future<BaseResponseModel> saveProviderRating(Map request) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('save-customer-rating', request: request, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('save-customer-rating',
+          request: request, method: HttpMethodType.POST)));
 }
 
 Future<BaseResponseModel> savePostJobBidProviderRating(Map request) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('postbid/rating-by-provider/save', request: request, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('postbid/rating-by-provider/save',
+          request: request, method: HttpMethodType.POST)));
 }
 //endregion
 
 //region CommonFunctions
-Future<Map<String, String>> getMultipartFields({required Map<String, dynamic> val}) async {
+Future<Map<String, String>> getMultipartFields(
+    {required Map<String, dynamic> val}) async {
   Map<String, String> data = {};
 
   val.forEach((key, value) {
@@ -1990,29 +2352,32 @@ Future<Map<String, String>> getMultipartFields({required Map<String, dynamic> va
   return data;
 }
 
-Future<List<MultipartFile>> getMultipartImages({required List<File> files, required String name}) async {
+Future<List<MultipartFile>> getMultipartImages(
+    {required List<File> files, required String name}) async {
   List<MultipartFile> multiPartRequest = [];
   int validFileIndex = 0; // Track index for valid files only
 
   // Use for loop instead of Future.forEach for better control
   for (int i = 0; i < files.length; i++) {
     final element = files[i];
-    
+
     log('Processing file $i for multipart: path="${element.path}"');
-    
+
     // Validate file path before creating MultipartFile
     final filePath = element.path.trim();
     if (filePath.isEmpty || filePath == '/' || filePath == '\\') {
       log('Skipping invalid file path in getMultipartImages: "${element.path}"');
       continue; // Skip this file
     }
-    
+
     // Additional path validation - ensure it's a real path, not just "/"
-    if (filePath.length <= 1 || !filePath.contains(Platform.pathSeparator) || filePath == Platform.pathSeparator) {
+    if (filePath.length <= 1 ||
+        !filePath.contains(Platform.pathSeparator) ||
+        filePath == Platform.pathSeparator) {
       log('Skipping invalid file path (too short or root only): "${element.path}"');
       continue;
     }
-    
+
     // Check if file exists
     try {
       final exists = await element.exists();
@@ -2020,45 +2385,47 @@ Future<List<MultipartFile>> getMultipartImages({required List<File> files, requi
         log('File does not exist in getMultipartImages: ${element.path}');
         continue; // Skip this file
       }
-      
+
       // Verify file is readable and has content
       final stat = await element.stat();
       if (stat.size == 0) {
         log('File is empty, skipping: ${element.path}');
         continue;
       }
-      
+
       log('File is valid: ${element.path}, size: ${stat.size} bytes');
-      
+
       // Double-check path is still valid before creating MultipartFile
-      if (element.path.isEmpty || element.path == '/' || element.path.trim().isEmpty) {
+      if (element.path.isEmpty ||
+          element.path == '/' ||
+          element.path.trim().isEmpty) {
         log('File path became invalid, skipping: "${element.path}"');
         continue;
       }
-      
+
       // Create MultipartFile with detailed error handling
       try {
         // Extract filename from path
         final fileName = element.path.split(Platform.pathSeparator).last;
-        
+
         // Ensure filename is valid
         if (fileName.isEmpty || fileName == '/' || fileName == '\\') {
           log('Invalid filename extracted from path: "$fileName", skipping');
           continue;
         }
-        
+
         log('Reading file bytes for: ${element.path}, filename: $fileName');
-        
+
         // Read file bytes into memory to avoid path issues
         final fileBytes = await element.readAsBytes();
-        
+
         if (fileBytes.isEmpty) {
           log('File bytes are empty, skipping: ${element.path}');
           continue;
         }
-        
+
         log('File bytes read successfully: ${fileBytes.length} bytes');
-        
+
         // Determine content type based on file extension
         String? contentType;
         final extension = fileName.split('.').last.toLowerCase();
@@ -2079,9 +2446,9 @@ Future<List<MultipartFile>> getMultipartImages({required List<File> files, requi
           default:
             contentType = 'image/jpeg'; // Default to jpeg
         }
-        
+
         log('Creating MultipartFile with field: ${name}${validFileIndex}, filename: $fileName, contentType: $contentType, size: ${fileBytes.length} bytes');
-        
+
         // Create MultipartFile from bytes instead of path to avoid server-side path issues
         final multipartFile = MultipartFile.fromBytes(
           '${name}${validFileIndex}',
@@ -2089,13 +2456,13 @@ Future<List<MultipartFile>> getMultipartImages({required List<File> files, requi
           filename: fileName,
           contentType: MediaType.parse(contentType),
         );
-        
+
         // Verify the multipart file was created correctly
         if (multipartFile.filename == null || multipartFile.filename!.isEmpty) {
           log('MultipartFile filename is null or empty, skipping');
           continue;
         }
-        
+
         multiPartRequest.add(multipartFile);
         validFileIndex++; // Only increment for successfully added files
         log('Successfully created MultipartFile - field: ${multipartFile.field}, filename: ${multipartFile.filename}, length: ${multipartFile.length}');
@@ -2136,7 +2503,8 @@ Future<String> sadadLogin(Map request) async {
   }
 }
 
-Future sadadCreateInvoice({required Map<String, dynamic> request, required String sadadToken}) async {
+Future sadadCreateInvoice(
+    {required Map<String, dynamic> request, required String sadadToken}) async {
   return await handleSadadResponse(await buildHttpResponse(
     '$SADAD_API_URL/api/invoices/createInvoice',
     method: HttpMethodType.POST,
@@ -2148,8 +2516,10 @@ Future sadadCreateInvoice({required Map<String, dynamic> request, required Strin
 
 //region Google Maps
 Future<List<GooglePlacesModel>> getSuggestion(String input) async {
-  String baseURL = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
-  String request = '$baseURL?input=$input&key=${appConfigurationStore.googleMapKey}&sessiontoken=${appStore.token}';
+  String baseURL =
+      'https://maps.googleapis.com/maps/api/place/autocomplete/json';
+  String request =
+      '$baseURL?input=$input&key=${appConfigurationStore.googleMapKey}&sessiontoken=${appStore.token}';
 
   var response = await buildHttpResponse(request);
 
@@ -2164,25 +2534,36 @@ Future<List<GooglePlacesModel>> getSuggestion(String input) async {
 
 Future<UserInfoResponse> getBankDetail(int id) async {
   appStore.setLoading(true);
-  UserInfoResponse res = UserInfoResponse.fromJson(await handleResponse(await buildHttpResponse('user-bank-detail?user_id=$id', method: HttpMethodType.GET)));
+  UserInfoResponse res = UserInfoResponse.fromJson(await handleResponse(
+      await buildHttpResponse('user-bank-detail?user_id=$id',
+          method: HttpMethodType.GET)));
   appStore.setLoading(false);
   return res;
 }
 
 Future<BaseResponseModel> withdrawRequest(Map request) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('save-provideraddress', request: request, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('save-provideraddress',
+          request: request, method: HttpMethodType.POST)));
 }
 
 //region Add Handyman Commission
-Future<BaseResponseModel> saveProviderHandymanTypeList({required Map request}) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('handymantype-save', method: HttpMethodType.POST, request: request)));
+Future<BaseResponseModel> saveProviderHandymanTypeList(
+    {required Map request}) async {
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('handymantype-save',
+          method: HttpMethodType.POST, request: request)));
 }
 
 Future<BaseResponseModel> deleteProviderHandymanTypeList(int id) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('handymantype-delete/$id', method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('handymantype-delete/$id',
+          method: HttpMethodType.POST)));
 }
 
 Future<BaseResponseModel> restoreProviderHandymanType(Map request) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('handymantype-action', request: request, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('handymantype-action',
+          request: request, method: HttpMethodType.POST)));
 }
 //end region Add Handyman Commission

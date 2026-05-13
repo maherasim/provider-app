@@ -168,17 +168,20 @@ class _AddServicesState extends State<AddServices> {
       print('   cityId from data: ${widget.data!.cityId}');
       print('   name from data: ${widget.data!.name}');
       print('   description from data: ${widget.data!.description}');
-      print('   advancePaymentAmount from data: ${widget.data!.advancePaymentAmount}');
+      print(
+          '   advancePaymentAmount from data: ${widget.data!.advancePaymentAmount}');
       print('   translations: ${widget.data!.translations?.keys.toList()}');
-      
+
       countryId = widget.data!.countryId.validate();
       // Ensure stateId and cityId are properly set (not 0 if they have values)
       final loadedStateId = widget.data!.stateId;
       final loadedCityId = widget.data!.cityId;
-      stateId = (loadedStateId != null && loadedStateId != 0) ? loadedStateId : 0;
+      stateId =
+          (loadedStateId != null && loadedStateId != 0) ? loadedStateId : 0;
       cityId = (loadedCityId != null && loadedCityId != 0) ? loadedCityId : 0;
-      
-      print('🔵 SETTING IDs: countryId=$countryId, stateId=$stateId, cityId=$cityId');
+
+      print(
+          '🔵 SETTING IDs: countryId=$countryId, stateId=$stateId, cityId=$cityId');
       minBookingCont.text = widget.data!.minimumBookings.validate();
       cancellationPolicyCont.text = widget.data!.cancellationPolicy.validate();
       tempAttachments = widget.data!.attchments.validate();
@@ -187,17 +190,21 @@ class _AddServicesState extends State<AddServices> {
           .map((e) => File(e.url.toString()))
           .toList();
       // Load name - check translations first, then direct field
-      String serviceName = widget.data?.translations?[DEFAULT_LANGUAGE]?.name.validate() ?? "";
+      String serviceName =
+          widget.data?.translations?[DEFAULT_LANGUAGE]?.name.validate() ?? "";
       if (serviceName.isEmpty) {
         serviceName = widget.data?.name.validate() ?? "";
       }
       serviceNameCont.text = serviceName;
-      
+
       priceCont.text = widget.data!.price.toString().validate();
       discountCont.text = widget.data!.discount.toString().validate();
-      
+
       // Load description - check translations first, then direct field
-      String serviceDescription = widget.data?.translations?[DEFAULT_LANGUAGE]?.description.validate() ?? "";
+      String serviceDescription = widget
+              .data?.translations?[DEFAULT_LANGUAGE]?.description
+              .validate() ??
+          "";
       if (serviceDescription.isEmpty) {
         serviceDescription = widget.data?.description.validate() ?? "";
       }
@@ -216,17 +223,20 @@ class _AddServicesState extends State<AddServices> {
       isTimeSlotAvailable = widget.data!.isSlot.validate() == 1 ? true : false;
       //isAdvancePaymentAllowedBySystem = widget.data!.isAdvancePaymentSetting;
       isAdvancePayment = widget.data!.isAdvancePayment;
-      
+
       // Fetch advance_payment_percentage directly from API and display as integer (e.g., "70" instead of "70.00%")
       if (widget.data!.advancePaymentPercentage != null) {
         // Convert to integer to remove decimals (e.g., 70.00 -> 70)
         int percentageInt = widget.data!.advancePaymentPercentage!.toInt();
         prePayAmountController.text = percentageInt.toString();
-        print('🔵 ADVANCE PAYMENT: Displaying percentage=$percentageInt (cleaned from ${widget.data!.advancePaymentPercentage})');
+        print(
+            '🔵 ADVANCE PAYMENT: Displaying percentage=$percentageInt (cleaned from ${widget.data!.advancePaymentPercentage})');
       } else if (widget.data!.advancePaymentAmount != null) {
         // Fallback to amount if percentage is not available
-        prePayAmountController.text = widget.data!.advancePaymentAmount!.toString();
-        print('🔵 ADVANCE PAYMENT: Fetched amount=${widget.data!.advancePaymentAmount} from API');
+        prePayAmountController.text =
+            widget.data!.advancePaymentAmount!.toString();
+        print(
+            '🔵 ADVANCE PAYMENT: Fetched amount=${widget.data!.advancePaymentAmount} from API');
       }
       if (widget.data?.translations?.isNotEmpty ?? false) {
         translations = await widget.data!.translations!;
@@ -242,7 +252,7 @@ class _AddServicesState extends State<AddServices> {
 
       // Load new fields from existing data if available
       selectedProviderId = widget.data!.providerId;
-      
+
       // Load remote work level
       if (widget.data!.remoteWorkLevel != null) {
         try {
@@ -254,7 +264,7 @@ class _AddServicesState extends State<AddServices> {
           selectedRemoteWorkLevel = RemoteWorkLevel.onsite0;
         }
       }
-      
+
       // Load career level
       if (widget.data!.careerLevel != null) {
         try {
@@ -266,7 +276,7 @@ class _AddServicesState extends State<AddServices> {
           selectedCareerLevel = CareerLevel.notSpecified;
         }
       }
-      
+
       // Load travel required
       if (widget.data!.travelRequired != null) {
         try {
@@ -284,7 +294,7 @@ class _AddServicesState extends State<AddServices> {
     if (_isAdminUser()) {
       await loadProviderList();
     }
-   
+
     await getCountryStateCityData();
     setState(() {});
     await timeSlotStore.timeSlotForProvider();
@@ -309,7 +319,8 @@ class _AddServicesState extends State<AddServices> {
         // Find and set selected provider
         final provider = providerList.firstWhere(
           (p) => p.id == selectedProviderId,
-          orElse: () => providerList.isNotEmpty ? providerList.first : UserData(),
+          orElse: () =>
+              providerList.isNotEmpty ? providerList.first : UserData(),
         );
         if (provider.id != null) {
           selectedProviderId = provider.id;
@@ -342,7 +353,8 @@ class _AddServicesState extends State<AddServices> {
       countryList.addAll(value);
 
       if (value.any((element) => element.id == countryId)) {
-        selectedCountry = value.firstWhere((element) => element.id == countryId);
+        selectedCountry =
+            value.firstWhere((element) => element.id == countryId);
         countryTaxCont.text = selectedCountry?.name ?? '';
       }
       setState(() {});
@@ -408,8 +420,6 @@ class _AddServicesState extends State<AddServices> {
     });
     appStore.setLoading(false);
   }
-
-  
 
 //region Add Service
   Future<void> checkValidation(
@@ -489,8 +499,8 @@ class _AddServicesState extends State<AddServices> {
   Map<String, dynamic> _buildServiceRequest() {
     final req = {
       AddServiceKey.name: enTranslations.name.validate(),
-      AddServiceKey.providerId: _isAdminUser() && selectedProviderId != null 
-          ? selectedProviderId!.validate() 
+      AddServiceKey.providerId: _isAdminUser() && selectedProviderId != null
+          ? selectedProviderId!.validate()
           : appStore.userId.validate(),
       AddServiceKey.categoryId: categoryId,
       AddServiceKey.type: serviceType.validate(),
@@ -581,7 +591,9 @@ class _AddServicesState extends State<AddServices> {
 
             // Double-check path is still valid
             final currentPath = file.path.trim();
-            if (currentPath.isEmpty || currentPath == '/' || currentPath == '\\') {
+            if (currentPath.isEmpty ||
+                currentPath == '/' ||
+                currentPath == '\\') {
               log('File path became invalid after check, skipping: "$currentPath"');
               continue;
             }
@@ -621,10 +633,11 @@ class _AddServicesState extends State<AddServices> {
       log('Error in _submitService: $e');
       String errorMessage = e.toString();
       // Provide user-friendly error message for file upload errors
-      if (errorMessage.contains("File `/` does not exist") || 
+      if (errorMessage.contains("File `/` does not exist") ||
           errorMessage.contains("FileDoesNotExist") ||
           errorMessage.contains("does not exist")) {
-        errorMessage = 'Image upload failed. Please try selecting the image again.';
+        errorMessage =
+            'Image upload failed. Please try selecting the image again.';
       }
       toast(errorMessage);
     }
@@ -767,7 +780,7 @@ class _AddServicesState extends State<AddServices> {
                   children: [
                     DropdownButtonFormField<CountryListResponse>(
                       decoration: inputDecoration(
-                        context, 
+                        context,
                         hint: languages.selectCountry,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
@@ -793,115 +806,130 @@ class _AddServicesState extends State<AddServices> {
                         selectedCity = null;
                         countryTaxCont.text = selectedCountry?.name ?? '';
                         setState(() {});
-                    
+
                         getStates(value.id!);
                       },
                     ).expand(),
                     8.width.visible(stateList.isNotEmpty),
-                    if (stateList.isNotEmpty) DropdownButtonFormField<StateListResponse>(
-                      decoration: inputDecoration(
-                        context,
-                        hint: languages.selectState,
-                        fillColor: context.scaffoldBackgroundColor,
-                      ),
-                      isExpanded: true,
-                      dropdownColor: context.cardColor,
-                      menuMaxHeight: 300,
-                      value: stateList.where((s) => s.id != null && s.id == stateId).firstOrNull ?? selectedState,
-                      validator: (value) {
-                        if (value == null) return errorThisFieldRequired;
-                        return null;
-                      },
-                      items: stateList.map((StateListResponse e) {
-                        return DropdownMenuItem<StateListResponse>(
-                          value: e,
-                          child: Text(e.name!,
-                              style: primaryTextStyle(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis),
-                        );
-                      }).toList(),
-                      onChanged: (StateListResponse? value) async {
-                        selectedCity = null;
-                        selectedState = value;
-                        stateId = value!.id!;
-                        setState(() {});
-                    
-                        getCity(value.id!);
-                      },
-                    ).expand(),
+                    if (stateList.isNotEmpty)
+                      DropdownButtonFormField<StateListResponse>(
+                        decoration: inputDecoration(
+                          context,
+                          hint: languages.selectState,
+                          fillColor: context.scaffoldBackgroundColor,
+                        ),
+                        isExpanded: true,
+                        dropdownColor: context.cardColor,
+                        menuMaxHeight: 300,
+                        value: stateList
+                                .where((s) => s.id != null && s.id == stateId)
+                                .firstOrNull ??
+                            selectedState,
+                        validator: (value) {
+                          if (value == null) return errorThisFieldRequired;
+                          return null;
+                        },
+                        items: stateList.map((StateListResponse e) {
+                          return DropdownMenuItem<StateListResponse>(
+                            value: e,
+                            child: Text(e.name!,
+                                style: primaryTextStyle(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis),
+                          );
+                        }).toList(),
+                        onChanged: (StateListResponse? value) async {
+                          selectedCity = null;
+                          selectedState = value;
+                          stateId = value!.id!;
+                          setState(() {});
+
+                          getCity(value.id!);
+                        },
+                      ).expand(),
                   ],
                 ),
-                if (cityList.isNotEmpty) DropdownButtonFormField<CityListResponse>(
-                  decoration: inputDecoration(
-                    context,
-                    hint: languages.selectCity,
-                    fillColor: context.scaffoldBackgroundColor,
+                if (cityList.isNotEmpty)
+                  DropdownButtonFormField<CityListResponse>(
+                    decoration: inputDecoration(
+                      context,
+                      hint: languages.selectCity,
+                      fillColor: context.scaffoldBackgroundColor,
+                    ),
+                    isExpanded: true,
+                    menuMaxHeight: 400,
+                    value: cityList
+                            .where((c) => c.id != null && c.id == cityId)
+                            .firstOrNull ??
+                        selectedCity,
+                    dropdownColor: context.cardColor,
+                    validator: (value) {
+                      if (value == null) return errorThisFieldRequired;
+                      return null;
+                    },
+                    items: cityList.map(
+                      (CityListResponse e) {
+                        return DropdownMenuItem<CityListResponse>(
+                          value: e,
+                          child: Text(
+                            e.name!,
+                            style: primaryTextStyle(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        );
+                      },
+                    ).toList(),
+                    onChanged: (CityListResponse? value) async {
+                      selectedCity = value;
+                      cityId = value!.id!;
+                      setState(() {});
+                    },
                   ),
-                  isExpanded: true,
-                  menuMaxHeight: 400,
-                  value: cityList.where((c) => c.id != null && c.id == cityId).firstOrNull ?? selectedCity,
-                  dropdownColor: context.cardColor,
-                  validator: (value) {
-                    if (value == null) return errorThisFieldRequired;
-                    return null;
-                  },
-                  items: cityList.map(
-                    (CityListResponse e) {
-                      return DropdownMenuItem<CityListResponse>(
+                // Provider dropdown (only for admin/demo_admin)
+                if (_isAdminUser() && providerList.isNotEmpty)
+                  DropdownButtonFormField<UserData>(
+                    decoration: inputDecoration(
+                      context,
+                      hint: languages.lblSelectProviderHint,
+                      fillColor: context.scaffoldBackgroundColor,
+                    ),
+                    isExpanded: true,
+                    menuMaxHeight: 300,
+                    value: selectedProviderId != null
+                        ? providerList
+                                .where((p) => p.id == selectedProviderId)
+                                .isNotEmpty
+                            ? providerList
+                                .firstWhere((p) => p.id == selectedProviderId)
+                            : null
+                        : null,
+                    dropdownColor: context.cardColor,
+                    validator: (value) {
+                      if (value == null) return errorThisFieldRequired;
+                      return null;
+                    },
+                    items: providerList.map((UserData e) {
+                      return DropdownMenuItem<UserData>(
                         value: e,
                         child: Text(
-                          e.name!,
+                          '${e.firstName ?? ''} ${e.lastName ?? ''}'
+                                  .trim()
+                                  .isEmpty
+                              ? e.username ?? 'Provider ${e.id}'
+                              : '${e.firstName ?? ''} ${e.lastName ?? ''}'
+                                  .trim(),
                           style: primaryTextStyle(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       );
+                    }).toList(),
+                    onChanged: (UserData? value) {
+                      selectedProviderId = value?.id;
+                      setState(() {});
                     },
-                  ).toList(),
-                  onChanged: (CityListResponse? value) async {
-                    selectedCity = value;
-                    cityId = value!.id!;
-                    setState(() {});
-                  },
-                ),
-                // Provider dropdown (only for admin/demo_admin)
-                if (_isAdminUser() && providerList.isNotEmpty) DropdownButtonFormField<UserData>(
-                  decoration: inputDecoration(
-                    context,
-                    hint: languages.lblSelectProviderHint,
-                    fillColor: context.scaffoldBackgroundColor,
                   ),
-                  isExpanded: true,
-                  menuMaxHeight: 300,
-                  value: selectedProviderId != null
-                      ? providerList.where((p) => p.id == selectedProviderId).isNotEmpty
-                          ? providerList.firstWhere((p) => p.id == selectedProviderId)
-                          : null
-                      : null,
-                  dropdownColor: context.cardColor,
-                  validator: (value) {
-                    if (value == null) return errorThisFieldRequired;
-                    return null;
-                  },
-                  items: providerList.map((UserData e) {
-                    return DropdownMenuItem<UserData>(
-                      value: e,
-                      child: Text(
-                        '${e.firstName ?? ''} ${e.lastName ?? ''}'.trim().isEmpty
-                            ? e.username ?? 'Provider ${e.id}'
-                            : '${e.firstName ?? ''} ${e.lastName ?? ''}'.trim(),
-                        style: primaryTextStyle(),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (UserData? value) {
-                    selectedProviderId = value?.id;
-                    setState(() {});
-                  },
-                ),
                 // Remote Work Level dropdown
                 DropdownButtonFormField<RemoteWorkLevel>(
                   decoration: inputDecoration(
@@ -948,7 +976,7 @@ class _AddServicesState extends State<AddServices> {
                     return DropdownMenuItem<CareerLevel>(
                       value: level,
                       child: Text(
-                        level.localizedLabel,
+                        level.displayName,
                         style: primaryTextStyle(),
                       ),
                     );
@@ -1142,7 +1170,8 @@ class _AddServicesState extends State<AddServices> {
               focus: durationHrFocus,
               nextFocus: durationMinFocus,
               maxLength: 3,
-              enabled: serviceType == SERVICE_TYPE_FREE || serviceType == SERVICE_TYPE_FIXED,
+              enabled: serviceType == SERVICE_TYPE_FREE ||
+                  serviceType == SERVICE_TYPE_FIXED,
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.digitsOnly
               ],
@@ -1283,7 +1312,7 @@ class _AddServicesState extends State<AddServices> {
                   focus: cancellationPolicyFocus,
                   enableChatGPT: appConfigurationStore.chatGPTStatus,
                   promptFieldInputDecorationChatGPT:
-                  inputDecoration(context).copyWith(
+                      inputDecoration(context).copyWith(
                     hintText: languages.writeHere,
                     fillColor: context.scaffoldBackgroundColor,
                     filled: true,
@@ -1298,7 +1327,8 @@ class _AddServicesState extends State<AddServices> {
                     fillColor: context.scaffoldBackgroundColor,
                   ),
                 ),
-                if (isAdmin) Container(
+                if (isAdmin)
+                  Container(
                     decoration: boxDecorationDefault(
                         color: context.scaffoldBackgroundColor,
                         borderRadius: radius()),
@@ -1491,7 +1521,8 @@ class _AddServicesState extends State<AddServices> {
                       if (s!.trim().isEmpty) return errorThisFieldRequired;
                       final v = int.tryParse(s.trim());
                       if (v == null) return 'Please enter a valid number';
-                      if (v < 20 || v > 99) return 'Advance payment must be between 20 and 99';
+                      if (v < 20 || v > 99)
+                        return 'Advance payment must be between 20 and 99';
                       return null;
                     },
                   ),
@@ -1525,7 +1556,8 @@ class _AddServicesState extends State<AddServices> {
         textColor: white,
         color: Colors.transparent,
         elevation: 0.0,
-        flexibleSpace: Container(decoration: BoxDecoration(gradient: kAppPrimaryGradient)),
+        flexibleSpace:
+            Container(decoration: BoxDecoration(gradient: kAppPrimaryGradient)),
         backWidget: BackWidget(),
       ),
       body: Stack(
@@ -1604,7 +1636,9 @@ class _AddServicesState extends State<AddServices> {
                         ? LinearGradient(
                             begin: kAppPrimaryGradient.begin,
                             end: kAppPrimaryGradient.end,
-                            colors: kAppPrimaryGradientColors.map((c) => c.withValues(alpha: 0.5)).toList(),
+                            colors: kAppPrimaryGradientColors
+                                .map((c) => c.withValues(alpha: 0.5))
+                                .toList(),
                           )
                         : kAppPrimaryGradient,
                     borderRadius: radius(),
@@ -1634,32 +1668,34 @@ class _AddServicesState extends State<AddServices> {
     );
   }
 
-  StaticDataModel get getServiceType => serviceType == SERVICE_TYPE_DAILY ? typeStaticData[2]
-      : serviceType == SERVICE_TYPE_HOURLY ? typeStaticData[1]
-      : typeStaticData[0];
+  StaticDataModel get getServiceType => serviceType == SERVICE_TYPE_DAILY
+      ? typeStaticData[2]
+      : serviceType == SERVICE_TYPE_HOURLY
+          ? typeStaticData[1]
+          : typeStaticData[0];
 
-  setHourByServiceType () {
-    if(serviceType == SERVICE_TYPE_HOURLY) {
+  setHourByServiceType() {
+    if (serviceType == SERVICE_TYPE_HOURLY) {
       durationContHr.text = '1';
       currentTime = TimeOfDay(
         hour: int.parse(durationContHr.text),
         minute: 0,
       );
-    } else if(serviceType == SERVICE_TYPE_DAILY) {
+    } else if (serviceType == SERVICE_TYPE_DAILY) {
       durationContHr.text = '8';
       currentTime = TimeOfDay(
         hour: int.parse(durationContHr.text),
         minute: 0,
       );
     } else {
-      if(widget.data != null) {
+      if (widget.data != null) {
         currentTime = TimeOfDay(
           hour: widget.data!.duration.validate().splitBefore(':').toInt(),
           minute: widget.data!.duration.validate().splitAfter(':').toInt(),
         );
         durationContHr.text = "${currentTime!.hour}";
         durationContMin.text = "${currentTime!.minute}";
-      }else {
+      } else {
         durationContHr.text = '';
         currentTime = null;
       }

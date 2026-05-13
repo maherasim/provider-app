@@ -1455,7 +1455,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             return DropdownMenuItem<CareerLevel>(
                               value: level,
                               child: Text(
-                                level.localizedLabel,
+                                level.displayName,
                                 style: primaryTextStyle(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,

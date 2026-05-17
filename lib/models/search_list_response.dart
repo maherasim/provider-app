@@ -5,16 +5,27 @@ class SearchListResponse {
   List<ServiceData>? data;
   int? max;
   int? min;
+  int? providerProfileComplete;
   Pagination? pagination;
 
-  SearchListResponse({this.data, this.max, this.min, this.pagination});
+  SearchListResponse(
+      {this.data,
+      this.max,
+      this.min,
+      this.providerProfileComplete,
+      this.pagination});
 
   factory SearchListResponse.fromJson(Map<String, dynamic> json) {
     return SearchListResponse(
-      data: json['data'] != null ? (json['data'] as List).map((i) => ServiceData.fromJson(i)).toList() : null,
+      data: json['data'] != null
+          ? (json['data'] as List).map((i) => ServiceData.fromJson(i)).toList()
+          : null,
       max: json['max'],
       min: json['min'],
-      pagination: json['pagination'] != null ? Pagination.fromJson(json['pagination']) : null,
+      providerProfileComplete: json['provider_profile_complete'],
+      pagination: json['pagination'] != null
+          ? Pagination.fromJson(json['pagination'])
+          : null,
     );
   }
 
@@ -26,6 +37,7 @@ class SearchListResponse {
 
     data['max'] = this.max;
     data['min'] = this.min;
+    data['provider_profile_complete'] = this.providerProfileComplete;
     if (this.pagination != null) {
       data['pagination'] = this.pagination!.toJson();
     }

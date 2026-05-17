@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:handyman_provider_flutter/auth/edit_profile_screen.dart';
 import 'package:handyman_provider_flutter/components/app_widgets.dart';
 import 'package:handyman_provider_flutter/components/back_widget.dart';
 import 'package:handyman_provider_flutter/main.dart';
@@ -31,6 +32,7 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
 
   bool changeListType = false;
   bool isLastPage = false;
+  bool isProviderProfileComplete = true;
 
   @override
   void initState() {
@@ -45,6 +47,8 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
         providerId: appStore.userId,
         services: services, lastPageCallback: (b) {
       isLastPage = b;
+    }, providerProfileCompleteCallback: (value) {
+      isProviderProfileComplete = value == 1;
     });
   }
 
@@ -77,7 +81,8 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: BackWidget(color: Colors.white),
-        flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
+        flexibleSpace: Container(
+            decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
         actions: [
           IconButton(
             onPressed: () {
@@ -90,6 +95,14 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
           IconButton(
             onPressed: () async {
               bool? res;
+
+              if (!isProviderProfileComplete) {
+                toast('Please complete your profile before creating a service');
+                await EditProfileScreen().launch(context,
+                    pageRouteAnimation: PageRouteAnimation.Fade);
+                setPageToOne();
+                return;
+              }
 
               res = await AddServices()
                   .launch(context, pageRouteAnimation: PageRouteAnimation.Fade);

@@ -27,7 +27,6 @@ import 'package:handyman_provider_flutter/models/login_response.dart';
 import 'package:handyman_provider_flutter/models/notification_list_response.dart';
 import 'package:handyman_provider_flutter/models/payment_history_response.dart';
 import 'package:handyman_provider_flutter/models/payment_list_reasponse.dart';
-import 'package:handyman_provider_flutter/models/post_job_payment_data.dart';
 import 'package:handyman_provider_flutter/models/plan_list_response.dart';
 import 'package:handyman_provider_flutter/models/plan_request_model.dart';
 import 'package:handyman_provider_flutter/models/profile_update_response.dart';
@@ -984,6 +983,7 @@ Future<List<ServiceData>> getSearchList(
   String? type,
   required List<ServiceData> services,
   Function(bool)? lastPageCallback,
+  Function(int)? providerProfileCompleteCallback,
 }) async {
   try {
     appStore.setLoading(true);
@@ -1004,6 +1004,7 @@ Future<List<ServiceData>> getSearchList(
     if (page == 1) services.clear();
     services.addAll(res.data.validate());
     lastPageCallback?.call(res.data.validate().length != perPage);
+    providerProfileCompleteCallback?.call(res.providerProfileComplete.validate());
 
     appStore.setLoading(false);
 

@@ -90,7 +90,8 @@ class _SignInScreenState extends State<SignInScreen> {
                 key: formKey,
                 autovalidateMode: autovalidateMode,
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -109,10 +110,13 @@ class _SignInScreenState extends State<SignInScreen> {
                               focus: emailFocus,
                               nextFocus: passwordFocus,
                               errorThisFieldRequired: languages.hintRequired,
-                              decoration: inputDecoration(context, hint: languages.hintEmailAddressTxt),
-                              suffix: ic_message.iconImage(size: 10).paddingAll(14),
+                              decoration: inputDecoration(context,
+                                  hint: languages.hintEmailAddressTxt),
+                              suffix:
+                                  ic_message.iconImage(size: 10).paddingAll(14),
                               autoFillHints: [AutofillHints.email],
-                              onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(passwordFocus),
+                              onFieldSubmitted: (val) => FocusScope.of(context)
+                                  .requestFocus(passwordFocus),
                             ),
                             16.height,
                             // Enter password text field
@@ -122,16 +126,20 @@ class _SignInScreenState extends State<SignInScreen> {
                               focus: passwordFocus,
                               obscureText: true,
                               errorThisFieldRequired: languages.hintRequired,
-                              suffixPasswordVisibleWidget: ic_show.iconImage(size: 10).paddingAll(14),
-                              suffixPasswordInvisibleWidget: ic_hide.iconImage(size: 10).paddingAll(14),
-                              errorMinimumPasswordLength: "${languages.errorPasswordLength} $passwordLengthGlobal",
-                              decoration: inputDecoration(context, hint: languages.hintPassword),
+                              suffixPasswordVisibleWidget:
+                                  ic_show.iconImage(size: 10).paddingAll(14),
+                              suffixPasswordInvisibleWidget:
+                                  ic_hide.iconImage(size: 10).paddingAll(14),
+                              errorMinimumPasswordLength:
+                                  "${languages.errorPasswordLength} $passwordLengthGlobal",
+                              decoration: inputDecoration(context,
+                                  hint: languages.hintPassword),
                               autoFillHints: [AutofillHints.password],
                               isValidationRequired: true,
                               validator: (val) {
                                 if (val == null || val.isEmpty) {
                                   return languages.hintRequired;
-                                } else if (val.length < 8 || val.length > 12) {
+                                } else if (!_isPasswordValid(val)) {
                                   return languages.passwordLengthShouldBe;
                                 }
                                 return null;
@@ -140,6 +148,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 _handleLogin();
                               },
                             ),
+                            _buildPasswordRequirements(),
                             8.height,
                           ],
                         ),
@@ -172,7 +181,8 @@ class _SignInScreenState extends State<SignInScreen> {
                 ),
               ),
               Observer(
-                builder: (_) => LoaderWidget().center().visible(appStore.isLoading),
+                builder: (_) =>
+                    LoaderWidget().center().visible(appStore.isLoading),
               ),
             ],
           ),
@@ -218,14 +228,16 @@ class _SignInScreenState extends State<SignInScreen> {
                     isRemember = !isRemember;
                     setState(() {});
                   },
-                  child: Text(languages.rememberMe, style: secondaryTextStyle()),
+                  child:
+                      Text(languages.rememberMe, style: secondaryTextStyle()),
                 ),
               ],
             ),
             TextButton(
               child: Text(
                 languages.forgotPassword,
-                style: boldTextStyle(color: primaryColor, fontStyle: FontStyle.italic),
+                style: boldTextStyle(
+                    color: primaryColor, fontStyle: FontStyle.italic),
                 textAlign: TextAlign.right,
               ),
               onPressed: () {
@@ -239,6 +251,55 @@ class _SignInScreenState extends State<SignInScreen> {
           ],
         ),
         32.height,
+      ],
+    );
+  }
+
+  Widget _buildPasswordRequirements() {
+    return ValueListenableBuilder<TextEditingValue>(
+      valueListenable: passwordCont,
+      builder: (context, value, child) {
+        final password = value.text;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            8.height,
+            Text('Your password must include:',
+                style: secondaryTextStyle(size: 12)),
+            8.height,
+            _buildPasswordRequirementItem(
+              '12 to 20 characters',
+              _hasValidPasswordLength(password),
+            ),
+            6.height,
+            _buildPasswordRequirementItem(
+              'At least one letter (A-Z or a-z)',
+              _hasPasswordLetter(password),
+            ),
+            6.height,
+            _buildPasswordRequirementItem(
+              'At least one number (0-9)',
+              _hasPasswordNumber(password),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildPasswordRequirementItem(String text, bool isValid) {
+    final color = isValid ? Colors.green : textSecondaryColorGlobal;
+
+    return Row(
+      children: [
+        Icon(
+          isValid ? Icons.check_box : Icons.check_box_outline_blank,
+          color: color,
+          size: 18,
+        ),
+        8.width,
+        Text(text, style: secondaryTextStyle(color: color, size: 12)),
       ],
     );
   }
@@ -300,6 +361,21 @@ class _SignInScreenState extends State<SignInScreen> {
     }
   }
 
+  bool _isPasswordValid(String password) {
+    return _hasValidPasswordLength(password) &&
+        _hasPasswordLetter(password) &&
+        _hasPasswordNumber(password);
+  }
+
+  bool _hasValidPasswordLength(String password) =>
+      password.length >= 12 && password.length <= 20;
+
+  bool _hasPasswordLetter(String password) =>
+      RegExp(r'[A-Za-z]').hasMatch(password);
+
+  bool _hasPasswordNumber(String password) =>
+      RegExp(r'[0-9]').hasMatch(password);
+
   void _handleLoginUsers() async {
     hideKeyboard(context);
     Map<String, dynamic> request = {
@@ -335,12 +411,15 @@ class _SignInScreenState extends State<SignInScreen> {
 
     if (res.status.validate() == 1) {
       await appStore.setToken(res.apiToken.validate());
-      appStore.setTester(res.email == DEFAULT_PROVIDER_EMAIL || res.email == DEFAULT_HANDYMAN_EMAIL);
+      appStore.setTester(res.email == DEFAULT_PROVIDER_EMAIL ||
+          res.email == DEFAULT_HANDYMAN_EMAIL);
 
       if (res.userType.validate().trim() == USER_TYPE_PROVIDER) {
-        ProviderDashboardScreen(index: 0).launch(context, isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+        ProviderDashboardScreen(index: 0).launch(context,
+            isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
       } else if (res.userType.validate().trim() == USER_TYPE_HANDYMAN) {
-        HandymanDashboardScreen().launch(context, isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+        HandymanDashboardScreen().launch(context,
+            isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
       } else {
         toast(languages.cantLogin, print: true);
       }

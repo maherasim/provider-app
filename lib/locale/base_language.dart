@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 abstract class Languages {
-  static Languages of(BuildContext context) => Localizations.of<Languages>(context, Languages)!;
+  static Languages of(BuildContext context) =>
+      Localizations.of<Languages>(context, Languages)!;
 
   String planAboutToExpire(int days);
 
@@ -485,7 +486,7 @@ abstract class Languages {
   String get lblDesignation;
 
   String get lblMinBooking;
-  
+
   String get lblCountryTax;
 
   String get lblCancellationPolicy;
@@ -1606,11 +1607,11 @@ abstract class Languages {
   String get waitingForAdvancePayment;
 
   String get waitingForCustomerToConfirm;
-  
+
   String get workInProgressWaitingForProvider;
-  
+
   String get jobCompletedWaitingForCustomer;
-  
+
   String get paymentCompletedDownloadInvoice;
 
   String get waitingForCustomerToAcceptTheBid;
@@ -1818,32 +1819,36 @@ abstract class Languages {
   String get lblProgressWork;
 
   String get doYouWantToHoldThisBid;
-  
+
   String get updatePaymentSplit;
-  
+
   String get advancePercentageShouldBeBetween;
-  
+
   String get advancePercentage;
-  
+
   String get remainingPercentage;
 
   String get addExtraCharges;
-  
+
   String get addMore;
-  
+
   String get extraChargesWillBeIncludedInFinalInvoice;
-  
+
   String get save;
-  
+
   String get charge;
-  
+
   String get title;
-  
+
   String get price;
-  
+
   String get quantityMustBeAtLeast1;
-  
+
   String get whyChooseMe;
+
+  String get lblFullTime;
+
+  String get lblPartTime;
 
   String get invoice;
 

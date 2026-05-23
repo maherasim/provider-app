@@ -1296,6 +1296,9 @@ class LanguageEn extends Languages {
   String get published => 'Published';
 
   @override
+  String get publish => 'Publish';
+
+  @override
   String get clearChatMessage => 'Do you want to clear this chat?';
 
   @override
@@ -2757,10 +2760,19 @@ class LanguageEn extends Languages {
   String get lblStripeAccountHint => 'Stripe Account';
 
   @override
-  String get lblRegularPayments => 'Regular Payments';
+  String get lblRegularPayments => 'General Payments';
 
   @override
   String get lblJobRequestPayments => 'Job Request Payments';
+
+  @override
+  String get lblUsers => 'Users';
+
+  @override
+  String get lblDateTime => 'Date & Time';
+
+  @override
+  String get lblJobRequest => 'Job Request';
 
   @override
   String get lblAttachment => 'Attachment';

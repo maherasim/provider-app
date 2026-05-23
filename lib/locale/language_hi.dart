@@ -1297,6 +1297,9 @@ class LanguageHi extends Languages {
   String get published => 'प्रकाशित';
 
   @override
+  String get publish => 'प्रकाशित करें';
+
+  @override
   String get clearChatMessage => 'क्या आप इस चैट को साफ़ करना चाहते हैं?';
 
   @override
@@ -2771,10 +2774,19 @@ class LanguageHi extends Languages {
   String get lblStripeAccountHint => 'Stripe खाता';
 
   @override
-  String get lblRegularPayments => 'नियमित भुगतान';
+  String get lblRegularPayments => '??????? ??????';
 
   @override
   String get lblJobRequestPayments => 'नौकरी अनुरोध भुगतान';
+
+  @override
+  String get lblUsers => 'Users';
+
+  @override
+  String get lblDateTime => 'Date & Time';
+
+  @override
+  String get lblJobRequest => 'Job Request';
 
   @override
   String get lblAttachment => 'अनुलग्नक';

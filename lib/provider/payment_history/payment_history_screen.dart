@@ -51,7 +51,8 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
     );
   }
 
-  Widget _buildDataCell(String text, double width, {TextAlign align = TextAlign.left}) {
+  Widget _buildDataCell(String text, double width,
+      {TextAlign align = TextAlign.left}) {
     return SizedBox(
       width: width,
       child: Container(
@@ -87,13 +88,13 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildHeaderCell("No.", 70),
+                  _buildHeaderCell(languages.lblNo, 70),
                   _buildHeaderCell(serviceHeader, 140),
-                  _buildHeaderCell("Users", 130),
-                  _buildHeaderCell("Payment Type", 110),
-                  _buildHeaderCell("Status", 90),
-                  _buildHeaderCell("Date & Time", 140),
-                  _buildHeaderCell("Amount", 100),
+                  _buildHeaderCell(languages.lblUsers, 130),
+                  _buildHeaderCell(languages.paymentType, 110),
+                  _buildHeaderCell(languages.lblStatus, 90),
+                  _buildHeaderCell(languages.lblDateTime, 140),
+                  _buildHeaderCell(languages.lblAmount, 100),
                 ],
               ),
             ),
@@ -102,13 +103,13 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
               final index = entry.key;
               final payment = entry.value;
               final serialNo = (index + 1).toString();
-              final formattedAmount = payment.totalAmount != null 
+              final formattedAmount = payment.totalAmount != null
                   ? payment.totalAmount!.toPriceFormat()
                   : '\$0.00';
-              
+
               // Get service name (for regular payments) or job title (for post job payments)
               final serviceOrJobName = payment.booking?.service?.name ?? '-';
-              
+
               return Container(
                 color: (index % 2) != 0 ? context.cardColor : null,
                 child: Row(
@@ -117,26 +118,31 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                     _buildDataCell(serialNo, 70),
                     _buildDataCell(serviceOrJobName, 140),
                     _buildDataCell(
-                      '${payment.customer?.firstName ?? ''} ${payment.customer?.lastName ?? ''}'.trim().isEmpty 
-                          ? '-' 
-                          : '${payment.customer?.firstName ?? ''} ${payment.customer?.lastName ?? ''}'.trim(),
-                      130
-                    ),
+                        '${payment.customer?.firstName ?? ''} ${payment.customer?.lastName ?? ''}'
+                                .trim()
+                                .isEmpty
+                            ? '-'
+                            : '${payment.customer?.firstName ?? ''} ${payment.customer?.lastName ?? ''}'
+                                .trim(),
+                        130),
                     _buildDataCell(payment.paymentType ?? '-', 110),
                     SizedBox(
                       width: 90,
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                         child: DecoratedBox(
                           decoration: BoxDecoration(
                             gradient: kAppPrimaryGradient,
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 4),
                             child: Text(
                               payment.paymentStatus ?? '-',
-                              style: TextStyle(color: Colors.white, fontSize: 11),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 11),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                               textAlign: TextAlign.center,
@@ -146,12 +152,13 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                       ),
                     ),
                     _buildDataCell(
-                      payment.dateTime == null 
-                          ? '-' 
-                          : formatDate(payment.dateTime?.toIso8601String(), showDateWithTime: true),
-                      140
-                    ),
-                    _buildDataCell(formattedAmount, 100, align: TextAlign.right),
+                        payment.dateTime == null
+                            ? '-'
+                            : formatDate(payment.dateTime?.toIso8601String(),
+                                showDateWithTime: true),
+                        140),
+                    _buildDataCell(formattedAmount, 100,
+                        align: TextAlign.right),
                   ],
                 ),
               );
@@ -175,59 +182,71 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: SnapHelperWidget<List<PaymentData>>(
-          future: future,
-          onSuccess: (list) {
-            // Separate regular payments and post job payments
-            final regularPayments = list.where((payment) => payment.booking?.bookingType != BOOKING_TYPE_USER_POST_JOB).toList();
-            final postJobPayments = list.where((payment) => payment.booking?.bookingType == BOOKING_TYPE_USER_POST_JOB).toList();
-            
-            return AnimatedScrollView(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              physics: AlwaysScrollableScrollPhysics(),
-              children: [
-                // Regular Payments Section
-                if (regularPayments.isNotEmpty) ...[
-                  Text(languages.lblRegularPayments, style: boldTextStyle(size: 16)).paddingOnly(left: 16, top: 16, bottom: 8),
-                  _buildPaymentTable(regularPayments, "Service"),
-                  16.height,
-                ],
-                // Post Job Payments Section
-                if (postJobPayments.isNotEmpty) ...[
-                  Text(languages.lblJobRequestPayments, style: boldTextStyle(size: 16)).paddingOnly(left: 16, top: 8, bottom: 8),
-                  _buildPaymentTable(postJobPayments, "Job Request"),
-                ],
-              ],
-              onNextPage: () {
-                if (!isLastPage) {
-                  page = page++;
+            future: future,
+            onSuccess: (list) {
+              // Separate regular payments and post job payments
+              final regularPayments = list
+                  .where((payment) =>
+                      payment.booking?.bookingType !=
+                      BOOKING_TYPE_USER_POST_JOB)
+                  .toList();
+              final postJobPayments = list
+                  .where((payment) =>
+                      payment.booking?.bookingType ==
+                      BOOKING_TYPE_USER_POST_JOB)
+                  .toList();
 
+              return AnimatedScrollView(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                physics: AlwaysScrollableScrollPhysics(),
+                children: [
+                  // Regular Payments Section
+                  if (regularPayments.isNotEmpty) ...[
+                    Text(languages.lblRegularPayments,
+                            style: boldTextStyle(size: 16))
+                        .paddingOnly(left: 16, top: 16, bottom: 8),
+                    _buildPaymentTable(regularPayments, languages.lblService),
+                    16.height,
+                  ],
+                  // Post Job Payments Section
+                  if (postJobPayments.isNotEmpty) ...[
+                    Text(languages.lblJobRequestPayments,
+                            style: boldTextStyle(size: 16))
+                        .paddingOnly(left: 16, top: 8, bottom: 8),
+                    _buildPaymentTable(
+                        postJobPayments, languages.lblJobRequest),
+                  ],
+                ],
+                onNextPage: () {
+                  if (!isLastPage) {
+                    page = page++;
+
+                    init();
+                    setState(() {});
+                  }
+                },
+                onSwipeRefresh: () async {
+                  page = 1;
                   init();
                   setState(() {});
-                }
-              },
-              onSwipeRefresh: () async {
-                page = 1;
-                init();
-                setState(() {});
-                return await 2.seconds.delay;
-              },
-            );
-          },
-          loadingWidget: PaymentHistoryShimmer(),
-          errorBuilder: (error) {
-            return NoDataWidget(
-              title: error,
-              imageWidget: ErrorStateWidget(),
-              retryText: languages.reload,
-              onRetry: () {
-                page = 1;
-                appStore.setLoading(true);
-                init();
-                setState(() {});
-              },
-            );
-          }
-        ),
+                  return await 2.seconds.delay;
+                },
+              );
+            },
+            loadingWidget: PaymentHistoryShimmer(),
+            errorBuilder: (error) {
+              return NoDataWidget(
+                title: error,
+                imageWidget: ErrorStateWidget(),
+                retryText: languages.reload,
+                onRetry: () {
+                  page = 1;
+                  appStore.setLoading(true);
+                  init();
+                  setState(() {});
+                },
+              );
+            }),
       ),
     );
   }

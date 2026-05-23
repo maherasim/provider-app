@@ -1282,6 +1282,9 @@ class LanguageDe extends Languages {
   String get published => 'Veröffentlicht';
 
   @override
+  String get publish => 'Veröffentlichen';
+
+  @override
   String get clearChatMessage => 'Möchten Sie diesen Chat löschen?';
 
   @override
@@ -2745,10 +2748,19 @@ class LanguageDe extends Languages {
   String get lblStripeAccountHint => 'Stripe-Konto';
 
   @override
-  String get lblRegularPayments => 'Regelmäßige Zahlungen';
+  String get lblRegularPayments => 'Allgemeine Zahlungen';
 
   @override
   String get lblJobRequestPayments => 'Auftragszahlungen';
+
+  @override
+  String get lblUsers => 'Benutzer';
+
+  @override
+  String get lblDateTime => 'Datum & Zeit';
+
+  @override
+  String get lblJobRequest => 'Auftrag';
 
   @override
   String get lblAttachment => 'Anhang';

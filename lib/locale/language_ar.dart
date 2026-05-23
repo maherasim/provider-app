@@ -1277,6 +1277,9 @@ class LanguageAr extends Languages {
   String get published => 'تم النشر';
 
   @override
+  String get publish => 'نشر';
+
+  @override
   String get clearChatMessage => 'هل تريد مسح هذه الدردشة؟';
 
   @override
@@ -2730,10 +2733,19 @@ class LanguageAr extends Languages {
   String get lblStripeAccountHint => 'حساب Stripe';
 
   @override
-  String get lblRegularPayments => 'مدفوعات عادية';
+  String get lblRegularPayments => '????????? ??????';
 
   @override
   String get lblJobRequestPayments => 'مدفوعات طلبات العمل';
+
+  @override
+  String get lblUsers => 'Users';
+
+  @override
+  String get lblDateTime => 'Date & Time';
+
+  @override
+  String get lblJobRequest => 'Job Request';
 
   @override
   String get lblAttachment => 'مرفق';

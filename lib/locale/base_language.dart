@@ -848,6 +848,8 @@ abstract class Languages {
 
   String get published;
 
+  String get publish;
+
   String get clearChatMessage;
 
   String get all;
@@ -1727,6 +1729,12 @@ abstract class Languages {
   String get lblRegularPayments;
 
   String get lblJobRequestPayments;
+
+  String get lblUsers;
+
+  String get lblDateTime;
+
+  String get lblJobRequest;
 
   String get lblAttachment;
 

@@ -1311,6 +1311,9 @@ class LanguageFr extends Languages {
   String get published => 'Publié';
 
   @override
+  String get publish => 'Publier';
+
+  @override
   String get clearChatMessage => 'Voulez-vous effacer cette discussion?';
 
   @override
@@ -2806,10 +2809,19 @@ class LanguageFr extends Languages {
   String get lblStripeAccountHint => 'Compte Stripe';
 
   @override
-  String get lblRegularPayments => 'Paiements réguliers';
+  String get lblRegularPayments => 'Paiements generaux';
 
   @override
   String get lblJobRequestPayments => 'Paiements des demandes d\'emploi';
+
+  @override
+  String get lblUsers => 'Utilisateurs';
+
+  @override
+  String get lblDateTime => 'Date et heure';
+
+  @override
+  String get lblJobRequest => 'Demande de travail';
 
   @override
   String get lblAttachment => 'Pièce jointe';

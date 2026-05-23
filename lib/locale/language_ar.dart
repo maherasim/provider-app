@@ -2029,6 +2029,15 @@ class LanguageAr extends Languages {
   String get sendMessage => 'أرسل رسالة';
 
   @override
+  String messageHiddenDueToPolicy(List<String> policyTypes) {
+    final types = policyTypes
+        .map((e) => e.trim().toLowerCase() == 'phone' ? 'Phone' : e.trim())
+        .where((e) => e.isNotEmpty)
+        .join(', ');
+    return 'Message hidden due to policy${types.isNotEmpty ? ' ($types)' : ''}';
+  }
+
+  @override
   String get handymanLocation => 'موقع العامل الماهر';
 
   @override
@@ -2829,6 +2838,18 @@ class LanguageAr extends Languages {
 
   @override
   String get lblTotalHours => 'إجمالي الساعات';
+
+  @override
+  String get lblStartTime => 'Start Time';
+
+  @override
+  String get lblEndTime => 'End Time';
+
+  @override
+  String get lblNumberOfHours => 'Number of Hours';
+
+  @override
+  String get lblNumberOfDays => 'Number of Days';
 
   @override
   String get lblEducationLevel => 'المستوى التعليمي';

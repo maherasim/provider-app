@@ -1326,6 +1326,8 @@ abstract class Languages {
 
   String get sendMessage;
 
+  String messageHiddenDueToPolicy(List<String> policyTypes);
+
   String get handymanLocation;
 
   String get track;
@@ -1793,6 +1795,14 @@ abstract class Languages {
   String get lblTotalDays;
 
   String get lblTotalHours;
+
+  String get lblStartTime;
+
+  String get lblEndTime;
+
+  String get lblNumberOfHours;
+
+  String get lblNumberOfDays;
 
   String get lblEducationLevel;
 

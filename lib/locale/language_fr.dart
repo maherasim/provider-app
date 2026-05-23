@@ -2084,6 +2084,15 @@ class LanguageFr extends Languages {
   String get sendMessage => 'Envoyer le message';
 
   @override
+  String messageHiddenDueToPolicy(List<String> policyTypes) {
+    final types = policyTypes
+        .map((e) => e.trim().toLowerCase() == 'phone' ? 'Telephone' : e.trim())
+        .where((e) => e.isNotEmpty)
+        .join(', ');
+    return 'Message masque en raison de la politique${types.isNotEmpty ? ' ($types)' : ''}';
+  }
+
+  @override
   String get handymanLocation => 'Emplacement du bricoleur';
 
   @override
@@ -2905,6 +2914,18 @@ class LanguageFr extends Languages {
 
   @override
   String get lblTotalHours => 'Nombre d\'heures';
+
+  @override
+  String get lblStartTime => 'Heure de debut';
+
+  @override
+  String get lblEndTime => 'Heure de fin';
+
+  @override
+  String get lblNumberOfHours => 'Nombre d\'heures';
+
+  @override
+  String get lblNumberOfDays => 'Nombre de jours';
 
   @override
   String get lblEducationLevel => 'Niveau d\'éducation';

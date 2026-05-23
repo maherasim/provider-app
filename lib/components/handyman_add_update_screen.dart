@@ -89,9 +89,10 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
   Country selectedCountry = defaultCountry();
 
   /// Same as [EditProfileScreen]: code → label (e.g. english → English), from API + [kLanguageOptions].
-  Map<String, String> spokenLanguageOptions = Map<String, String>.from(kLanguageOptions);
+  Map<String, String> spokenLanguageOptions =
+      Map<String, String>.from(kLanguageOptions);
   List<String> selectedLanguages = [];
-  
+
   // Skills, Certification, Mobility - changed to text inputs (keeping lists for backward compatibility during migration)
   final List<String> skills = [];
   final List<String> experiences = [];
@@ -102,10 +103,10 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
   String selectedAvailability = 'full_time';
   final List<String> mobilityList = [];
   final List<String> certifications = [];
-  
+
   // Profile image
   File? profileImageFile;
-  
+
   // Country/State/City dropdowns
   List<CountryListResponse> countryList = [];
   List<StateListResponse> stateList = [];
@@ -116,12 +117,12 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
   int? countryId;
   int? stateId;
   int? cityId;
-  
+
   // Provider dropdown (for admin)
   List<UserData> providerList = [];
   UserData? selectedProvider;
   int? providerId;
-  
+
   // Status dropdown
   String selectedStatus = '1'; // 1 = Active, 0 = Inactive
 
@@ -154,11 +155,11 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
       commissionId = widget.data!.handymanCommissionId.validate();
       designationCont.text = widget.data!.designation.validate();
       addressCont.text = parseHtmlString(widget.data!.address.validate());
-      
+
       // Initialize new fields
       companyNameCont.text = widget.data!.companyName.validate();
       vatNumberCont.text = widget.data!.vatNumber.validate();
-      
+
       // Handle skills - might be JSON array or plain text
       if (widget.data!.skills != null && widget.data!.skills!.isNotEmpty) {
         try {
@@ -173,58 +174,69 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
           skillsCont.text = widget.data!.skills.validate();
         }
       }
-      
+
       experienceCont.text = parseHtmlString(widget.data!.experience.validate());
       mobilityCont.text = widget.data!.mobility.validate();
       certificationCont.text = widget.data!.certification.validate();
       aboutMeCont.text = parseHtmlString(widget.data!.aboutMe.validate());
-      educationCont.text = parseHtmlString(widget.data!.education.validate()); // Use education field directly
-      
+      educationCont.text = parseHtmlString(
+          widget.data!.education.validate()); // Use education field directly
+
       // Initialize availability - normalize the value to match dropdown items
       if (widget.data!.availability != null) {
-        String availabilityValue = widget.data!.availability.validate().toLowerCase();
+        String availabilityValue =
+            widget.data!.availability.validate().toLowerCase();
         // Normalize: convert "Full-time", "full-time", "full_time" to "full_time"
         // and "Part-time", "part-time", "part_time" to "part_time"
-        if (availabilityValue.contains('full') || availabilityValue == 'full_time') {
+        if (availabilityValue.contains('full') ||
+            availabilityValue == 'full_time') {
           selectedAvailability = 'full_time';
-        } else if (availabilityValue.contains('part') || availabilityValue == 'part_time') {
+        } else if (availabilityValue.contains('part') ||
+            availabilityValue == 'part_time') {
           selectedAvailability = 'part_time';
         } else {
           // Default to full_time if value doesn't match
           selectedAvailability = 'full_time';
         }
       } else if (widget.data!.isHandymanAvailable != null) {
-        selectedAvailability = widget.data!.isHandymanAvailable == true ? 'full_time' : 'part_time';
+        selectedAvailability = widget.data!.isHandymanAvailable == true
+            ? 'full_time'
+            : 'part_time';
       }
-      
+
       // Initialize status
       selectedStatus = widget.data!.status == 1 ? '1' : '0';
-      
+
       _initKnownLanguagesFromHandymanData();
-      
+
       // Initialize handyman commission
       if (widget.data!.handymanCommission != null) {
-        handymanCommissionCont.text = widget.data!.handymanCommission.toString();
+        handymanCommissionCont.text =
+            widget.data!.handymanCommission.toString();
       }
-      
+
       // Initialize country, state, city
       countryId = widget.data!.countryId;
       stateId = widget.data!.stateId;
       cityId = widget.data!.cityId;
-      
+
       // Initialize provider (if admin)
       if (_isAdminUser() && widget.data!.providerId != null) {
         providerId = widget.data!.providerId;
       }
-      
+
       // Initialize country code from contact number
       String? phoneCodeFromContact = "";
-      if (widget.data!.contactNumber != null && widget.data!.contactNumber!.contains("-")) {
-        phoneCodeFromContact = widget.data!.contactNumber!.split("-").first.trim();
+      if (widget.data!.contactNumber != null &&
+          widget.data!.contactNumber!.contains("-")) {
+        phoneCodeFromContact =
+            widget.data!.contactNumber!.split("-").first.trim();
       }
-      
+
       selectedCountry = Country(
-        phoneCode: phoneCodeFromContact.isNotEmpty ? phoneCodeFromContact : defaultCountry().phoneCode,
+        phoneCode: phoneCodeFromContact.isNotEmpty
+            ? phoneCodeFromContact
+            : defaultCountry().phoneCode,
         countryCode: "",
         e164Sc: 0,
         geographic: true,
@@ -245,12 +257,12 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
 
   Future<void> init() async {
     await _loadSpokenLanguageOptions();
-    getAddressList();
     getCommissionList();
     getCountryList();
     if (_isAdminUser()) {
-      loadProviderList();
+      await loadProviderList();
     }
+    getAddressList(providerId: _effectiveProviderId);
   }
 
   Future<void> _loadSpokenLanguageOptions() async {
@@ -276,7 +288,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
     String normalized = s.toLowerCase().trim();
     String withUnderscore = normalized.replaceAll(' ', '_');
     if (spokenLanguageOptions.containsKey(normalized)) return normalized;
-    if (spokenLanguageOptions.containsKey(withUnderscore)) return withUnderscore;
+    if (spokenLanguageOptions.containsKey(withUnderscore))
+      return withUnderscore;
     for (var e in spokenLanguageOptions.entries) {
       if (e.value.toLowerCase() == s.toLowerCase()) return e.key;
     }
@@ -284,7 +297,11 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
   }
 
   void _parsePlainLanguageString(String knownLanguagesStr) {
-    List<String> parts = knownLanguagesStr.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+    List<String> parts = knownLanguagesStr
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
     for (String part in parts) {
       String value = _languageStringToValue(part);
       if (value.isNotEmpty && !selectedLanguages.contains(value)) {
@@ -302,7 +319,9 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
         String s = e.toString().trim();
         if (s.isEmpty) continue;
         String value = _languageStringToValue(s);
-        if (value.isNotEmpty && kLanguageOptions.containsKey(value) && !selectedLanguages.contains(value)) {
+        if (value.isNotEmpty &&
+            kLanguageOptions.containsKey(value) &&
+            !selectedLanguages.contains(value)) {
           selectedLanguages.add(value);
         }
       }
@@ -357,7 +376,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                           child: AppTextField(
                             controller: searchCont,
                             textFieldType: TextFieldType.OTHER,
-                            decoration: inputDecoration(context, hint: 'Search languages'),
+                            decoration: inputDecoration(context,
+                                hint: 'Search languages'),
                             onChanged: (v) {
                               searchNotifier.value = v;
                             },
@@ -366,9 +386,11 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                         8.width,
                         TextButton(
                           onPressed: () {
-                            Navigator.of(ctx).pop(List<String>.from(tempSelected));
+                            Navigator.of(ctx)
+                                .pop(List<String>.from(tempSelected));
                           },
-                          child: Text(languages.done, style: boldTextStyle(color: primaryColor)),
+                          child: Text(languages.done,
+                              style: boldTextStyle(color: primaryColor)),
                         ),
                       ],
                     ),
@@ -380,7 +402,9 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       builder: (_, query, __) {
                         String q = query.toLowerCase().trim();
                         var entries = spokenLanguageOptions.entries
-                            .where((e) => e.key.contains(q) || e.value.toLowerCase().contains(q))
+                            .where((e) =>
+                                e.key.contains(q) ||
+                                e.value.toLowerCase().contains(q))
                             .toList();
                         return ListView.builder(
                           controller: scrollController,
@@ -393,13 +417,15 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                               value: checked,
                               onChanged: (v) {
                                 if (v == true) {
-                                  if (!tempSelected.contains(value)) tempSelected.add(value);
+                                  if (!tempSelected.contains(value))
+                                    tempSelected.add(value);
                                 } else {
                                   tempSelected.remove(value);
                                 }
                                 setModalState(() {});
                               },
-                              title: Text(label, style: primaryTextStyle(size: 14)),
+                              title: Text(label,
+                                  style: primaryTextStyle(size: 14)),
                               controlAffinity: ListTileControlAffinity.leading,
                               activeColor: primaryColor,
                             );
@@ -426,11 +452,31 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
       });
     });
   }
-  
+
   bool _isAdminUser() {
     return appStore.userType == 'admin' || appStore.userType == 'demo_admin';
   }
-  
+
+  Widget _buildRequiredLabel(String text) {
+    return Text.rich(
+      TextSpan(
+        text: text,
+        style: secondaryTextStyle(size: 14),
+        children: const [
+          TextSpan(
+            text: ' *',
+            style: TextStyle(color: Colors.red, fontWeight: FontWeight.w700),
+          )
+        ],
+      ),
+    );
+  }
+
+  int? get _effectiveProviderId {
+    if (_isAdminUser()) return providerId;
+    return appStore.userId;
+  }
+
   Future<void> getCountryList() async {
     appStore.setLoading(true);
     await getUpdatedCountryList().then((value) {
@@ -451,7 +497,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
     });
     appStore.setLoading(false);
   }
-  
+
   Future<void> getStates(int countryId) async {
     appStore.setLoading(true);
     await getUpdatedStateList(countryId).then((value) {
@@ -474,7 +520,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
     });
     appStore.setLoading(false);
   }
-  
+
   Future<void> getCity(int stateId) async {
     appStore.setLoading(true);
     await getUpdatedCityList(stateId).then((value) {
@@ -494,7 +540,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
     });
     appStore.setLoading(false);
   }
-  
+
   Future<void> loadProviderList() async {
     appStore.setLoading(true);
     List<UserData> tempList = [];
@@ -509,7 +555,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
       if (widget.data != null && widget.data!.providerId != null) {
         selectedProvider = providerList.firstWhere(
           (e) => e.id == widget.data!.providerId,
-          orElse: () => providerList.isNotEmpty ? providerList.first : UserData(),
+          orElse: () =>
+              providerList.isNotEmpty ? providerList.first : UserData(),
         );
         providerId = selectedProvider?.id;
       }
@@ -520,10 +567,15 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
     appStore.setLoading(false);
   }
 
-  Future<void> getAddressList() async {
-    getAddresses(providerId: appStore.userId).then((value) {
+  Future<void> getAddressList({int? providerId}) async {
+    final int? addressProviderId = providerId ?? _effectiveProviderId;
+    if (addressProviderId == null) return;
+
+    getAddresses(providerId: addressProviderId).then((value) {
       appStore.setLoading(false);
-      serviceAddressList.addAll(value.addressResponse!);
+      serviceAddressList.clear();
+      serviceAddressList.addAll(value.addressResponse.validate());
+      selectedServiceAddress = null;
 
       serviceAddressList.forEach((e) {
         if (e.id == serviceAddressId) {
@@ -562,7 +614,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
   String buildMobileNumber() {
     String phoneCode = selectedCountry.phoneCode.validate().trim();
     String phoneNumber = mobileCont.text.trim();
-    
+
     // If phone code is empty, try to get it from the original data
     if (phoneCode.isEmpty && isUpdate && widget.data != null) {
       String? originalContact = widget.data!.contactNumber;
@@ -570,20 +622,20 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
         phoneCode = originalContact.split('-').first.trim();
       }
     }
-    
+
     // If still empty, use default country code
     if (phoneCode.isEmpty) {
       phoneCode = defaultCountry().phoneCode;
     }
-    
+
     // Remove any non-digit characters from phone number (except if it already has country code)
     phoneNumber = phoneNumber.replaceAll(RegExp(r'[^\d]'), '');
-    
+
     // Ensure phone number is not empty
     if (phoneNumber.isEmpty) {
       throw Exception('Phone number cannot be empty');
     }
-    
+
     // Return in format: phoneCode-phoneNumber
     return '$phoneCode-$phoneNumber';
   }
@@ -591,6 +643,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
   /// Register the Handyman
   Future<void> register() async {
     if (formKey.currentState!.validate()) {
+      if (!_validateRequiredSelections()) return;
       if (selectedLanguages.isEmpty) {
         toast(languages.pleaseAddKnownLanguage);
         return;
@@ -599,7 +652,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
       formKey.currentState!.save();
       hideKeyboard(context);
       String? type = widget.userType;
-      
+
       // Use multipart request ONLY if profile image file is present
       // Otherwise use regular JSON request (backend accepts profile_image_url in JSON)
       log('Checking profileImageFile: ${profileImageFile != null}, isUpdate: $isUpdate');
@@ -614,7 +667,9 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
           UserKeys.lastName: lNameCont.text,
           UserKeys.userName: userNameCont.text,
           UserKeys.userType: type,
-          UserKeys.providerId: _isAdminUser() && providerId != null ? providerId : appStore.userId,
+          UserKeys.providerId: _isAdminUser() && providerId != null
+              ? providerId
+              : appStore.userId,
           UserKeys.status: selectedStatus,
           UserKeys.contactNumber: buildMobileNumber().validate(),
           UserKeys.designation: designationCont.text.validate(),
@@ -622,24 +677,36 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
             UserKeys.serviceAddressId: serviceAddressId.validate(),
           UserKeys.email: emailCont.text,
           UserKeys.address: addressCont.text,
-          if (selectedHandymanCommission != null && selectedHandymanCommission!.id != -1)
+          if (selectedHandymanCommission != null &&
+              selectedHandymanCommission!.id != -1)
             UserKeys.handymanTypeId: selectedHandymanCommission?.id,
           if (!isUpdate) UserKeys.password: passwordCont.text,
           // Include existing profile image URL when updating without new image
-          if (isUpdate && widget.data != null && widget.data!.profileImage.validate().isNotEmpty)
+          if (isUpdate &&
+              widget.data != null &&
+              widget.data!.profileImage.validate().isNotEmpty)
             'profile_image_url': widget.data!.profileImage.validate(),
           // New fields from documentation (required fields)
           'company_name': companyNameCont.text.trim(),
           'vat_number': vatNumberCont.text.trim(),
-          if (skillsCont.text.trim().isNotEmpty) 'skills': skillsCont.text.trim(),
-          if (educationCont.text.trim().isNotEmpty) 'education': educationCont.text.trim(),
-          if (certificationCont.text.trim().isNotEmpty) 'certification': certificationCont.text.trim(),
-          if (mobilityCont.text.trim().isNotEmpty) 'mobility': mobilityCont.text.trim(),
-          if (experienceCont.text.trim().isNotEmpty) 'experience': experienceCont.text.trim(),
-          if (aboutMeCont.text.trim().isNotEmpty) 'about_me': aboutMeCont.text.trim(),
-          if (selectedAvailability.isNotEmpty) 'availability': selectedAvailability,
+          if (skillsCont.text.trim().isNotEmpty)
+            'skills': skillsCont.text.trim(),
+          if (educationCont.text.trim().isNotEmpty)
+            'education': educationCont.text.trim(),
+          if (certificationCont.text.trim().isNotEmpty)
+            'certification': certificationCont.text.trim(),
+          if (mobilityCont.text.trim().isNotEmpty)
+            'mobility': mobilityCont.text.trim(),
+          if (experienceCont.text.trim().isNotEmpty)
+            'experience': experienceCont.text.trim(),
+          if (aboutMeCont.text.trim().isNotEmpty)
+            'about_me': aboutMeCont.text.trim(),
+          if (selectedAvailability.isNotEmpty)
+            'availability': selectedAvailability,
+          'languages': selectedLanguages,
           UserKeys.knownLanguages: jsonEncode(selectedLanguages),
-          for (int i = 0; i < selectedLanguages.length; i++) 'languages[$i]': selectedLanguages[i],
+          for (int i = 0; i < selectedLanguages.length; i++)
+            'languages[$i]': selectedLanguages[i],
           if (handymanCommissionCont.text.isNotEmpty)
             'handyman_commission': handymanCommissionCont.text.validate(),
           if (countryId != null) CommonKeys.countryId: countryId,
@@ -647,10 +714,10 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
           if (cityId != null) CommonKeys.cityId: cityId,
         };
         appStore.setLoading(true);
-        
+
         // Debug: Log the request
         log('Handyman Request: ${jsonEncode(request)}');
-        
+
         if (isUpdate) {
           await updateProfile(request).then((res) async {
             appStore.setLoading(false);
@@ -675,67 +742,111 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
       }
     }
   }
-  
+
+  bool _validateRequiredSelections() {
+    if (serviceAddressId == null || serviceAddressId == -1) {
+      toast('${languages.lblServiceAddress}: ${languages.hintRequired}');
+      return false;
+    }
+    if (countryId == null) {
+      toast('${languages.selectCountry}: ${languages.hintRequired}');
+      return false;
+    }
+    if (stateId == null) {
+      toast('${languages.selectState}: ${languages.hintRequired}');
+      return false;
+    }
+    if (cityId == null) {
+      toast('${languages.selectCity}: ${languages.hintRequired}');
+      return false;
+    }
+    return true;
+  }
+
   Future<void> registerWithImage(String? type) async {
-    MultipartRequest multiPartRequest = await getMultiPartRequest(isUpdate ? 'update-profile' : 'register');
-    
+    MultipartRequest multiPartRequest =
+        await getMultiPartRequest(isUpdate ? 'update-profile' : 'register');
+
     log('Creating multipart request for ${isUpdate ? 'update-profile' : 'register'}');
     log('profileImageFile is null: ${profileImageFile == null}');
-    
+
     // Same as [EditProfileScreen.update]: many Laravel APIs only persist [profile_image] when this flag is set.
     multiPartRequest.fields['profile'] = 'profile';
     multiPartRequest.fields[UserKeys.displayName] =
-        '${fNameCont.text.validate().trim()} ${lNameCont.text.validate().trim()}'.trim();
+        '${fNameCont.text.validate().trim()} ${lNameCont.text.validate().trim()}'
+            .trim();
 
     multiPartRequest.fields[UserKeys.firstName] = fNameCont.text;
     multiPartRequest.fields[UserKeys.lastName] = lNameCont.text;
     multiPartRequest.fields[UserKeys.userName] = userNameCont.text;
     multiPartRequest.fields[UserKeys.userType] = type.validate();
-    multiPartRequest.fields[UserKeys.providerId] = (_isAdminUser() && providerId != null ? providerId : appStore.userId).toString();
+    multiPartRequest.fields[UserKeys.providerId] =
+        (_isAdminUser() && providerId != null ? providerId : appStore.userId)
+            .toString();
     multiPartRequest.fields[UserKeys.status] = selectedStatus;
-    multiPartRequest.fields[UserKeys.contactNumber] = buildMobileNumber().validate();
-    multiPartRequest.fields[UserKeys.designation] = designationCont.text.validate();
+    multiPartRequest.fields[UserKeys.contactNumber] =
+        buildMobileNumber().validate();
+    multiPartRequest.fields[UserKeys.designation] =
+        designationCont.text.validate();
     if (serviceAddressId != null && serviceAddressId != -1)
-      multiPartRequest.fields[UserKeys.serviceAddressId] = serviceAddressId.toString();
+      multiPartRequest.fields[UserKeys.serviceAddressId] =
+          serviceAddressId.toString();
     multiPartRequest.fields[UserKeys.email] = emailCont.text;
     multiPartRequest.fields[UserKeys.address] = addressCont.text.validate();
-    if (selectedHandymanCommission != null && selectedHandymanCommission!.id != -1)
-      multiPartRequest.fields[UserKeys.handymanTypeId] = selectedHandymanCommission!.id.toString();
-    if (!isUpdate) multiPartRequest.fields[UserKeys.password] = passwordCont.text;
-    if (isUpdate) multiPartRequest.fields[CommonKeys.id] = widget.data!.id.toString();
-    
+    if (selectedHandymanCommission != null &&
+        selectedHandymanCommission!.id != -1)
+      multiPartRequest.fields[UserKeys.handymanTypeId] =
+          selectedHandymanCommission!.id.toString();
+    if (!isUpdate)
+      multiPartRequest.fields[UserKeys.password] = passwordCont.text;
+    if (isUpdate)
+      multiPartRequest.fields[CommonKeys.id] = widget.data!.id.toString();
+
     // New fields from documentation (required fields)
     multiPartRequest.fields['company_name'] = companyNameCont.text.trim();
     multiPartRequest.fields['vat_number'] = vatNumberCont.text.trim();
-    if (skillsCont.text.trim().isNotEmpty) multiPartRequest.fields['skills'] = skillsCont.text.trim();
-    if (educationCont.text.trim().isNotEmpty) multiPartRequest.fields['education'] = educationCont.text.trim();
-    if (certificationCont.text.trim().isNotEmpty) multiPartRequest.fields['certification'] = certificationCont.text.trim();
-    if (mobilityCont.text.trim().isNotEmpty) multiPartRequest.fields['mobility'] = mobilityCont.text.trim();
-    if (experienceCont.text.trim().isNotEmpty) multiPartRequest.fields['experience'] = experienceCont.text.trim();
-    if (aboutMeCont.text.trim().isNotEmpty) multiPartRequest.fields['about_me'] = aboutMeCont.text.trim();
-    if (selectedAvailability.isNotEmpty) multiPartRequest.fields['availability'] = selectedAvailability;
-    multiPartRequest.fields[UserKeys.knownLanguages] = jsonEncode(selectedLanguages);
+    if (skillsCont.text.trim().isNotEmpty)
+      multiPartRequest.fields['skills'] = skillsCont.text.trim();
+    if (educationCont.text.trim().isNotEmpty)
+      multiPartRequest.fields['education'] = educationCont.text.trim();
+    if (certificationCont.text.trim().isNotEmpty)
+      multiPartRequest.fields['certification'] = certificationCont.text.trim();
+    if (mobilityCont.text.trim().isNotEmpty)
+      multiPartRequest.fields['mobility'] = mobilityCont.text.trim();
+    if (experienceCont.text.trim().isNotEmpty)
+      multiPartRequest.fields['experience'] = experienceCont.text.trim();
+    if (aboutMeCont.text.trim().isNotEmpty)
+      multiPartRequest.fields['about_me'] = aboutMeCont.text.trim();
+    if (selectedAvailability.isNotEmpty)
+      multiPartRequest.fields['availability'] = selectedAvailability;
+    multiPartRequest.fields[UserKeys.knownLanguages] =
+        jsonEncode(selectedLanguages);
     for (var i = 0; i < selectedLanguages.length; i++) {
       multiPartRequest.fields['languages[$i]'] = selectedLanguages[i];
     }
     if (handymanCommissionCont.text.isNotEmpty)
-      multiPartRequest.fields['handyman_commission'] = handymanCommissionCont.text.validate();
-    if (countryId != null) multiPartRequest.fields[CommonKeys.countryId] = countryId.toString();
-    if (stateId != null) multiPartRequest.fields[CommonKeys.stateId] = stateId.toString();
-    if (cityId != null) multiPartRequest.fields[CommonKeys.cityId] = cityId.toString();
-    
+      multiPartRequest.fields['handyman_commission'] =
+          handymanCommissionCont.text.validate();
+    if (countryId != null)
+      multiPartRequest.fields[CommonKeys.countryId] = countryId.toString();
+    if (stateId != null)
+      multiPartRequest.fields[CommonKeys.stateId] = stateId.toString();
+    if (cityId != null)
+      multiPartRequest.fields[CommonKeys.cityId] = cityId.toString();
+
     // Always add profile_image field, even if null (backend expects it)
     // But only add file if profileImageFile is not null and is a valid local file
     if (profileImageFile != null) {
       try {
         // Verify it's a local file, not a network URL
-        if (profileImageFile!.path.contains('http://') || profileImageFile!.path.contains('https://')) {
+        if (profileImageFile!.path.contains('http://') ||
+            profileImageFile!.path.contains('https://')) {
           log('Error: profileImageFile is a network URL, not a local file: ${profileImageFile!.path}');
           toast('Please select a new image file');
           appStore.setLoading(false);
           return;
         }
-        
+
         // Verify file exists
         if (!await profileImageFile!.exists()) {
           log('Error: profile image file does not exist: ${profileImageFile!.path}');
@@ -743,14 +854,14 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
           appStore.setLoading(false);
           return;
         }
-        
+
         // Get file info before adding
         int fileSize = await profileImageFile!.length();
         String fileName = profileImageFile!.path.split('/').last;
         String fileExtension = fileName.split('.').last.toLowerCase();
         log('Adding profile image file: ${profileImageFile!.path}');
         log('File size: $fileSize bytes, File name: $fileName, Extension: $fileExtension');
-        
+
         // Determine content type based on file extension (allow all image types)
         String? contentType;
         switch (fileExtension) {
@@ -789,17 +900,18 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
             contentType = null; // Let multipart auto-detect
             log('Unknown image extension: $fileExtension, using auto-detect');
         }
-        
+
         // Create multipart file - allow all image types (field name must match [UserKeys.profileImage])
         MultipartFile multipartFile = await MultipartFile.fromPath(
           UserKeys.profileImage,
           profileImageFile!.path,
           filename: fileName,
-          contentType: contentType != null ? MediaType.parse(contentType) : null,
+          contentType:
+              contentType != null ? MediaType.parse(contentType) : null,
         );
-        
+
         log('MultipartFile created - field: ${multipartFile.field}, filename: ${multipartFile.filename}, length: ${multipartFile.length}, contentType: ${multipartFile.contentType}');
-        
+
         multiPartRequest.files.add(multipartFile);
         log('Profile image file added successfully. Files count: ${multiPartRequest.files.length}');
       } catch (e) {
@@ -812,12 +924,12 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
       log('Warning: profileImageFile is null - no image will be uploaded');
       // Don't add empty file - backend will skip image update if not present
     }
-    
+
     // Build headers but remove Content-Type (multipart will set it automatically)
     Map<String, String> headers = buildHeaderTokens();
     headers.remove('Content-Type'); // Let multipart set this automatically
     multiPartRequest.headers.addAll(headers);
-    
+
     // Debug: Log all files being sent
     log('Total multipart files: ${multiPartRequest.files.length}');
     if (multiPartRequest.files.isNotEmpty) {
@@ -827,7 +939,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
     } else {
       log('No files in multipart request');
     }
-    
+
     // Log complete payload structure
     log('=== MULTIPART REQUEST PAYLOAD ===');
     log('URL: ${multiPartRequest.url}');
@@ -842,7 +954,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
       log('  ${file.field}: ${file.filename ?? 'no filename'} (length: ${file.length}, contentType: ${file.contentType})');
     }
     log('=== END PAYLOAD ===');
-    
+
     // Verify file is actually added before sending
     if (profileImageFile != null && multiPartRequest.files.isEmpty) {
       log('ERROR: profileImageFile is set but no files in multipart request!');
@@ -850,9 +962,9 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
       appStore.setLoading(false);
       return;
     }
-    
+
     appStore.setLoading(true);
-    
+
     await sendMultiPartRequest(
       multiPartRequest,
       onSuccess: (data) async {
@@ -946,7 +1058,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
           elevation: 0,
           backgroundColor: Colors.transparent,
           leading: BackWidget(color: white),
-          flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
+          flexibleSpace: Container(
+              decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
           actions: [
             IconButton(
               onPressed: () {
@@ -1045,12 +1158,15 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     12.height,
                     // Profile Image Preview and Upload
                     // Show existing image only when no new file is selected
-                    if (isUpdate && widget.data!.profileImage.validate().isNotEmpty && profileImageFile == null)
+                    if (isUpdate &&
+                        widget.data!.profileImage.validate().isNotEmpty &&
+                        profileImageFile == null)
                       Stack(
                         alignment: Alignment.center,
                         children: [
                           CachedImageWidget(
-                            url: widget.data!.profileImage.validate(value: profile),
+                            url: widget.data!.profileImage
+                                .validate(value: profile),
                             height: 100,
                             width: 100,
                             circle: true,
@@ -1069,17 +1185,25 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                           fit: BoxFit.cover,
                         ),
                       ).center(),
-                    if ((isUpdate && widget.data!.profileImage.validate().isNotEmpty && profileImageFile == null) || profileImageFile != null) 16.height,
+                    if ((isUpdate &&
+                            widget.data!.profileImage.validate().isNotEmpty &&
+                            profileImageFile == null) ||
+                        profileImageFile != null)
+                      16.height,
                     // Profile Image Picker - only pass local file path, not network URL
                     CustomImagePicker(
-                      selectedImages: profileImageFile != null ? [profileImageFile!.path] : null,
+                      selectedImages: profileImageFile != null
+                          ? [profileImageFile!.path]
+                          : null,
                       onFileSelected: (List<File> files) async {
                         if (files.isNotEmpty) {
                           File selectedFile = files.first;
                           // Check if it's a valid local file (not a network URL)
-                          if (selectedFile.path.contains('http://') || selectedFile.path.contains('https://')) {
+                          if (selectedFile.path.contains('http://') ||
+                              selectedFile.path.contains('https://')) {
                             log('Warning: Selected file is a network URL, not a local file: ${selectedFile.path}');
-                            toast('Please select a new image from gallery or camera');
+                            toast(
+                                'Please select a new image from gallery or camera');
                             return;
                           }
                           // Check if file exists
@@ -1103,6 +1227,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       isMultipleImages: false,
                     ),
                     30.height,
+                    _buildRequiredLabel(languages.hintFirstNameTxt),
+                    8.height,
                     AppTextField(
                       textFieldType: TextFieldType.NAME,
                       controller: fNameCont,
@@ -1117,6 +1243,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       suffix: profile.iconImage(size: 10).paddingAll(14),
                     ),
                     16.height,
+                    _buildRequiredLabel(languages.hintLastNameTxt),
+                    8.height,
                     AppTextField(
                       textFieldType: TextFieldType.NAME,
                       controller: lNameCont,
@@ -1131,6 +1259,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       suffix: profile.iconImage(size: 10).paddingAll(14),
                     ),
                     16.height,
+                    _buildRequiredLabel(languages.hintUserNameTxt),
+                    8.height,
                     AppTextField(
                       textFieldType: TextFieldType.USERNAME,
                       controller: userNameCont,
@@ -1145,6 +1275,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       suffix: profile.iconImage(size: 10).paddingAll(14),
                     ),
                     16.height,
+                    _buildRequiredLabel(languages.hintEmailAddressTxt),
+                    8.height,
                     AppTextField(
                       textFieldType: TextFieldType.EMAIL_ENHANCED,
                       controller: emailCont,
@@ -1179,6 +1311,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     ),
                     16.height,
                     // VAT Number - Required
+                    _buildRequiredLabel('VAT Number'),
+                    8.height,
                     AppTextField(
                       textFieldType: TextFieldType.NAME,
                       controller: vatNumberCont,
@@ -1186,6 +1320,11 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       nextFocus: skillsFocus,
                       enabled: true,
                       isValidationRequired: true,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty)
+                          return languages.hintRequired;
+                        return null;
+                      },
                       decoration: inputDecoration(
                         context,
                         hint: 'VAT Number',
@@ -1195,7 +1334,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     16.height,
                     Divider(),
                     12.height,
-                    Text('Professional Details', style: boldTextStyle(size: 16)),
+                    Text('Professional Details',
+                        style: boldTextStyle(size: 16)),
                     12.height,
                     // Skills - Text Input (Required)
                     AppTextField(
@@ -1263,6 +1403,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     12.height,
                     Text('Contact & Address', style: boldTextStyle(size: 16)),
                     12.height,
+                    _buildRequiredLabel(languages.hintContactNumberTxt),
+                    8.height,
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -1304,8 +1446,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                               hint: languages.hintContactNumberTxt,
                               fillColor: context.scaffoldBackgroundColor,
                             ),
-                            suffix:
-                                calling.iconImage(size: 10).paddingAll(14),
+                            suffix: calling.iconImage(size: 10).paddingAll(14),
                             validator: (mobileCont) {
                               if (mobileCont!.isEmpty)
                                 return languages.lblPleaseEnterMobileNumber;
@@ -1335,27 +1476,29 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     Text('Commission', style: boldTextStyle(size: 16)),
                     12.height,
                     // Handyman Commission - Number input (1-99)
+                    _buildRequiredLabel('Handyman Commission (1-99)'),
+                    8.height,
                     AppTextField(
                       textFieldType: TextFieldType.PHONE,
                       controller: handymanCommissionCont,
                       focus: handymanCommissionFocus,
                       nextFocus: companyNameFocus,
                       enabled: true,
-                      isValidationRequired: false,
+                      isValidationRequired: true,
                       decoration: inputDecoration(
                         context,
                         hint: 'Handyman Commission (1-99)',
                         fillColor: context.scaffoldBackgroundColor,
                       ),
                       validator: (value) {
-                        if (value != null && value.isNotEmpty) {
-                          double? commission = double.tryParse(value);
-                          if (commission == null) {
-                            return 'Please enter a valid number';
-                          }
-                          if (commission < 1 || commission > 99) {
-                            return 'Commission must be between 1 and 99';
-                          }
+                        if (value == null || value.trim().isEmpty)
+                          return languages.hintRequired;
+                        double? commission = double.tryParse(value.trim());
+                        if (commission == null) {
+                          return 'Please enter a valid number';
+                        }
+                        if (commission < 1 || commission > 99) {
+                          return 'Commission must be between 1 and 99';
                         }
                         return null;
                       },
@@ -1365,62 +1508,73 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     12.height,
                     Text('Location', style: boldTextStyle(size: 16)),
                     12.height,
-                    DropdownButtonFormField<AddressResponse>(
+                    // Provider dropdown (for admin only)
+                    if (_isAdminUser())
+                      DropdownButtonFormField<UserData>(
                         decoration: inputDecoration(
                           context,
-                          hint:  '${languages.lblService} ${languages.lblAddress}',
+                          hint: 'Select Provider',
                           fillColor: context.scaffoldBackgroundColor,
                         ),
                         isExpanded: true,
                         dropdownColor: context.cardColor,
-                        value: selectedServiceAddress != null
-                            ? selectedServiceAddress
-                            : null,
-                        items: serviceAddressList.map((data) {
-                          return DropdownMenuItem<AddressResponse>(
+                        value: selectedProvider,
+                        items: providerList.map((data) {
+                          return DropdownMenuItem<UserData>(
                             value: data,
                             child: Text(
-                              data.address.validate(),
+                              data.displayName ??
+                                  '${data.firstName} ${data.lastName}',
                               style: primaryTextStyle(),
                             ),
                           );
                         }).toList(),
-                        onChanged: (AddressResponse? value) async {
-                          selectedServiceAddress = value;
-                          serviceAddressId =
-                              selectedServiceAddress!.id.validate();
+                        onChanged: (UserData? value) {
+                          selectedProvider = value;
+                          providerId = selectedProvider?.id;
+                          serviceAddressId = null;
+                          selectedServiceAddress = null;
+                          getAddressList(providerId: providerId);
                           setState(() {});
                         },
-                      ).visible(serviceAddressList.isNotEmpty),
-                    16.height,
-                    // Provider dropdown (for admin only)
-                    if (_isAdminUser())
-                      DropdownButtonFormField<UserData>(
-                          decoration: inputDecoration(
-                            context,
-                            hint: 'Select Provider',
-                            fillColor: context.scaffoldBackgroundColor,
-                          ),
-                          isExpanded: true,
-                          dropdownColor: context.cardColor,
-                          value: selectedProvider,
-                          items: providerList.map((data) {
-                            return DropdownMenuItem<UserData>(
-                              value: data,
-                              child: Text(
-                                data.displayName ?? '${data.firstName} ${data.lastName}',
-                                style: primaryTextStyle(),
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (UserData? value) {
-                            selectedProvider = value;
-                            providerId = selectedProvider?.id;
-                            setState(() {});
-                          },
-                        ).visible(providerList.isNotEmpty),
+                      ).visible(providerList.isNotEmpty),
                     if (_isAdminUser()) 16.height,
+                    _buildRequiredLabel(languages.lblServiceAddress),
+                    8.height,
+                    DropdownButtonFormField<AddressResponse>(
+                      decoration: inputDecoration(
+                        context,
+                        hint: '${languages.lblService} ${languages.lblAddress}',
+                        fillColor: context.scaffoldBackgroundColor,
+                      ),
+                      isExpanded: true,
+                      dropdownColor: context.cardColor,
+                      value: selectedServiceAddress != null
+                          ? selectedServiceAddress
+                          : null,
+                      validator: (value) {
+                        if (value == null) return languages.hintRequired;
+                        return null;
+                      },
+                      items: serviceAddressList.map((data) {
+                        return DropdownMenuItem<AddressResponse>(
+                          value: data,
+                          child: Text(
+                            data.address.validate(),
+                            style: primaryTextStyle(),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (AddressResponse? value) async {
+                        selectedServiceAddress = value;
+                        serviceAddressId = selectedServiceAddress?.id;
+                        setState(() {});
+                      },
+                    ).visible(serviceAddressList.isNotEmpty),
+                    16.height,
                     // Country dropdown - Required
+                    _buildRequiredLabel(languages.selectCountry),
+                    8.height,
                     DropdownButtonFormField<CountryListResponse>(
                       decoration: inputDecoration(
                         context,
@@ -1431,6 +1585,10 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       menuMaxHeight: 300,
                       value: selectedCountryData,
                       dropdownColor: context.cardColor,
+                      validator: (value) {
+                        if (value == null) return languages.hintRequired;
+                        return null;
+                      },
                       items: countryList.map((e) {
                         return DropdownMenuItem<CountryListResponse>(
                           value: e,
@@ -1447,6 +1605,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                         countryId = value?.id;
                         selectedState = null;
                         selectedCity = null;
+                        stateId = null;
+                        cityId = null;
                         stateList.clear();
                         cityList.clear();
                         setState(() {});
@@ -1457,7 +1617,9 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     ).visible(countryList.isNotEmpty),
                     16.height.visible(countryList.isNotEmpty),
                     // State dropdown - Required
-                    if (stateList.isNotEmpty)
+                    if (stateList.isNotEmpty) ...[
+                      _buildRequiredLabel(languages.selectState),
+                      8.height,
                       DropdownButtonFormField<StateListResponse>(
                         decoration: inputDecoration(
                           context,
@@ -1468,6 +1630,10 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                         menuMaxHeight: 300,
                         value: selectedState,
                         dropdownColor: context.cardColor,
+                        validator: (value) {
+                          if (value == null) return languages.hintRequired;
+                          return null;
+                        },
                         items: stateList.map((e) {
                           return DropdownMenuItem<StateListResponse>(
                             value: e,
@@ -1483,6 +1649,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                           selectedState = value;
                           stateId = value?.id;
                           selectedCity = null;
+                          cityId = null;
                           cityList.clear();
                           setState(() {});
                           if (stateId != null) {
@@ -1490,9 +1657,12 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                           }
                         },
                       ),
+                    ],
                     16.height.visible(stateList.isNotEmpty),
                     // City dropdown - Required
-                    if (cityList.isNotEmpty)
+                    if (cityList.isNotEmpty) ...[
+                      _buildRequiredLabel(languages.selectCity),
+                      8.height,
                       DropdownButtonFormField<CityListResponse>(
                         decoration: inputDecoration(
                           context,
@@ -1503,6 +1673,10 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                         menuMaxHeight: 300,
                         value: selectedCity,
                         dropdownColor: context.cardColor,
+                        validator: (value) {
+                          if (value == null) return languages.hintRequired;
+                          return null;
+                        },
                         items: cityList.map((e) {
                           return DropdownMenuItem<CityListResponse>(
                             value: e,
@@ -1520,6 +1694,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                           setState(() {});
                         },
                       ),
+                    ],
                     16.height.visible(cityList.isNotEmpty),
                     AppTextField(
                       textFieldType: TextFieldType.MULTILINE,
@@ -1535,6 +1710,10 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       ),
                     ),
                     16.height.visible(!isUpdate),
+                    if (!isUpdate) ...[
+                      _buildRequiredLabel(languages.hintPassword),
+                      8.height,
+                    ],
                     AppTextField(
                       textFieldType: TextFieldType.PASSWORD,
                       controller: passwordCont,
@@ -1568,8 +1747,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                         text: '${languages.lblEmailIsVerified}',
                         textStyle: primaryTextStyle(color: Colors.green),
                         prefix: Container(
-                          child: Icon(Icons.check,
-                              color: Colors.white, size: 14),
+                          child:
+                              Icon(Icons.check, color: Colors.white, size: 14),
                           padding: EdgeInsets.all(2),
                           decoration: BoxDecoration(
                               shape: BoxShape.circle, color: Colors.green),
@@ -1585,7 +1764,9 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       dropdownColor: context.cardColor,
                       value: selectedAvailability,
                       items: availabilityList.map((data) {
-                        String displayText = data == 'full_time' ? 'Full-time' : 'Part-time';
+                        String displayText = data == 'full_time'
+                            ? languages.lblFullTime
+                            : languages.lblPartTime;
                         return DropdownMenuItem<String>(
                           value: data,
                           child: Text(displayText, style: primaryTextStyle()),
@@ -1598,6 +1779,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     ),
                     16.height,
                     // Status dropdown - Active/Inactive
+                    _buildRequiredLabel(languages.lblStatus),
+                    8.height,
                     DropdownButtonFormField<String>(
                       decoration: inputDecoration(
                         context,
@@ -1609,11 +1792,13 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       items: [
                         DropdownMenuItem<String>(
                           value: '1',
-                          child: Text('Active', style: primaryTextStyle()),
+                          child:
+                              Text(languages.active, style: primaryTextStyle()),
                         ),
                         DropdownMenuItem<String>(
                           value: '0',
-                          child: Text('Inactive', style: primaryTextStyle()),
+                          child: Text(languages.inactive,
+                              style: primaryTextStyle()),
                         ),
                       ],
                       onChanged: (String? value) {
@@ -1624,7 +1809,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     16.height,
                     Divider(),
                     12.height,
-                    Text(languages.knownLanguages, style: secondaryTextStyle()),
+                    _buildRequiredLabel(languages.knownLanguages),
                     8.height,
                     InkWell(
                       onTap: () => _showLanguageMultiSelect(context),
@@ -1641,7 +1826,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                           children: [
                             Row(
                               children: [
-                                Icon(Icons.language, size: 20, color: context.iconColor),
+                                Icon(Icons.language,
+                                    size: 20, color: context.iconColor),
                                 8.width,
                                 Text(
                                   selectedLanguages.isEmpty
@@ -1652,7 +1838,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                                       : primaryTextStyle(size: 14),
                                 ),
                                 Spacer(),
-                                Icon(Icons.arrow_drop_down, color: context.iconColor),
+                                Icon(Icons.arrow_drop_down,
+                                    color: context.iconColor),
                               ],
                             ),
                             if (selectedLanguages.isNotEmpty) ...[
@@ -1661,16 +1848,21 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                                 spacing: 6,
                                 runSpacing: 6,
                                 children: selectedLanguages.map((value) {
-                                  String label = spokenLanguageOptions[value] ?? value;
+                                  String label =
+                                      spokenLanguageOptions[value] ?? value;
                                   return Chip(
-                                    label: Text(label, style: primaryTextStyle(size: 12)),
-                                    deleteIcon: Icon(Icons.close, size: 16, color: context.iconColor),
+                                    label: Text(label,
+                                        style: primaryTextStyle(size: 12)),
+                                    deleteIcon: Icon(Icons.close,
+                                        size: 16, color: context.iconColor),
                                     onDeleted: () {
                                       selectedLanguages.remove(value);
                                       setState(() {});
                                     },
-                                    backgroundColor: context.scaffoldBackgroundColor,
-                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    backgroundColor:
+                                        context.scaffoldBackgroundColor,
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
                                   );
                                 }).toList(),
                               ),
@@ -1717,7 +1909,9 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     24.height,
                     Observer(
                       builder: (context) => DecoratedBox(
-                        decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                        decoration: BoxDecoration(
+                            gradient: kAppPrimaryGradient,
+                            borderRadius: radius(8)),
                         child: AppButton(
                           text: languages.btnSave,
                           height: 40,

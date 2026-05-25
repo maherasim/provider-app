@@ -52,6 +52,50 @@ class WalletHistoryScreenState extends State<WalletHistoryScreen> {
     if (mounted) super.setState(fn);
   }
 
+  String _localizedWalletActivityMessage(String message) {
+    String value = message.validate();
+    if (appStore.selectedLanguageCode != 'de') return value;
+
+    RegExpMatch? remainingPaymentMatch = RegExp(
+      r'^Remaining payment of\s+(.+?)\s+for Bid\s+#?(\d+)\s+has been paid$',
+      caseSensitive: false,
+    ).firstMatch(value);
+
+    if (remainingPaymentMatch != null) {
+      return 'Restzahlung von ${remainingPaymentMatch.group(1).validate()} für Gebot #${remainingPaymentMatch.group(2).validate()} wurde bezahlt';
+    }
+
+    RegExpMatch? advancePaymentReceivedMatch = RegExp(
+      r'^Advance payment for Bid\s+#?(\d+)\s+received(?:\s+\((.+)\))?$',
+      caseSensitive: false,
+    ).firstMatch(value);
+
+    if (advancePaymentReceivedMatch != null) {
+      String paymentMethod = advancePaymentReceivedMatch.group(2).validate();
+      String translatedPaymentMethod = paymentMethod.isNotEmpty
+          ? ' (${_localizedPaymentMethod(paymentMethod)})'
+          : '';
+
+      return 'Anzahlung für Gebot #${advancePaymentReceivedMatch.group(1).validate()} erhalten$translatedPaymentMethod';
+    }
+
+    return value;
+  }
+
+  String _localizedPaymentMethod(String paymentMethod) {
+    String method = paymentMethod.validate().toLowerCase().replaceAll(' ', '_');
+
+    if (method == PAYMENT_METHOD_FROM_WALLET) return languages.lblWallet;
+    if (method == PAYMENT_METHOD_COD) return languages.cash;
+    if (method == 'bank_transfer') return languages.lblBankTransfer;
+    if (method == PAYMENT_METHOD_STRIPE) return 'Stripe';
+
+    return paymentMethod
+        .validate()
+        .replaceAll('_', ' ')
+        .capitalizeFirstLetter();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
@@ -76,14 +120,18 @@ class WalletHistoryScreenState extends State<WalletHistoryScreen> {
                 },
               ),
               20.height,
-              Text(languages.lblWalletHistory, style: primaryTextStyle(size: 14, weight: FontWeight.bold)).paddingSymmetric(horizontal: 16),
+              Text(languages.lblWalletHistory,
+                      style:
+                          primaryTextStyle(size: 14, weight: FontWeight.bold))
+                  .paddingSymmetric(horizontal: 16),
               16.height,
               AnimatedListView(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 listAnimationType: ListAnimationType.FadeIn,
                 fadeInConfiguration: FadeInConfiguration(duration: 2.seconds),
-                slideConfiguration: SlideConfiguration(duration: 400.milliseconds, delay: 50.milliseconds),
+                slideConfiguration: SlideConfiguration(
+                    duration: 400.milliseconds, delay: 50.milliseconds),
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 itemCount: snap.length,
                 itemBuilder: (BuildContext context, index) {
@@ -103,23 +151,44 @@ class WalletHistoryScreenState extends State<WalletHistoryScreen> {
                           padding: EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: snap[index].activityData!.transactionType.isEmptyOrNull
+                            color: snap[index]
+                                    .activityData!
+                                    .transactionType
+                                    .isEmptyOrNull
                                 ? Colors.red.shade50
-                                : snap[index].activityData!.transactionType!.toLowerCase().contains(PAYMENT_STATUS_DEBIT)
+                                : snap[index]
+                                        .activityData!
+                                        .transactionType!
+                                        .toLowerCase()
+                                        .contains(PAYMENT_STATUS_DEBIT)
                                     ? Colors.red.shade50
                                     : Colors.green.shade50,
                           ),
                           child: Image.asset(
-                            snap[index].activityData!.transactionType.isEmptyOrNull
+                            snap[index]
+                                    .activityData!
+                                    .transactionType
+                                    .isEmptyOrNull
                                 ? ic_diagonal_right_up_arrow
-                                : snap[index].activityData!.transactionType!.toLowerCase().contains(PAYMENT_STATUS_DEBIT)
+                                : snap[index]
+                                        .activityData!
+                                        .transactionType!
+                                        .toLowerCase()
+                                        .contains(PAYMENT_STATUS_DEBIT)
                                     ? ic_diagonal_right_up_arrow
                                     : ic_diagonal_left_down_arrow,
                             height: 18,
                             width: 18,
-                            color: snap[index].activityData!.transactionType.isEmptyOrNull
+                            color: snap[index]
+                                    .activityData!
+                                    .transactionType
+                                    .isEmptyOrNull
                                 ? Colors.red
-                                : snap[index].activityData!.transactionType!.toLowerCase().contains(PAYMENT_STATUS_DEBIT)
+                                : snap[index]
+                                        .activityData!
+                                        .transactionType!
+                                        .toLowerCase()
+                                        .contains(PAYMENT_STATUS_DEBIT)
                                     ? Colors.red
                                     : Colors.green,
                           ),
@@ -130,14 +199,16 @@ class WalletHistoryScreenState extends State<WalletHistoryScreen> {
                           children: [
                             if (data.activityMessage.validate().isNotEmpty)
                               Text(
-                                data.activityMessage.validate(),
+                                _localizedWalletActivityMessage(
+                                    data.activityMessage.validate()),
                                 style: boldTextStyle(size: 12),
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             4.height,
                             Text(
-                              formatDate(snap[index].datetime, showDateWithTime: true),
+                              formatDate(snap[index].datetime,
+                                  showDateWithTime: true),
                               style: secondaryTextStyle(),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -146,11 +217,22 @@ class WalletHistoryScreenState extends State<WalletHistoryScreen> {
                         ).expand(),
                         16.width,
                         Text(
-                          snap[index].activityData!.creditDebitAmount.validate().toPriceFormat(),
+                          snap[index]
+                              .activityData!
+                              .creditDebitAmount
+                              .validate()
+                              .toPriceFormat(),
                           style: boldTextStyle(
-                              color: snap[index].activityData!.transactionType.isEmptyOrNull
+                              color: snap[index]
+                                      .activityData!
+                                      .transactionType
+                                      .isEmptyOrNull
                                   ? Colors.red
-                                  : snap[index].activityData!.transactionType!.toLowerCase().contains(PAYMENT_STATUS_DEBIT)
+                                  : snap[index]
+                                          .activityData!
+                                          .transactionType!
+                                          .toLowerCase()
+                                          .contains(PAYMENT_STATUS_DEBIT)
                                       ? Colors.redAccent
                                       : Colors.green),
                         ),

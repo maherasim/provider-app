@@ -1384,7 +1384,7 @@ class LanguageDe extends Languages {
   String get handymanHome => 'Home Freiberufler & Handwerker';
 
   @override
-  String get home => 'Home';
+  String get home => 'Start';
 
   @override
   String get selectPlanSubTitle =>

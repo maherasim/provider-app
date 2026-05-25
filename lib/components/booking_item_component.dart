@@ -113,6 +113,31 @@ class BookingItemComponentState extends State<BookingItemComponent> {
     if (mounted) super.setState(fn);
   }
 
+  String _bookingStatusText() {
+    bool isWaitingForAdvancePayment =
+        widget.bookingData.status == BookingStatusKeys.accept &&
+            (widget.bookingData.paymentStatus == null ||
+                widget.bookingData.paymentStatus == '' ||
+                widget.bookingData.paymentStatus == PENDING);
+
+    if (isWaitingForAdvancePayment) return languages.waitingForAdvancePayment;
+
+    return widget.bookingData.status.validate().toBookingStatus();
+  }
+
+  String _localizedBookingAddress(String address) {
+    String value = address.validate();
+    String normalized = value.toLowerCase().trim();
+
+    if (normalized == 'available after payment confirmation') {
+      return appStore.selectedLanguageCode == 'de'
+          ? 'Nach Zahlungsbestätigung verfügbar'
+          : 'Available after payment confirmation';
+    }
+
+    return value;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -195,10 +220,7 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                             ),
                             child: Marquee(
                               child: Text(
-                                widget.bookingData.status == BookingStatusKeys.accept &&
-                                    (widget.bookingData.paymentStatus == null ||
-                                        widget.bookingData.paymentStatus == '' ||
-                                        widget.bookingData.paymentStatus == PENDING) ? 'Waiting for client advance payment' : widget.bookingData.status.validate().toBookingStatus(),
+                                _bookingStatusText(),
                                 style: boldTextStyle(
                                   color: widget.bookingData.status
                                       .validate()
@@ -250,7 +272,7 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                   Marquee(
                     child: Text(
                       widget.bookingData.isPackageBooking
-                          ? '${widget.bookingData.bookingPackage!.name.validate()}' 
+                          ? '${widget.bookingData.bookingPackage!.name.validate()}'
                           : '${widget.bookingData.serviceName.validate()}',
                       style: boldTextStyle(),
                       overflow: TextOverflow.ellipsis,
@@ -259,16 +281,20 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                   ),
                   8.height,
                   // City and Country
-                  if (widget.bookingData.cityName.validate().isNotEmpty || 
+                  if (widget.bookingData.cityName.validate().isNotEmpty ||
                       widget.bookingData.countryName.validate().isNotEmpty)
                     Builder(
                       builder: (context) {
                         List<String> locationParts = [];
                         if (widget.bookingData.cityName.validate().isNotEmpty) {
-                          locationParts.add(widget.bookingData.cityName.validate());
+                          locationParts
+                              .add(widget.bookingData.cityName.validate());
                         }
-                        if (widget.bookingData.countryName.validate().isNotEmpty) {
-                          locationParts.add(widget.bookingData.countryName.validate());
+                        if (widget.bookingData.countryName
+                            .validate()
+                            .isNotEmpty) {
+                          locationParts
+                              .add(widget.bookingData.countryName.validate());
                         }
                         return Text(
                           locationParts.join(' - '),
@@ -298,21 +324,22 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                           isDailyService:
                               widget.bookingData.type == SERVICE_TYPE_DAILY,
                           isFixesService: widget.bookingData.isFixedService,
-                          ),
+                        ),
                         if (widget.bookingData.discount.validate() != 0)
                           Text(
                             '(${widget.bookingData.discount.validate()}% ${languages.lblOff})',
                             style: boldTextStyle(size: 12, color: Colors.green),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
-                          ).paddingLeft(4).expand(                        ),
+                          ).paddingLeft(4).expand(),
                       ],
                     ),
                   // Job Type (Online/Onsite/Hybrid) - After Price
                   if (widget.bookingData.service?.visitType != null)
                     Builder(
                       builder: (context) {
-                        String visitType = widget.bookingData.service!.visitType.validate();
+                        String visitType =
+                            widget.bookingData.service!.visitType.validate();
                         String displayText = '';
                         if (visitType == VISIT_OPTION_ONLINE) {
                           displayText = languages.onlineRemoteService;
@@ -326,7 +353,8 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                                 padding: EdgeInsets.only(top: 4),
                                 child: Text(
                                   displayText,
-                                  style: secondaryTextStyle(size: 12, color: primaryColor),
+                                  style: secondaryTextStyle(
+                                      size: 12, color: primaryColor),
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                 ),
@@ -338,7 +366,6 @@ class BookingItemComponentState extends State<BookingItemComponent> {
               ).expand(),
             ],
           ).paddingAll(8),
-                  if (widget.showDescription)
           if (widget.showDescription)
             Container(
               decoration: boxDecorationWithRoundedCorners(
@@ -362,16 +389,16 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                         8.width,
                         Marquee(
                           child: Text(
-                            widget.bookingData.address.validate(),
+                            _localizedBookingAddress(
+                                widget.bookingData.address.validate()),
                             style: boldTextStyle(size: 12),
                             textAlign: TextAlign.left,
                           ),
                         ).expand(flex: 5),
                       ],
                     ).paddingAll(8).visible(
-                      // Hide address if payment status is pending by admin
-                      widget.bookingData.paymentStatus != PENDING_BY_ADMINS
-                    ),
+                        // Hide address if payment status is pending by admin
+                        widget.bookingData.paymentStatus != PENDING_BY_ADMINS),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -423,17 +450,25 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                         Marquee(
                           child: Text(
                             (() {
-                              final String status = widget.bookingData.paymentStatus.validate();
-                              final String methodRaw = widget.bookingData.paymentMethod.validate();
-                              final String method = methodRaw.capitalizeFirstLetter();
-                              if (methodRaw.toLowerCase() == 'bank_transfer' && widget.bookingData.bankTransferStatus == '0') {
+                              final String status =
+                                  widget.bookingData.paymentStatus.validate();
+                              final String methodRaw =
+                                  widget.bookingData.paymentMethod.validate();
+                              final String method =
+                                  methodRaw.capitalizeFirstLetter();
+                              if (methodRaw.toLowerCase() == 'bank_transfer' &&
+                                  widget.bookingData.bankTransferStatus ==
+                                      '0') {
                                 return languages.waitingForPaymentApproval;
                               }
-                              return buildPaymentStatusWithMethod(status, method);
+                              return buildPaymentStatusWithMethod(
+                                  status, method);
                             })(),
                             style: boldTextStyle(
                               size: 12,
-                              color: (widget.bookingData.paymentStatus.validate() == PAID)
+                              color: (widget.bookingData.paymentStatus
+                                          .validate() ==
+                                      PAID)
                                   ? Colors.green
                                   : Colors.red,
                             ),
@@ -529,14 +564,19 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                 ],
               ).paddingAll(8),
             ),
-          if (isUserTypeProvider && widget.bookingData.status == BookingStatusKeys.pending || (isUserTypeHandyman && widget.bookingData.status == BookingStatusKeys.accept))
+          if (isUserTypeProvider &&
+                  widget.bookingData.status == BookingStatusKeys.pending ||
+              (isUserTypeHandyman &&
+                  widget.bookingData.status == BookingStatusKeys.accept))
             Row(
               children: [
                 if (isUserTypeProvider)
                   DecoratedBox(
-                    decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                    decoration: BoxDecoration(
+                        gradient: kAppPrimaryGradient, borderRadius: radius(8)),
                     child: AppButton(
-                      child: Text(languages.accept, style: boldTextStyle(color: white)),
+                      child: Text(languages.accept,
+                          style: boldTextStyle(color: white)),
                       width: context.width(),
                       color: Colors.transparent,
                       elevation: 0,
@@ -548,20 +588,27 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                             contentPadding: EdgeInsets.all(0),
                             builder: (_) {
                               return Container(
-                                decoration: boxDecorationDefault(color: context.cardColor, borderRadius: radius(12)),
+                                decoration: boxDecorationDefault(
+                                    color: context.cardColor,
+                                    borderRadius: radius(12)),
                                 padding: EdgeInsets.all(16),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(languages.lblAreYouSureYouWantToAssignToYourself, style: boldTextStyle()),
+                                    Text(
+                                        languages
+                                            .lblAreYouSureYouWantToAssignToYourself,
+                                        style: boldTextStyle()),
                                     16.height,
                                     Row(
                                       children: [
                                         AppButton(
                                           text: languages.lblCancel,
                                           elevation: 0,
-                                          color: appStore.isDarkMode ? context.scaffoldBackgroundColor : white,
+                                          color: appStore.isDarkMode
+                                              ? context.scaffoldBackgroundColor
+                                              : white,
                                           textColor: textPrimaryColorGlobal,
                                           onTap: () {
                                             finish(context);
@@ -569,16 +616,21 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                                         ).expand(),
                                         16.width,
                                         DecoratedBox(
-                                          decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                                          decoration: BoxDecoration(
+                                              gradient: kAppPrimaryGradient,
+                                              borderRadius: radius(8)),
                                           child: AppButton(
                                             text: languages.lblYes,
                                             elevation: 0,
                                             color: Colors.transparent,
-                                            textStyle: boldTextStyle(color: white),
+                                            textStyle:
+                                                boldTextStyle(color: white),
                                             onTap: () async {
                                               finish(context);
                                               var request = {
-                                                CommonKeys.id: widget.bookingData.id.validate(),
+                                                CommonKeys.id: widget
+                                                    .bookingData.id
+                                                    .validate(),
                                                 CommonKeys.handymanId: [
                                                   appStore.userId.validate()
                                                 ],
@@ -586,11 +638,13 @@ class BookingItemComponentState extends State<BookingItemComponent> {
 
                                               appStore.setLoading(true);
 
-                                              await assignBooking(request).then((res) async {
+                                              await assignBooking(request)
+                                                  .then((res) async {
                                                 appStore.setLoading(false);
 
                                                 setState(() {});
-                                                LiveStream().emit(LIVESTREAM_UPDATE_BOOKINGS);
+                                                LiveStream().emit(
+                                                    LIVESTREAM_UPDATE_BOOKINGS);
 
                                                 toast(res.message);
                                               }).catchError((e) {
@@ -614,20 +668,27 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                             contentPadding: EdgeInsets.all(0),
                             builder: (_) {
                               return Container(
-                                decoration: boxDecorationDefault(color: context.cardColor, borderRadius: radius(12)),
+                                decoration: boxDecorationDefault(
+                                    color: context.cardColor,
+                                    borderRadius: radius(12)),
                                 padding: EdgeInsets.all(16),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(languages.wouldYouLikeToAssignThisBooking, style: boldTextStyle()),
+                                    Text(
+                                        languages
+                                            .wouldYouLikeToAssignThisBooking,
+                                        style: boldTextStyle()),
                                     16.height,
                                     Row(
                                       children: [
                                         AppButton(
                                           text: languages.lblNo,
                                           elevation: 0,
-                                          color: appStore.isDarkMode ? context.scaffoldBackgroundColor : white,
+                                          color: appStore.isDarkMode
+                                              ? context.scaffoldBackgroundColor
+                                              : white,
                                           textColor: textPrimaryColorGlobal,
                                           onTap: () {
                                             finish(context);
@@ -635,28 +696,39 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                                         ).expand(),
                                         16.width,
                                         DecoratedBox(
-                                          decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                                          decoration: BoxDecoration(
+                                              gradient: kAppPrimaryGradient,
+                                              borderRadius: radius(8)),
                                           child: AppButton(
                                             text: languages.lblYes,
                                             elevation: 0,
                                             color: Colors.transparent,
-                                            textStyle: boldTextStyle(color: white),
+                                            textStyle:
+                                                boldTextStyle(color: white),
                                             onTap: () async {
                                               finish(context);
                                               var request = {
-                                                CommonKeys.id: widget.bookingData.id.validate(),
+                                                CommonKeys.id: widget
+                                                    .bookingData.id
+                                                    .validate(),
                                                 BookingUpdateKeys.status:
                                                     BookingStatusKeys.accept,
-                                                BookingUpdateKeys.paymentStatus: widget
-                                                        .bookingData.isAdvancePaymentDone
+                                                BookingUpdateKeys
+                                                    .paymentStatus: widget
+                                                        .bookingData
+                                                        .isAdvancePaymentDone
                                                     ? SERVICE_PAYMENT_STATUS_ADVANCE_PAID
-                                                    : widget.bookingData.paymentStatus.validate(),
+                                                    : widget.bookingData
+                                                        .paymentStatus
+                                                        .validate(),
                                               };
                                               appStore.setLoading(true);
 
-                                              bookingUpdate(request).then((res) async {
+                                              bookingUpdate(request)
+                                                  .then((res) async {
                                                 setState(() {});
-                                                LiveStream().emit(LIVESTREAM_UPDATE_BOOKINGS);
+                                                LiveStream().emit(
+                                                    LIVESTREAM_UPDATE_BOOKINGS);
                                               }).catchError((e) {
                                                 appStore.setLoading(false);
                                                 toast(e.toString());
@@ -695,12 +767,16 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                 ).expand(),
               ],
             ).paddingOnly(bottom: 8, left: 8, right: 8, top: 16),
-          if (isUserTypeProvider && widget.bookingData.status == BookingStatusKeys.accept && widget.bookingData.paymentStatus == SERVICE_PAYMENT_STATUS_ADVANCE_PAID)
+          if (isUserTypeProvider &&
+              widget.bookingData.status == BookingStatusKeys.accept &&
+              widget.bookingData.paymentStatus ==
+                  SERVICE_PAYMENT_STATUS_ADVANCE_PAID)
             Column(
               children: [
                 8.height,
                 DecoratedBox(
-                  decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                  decoration: BoxDecoration(
+                      gradient: kAppPrimaryGradient, borderRadius: radius(8)),
                   child: AppButton(
                     width: context.width(),
                     child: Text(
@@ -750,7 +826,8 @@ class BookingItemComponentState extends State<BookingItemComponent> {
       contentPadding: EdgeInsets.all(0),
       builder: (_) {
         return Container(
-          decoration: boxDecorationDefault(color: context.cardColor, borderRadius: radius(12)),
+          decoration: boxDecorationDefault(
+              color: context.cardColor, borderRadius: radius(12)),
           padding: EdgeInsets.all(16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -763,7 +840,9 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                   AppButton(
                     text: negativeText ?? languages.lblNo,
                     elevation: 0,
-                    color: appStore.isDarkMode ? context.scaffoldBackgroundColor : white,
+                    color: appStore.isDarkMode
+                        ? context.scaffoldBackgroundColor
+                        : white,
                     textColor: textPrimaryColorGlobal,
                     onTap: () {
                       finish(context);
@@ -771,7 +850,8 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                   ).expand(),
                   16.width,
                   DecoratedBox(
-                    decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                    decoration: BoxDecoration(
+                        gradient: kAppPrimaryGradient, borderRadius: radius(8)),
                     child: AppButton(
                       text: positiveText ?? languages.lblYes,
                       elevation: 0,

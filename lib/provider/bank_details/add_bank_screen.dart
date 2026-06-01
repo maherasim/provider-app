@@ -32,7 +32,6 @@ class _AddBankScreenState extends State<AddBankScreen> {
   TextEditingController branchNameCont = TextEditingController();
   TextEditingController accNumberCont = TextEditingController();
   TextEditingController accountHolderCont = TextEditingController();
-  TextEditingController ifscCodeCont = TextEditingController();
   TextEditingController bicNumberCont = TextEditingController();
   TextEditingController contactNumberCont = TextEditingController();
   TextEditingController stripeAccountCont = TextEditingController();
@@ -41,7 +40,6 @@ class _AddBankScreenState extends State<AddBankScreen> {
   FocusNode branchNameFocus = FocusNode();
   FocusNode accNumberFocus = FocusNode();
   FocusNode accountHolderFocus = FocusNode();
-  FocusNode ifscCodeFocus = FocusNode();
   FocusNode bicNumberFocus = FocusNode();
   FocusNode contactNumberFocus = FocusNode();
   FocusNode stripeAccountFocus = FocusNode();
@@ -74,9 +72,6 @@ class _AddBankScreenState extends State<AddBankScreen> {
     }
     if (bicNumberCont.text.trim().isNotEmpty) {
       multiPartRequest.fields['bic_number'] = bicNumberCont.text.trim();
-    }
-    if (ifscCodeCont.text.trim().isNotEmpty) {
-      multiPartRequest.fields['ifsc_no'] = ifscCodeCont.text.trim();
     }
     if (stripeAccountCont.text.trim().isNotEmpty) {
       multiPartRequest.fields['stripe_account'] = stripeAccountCont.text.trim();
@@ -152,7 +147,6 @@ class _AddBankScreenState extends State<AddBankScreen> {
     branchNameCont.clear();
     accNumberCont.clear();
     accountHolderCont.clear();
-    ifscCodeCont.clear();
     bicNumberCont.clear();
     contactNumberCont.clear();
     stripeAccountCont.clear();
@@ -171,8 +165,6 @@ class _AddBankScreenState extends State<AddBankScreen> {
           (accountHolder.isEmpty || accountHolder.toLowerCase() == "null")
               ? ""
               : accountHolder;
-
-      ifscCodeCont.text = widget.data!.ifscNo.validate();
 
       // Handle BIC - ensure null values don't show as "null"
       String bicNumber = widget.data!.bicNumber.validate();
@@ -303,20 +295,9 @@ class _AddBankScreenState extends State<AddBankScreen> {
                     textFieldType: TextFieldType.NAME,
                     controller: bicNumberCont,
                     focus: bicNumberFocus,
-                    nextFocus: ifscCodeFocus,
-                    decoration: inputDecoration(context,
-                        hint: languages.lblBicSwiftHint, counter: false),
-                    suffix: profile.iconImage(size: 10).paddingAll(14),
-                    isValidationRequired: false,
-                  ),
-                  16.height,
-                  AppTextField(
-                    textFieldType: TextFieldType.NAME,
-                    controller: ifscCodeCont,
-                    focus: ifscCodeFocus,
                     nextFocus: stripeAccountFocus,
                     decoration: inputDecoration(context,
-                        hint: languages.iFSCCode, counter: false),
+                        hint: languages.lblBicSwiftHint, counter: false),
                     suffix: profile.iconImage(size: 10).paddingAll(14),
                     isValidationRequired: false,
                   ),

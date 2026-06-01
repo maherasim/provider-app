@@ -19,7 +19,7 @@ class LanguageDe extends Languages {
   String get lblStartDrive => 'Arbeit beginnen';
 
   @override
-  String get handyman => 'Freiberufler / Handwerker';
+  String get handyman => 'Fachkäfte';
 
   @override
   String get signIn => 'Anmelden';
@@ -214,10 +214,10 @@ class LanguageDe extends Languages {
   String get lblBookingsCount => 'Buchungen';
 
   @override
-  String get lblTotalBooking => 'Gesamtbuchungen';
+  String get lblTotalBooking => 'Buchungen';
 
   @override
-  String get lblTotalService => 'Gesamtleistungen';
+  String get lblTotalService => 'Services';
 
   @override
   String get lblTotalHandyman => 'Gesamte Fachkräfte';
@@ -313,7 +313,7 @@ class LanguageDe extends Languages {
   String get lblDelete => 'Löschen';
 
   @override
-  String get lblServiceAddress => 'Serviceadressen';
+  String get lblServiceAddress => 'Adresse';
 
   @override
   String get lblServices => 'Services';
@@ -908,7 +908,7 @@ class LanguageDe extends Languages {
   String get bidList => 'Gebote';
 
   @override
-  String get bid => 'Jetzt Gebot Abgeben';
+  String get bid => 'Ihr Gebot';
   @override
   String get postJobTitle => 'Jobauftrag Titel';
 
@@ -1569,7 +1569,7 @@ class LanguageDe extends Languages {
   String get pleaseWaitWhileWeLoadBankDetails => 'Bitte warten, während die Bankdaten geladen werden...';
 
   @override
-  String get cashPaymentConfirmation => 'Barzahlungsbestätigung';
+  String get cashPaymentConfirmation => 'Zahlungsbestätigung';
 
   @override
   String get remark => 'Bemerkung';
@@ -2155,13 +2155,13 @@ class LanguageDe extends Languages {
   String get rateYourExperience => 'Bewerten Sie Ihre Erfahrung';
 
   @override
-  String get remainingPayout => 'Ausstehende Auszahlung';
+  String get remainingPayout => 'Auszahlung Offen';
 
   @override
   String get totalRevenue => 'Gesamtumsatz';
 
   @override
-  String get totalActiveCount => 'Gesamtzahl aktiver Einträge:';
+  String get totalActiveCount => 'Meine aktiver Fachkräfte:';
 
   @override
   String get completedBookings => 'Abgeschloßene Aufträge';
@@ -2430,7 +2430,7 @@ class LanguageDe extends Languages {
   String get title => 'Titel';
 
   @override
-  String get price => 'Preis';
+  String get price => 'Honorar';
 
   @override
   String get quantityMustBeAtLeast1 => 'Die Menge muss mindestens 1 sein';
@@ -2530,7 +2530,7 @@ class LanguageDe extends Languages {
   String get lblYearsOfExperienceHint => 'Berufserfahrung';
 
   @override
-  String get lblCertificationHint => 'Zertifizierung (kommagetrennt)';
+  String get lblCertificationHint => 'Zertifizierung';
 
   @override
   String get lblSelectProviderHint => 'Dienstleister auswählen';

@@ -194,7 +194,7 @@ class _JobReportDialogState extends State<JobReportDialog> {
                       languages.lblCancel,
                       style: primaryTextStyle(color: textSecondaryColorGlobal),
                     ),
-                  ).expand(flex: 2),
+                  ).expand(),
                   8.width,
                   DecoratedBox(
                     decoration: BoxDecoration(
@@ -202,7 +202,7 @@ class _JobReportDialogState extends State<JobReportDialog> {
                       borderRadius: radius(8),
                     ),
                     child: SizedBox(
-                      height: 40,
+                      height: 44,
                       width: double.infinity,
                       child: _submitting
                           ? Center(
@@ -222,7 +222,7 @@ class _JobReportDialogState extends State<JobReportDialog> {
                               elevation: 0,
                               textStyle:
                                   boldTextStyle(color: white, size: 14),
-                              height: 40,
+                              height: 44,
                               width: double.infinity,
                               onTap: () {
                                 if (_loadingReasons ||
@@ -234,7 +234,7 @@ class _JobReportDialogState extends State<JobReportDialog> {
                               },
                             ),
                     ),
-                  ).expand(flex: 1),
+                  ).expand(),
                 ],
               ),
             ],

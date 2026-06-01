@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/models/handyman_dashboard_response.dart';
-import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
@@ -29,8 +28,8 @@ class HandymanCommissionComponent extends StatelessWidget {
               RichTextWidget(
                 textAlign: TextAlign.center,
                 list: [
-                  TextSpan(text: "Worker type: ", style: secondaryTextStyle()),
-                  TextSpan(text: 'Commission', style: boldTextStyle()),
+                  TextSpan(text: '${languages.lblHandymanType}: ', style: secondaryTextStyle()),
+                  TextSpan(text: languages.commission, style: boldTextStyle()),
                 ],
               ),
               8.height,
@@ -59,11 +58,6 @@ class HandymanCommissionComponent extends StatelessWidget {
                             : '${appConfigurationStore.currencySymbol}$formattedCommission',
                         style: boldTextStyle(),
                       ),
-                      if (isPercent)
-                    TextSpan(
-                      text: ' (${languages.lblFixed})',
-                      style: secondaryTextStyle(),
-                    ),
                 ],
                   );
                 },

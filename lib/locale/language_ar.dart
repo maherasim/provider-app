@@ -2799,6 +2799,12 @@ class LanguageAr extends Languages {
   String get lblRequirementsColon => 'المتطلبات:';
 
   @override
+  String get lblReadMore => ' ...قراءة المزيد';
+
+  @override
+  String get lblReadLess => ' قراءة أقل';
+
+  @override
   String get lblJobType => 'نوع العمل';
 
   @override

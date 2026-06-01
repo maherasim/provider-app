@@ -2840,6 +2840,12 @@ class LanguageHi extends Languages {
   String get lblRequirementsColon => 'आवश्यकताएँ:';
 
   @override
+  String get lblReadMore => ' ...और पढ़ें';
+
+  @override
+  String get lblReadLess => ' कम पढ़ें';
+
+  @override
   String get lblJobType => 'नौकरी प्रकार';
 
   @override

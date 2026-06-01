@@ -2875,6 +2875,12 @@ class LanguageFr extends Languages {
   String get lblRequirementsColon => 'Exigences :';
 
   @override
+  String get lblReadMore => ' ...lire plus';
+
+  @override
+  String get lblReadLess => ' lire moins';
+
+  @override
   String get lblJobType => 'Type de mission';
 
   @override

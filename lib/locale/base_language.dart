@@ -1770,6 +1770,10 @@ abstract class Languages {
 
   String get lblRequirementsColon;
 
+  String get lblReadMore;
+
+  String get lblReadLess;
+
   String get lblJobType;
 
   String get lblRateType;

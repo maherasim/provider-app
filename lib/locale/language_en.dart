@@ -2826,6 +2826,12 @@ class LanguageEn extends Languages {
   String get lblRequirementsColon => 'Requirements:';
 
   @override
+  String get lblReadMore => ' ...read more';
+
+  @override
+  String get lblReadLess => ' read less';
+
+  @override
   String get lblJobType => 'Job Type';
 
   @override

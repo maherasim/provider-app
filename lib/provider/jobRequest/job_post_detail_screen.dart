@@ -144,6 +144,8 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
           parseHtmlString(content),
           style: primaryTextStyle(size: 14),
           colorClickableText: gradientBlue,
+          trimCollapsedText: languages.lblReadMore,
+          trimExpandedText: languages.lblReadLess,
         ),
       ],
     );

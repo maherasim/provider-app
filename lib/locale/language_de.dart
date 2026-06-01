@@ -2688,6 +2688,12 @@ class LanguageDe extends Languages {
   String get lblRequirementsColon => 'Anforderungen:';
 
   @override
+  String get lblReadMore => ' ...mehr lesen';
+
+  @override
+  String get lblReadLess => ' weniger lesen';
+
+  @override
   String get lblJobType => 'Einsatzart';
 
   @override

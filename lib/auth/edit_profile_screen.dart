@@ -84,7 +84,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   int profileStatus = 1;
 
   CareerLevel? selectedCareerLevel = CareerLevel.notSpecified;
-  ProfileEducationLevel? selectedEducation = ProfileEducationLevel.unselected;
+  ProfileEducationLevel? selectedEducation;
   YearsOfExperience? selectedYearsOfExperience = YearsOfExperience.unselected;
 
   TextEditingController fNameCont = TextEditingController();
@@ -337,15 +337,18 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       {
         String? ed = value.data!.education;
         if (ed == null || ed.trim().isEmpty || ed.trim() == 'not_specified') {
-          selectedEducation = ProfileEducationLevel.unselected;
+          selectedEducation = null;
         } else {
           try {
             selectedEducation = ProfileEducationLevel.values.firstWhere(
               (e) => e.backendValue == ed.trim(),
               orElse: () => ProfileEducationLevel.unselected,
             );
+            if (selectedEducation == ProfileEducationLevel.unselected) {
+              selectedEducation = null;
+            }
           } catch (_) {
-            selectedEducation = ProfileEducationLevel.unselected;
+            selectedEducation = null;
           }
         }
       }
@@ -1423,9 +1426,13 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               fillColor: context.scaffoldBackgroundColor),
                           isExpanded: true,
                           value: selectedEducation,
+                          hint: Text(languages.lblEducationHint,
+                              style: secondaryTextStyle()),
                           dropdownColor: context.cardColor,
                           menuMaxHeight: 300,
                           items: ProfileEducationLevel.values
+                              .where((level) =>
+                                  level != ProfileEducationLevel.unselected)
                               .map((ProfileEducationLevel level) {
                             return DropdownMenuItem<ProfileEducationLevel>(
                               value: level,

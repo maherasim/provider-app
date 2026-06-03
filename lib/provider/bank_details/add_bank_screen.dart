@@ -31,6 +31,7 @@ class _AddBankScreenState extends State<AddBankScreen> {
   TextEditingController bankNameCont = TextEditingController();
   TextEditingController branchNameCont = TextEditingController();
   TextEditingController accNumberCont = TextEditingController();
+  TextEditingController ibanNoCont = TextEditingController();
   TextEditingController accountHolderCont = TextEditingController();
   TextEditingController bicNumberCont = TextEditingController();
   TextEditingController contactNumberCont = TextEditingController();
@@ -39,6 +40,7 @@ class _AddBankScreenState extends State<AddBankScreen> {
   FocusNode bankNameFocus = FocusNode();
   FocusNode branchNameFocus = FocusNode();
   FocusNode accNumberFocus = FocusNode();
+  FocusNode ibanNoFocus = FocusNode();
   FocusNode accountHolderFocus = FocusNode();
   FocusNode bicNumberFocus = FocusNode();
   FocusNode contactNumberFocus = FocusNode();
@@ -64,6 +66,9 @@ class _AddBankScreenState extends State<AddBankScreen> {
     multiPartRequest.fields['status'] = getStatusValue().toString();
 
     // Optional fields (only include if not empty)
+    if (ibanNoCont.text.trim().isNotEmpty) {
+      multiPartRequest.fields['iban_no'] = ibanNoCont.text.trim();
+    }
     if (accountHolderCont.text.trim().isNotEmpty) {
       multiPartRequest.fields['account_holder'] = accountHolderCont.text.trim();
     }
@@ -146,6 +151,7 @@ class _AddBankScreenState extends State<AddBankScreen> {
     bankNameCont.clear();
     branchNameCont.clear();
     accNumberCont.clear();
+    ibanNoCont.clear();
     accountHolderCont.clear();
     bicNumberCont.clear();
     contactNumberCont.clear();
@@ -158,6 +164,7 @@ class _AddBankScreenState extends State<AddBankScreen> {
       bankNameCont.text = widget.data!.bankName.validate();
       branchNameCont.text = widget.data!.branchName.validate();
       accNumberCont.text = widget.data!.accountNo.validate();
+      ibanNoCont.text = widget.data!.ibanNo.validate();
 
       // Handle account holder - ensure null values don't show as "null"
       String accountHolder = widget.data!.accountHolder.validate();
@@ -287,6 +294,17 @@ class _AddBankScreenState extends State<AddBankScreen> {
                     nextFocus: bicNumberFocus,
                     decoration: inputDecoration(context,
                         hint: languages.lblMobileNumberHint, counter: false),
+                    suffix: profile.iconImage(size: 10).paddingAll(14),
+                    isValidationRequired: false,
+                  ),
+                  16.height,
+                  AppTextField(
+                    textFieldType: TextFieldType.NAME,
+                    controller: ibanNoCont,
+                    focus: ibanNoFocus,
+                    nextFocus: bicNumberFocus,
+                    decoration: inputDecoration(context,
+                        hintText: languages.lblIbanNumberHint, counter: false),
                     suffix: profile.iconImage(size: 10).paddingAll(14),
                     isValidationRequired: false,
                   ),

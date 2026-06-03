@@ -14,14 +14,18 @@ import 'model/help_desk_detail_response.dart';
 import 'model/help_desk_response.dart';
 
 // region Save Help Desk API
-Future<void> saveHelpDeskMultiPart({required Map<String, dynamic> value, List<File>? imageFile}) async {
-  MultipartRequest multiPartRequest = await getMultiPartRequest('helpdesk-save');
+Future<void> saveHelpDeskMultiPart(
+    {required Map<String, dynamic> value, List<File>? imageFile}) async {
+  MultipartRequest multiPartRequest =
+      await getMultiPartRequest('helpdesk-save');
 
   multiPartRequest.fields.addAll(await getMultipartFields(val: value));
 
   if (imageFile.validate().isNotEmpty) {
-    multiPartRequest.files.addAll(await getMultipartImages(files: imageFile.validate(), name: HelpDeskKey.helpdeskAttachment));
-    multiPartRequest.fields[HelpDeskKey.attachmentCount] = imageFile.validate().length.toString();
+    multiPartRequest.files.addAll(await getMultipartImages(
+        files: imageFile.validate(), name: HelpDeskKey.helpdeskAttachment));
+    multiPartRequest.fields[HelpDeskKey.attachmentCount] =
+        imageFile.validate().length.toString();
   }
 
   log("${multiPartRequest.fields}");
@@ -57,23 +61,34 @@ Future<List<HelpDeskListData>> getHelpDeskList({
   Function(bool)? lastPageCallback,
 }) async {
   try {
+    final normalizedStatus = normalizeHelpDeskStatus(status);
     HelpDeskResponse res = HelpDeskResponse.fromJson(
-      await handleResponse(await buildHttpResponse('helpdesk-list?status=$status&per_page=$PER_PAGE_ITEM&page=$page', method: HttpMethodType.GET)),
+      await handleResponse(await buildHttpResponse(
+          'helpdesk-list?status=${Uri.encodeQueryComponent(normalizedStatus)}&per_page=$PER_PAGE_ITEM&page=$page',
+          method: HttpMethodType.GET)),
     );
 
     if (page == 1) helpDeskListData.clear();
 
-    if (res.data.validate().isNotEmpty) {
+    final responseData = res.data.validate();
+    final filteredData = normalizedStatus.isEmpty || normalizedStatus == 'all'
+        ? responseData
+        : responseData
+            .where((item) =>
+                normalizeHelpDeskStatus(item.status) == normalizedStatus)
+            .toList();
+
+    if (filteredData.isNotEmpty) {
       appStore.setIsHelpDeskFirstTime(false);
-    } else if (res.data.validate().isEmpty) {
+    } else if (filteredData.isEmpty) {
       if (appStore.isHelpDeskFirstTime) {
         appStore.setIsHelpDeskFirstTime(false);
       }
     }
 
-    helpDeskListData.addAll(res.data.validate());
+    helpDeskListData.addAll(filteredData);
 
-    lastPageCallback?.call(res.data.validate().length != PER_PAGE_ITEM);
+    lastPageCallback?.call(responseData.length != PER_PAGE_ITEM);
 
     appStore.setLoading(false);
 
@@ -96,14 +111,17 @@ Future<List<HelpDeskActivityData>> getHelpDeskDetailAPI({
 }) async {
   try {
     HelpDeskDetailResponse res = HelpDeskDetailResponse.fromJson(
-      await handleResponse(await buildHttpResponse('helpdesk-detail?id=$helpDeskId&per_page=$PER_PAGE_ITEM&page=$page', method: HttpMethodType.GET)),
+      await handleResponse(await buildHttpResponse(
+          'helpdesk-detail?id=$helpDeskId&per_page=$PER_PAGE_ITEM&page=$page',
+          method: HttpMethodType.GET)),
     );
 
     if (page == 1) helpDeskActivityListData.clear();
 
     helpDeskActivityListData.addAll(res.data.validate());
 
-    lastPageCallback?.call(res.data.validate().length != PER_PAGE_ITEM, res.status.validate());
+    lastPageCallback?.call(
+        res.data.validate().length != PER_PAGE_ITEM, res.status.validate());
 
     appStore.setLoading(false);
 
@@ -116,14 +134,21 @@ Future<List<HelpDeskActivityData>> getHelpDeskDetailAPI({
 //endregion
 
 // region Save Help Desk API
-Future<void> saveHelpDeskActivityMultiPart({required int helpDeskId, required Map<String, dynamic> value, List<File>? imageFile}) async {
-  MultipartRequest multiPartRequest = await getMultiPartRequest('helpdesk-activity-save/$helpDeskId');
+Future<void> saveHelpDeskActivityMultiPart(
+    {required int helpDeskId,
+    required Map<String, dynamic> value,
+    List<File>? imageFile}) async {
+  MultipartRequest multiPartRequest =
+      await getMultiPartRequest('helpdesk-activity-save/$helpDeskId');
 
   multiPartRequest.fields.addAll(await getMultipartFields(val: value));
 
   if (imageFile.validate().isNotEmpty) {
-    multiPartRequest.files.addAll(await getMultipartImages(files: imageFile.validate(), name: HelpDeskKey.helpdeskActivityAttachment));
-    multiPartRequest.fields[HelpDeskKey.attachmentCount] = imageFile.validate().length.toString();
+    multiPartRequest.files.addAll(await getMultipartImages(
+        files: imageFile.validate(),
+        name: HelpDeskKey.helpdeskActivityAttachment));
+    multiPartRequest.fields[HelpDeskKey.attachmentCount] =
+        imageFile.validate().length.toString();
   }
 
   log("${multiPartRequest.fields}");
@@ -151,6 +176,8 @@ Future<void> saveHelpDeskActivityMultiPart({required int helpDeskId, required Ma
 
 // region Help Desk Closed API
 Future<BaseResponseModel> helpDeskClosedAPI({required num helpDeskId}) async {
-  return BaseResponseModel.fromJson(await handleResponse(await buildHttpResponse('helpdesk-closed/$helpDeskId', request: {}, method: HttpMethodType.POST)));
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('helpdesk-closed/$helpDeskId',
+          request: {}, method: HttpMethodType.POST)));
 }
 //endregion

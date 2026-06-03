@@ -9,7 +9,6 @@ import '../../utils/constant.dart';
 import '../components/app_widgets.dart';
 import '../components/base_scaffold_widget.dart';
 import '../components/empty_error_state_widget.dart';
-import '../utils/configs.dart';
 import '../utils/images.dart';
 import 'add_help_desk_screen.dart';
 import 'components/help_desk_item_component.dart';
@@ -51,13 +50,17 @@ class _HelpDeskListScreenState extends State<HelpDeskListScreen> {
   void init() async {
     helpDeskStatus = [
       HelpDeskStatusModel(status: HelpDeskStatus.all, name: languages.all),
-      HelpDeskStatusModel(status: HelpDeskStatus.open, name: languages.open.capitalizeFirstLetter()),
-      HelpDeskStatusModel(status: HelpDeskStatus.closed, name: languages.closed.capitalizeFirstLetter()),
+      HelpDeskStatusModel(
+          status: HelpDeskStatus.open,
+          name: languages.open.capitalizeFirstLetter()),
+      HelpDeskStatusModel(
+          status: HelpDeskStatus.closed,
+          name: languages.closed.capitalizeFirstLetter()),
     ];
 
     if (helpDeskStatus.isNotEmpty) {
       selectedTab = helpDeskStatus.first;
-      getHelpDeskListAPI(status: selectedTab.name);
+      getHelpDeskListAPI(status: selectedTab.status.name);
     }
   }
 
@@ -88,7 +91,7 @@ class _HelpDeskListScreenState extends State<HelpDeskListScreen> {
               selectedTab = helpDeskStatus.first;
               page = 1;
               appStore.setLoading(true);
-              getHelpDeskListAPI(status: selectedTab.name);
+              getHelpDeskListAPI(status: selectedTab.status.name);
               setState(() {});
             }).launch(context);
           },
@@ -116,13 +119,19 @@ class _HelpDeskListScreenState extends State<HelpDeskListScreen> {
                           FilterChip(
                             shape: RoundedRectangleBorder(
                               borderRadius: radius(18),
-                              side: BorderSide(color: selectedTab.status == filterStatus.status ? gradientRed : Colors.transparent),
+                              side: BorderSide(
+                                  color:
+                                      selectedTab.status == filterStatus.status
+                                          ? gradientRed
+                                          : Colors.transparent),
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             label: selectedTab.status == filterStatus.status
                                 ? ShaderMask(
                                     shaderCallback: (Rect bounds) {
-                                      return kAppPrimaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
+                                      return kAppPrimaryGradient.createShader(
+                                          Rect.fromLTWH(0, 0, bounds.width,
+                                              bounds.height));
                                     },
                                     blendMode: BlendMode.srcIn,
                                     child: Text(
@@ -140,12 +149,16 @@ class _HelpDeskListScreenState extends State<HelpDeskListScreen> {
                                     ),
                                   ),
                             selected: false,
-                            backgroundColor: selectedTab.status == filterStatus.status ? lightPrimaryColor : context.cardColor,
+                            backgroundColor:
+                                selectedTab.status == filterStatus.status
+                                    ? lightPrimaryColor
+                                    : context.cardColor,
                             onSelected: (bool selected) {
                               selectedTab = helpDeskStatus[index];
                               page = 1;
                               appStore.setLoading(true);
-                              getHelpDeskListAPI(status: selectedTab.name);
+                              getHelpDeskListAPI(
+                                  status: selectedTab.status.name);
                               setState(() {});
                             },
                           ),
@@ -164,26 +177,39 @@ class _HelpDeskListScreenState extends State<HelpDeskListScreen> {
                     physics: AlwaysScrollableScrollPhysics(),
                     padding: EdgeInsets.all(16),
                     listAnimationType: ListAnimationType.FadeIn,
-                    fadeInConfiguration: FadeInConfiguration(duration: 2.seconds),
+                    fadeInConfiguration:
+                        FadeInConfiguration(duration: 2.seconds),
                     itemCount: helpDeskList.length,
                     emptyWidget: appStore.isLoading
                         ? Offstage()
                         : NoDataWidget(
-                            title: '${languages.lblNo} ${selectedTab.name} ${languages.queryYet}',
+                            title:
+                                '${languages.lblNo} ${selectedTab.name} ${languages.queryYet}',
                             titleTextStyle: boldTextStyle(),
                             subTitle: selectedTab.status == HelpDeskStatus.open
                                 ? languages.toSubmitYourProblems
                                 : '${languages.noRecordsFoundFor} ${selectedTab.name.toLowerCase()} ${languages.queries}',
-                            imageWidget: selectedTab.status == HelpDeskStatus.open ? ic_help_desk_outline.iconImage(size: 60) : EmptyStateWidget(),
-                            retryText: selectedTab.status == HelpDeskStatus.open  &&  rolesAndPermissionStore.helpDeskAdd ? languages.hintAdd : null,
-                            onRetry: selectedTab.status == HelpDeskStatus.open  &&  rolesAndPermissionStore.helpDeskAdd
-                                ? () { 
-                                    if (selectedTab.status == HelpDeskStatus.open) {
+                            imageWidget:
+                                selectedTab.status == HelpDeskStatus.open
+                                    ? ic_help_desk_outline.iconImage(size: 60)
+                                    : EmptyStateWidget(),
+                            retryText:
+                                selectedTab.status == HelpDeskStatus.open &&
+                                        rolesAndPermissionStore.helpDeskAdd
+                                    ? languages.hintAdd
+                                    : null,
+                            onRetry: selectedTab.status ==
+                                        HelpDeskStatus.open &&
+                                    rolesAndPermissionStore.helpDeskAdd
+                                ? () {
+                                    if (selectedTab.status ==
+                                        HelpDeskStatus.open) {
                                       AddHelpDeskScreen(callback: (p0) {
                                         selectedTab = helpDeskStatus.first;
                                         page = 1;
                                         appStore.setLoading(true);
-                                        getHelpDeskListAPI(status: selectedTab.name);
+                                        getHelpDeskListAPI(
+                                            status: selectedTab.status.name);
 
                                         setState(() {});
                                       }).launch(context);
@@ -197,21 +223,22 @@ class _HelpDeskListScreenState extends State<HelpDeskListScreen> {
                         page++;
                         appStore.setLoading(true);
 
-                        getHelpDeskListAPI(status: selectedTab.name);
+                        getHelpDeskListAPI(status: selectedTab.status.name);
                         setState(() {});
                       }
                     },
                     onSwipeRefresh: () async {
                       page = 1;
 
-                      getHelpDeskListAPI(status: selectedTab.name);
+                      getHelpDeskListAPI(status: selectedTab.status.name);
                       setState(() {});
 
                       return await 2.seconds.delay;
                     },
                     disposeScrollController: true,
                     itemBuilder: (BuildContext context, index) {
-                      return HelpDeskItemComponent(helpDeskData: helpDeskList[index]);
+                      return HelpDeskItemComponent(
+                          helpDeskData: helpDeskList[index]);
                     },
                   );
                 },
@@ -224,7 +251,7 @@ class _HelpDeskListScreenState extends State<HelpDeskListScreen> {
                       page = 1;
                       appStore.setLoading(true);
 
-                      getHelpDeskListAPI(status: selectedTab.name);
+                      getHelpDeskListAPI(status: selectedTab.status.name);
                       setState(() {});
                     },
                   );

@@ -3,7 +3,6 @@ import 'package:nb_utils/nb_utils.dart';
 
 import '../main.dart';
 import '../utils/common.dart';
-import '../utils/configs.dart';
 import '../utils/colors.dart';
 
 class AddReasonsComponent extends StatefulWidget {
@@ -43,13 +42,15 @@ class _AddReasonsComponentState extends State<AddReasonsComponent> {
             width: context.width(),
             decoration: BoxDecoration(
               gradient: kAppPrimaryGradient,
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8), topRight: Radius.circular(8)),
             ),
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(languages.addReason, style: boldTextStyle(color: white)).expand(),
+                Text(languages.addReason, style: boldTextStyle(color: white))
+                    .expand(),
                 CloseButton(color: Colors.white),
               ],
             ),
@@ -57,10 +58,12 @@ class _AddReasonsComponentState extends State<AddReasonsComponent> {
           AppTextField(
             textFieldType: TextFieldType.NAME,
             controller: reasonsCont,
-            decoration: inputDecoration(context, hint: languages.writeReason,fillColor: Colors.black),
+            textStyle: primaryTextStyle(),
+            decoration: inputDecoration(context, hint: languages.writeReason),
           ).paddingAll(16),
           DecoratedBox(
-            decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+            decoration: BoxDecoration(
+                gradient: kAppPrimaryGradient, borderRadius: radius(8)),
             child: AppButton(
               text: languages.btnSave,
               color: Colors.transparent,

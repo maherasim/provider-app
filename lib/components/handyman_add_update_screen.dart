@@ -142,6 +142,22 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
 
   bool isUpdate = false;
 
+  bool _hasValidPasswordLength(String password) =>
+      password.length >= 8 && password.length <= 20;
+
+  bool _hasPasswordLetter(String password) =>
+      RegExp(r'[A-Za-z]').hasMatch(password);
+
+  bool _hasPasswordNumber(String password) => RegExp(r'\d').hasMatch(password);
+
+  String? _passwordValidator(String? value) {
+    if (value == null || value.isEmpty) return languages.hintRequired;
+    if (!_hasValidPasswordLength(value)) return '8 to 20 characters';
+    if (!_hasPasswordLetter(value)) return 'At least one letter (A-Z or a-z)';
+    if (!_hasPasswordNumber(value)) return 'At least one number (0-9)';
+    return null;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -468,6 +484,46 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
           )
         ],
       ),
+    );
+  }
+
+  Widget _buildPasswordRequirements(String password) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: context.cardColor,
+        borderRadius: radius(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildPasswordRequirementItem(
+              '8 to 20 characters', _hasValidPasswordLength(password)),
+          8.height,
+          _buildPasswordRequirementItem(
+              'At least one letter (A-Z or a-z)', _hasPasswordLetter(password)),
+          8.height,
+          _buildPasswordRequirementItem(
+              'At least one number (0-9)', _hasPasswordNumber(password)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPasswordRequirementItem(String text, bool isValid) {
+    final Color color = isValid ? Colors.green : textSecondaryColorGlobal;
+
+    return Row(
+      children: [
+        Icon(
+          isValid ? Icons.check_circle : Icons.radio_button_unchecked,
+          size: 16,
+          color: color,
+        ),
+        8.width,
+        Text(text, style: secondaryTextStyle(color: color)).expand(),
+      ],
     );
   }
 
@@ -1723,13 +1779,9 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                         fillColor: context.scaffoldBackgroundColor,
                       ),
                       isValidationRequired: true,
-                      validator: (val) {
-                        if (val == null || val.isEmpty) {
-                          return languages.hintRequired;
-                        } else if (val.length < 8 || val.length > 12) {
-                          return languages.passwordLengthShouldBe;
-                        }
-                        return null;
+                      validator: _passwordValidator,
+                      onChanged: (value) {
+                        setState(() {});
                       },
                       onFieldSubmitted: (s) {
                         ifNotTester(context, () {
@@ -1737,6 +1789,10 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                         });
                       },
                     ).visible(!isUpdate),
+                    if (!isUpdate) ...[
+                      12.height,
+                      _buildPasswordRequirements(passwordCont.text),
+                    ],
                     16.height,
                     if (isUpdate &&
                         widget.data!.emailVerifiedAt.validate().isNotEmpty)

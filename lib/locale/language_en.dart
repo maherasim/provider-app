@@ -2486,7 +2486,7 @@ class LanguageEn extends Languages {
 
   @override
   String get passwordLengthShouldBe =>
-      'Password length should be 8 to 12 characters.';
+      'Password length should be 12 to 20 characters.';
 
   @override
   String get lblCountryTax => 'Country Tax';

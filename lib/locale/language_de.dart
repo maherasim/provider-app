@@ -490,7 +490,6 @@ class LanguageDe extends Languages {
 
   @override
   String get lblHandymanType => 'Profityp';
-
   @override
   String get lblFixed => 'Festpreis';
 
@@ -2935,6 +2934,7 @@ class LanguageDe extends Languages {
 
   @override
   String get lblReportProfileTitle => 'Profil melden';
+  
 
   @override
   String get lblReportProfileNoReasons =>
@@ -2942,4 +2942,13 @@ class LanguageDe extends Languages {
 
   @override
   String get lblReportReviewTitle => 'Bewertung melden';
+
+
+//New
+
+  
+
+  @override
+  String get handymanPlanLimitExceeded => 'Ihr aktueller Plan erlaubt keine weiteren Handwerker. Bitte upgraden Sie Ihr Abonnement.';
+
 }

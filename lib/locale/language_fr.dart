@@ -506,6 +506,9 @@ class LanguageFr extends Languages {
   String get lblHandymanType => "Type de bricoleur";
 
   @override
+  String get handymanPlanLimitExceeded => "Votre plan actuel ne permet pas d'ajouter plus d'artisans. Veuillez mettre à niveau votre abonnement.";
+
+  @override
   String get lblFixed => "Fixé";
 
   @override

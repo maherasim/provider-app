@@ -497,6 +497,9 @@ class LanguageAr extends Languages {
   String get lblHandymanType => "Handyman نوع";
 
   @override
+  String get handymanPlanLimitExceeded => 'خطتك الحالية لا تسمح بإضافة المزيد من الحرفيين. يرجى ترقية اشتراكك.';
+
+  @override
   String get lblFixed => "سعر ثابت";
 
   @override

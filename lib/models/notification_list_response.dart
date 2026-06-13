@@ -60,8 +60,10 @@ class Data {
   String? type;
   String? subject;
   String? message;
-  String? notificationType;  
+  String? notificationType;
   String? checkBookingType;
+  int? postRequestId;
+  int? bidId;
 
   Data(
       {this.id,
@@ -69,7 +71,9 @@ class Data {
       this.checkBookingType,
       this.subject,
       this.message,
-      this.notificationType});
+      this.notificationType,
+      this.postRequestId,
+      this.bidId});
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -78,6 +82,8 @@ class Data {
     message = json['message'];
     notificationType = json['notification-type'];
     checkBookingType = json['check_booking_type'];
+    postRequestId = json['post_request_id'] is int ? json['post_request_id'] : int.tryParse('${json['post_request_id'] ?? ''}');
+    bidId = json['bid_id'] is int ? json['bid_id'] : int.tryParse('${json['bid_id'] ?? ''}');
   }
 
   Map<String, dynamic> toJson() {
@@ -88,6 +94,8 @@ class Data {
     data['message'] = this.message;
     data['notification-type'] = this.notificationType;
     data['check_booking_type'] = this.checkBookingType;
+    data['post_request_id'] = this.postRequestId;
+    data['bid_id'] = this.bidId;
     return data;
   }
 }

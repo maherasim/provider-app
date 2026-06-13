@@ -501,6 +501,7 @@ class LanguageEn extends Languages {
   @override
   String get lblHandymanType => "Handyman Type";
 
+
   @override
   String get lblFixed => "Fixed";
 
@@ -2620,4 +2621,8 @@ class LanguageEn extends Languages {
 
   @override
   String get lblReportReviewTitle => 'Report review';
+  //New
+    @override
+  String get handymanPlanLimitExceeded => 'Your current plan does not allow more handymen. Please upgrade your subscription.';
+
 }

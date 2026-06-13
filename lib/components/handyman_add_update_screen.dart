@@ -801,6 +801,10 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
   }
 
   bool _validateRequiredSelections() {
+    if (selectedHandymanCommission == null || selectedHandymanCommission!.id == -1) {
+      toast('${languages.lblHandymanType}: ${languages.hintRequired}');
+      return false;
+    }
     if (serviceAddressId == null || serviceAddressId == -1) {
       toast('${languages.lblServiceAddress}: ${languages.hintRequired}');
       return false;
@@ -1023,12 +1027,22 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
         }
       },
       onError: (error) {
-        toast(error.toString(), print: true);
         appStore.setLoading(false);
+        final msg = error.toString().toLowerCase();
+        if (msg.contains('limit') || msg.contains('plan') || msg.contains('upgrade') || msg.contains('not in')) {
+          toast(languages.handymanPlanLimitExceeded, print: true);
+        } else {
+          toast(error.toString(), print: true);
+        }
       },
     ).catchError((e) {
       appStore.setLoading(false);
-      toast(e.toString());
+      final msg = e.toString().toLowerCase();
+      if (msg.contains('limit') || msg.contains('plan') || msg.contains('upgrade') || msg.contains('not in')) {
+        toast(languages.handymanPlanLimitExceeded);
+      } else {
+        toast(e.toString());
+      }
     });
   }
 

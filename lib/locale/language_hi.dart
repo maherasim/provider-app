@@ -501,6 +501,9 @@ class LanguageHi extends Languages {
   String get lblHandymanType => "हैंडमैन प्रकार";
 
   @override
+  String get handymanPlanLimitExceeded => 'आपकी वर्तमान योजना अधिक हैंडमैन की अनुमति नहीं देती। कृपया अपनी सदस्यता अपग्रेड करें।';
+
+  @override
   String get lblFixed => "फिक्स्ड";
 
   @override

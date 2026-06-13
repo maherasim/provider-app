@@ -334,6 +334,8 @@ abstract class Languages {
 
   String get lblHandymanType;
 
+  String get handymanPlanLimitExceeded;
+
   String get lblFixed;
 
   String get lblHello;

@@ -1651,7 +1651,7 @@ abstract class Languages {
 
   String get invoice;
 
-  /// Provider job list ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â report / block (UGC APIs)
+  /// Provider job list ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â report / block (UGC APIs)
   String get lblReportJob;
   String get lblBlock;
   String get lblBlockCustomer;
@@ -1782,6 +1782,9 @@ abstract class Languages {
   String get lblProgressAdvance;
   String get lblProgressAdvancePaidShort;
   String get lblProgressLetsStart;
-  String get lblProgressWork;  String get lblQuantity;
+  String get lblProgressWork;
+  String get lblQuantity;
   String get lblTotalExtraCharges;
+  String get lblPasswordMustInclude;
+  String get lblProfilePhoto;
 }

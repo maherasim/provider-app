@@ -265,7 +265,7 @@ class _SignInScreenState extends State<SignInScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             8.height,
-            Text('Your password must include:',
+            Text(languages.lblPasswordMustInclude,
                 style: secondaryTextStyle(size: 12)),
             8.height,
             _buildPasswordRequirementItem(

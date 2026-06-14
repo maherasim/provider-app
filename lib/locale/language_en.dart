@@ -2330,7 +2330,7 @@ class LanguageEn extends Languages {
 
   @override
   String get serviceProofMediaUploadNote =>
-      'Note : You can Upload Image with ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œJPGÃƒÂ¢Ã¢â€šÂ¬Ã‚Â , ÃƒÂ¢Ã¢â€šÂ¬Ã‹Å“PNGÃƒÂ¢Ã¢â€šÂ¬Ã‚Â, ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œJPEGÃƒÂ¢Ã¢â€šÂ¬Ã‚Â extension and you can select multiple images';
+      'Note : You can Upload Image with ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“JPGÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â , ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¹Ã…â€œPNGÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â, ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“JPEGÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â extension and you can select multiple images';
 
   @override
   String get uploadMedia => 'Upload Media';
@@ -2476,11 +2476,11 @@ class LanguageEn extends Languages {
 
   @override
   String get workInProgressWaitingForProvider =>
-      "Work in progress ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â waiting for Employer to update or mark done";
+      "Work in progress ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â waiting for Employer to update or mark done";
 
   @override
   String get jobCompletedWaitingForCustomer =>
-      "Job is completed ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â waiting for customer to pay remaining amount";
+      "Job is completed ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â waiting for customer to pay remaining amount";
 
   @override
   String get paymentCompletedDownloadInvoice =>
@@ -2846,8 +2846,16 @@ class LanguageEn extends Languages {
   @override
   String get lblProgressLetsStart => "Let's Start";
   @override
-  String get lblProgressWork => 'Work';  @override
+  String get lblProgressWork => 'Work';
+
+  @override
   String get lblQuantity => 'Quantity';
   @override
   String get lblTotalExtraCharges => 'Total Extra Charges';
+
+  @override
+  String get lblPasswordMustInclude => 'Your password must include:';
+
+  @override
+  String get lblProfilePhoto => 'Profile photo';
 }

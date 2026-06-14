@@ -426,32 +426,32 @@ class _AddServicesState extends State<AddServices> {
 
     // Validate required fields per documentation
     if (stateId == 0) {
-      toast('Please select state');
+      toast(languages.selectState);
       return;
     }
 
     if (cityId == 0) {
-      toast('Please select city');
+      toast(languages.selectCity);
       return;
     }
 
     if (selectedRemoteWorkLevel == null) {
-      toast('Please select remote work level');
+      toast(languages.lblPleaseSelectRemoteWorkLevel);
       return;
     }
 
     if (selectedCareerLevel == null) {
-      toast('Please select career level');
+      toast(languages.lblPleaseSelectCareerLevel);
       return;
     }
 
     if (selectedTravelRequired == null) {
-      toast('Please select travel required');
+      toast(languages.lblPleaseSelectTravelRequired);
       return;
     }
 
     if (_isAdminUser() && selectedProviderId == null) {
-      toast('Please select provider');
+      toast(languages.lblPleaseSelectProvider);
       return;
     }
 
@@ -601,11 +601,11 @@ class _AddServicesState extends State<AddServices> {
       final bool hasExistingImages = tempAttachments.validate().isNotEmpty;
       if (validImageFiles.isEmpty) {
         if (!isUpdate) {
-          toast('Please select valid images');
+          toast(languages.lblPleaseSelectValidImages);
           return;
         }
         if (isUpdate && !hasExistingImages) {
-          toast('Please select valid images');
+          toast(languages.lblPleaseSelectValidImages);
           return;
         }
         // isUpdate && hasExistingImages → proceed with empty validImageFiles (keep existing only)

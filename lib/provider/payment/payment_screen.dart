@@ -550,7 +550,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   Spacer(),
                   AppButton(
                     onTap: () {
-                      if (selectedPaymentSetting == null) return toast('Choose any one payment method first');
+                      if (selectedPaymentSetting == null) return toast(languages.lblChoosePaymentMethodFirst);
 
                       _handleClick();
                     },

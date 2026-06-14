@@ -47,7 +47,7 @@ class _PostJobBidRatingDialogState extends State<PostJobBidRatingDialog> {
 
   void _submitRating() {
     if (rating == 0.0) {
-      toast('Please select a rating');
+      toast(languages.lblPleaseSelectRating);
       return;
     }
 

@@ -1651,7 +1651,7 @@ abstract class Languages {
 
   String get invoice;
 
-  /// Provider job list ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â report / block (UGC APIs)
+  /// Provider job list ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â report / block (UGC APIs)
   String get lblReportJob;
   String get lblBlock;
   String get lblBlockCustomer;
@@ -1787,4 +1787,25 @@ abstract class Languages {
   String get lblTotalExtraCharges;
   String get lblPasswordMustInclude;
   String get lblProfilePhoto;
+  String get lblPleaseSelectRating;
+  String get lblPleaseSelectNewImageFile;
+  String get lblSelectedFileDoesNotExist;
+  String get lblChooseValidImageFormat;
+  String get lblErrorImageFileNotAdded;
+  String get lblPleaseSelectRemoteWorkLevel;
+  String get lblPleaseSelectCareerLevel;
+  String get lblPleaseSelectTravelRequired;
+  String get lblPleaseSelectProvider;
+  String get lblPleaseSelectValidImages;
+  String get lblCompleteProfileBeforeService;
+  String get lblCantFindRevenueCatProduct;
+  String get lblLocationSharingStarted;
+  String get lblAllowLocationPermission;
+  String get lblLocationSharingOnlyInProgress;
+  String get lblSavingSubscription;
+  String get lblChoosePaymentMethodFirst;
+  String get lblErrorCapturingImage;
+  String get lblErrorAddingProfileImage;
+  String get lblFileSizeLimitPrefix;
+  String get lblInvalidUrlPrefix;
 }

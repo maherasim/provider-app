@@ -46,7 +46,7 @@ class _ProviderRatingDialogState extends State<ProviderRatingDialog> {
 
   void _submitRating() {
     if (rating == 0.0) {
-      toast('Please select a rating');
+      toast(languages.lblPleaseSelectRating);
       return;
     }
 

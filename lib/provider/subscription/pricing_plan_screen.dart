@@ -371,8 +371,7 @@ class _PricingPlanScreenState extends State<PricingPlanScreen> {
                             },
                           );
                         else {
-                          /// Todo add language key
-                          toast("Can't find revenueCat product");
+                          toast(languages.lblCantFindRevenueCatProduct);
                         }
                       }
                     } else {

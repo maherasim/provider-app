@@ -97,7 +97,7 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
               bool? res;
 
               if (!isProviderProfileComplete) {
-                toast('Please complete your profile before creating a service');
+                toast(languages.lblCompleteProfileBeforeService);
                 await EditProfileScreen().launch(context,
                     pageRouteAnimation: PageRouteAnimation.Fade);
                 setPageToOne();

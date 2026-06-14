@@ -907,7 +907,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
         if (profileImageFile!.path.contains('http://') ||
             profileImageFile!.path.contains('https://')) {
           log('Error: profileImageFile is a network URL, not a local file: ${profileImageFile!.path}');
-          toast('Please select a new image file');
+          toast(languages.lblPleaseSelectNewImageFile);
           appStore.setLoading(false);
           return;
         }
@@ -915,7 +915,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
         // Verify file exists
         if (!await profileImageFile!.exists()) {
           log('Error: profile image file does not exist: ${profileImageFile!.path}');
-          toast('Selected file does not exist');
+          toast(languages.lblSelectedFileDoesNotExist);
           appStore.setLoading(false);
           return;
         }
@@ -932,7 +932,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
         // Laravel/API only accepts PNG, GIF, JPG, JPEG (see server error: "Bild muss ...")
         const allowedExts = {'jpg', 'jpeg', 'png', 'gif'};
         if (!allowedExts.contains(fileExtension)) {
-          toast('Please choose a PNG, GIF, JPG, or JPEG image.');
+          toast(languages.lblChooseValidImageFormat);
           appStore.setLoading(false);
           return;
         }
@@ -965,7 +965,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
         log('Profile image file added successfully. Files count: ${multiPartRequest.files.length}');
       } catch (e) {
         log('Error adding profile image: $e');
-        toast('Error adding profile image: $e');
+        toast('${languages.lblErrorAddingProfileImage}: $e');
         appStore.setLoading(false);
         return;
       }
@@ -1007,7 +1007,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
     // Verify file is actually added before sending
     if (profileImageFile != null && multiPartRequest.files.isEmpty) {
       log('ERROR: profileImageFile is set but no files in multipart request!');
-      toast('Error: Image file not added to request');
+      toast(languages.lblErrorImageFileNotAdded);
       appStore.setLoading(false);
       return;
     }
@@ -1269,7 +1269,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                           bool fileExists = await selectedFile.exists();
                           if (!fileExists) {
                             log('Error: Selected file does not exist: ${selectedFile.path}');
-                            toast('Selected file does not exist');
+                            toast(languages.lblSelectedFileDoesNotExist);
                             return;
                           }
                           profileImageFile = selectedFile;

@@ -404,14 +404,14 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   _buildInfoCard(
                     icon: Icons.business_center,
                     iconColor: Colors.orange,
-                    title: 'Job Type',
+                    title: languages.lblJobType,
                     value: postJobDetail!.postRequest?.type.displayName.validate() ?? '',
                     cardBackgroundColor: postJobDetail!.postRequest?.type.bgColor,
                   ),
                   _buildInfoCard(
                     icon: Icons.attach_money,
                     iconColor: Colors.green[600]!,
-                    title: 'Rate Type',
+                    title: languages.lblRateType,
                     value: postJobDetail!.postRequest?.priceType.displayName.validate() ?? '',
                   ),
                   _buildInfoCard(
@@ -431,19 +431,19 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   _buildInfoCard(
                     icon: Icons.account_balance_wallet,
                     iconColor: Colors.blue,
-                    title: 'Total Budget',
+                    title: languages.lblTotalBudget,
                     value: postJobDetail!.postRequest?.totalBudget?.validate().toPriceFormat() ?? '0',
                   ),
                   _buildInfoCard(
                     icon: Icons.groups,
                     iconColor: Colors.grey,
-                    title: 'Proposals',
+                    title: languages.lblProposals,
                     value: (postJobDetail!.postRequest?.postBidList.length??0).validate().toString(), // Simplified for now
                   ),
                   _buildInfoCard(
                     icon: Icons.person,
                     iconColor: Colors.indigo,
-                    title: 'Worker',
+                    title: languages.lblWorker,
                     value: postJobDetail!.provider?.displayName.validate() ?? '',
                     profileUserIdToReport: postJobDetail!.provider?.id,
                   ),
@@ -478,7 +478,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Working Address', style: secondaryTextStyle(size: 11)),
+                              Text(languages.workingAddress, style: secondaryTextStyle(size: 11)),
                               4.height,
                               Text(
                                 _workingAddressDisplay(postJobDetail!),
@@ -631,12 +631,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                             }
                             toast(languages.pleaseWaitWhileWeLoadChatDetails);
                             try {
-                              final res = await FrobsterChatApi.openWithUser(userId: customerId, title: 'Direct Message');
+                              final res = await FrobsterChatApi.openWithUser(userId: customerId, title: languages.lblDirectMessage);
                               Fluttertoast.cancel();
                               if (res.status && res.conversationId != 0) {
                                 FrobsterChatThreadScreen(
                                   conversationId: res.conversationId,
-                                  title: 'Direct Message',
+                                  title: languages.lblDirectMessage,
                                   otherDisplayName: postJobDetail?.customer?.displayName,
                                 ).launch(context);
                               } else {
@@ -669,12 +669,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                         }
                         toast(languages.pleaseWaitWhileWeLoadChatDetails);
                         try {
-                          final res = await FrobsterChatApi.openWithUser(userId: customerId, title: 'Direct Message');
+                          final res = await FrobsterChatApi.openWithUser(userId: customerId, title: languages.lblDirectMessage);
                           Fluttertoast.cancel();
                           if (res.status && res.conversationId != 0) {
                             FrobsterChatThreadScreen(
                               conversationId: res.conversationId,
-                              title: 'Direct Message',
+                              title: languages.lblDirectMessage,
                               otherDisplayName: postJobDetail?.customer?.displayName,
                             ).launch(context);
                           } else {
@@ -727,12 +727,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                             }
                             toast(languages.pleaseWaitWhileWeLoadChatDetails);
                             try {
-                              final res = await FrobsterChatApi.openWithUser(userId: customerId, title: 'Direct Message');
+                              final res = await FrobsterChatApi.openWithUser(userId: customerId, title: languages.lblDirectMessage);
                               Fluttertoast.cancel();
                               if (res.status && res.conversationId != 0) {
                                 FrobsterChatThreadScreen(
                                   conversationId: res.conversationId,
-                                  title: 'Direct Message',
+                                  title: languages.lblDirectMessage,
                                   otherDisplayName: postJobDetail?.customer?.displayName,
                                 ).launch(context);
                               } else {
@@ -765,12 +765,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                         }
                         toast(languages.pleaseWaitWhileWeLoadChatDetails);
                         try {
-                          final res = await FrobsterChatApi.openWithUser(userId: customerId, title: 'Direct Message');
+                          final res = await FrobsterChatApi.openWithUser(userId: customerId, title: languages.lblDirectMessage);
                           Fluttertoast.cancel();
                           if (res.status && res.conversationId != 0) {
                             FrobsterChatThreadScreen(
                               conversationId: res.conversationId,
-                              title: 'Direct Message',
+                              title: languages.lblDirectMessage,
                               otherDisplayName: postJobDetail?.customer?.displayName,
                             ).launch(context);
                           } else {
@@ -795,12 +795,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                         }
                         toast(languages.pleaseWaitWhileWeLoadChatDetails);
                         try {
-                          final res = await FrobsterChatApi.openWithUser(userId: customerId, title: 'Direct Message');
+                          final res = await FrobsterChatApi.openWithUser(userId: customerId, title: languages.lblDirectMessage);
                           Fluttertoast.cancel();
                           if (res.status && res.conversationId != 0) {
                             FrobsterChatThreadScreen(
                               conversationId: res.conversationId,
-                              title: 'Direct Message',
+                              title: languages.lblDirectMessage,
                               otherDisplayName: postJobDetail?.customer?.displayName,
                             ).launch(context);
                           } else {
@@ -827,12 +827,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                             }
                             toast(languages.pleaseWaitWhileWeLoadChatDetails);
                             try {
-                              final res = await FrobsterChatApi.openWithUser(userId: customerId, title: 'Direct Message');
+                              final res = await FrobsterChatApi.openWithUser(userId: customerId, title: languages.lblDirectMessage);
                               Fluttertoast.cancel();
                               if (res.status && res.conversationId != 0) {
                                 FrobsterChatThreadScreen(
                                   conversationId: res.conversationId,
-                                  title: 'Direct Message',
+                                  title: languages.lblDirectMessage,
                                   otherDisplayName: postJobDetail?.customer?.displayName,
                                 ).launch(context);
                               } else {
@@ -973,7 +973,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         24.height,
-        Text('Price Details', style: boldTextStyle(size: LABEL_TEXT_SIZE)),
+        Text(languages.lblPriceDetail, style: boldTextStyle(size: LABEL_TEXT_SIZE)),
         16.height,
         Container(
           padding: EdgeInsets.all(12),
@@ -986,7 +986,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text('Rate (Unit Price)', style: secondaryTextStyle(size: 12)).expand(),
+                  Text(languages.lblRateUnitPrice, style: secondaryTextStyle(size: 12)).expand(),
                   16.width,
                   PriceWidget(
                     price: data.price?.validate() ?? 0,
@@ -1002,7 +1002,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Quantity', style: secondaryTextStyle(size: 12)).flexible(fit: FlexFit.loose),
+                  Text(languages.lblQuantity, style: secondaryTextStyle(size: 12)).flexible(fit: FlexFit.loose),
                   16.width,
                   Text(quantity.toString(), style: boldTextStyle(size: 14)),
                 ],
@@ -1012,7 +1012,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               // Total calculation row
               Row(
                 children: [
-                  Text('Total Amount', style: secondaryTextStyle(size: 12)).expand(),
+                  Text(languages.lblTotal, style: secondaryTextStyle(size: 12)).expand(),
                   16.width,
                   PriceWidget(
                     price: totalAmount,
@@ -1027,7 +1027,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               if (extraCharges > 0)
                 Row(
                   children: [
-                    Text('Extra Charges', style: secondaryTextStyle(size: 12)).expand(),
+                    Text(languages.lblExtraCharges, style: secondaryTextStyle(size: 12)).expand(),
                     16.width,
                     PriceWidget(
                       price: extraCharges,
@@ -1042,7 +1042,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Subtotal', style: secondaryTextStyle(size: 12)).flexible(fit: FlexFit.loose),
+                  Text(languages.lblSubTotal, style: secondaryTextStyle(size: 12)).flexible(fit: FlexFit.loose),
                   PriceWidget(
                     price: subTotal,
                     color: textPrimaryColorGlobal,
@@ -1059,8 +1059,8 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Net Amount', style: secondaryTextStyle(size: 12)),
-                      Text('(Subtotal - Tax)', style: secondaryTextStyle(size: 11)),
+                      Text(languages.lblNetAmount, style: secondaryTextStyle(size: 12)),
+                      Text(languages.lblNetAmountFormula, style: secondaryTextStyle(size: 11)),
                     ],
                   ).flexible(fit: FlexFit.loose),
                   PriceWidget(
@@ -1102,9 +1102,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                      'Grand Total Amount', style: secondaryTextStyle(size: 12)
-                  ),
+                  Text(languages.lblGrandTotalAmount, style: secondaryTextStyle(size: 12)),
                   16.width,
                   PriceWidget(
                     price: subTotal,
@@ -1134,7 +1132,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               ),
               Row(
                 children: [
-                  Text('Remaining Amount', style: secondaryTextStyle(size: 12)).expand(),
+                  Text(languages.remainingAmount, style: secondaryTextStyle(size: 12)).expand(),
                   16.width,
                   PriceWidget(
                     price: remaining,
@@ -1267,7 +1265,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         24.height,
-        Text('Extra Charges Breakdown', style: boldTextStyle(size: LABEL_TEXT_SIZE)),
+        Text(languages.lblExtraChargesBreakdown, style: boldTextStyle(size: LABEL_TEXT_SIZE)),
         16.height,
         Container(
           padding: EdgeInsets.all(16),
@@ -1283,7 +1281,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Total Extra Charges', style: boldTextStyle(size: 14)),
+                  Text(languages.lblTotalExtraCharges, style: boldTextStyle(size: 14)),
                   PriceWidget(
                     price: totalExtraCharges,
                     color: textPrimaryColorGlobal,

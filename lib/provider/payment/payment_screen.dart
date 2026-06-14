@@ -329,7 +329,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       barrierDismissible: false,
       builder: (context) {
         return AppCommonDialog(
-          title: 'Bank Transfer Details',
+          title: languages.lblBankTransferDetails,
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Column(
@@ -417,7 +417,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       barrierDismissible: false,
       builder: (context) {
         return AppCommonDialog(
-          title: 'Bank Transfer',
+          title: languages.lblBankTransfer,
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Column(

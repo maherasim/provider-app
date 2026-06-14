@@ -736,7 +736,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             controller: searchCont,
                             textFieldType: TextFieldType.OTHER,
                             decoration: inputDecoration(context,
-                                hint: 'Search languages'),
+                                hint: languages.lblSearchLanguagesHint),
                             onChanged: (v) {
                               searchNotifier.value = v;
                             },
@@ -1289,7 +1289,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         16.height,
                         DropdownButtonFormField<ProfileEducationLevel>(
                           decoration: inputDecoration(context,
-                              hint: 'Education',
+                              hint: languages.lblEducationHint,
                               fillColor: context.scaffoldBackgroundColor),
                           isExpanded: true,
                           initialValue: selectedEducation,
@@ -1315,7 +1315,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         16.height,
                         DropdownButtonFormField<CareerLevel>(
                           decoration: inputDecoration(context,
-                              hint: 'Career Level',
+                              hint: languages.lblCareerLevelHint,
                               fillColor: context.scaffoldBackgroundColor),
                           isExpanded: true,
                           initialValue: selectedCareerLevel,
@@ -1340,7 +1340,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         16.height,
                         DropdownButtonFormField<YearsOfExperience>(
                           decoration: inputDecoration(context,
-                              hint: 'Years of Experience',
+                              hint: languages.lblYearsOfExperienceHint,
                               fillColor: context.scaffoldBackgroundColor),
                           isExpanded: true,
                           initialValue: selectedYearsOfExperience,
@@ -1449,7 +1449,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               appConfigurationStore.testWithoutKey,
                           loaderWidgetForChatGPT: const ChatGPTLoadingWidget(),
                           decoration:
-                              inputDecoration(context, hint: 'About me'),
+                              inputDecoration(context, hint: languages.lblAboutMeHint),
                           isValidationRequired: false,
                         ),
                         16.height,

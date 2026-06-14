@@ -392,7 +392,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                             controller: searchCont,
                             textFieldType: TextFieldType.OTHER,
                             decoration: inputDecoration(context,
-                                hint: 'Search languages'),
+                                hint: languages.lblSearchLanguagesHint),
                             onChanged: (v) {
                               searchNotifier.value = v;
                             },
@@ -1352,7 +1352,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     16.height,
                     Divider(),
                     12.height,
-                    Text('Company Information', style: boldTextStyle(size: 16)),
+                    Text(languages.lblCompanyInformation, style: boldTextStyle(size: 16)),
                     12.height,
                     // Company Name - Optional
                     AppTextField(
@@ -1364,7 +1364,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       isValidationRequired: false,
                       decoration: inputDecoration(
                         context,
-                        hint: 'Company name',
+                        hint: languages.lblCompanyNameHint,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
                     ),
@@ -1386,7 +1386,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       },
                       decoration: inputDecoration(
                         context,
-                        hint: 'VAT number',
+                        hint: languages.lblVatNumberHint,
                         fillColor: context.scaffoldBackgroundColor,
                         prefixIcon: Icon(
                           Icons.receipt_long_outlined,
@@ -1398,7 +1398,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     16.height,
                     Divider(),
                     12.height,
-                    Text('Professional Details',
+                    Text(languages.lblProfessionalDetails,
                         style: boldTextStyle(size: 16)),
                     12.height,
                     // Skills - Text Input (Optional)
@@ -1411,7 +1411,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       isValidationRequired: false,
                       decoration: inputDecoration(
                         context,
-                        hint: 'Skills',
+                        hint: languages.lblSkillsHint,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
                     ),
@@ -1428,7 +1428,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       maxLines: 5,
                       decoration: inputDecoration(
                         context,
-                        hint: 'Experience',
+                        hint: languages.lblExperienceHint,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
                     ),
@@ -1443,7 +1443,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       isValidationRequired: false,
                       decoration: inputDecoration(
                         context,
-                        hint: 'Mobility',
+                        hint: languages.lblMobilityShortHint,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
                     ),
@@ -1458,7 +1458,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       isValidationRequired: false,
                       decoration: inputDecoration(
                         context,
-                        hint: 'Certification',
+                        hint: languages.lblCertificationShortHint,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
                     ),
@@ -1570,14 +1570,14 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     16.height,
                     Divider(),
                     12.height,
-                    Text('Location', style: boldTextStyle(size: 16)),
+                    Text(languages.lblLocationSection, style: boldTextStyle(size: 16)),
                     12.height,
                     // Provider dropdown (for admin only)
                     if (_isAdminUser())
                       DropdownButtonFormField<UserData>(
                         decoration: inputDecoration(
                           context,
-                          hint: 'Select provider',
+                          hint: languages.lblSelectProviderHint,
                           fillColor: context.scaffoldBackgroundColor,
                         ),
                         isExpanded: true,
@@ -1873,7 +1873,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     16.height,
                     Divider(),
                     12.height,
-                    Text('Languages', style: boldTextStyle(size: 16)),
+                    Text(languages.lblLanguagesSection, style: boldTextStyle(size: 16)),
                     8.height,
                     _buildRequiredLabel(languages.knownLanguages),
                     8.height,
@@ -1951,7 +1951,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       isValidationRequired: false,
                       decoration: inputDecoration(
                         context,
-                        hint: 'Education',
+                        hint: languages.lblEducationHint,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
                     ),
@@ -1967,7 +1967,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       maxLines: 5,
                       decoration: inputDecoration(
                         context,
-                        hint: 'About me',
+                        hint: languages.lblAboutMeHint,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
                     ),

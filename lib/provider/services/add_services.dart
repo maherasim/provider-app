@@ -99,7 +99,7 @@ class _AddServicesState extends State<AddServices> {
   List<VisitTypeData> visitTypeData = [
     VisitTypeData(
       isEnabled: false,
-      title: 'Hybrid',
+      title: languages.lblHybrid,
       key: VISIT_OPTION_HYBRID,
     ),
     VisitTypeData(
@@ -905,7 +905,7 @@ class _AddServicesState extends State<AddServices> {
                 DropdownButtonFormField<RemoteWorkLevel>(
                   decoration: inputDecoration(
                     context,
-                    hint: 'Remote Work Level',
+                    hint: languages.lblRemoteWorkLevelHint,
                     fillColor: context.scaffoldBackgroundColor,
                   ),
                   isExpanded: true,
@@ -933,7 +933,7 @@ class _AddServicesState extends State<AddServices> {
                 DropdownButtonFormField<CareerLevel>(
                   decoration: inputDecoration(
                     context,
-                    hint: 'Career Level',
+                    hint: languages.lblCareerLevelHint,
                     fillColor: context.scaffoldBackgroundColor,
                   ),
                   isExpanded: true,
@@ -961,7 +961,7 @@ class _AddServicesState extends State<AddServices> {
                 DropdownButtonFormField<TravelRequirement>(
                   decoration: inputDecoration(
                     context,
-                    hint: 'Travel Required',
+                    hint: languages.lblTravelRequiredHint,
                     fillColor: context.scaffoldBackgroundColor,
                   ),
                   isExpanded: true,

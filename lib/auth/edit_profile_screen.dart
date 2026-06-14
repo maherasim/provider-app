@@ -845,7 +845,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Profile photo', style: secondaryTextStyle()),
+                        Text(languages.lblProfilePhoto, style: secondaryTextStyle()),
                         4.height,
                         Align(
                           child: Stack(
@@ -1234,14 +1234,14 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           items: [
                             DropdownMenuItem(
                               value: 1,
-                              child: Text('Active',
+                              child: Text(languages.active,
                                   style: primaryTextStyle(),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis),
                             ),
                             DropdownMenuItem(
                               value: 0,
-                              child: Text('Inactive',
+                              child: Text(languages.inactive,
                                   style: primaryTextStyle(),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis),

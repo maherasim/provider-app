@@ -63,7 +63,7 @@ class CinetPayServicesNew {
         log(response);
 
         if (data['status'] == "REFUSED") {
-          toast('Your payment failed please try again');
+          toast(languages.yourPaymentFailedPleaseTryAgain);
         } else if (data['status'] == "ACCEPTED") {
           toast(languages.yourPaymentHasBeenMadeSuccessfully);
           appStore.setLoading(false);

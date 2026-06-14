@@ -107,7 +107,7 @@ class _CustomImagePickerState extends State<CustomImagePicker> {
                     setState(() {});
                     widget.onFileSelected.call(imageFiles);
                   }).catchError((e) {
-                    toast('Error capturing image: ${e.toString()}');
+                    toast('${languages.lblErrorCapturingImage}: ${e.toString()}');
                     log('Error in getCameraImage: $e');
                   });
                 } else if (file == GalleryFileTypes.GALLERY) {

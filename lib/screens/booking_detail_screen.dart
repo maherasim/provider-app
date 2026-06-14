@@ -561,14 +561,14 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                   status: status, handymanID: handymanID);
             },
           );
-          if (mounted) toast('Location sharing started');
+          if (mounted) toast(languages.lblLocationSharingStarted);
         }
       } else {
-        if (mounted) toast('Please allow location permission to share your location');
+        if (mounted) toast(languages.lblAllowLocationPermission);
       }
     } else {
       stopLocationUpdates();
-      if (mounted) toast('Location sharing is only available when the booking is in progress');
+      if (mounted) toast(languages.lblLocationSharingOnlyInProgress);
     }
   }
 

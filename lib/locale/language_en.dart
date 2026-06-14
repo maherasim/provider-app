@@ -2330,7 +2330,7 @@ class LanguageEn extends Languages {
 
   @override
   String get serviceProofMediaUploadNote =>
-      'Note : You can Upload Image with ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“JPGÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â , ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¹Ã…â€œPNGÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â, ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“JPEGÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â extension and you can select multiple images';
+      'Note : You can Upload Image with ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œJPGÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â , ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¹Ãƒâ€¦Ã¢â‚¬Å“PNGÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â, ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œJPEGÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â extension and you can select multiple images';
 
   @override
   String get uploadMedia => 'Upload Media';
@@ -2476,11 +2476,11 @@ class LanguageEn extends Languages {
 
   @override
   String get workInProgressWaitingForProvider =>
-      "Work in progress ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â waiting for Employer to update or mark done";
+      "Work in progress ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â waiting for Employer to update or mark done";
 
   @override
   String get jobCompletedWaitingForCustomer =>
-      "Job is completed ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â waiting for customer to pay remaining amount";
+      "Job is completed ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â waiting for customer to pay remaining amount";
 
   @override
   String get paymentCompletedDownloadInvoice =>
@@ -2858,4 +2858,67 @@ class LanguageEn extends Languages {
 
   @override
   String get lblProfilePhoto => 'Profile photo';
+
+  @override
+  String get lblPleaseSelectRating => 'Please select a rating';
+
+  @override
+  String get lblPleaseSelectNewImageFile => 'Please select a new image file';
+
+  @override
+  String get lblSelectedFileDoesNotExist => 'Selected file does not exist';
+
+  @override
+  String get lblChooseValidImageFormat => 'Please choose a PNG, GIF, JPG, or JPEG image.';
+
+  @override
+  String get lblErrorImageFileNotAdded => 'Error: Image file not added to request';
+
+  @override
+  String get lblPleaseSelectRemoteWorkLevel => 'Please select remote work level';
+
+  @override
+  String get lblPleaseSelectCareerLevel => 'Please select career level';
+
+  @override
+  String get lblPleaseSelectTravelRequired => 'Please select travel required';
+
+  @override
+  String get lblPleaseSelectProvider => 'Please select provider';
+
+  @override
+  String get lblPleaseSelectValidImages => 'Please select valid images';
+
+  @override
+  String get lblCompleteProfileBeforeService => 'Please complete your profile before creating a service';
+
+  @override
+  String get lblCantFindRevenueCatProduct => "Can't find revenueCat product";
+
+  @override
+  String get lblLocationSharingStarted => 'Location sharing started';
+
+  @override
+  String get lblAllowLocationPermission => 'Please allow location permission to share your location';
+
+  @override
+  String get lblLocationSharingOnlyInProgress => 'Location sharing is only available when the booking is in progress';
+
+  @override
+  String get lblSavingSubscription => "Wait for a while we're saving your subscription";
+
+  @override
+  String get lblChoosePaymentMethodFirst => 'Choose any one payment method first';
+
+  @override
+  String get lblErrorCapturingImage => 'Error capturing image';
+
+  @override
+  String get lblErrorAddingProfileImage => 'Error adding profile image';
+
+  @override
+  String get lblFileSizeLimitPrefix => 'File size should be less than';
+
+  @override
+  String get lblInvalidUrlPrefix => 'Invalid URL';
 }

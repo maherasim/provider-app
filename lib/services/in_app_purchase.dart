@@ -122,8 +122,7 @@ class InAppPurchaseService {
             (value) {
               log(value.entitlements);
 
-              ///Todo add language key
-              toast("Wait for a while we're saving your subscription");
+              toast(languages.lblSavingSubscription);
               onComplete.call('');
               Purchases.logOut();
               setValue(HAS_IN_REVENUE_CAT_LOGIN_DONE_LEASE_ONCE, false);

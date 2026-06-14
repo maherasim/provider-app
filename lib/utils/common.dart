@@ -337,7 +337,7 @@ String getDisplayTimeFormat(String phpFormat) {
 Future<void> commonLaunchUrl(String url,
     {LaunchMode launchMode = LaunchMode.inAppWebView}) async {
   await launchUrl(Uri.parse(url), mode: launchMode).catchError((e) {
-    toast('Invalid URL: $url');
+    toast('${languages.lblInvalidUrlPrefix}: $url');
     throw e;
   });
 }
@@ -754,7 +754,7 @@ Future<List<File>> pickFiles({
             _filePath.add(File(file.path!));
           } else {
             // File size exceeds the limit
-            toast('File size should be less than $maxFileSizeMB MB');
+            toast('${languages.lblFileSizeLimitPrefix} $maxFileSizeMB MB');
           }
         }
       } else {
@@ -767,7 +767,7 @@ Future<List<File>> pickFiles({
             _filePath.add(cacheFile);
           } else {
             // File size exceeds the limit
-            toast('File size should be less than $maxFileSizeMB MB');
+            toast('${languages.lblFileSizeLimitPrefix} $maxFileSizeMB MB');
           }
         }
       }

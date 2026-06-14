@@ -1,4 +1,4 @@
-/// Response from `GET spoken-languages` (e.g. `/api/spoken-languages`).
+/// Response from `GET spoken-languages` (see `/api/spoken-languages`).
 class SpokenLanguagesResponse {
   final Map<String, String> options;
 

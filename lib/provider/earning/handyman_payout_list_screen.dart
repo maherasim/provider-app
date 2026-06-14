@@ -19,8 +19,7 @@ class HandymanPayoutListScreen extends StatefulWidget {
   HandymanPayoutListScreen({required this.user});
 
   @override
-  _HandymanPayoutListScreenState createState() =>
-      _HandymanPayoutListScreenState();
+  _HandymanPayoutListScreenState createState() => _HandymanPayoutListScreenState();
 }
 
 class _HandymanPayoutListScreenState extends State<HandymanPayoutListScreen> {
@@ -54,42 +53,6 @@ class _HandymanPayoutListScreenState extends State<HandymanPayoutListScreen> {
     if (mounted) super.setState(fn);
   }
 
-  String _localizedPaymentMethod(String paymentMethod) {
-    String method = paymentMethod.validate().toLowerCase().replaceAll(' ', '_');
-
-    if (method == PAYMENT_METHOD_FROM_WALLET) return languages.lblWallet;
-    if (method == PAYMENT_METHOD_COD) return languages.cash;
-    if (method == 'bank_transfer') return languages.lblBankTransfer;
-
-    return paymentMethod
-        .validate()
-        .replaceAll('_', ' ')
-        .capitalizeFirstLetter();
-  }
-
-  String _localizedDescription(String description) {
-    String value = description.validate();
-    RegExpMatch? match = RegExp(
-      r'^(advance|remaining|remaing)\s+payout\s+for\s+bid\s+#?(\d+)$',
-      caseSensitive: false,
-    ).firstMatch(value);
-
-    if (match == null) return value;
-
-    String bidNumber = match.group(2).validate();
-    bool isAdvancePayout = match.group(1).validate().toLowerCase() == 'advance';
-
-    if (appStore.selectedLanguageCode == 'de') {
-      return isAdvancePayout
-          ? 'Vorauszahlung für Gebot #$bidNumber'
-          : 'Restzahlung für Gebot #$bidNumber';
-    }
-
-    return isAdvancePayout
-        ? 'Advance payout for Bid #$bidNumber'
-        : 'Remaining payout for Bid #$bidNumber';
-  }
-
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
@@ -103,8 +66,7 @@ class _HandymanPayoutListScreenState extends State<HandymanPayoutListScreen> {
             physics: AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.fromLTRB(16, 8, 16, 60),
             itemCount: payoutList.length,
-            slideConfiguration:
-                SlideConfiguration(delay: 50.milliseconds, verticalOffset: 400),
+            slideConfiguration: SlideConfiguration(delay: 50.milliseconds, verticalOffset: 400),
             itemBuilder: (_, index) {
               PayoutData data = payoutList[index];
 
@@ -124,11 +86,9 @@ class _HandymanPayoutListScreenState extends State<HandymanPayoutListScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(languages.paymentMethod,
-                            style: secondaryTextStyle(size: 16)),
+                        Text(languages.paymentMethod, style: secondaryTextStyle(size: 16)),
                         Text(
-                          _localizedPaymentMethod(
-                              data.paymentMethod.validate()),
+                          data.paymentMethod.validate().capitalizeFirstLetter(),
                           style: boldTextStyle(color: primaryColor),
                         ),
                       ],
@@ -137,16 +97,12 @@ class _HandymanPayoutListScreenState extends State<HandymanPayoutListScreen> {
                       Column(
                         children: [
                           16.height,
-                          Text(
-                              _localizedDescription(
-                                  data.description.validate()),
-                              style: secondaryTextStyle()),
+                          Text(data.description.validate(), style: secondaryTextStyle()),
                         ],
                       ),
                     16.height,
                     Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       decoration: boxDecorationWithRoundedCorners(
                         backgroundColor: context.cardColor,
                         borderRadius: radius(),
@@ -158,8 +114,7 @@ class _HandymanPayoutListScreenState extends State<HandymanPayoutListScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(languages.lblAmount,
-                                  style: secondaryTextStyle(size: 14)),
+                              Text(languages.lblAmount, style: secondaryTextStyle(size: 14)),
                               16.width,
                               PriceWidget(
                                 price: data.amount.validate(),
@@ -172,11 +127,9 @@ class _HandymanPayoutListScreenState extends State<HandymanPayoutListScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(languages.lblDate,
-                                  style: secondaryTextStyle(size: 14)),
+                              Text(languages.lblDate, style: secondaryTextStyle(size: 14)),
                               Text(
-                                formatDate(data.createdAt.validate().toString(),
-                                    format: DATE_FORMAT_2),
+                                formatDate(data.createdAt.validate().toString(), format: DATE_FORMAT_2),
                                 style: boldTextStyle(size: 14),
                               ),
                             ],

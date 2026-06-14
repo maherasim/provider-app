@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -92,12 +91,6 @@ int getRemainingPlanDays() {
 List<LanguageDataModel> languageList() {
   return [
     LanguageDataModel(
-        id: 5,
-        name: 'German',
-        languageCode: 'de',
-        fullLanguageCode: 'de-DE',
-        flag: 'assets/flag/ic_de.png'),
-    LanguageDataModel(
         id: 1,
         name: 'English',
         languageCode: 'en',
@@ -105,22 +98,28 @@ List<LanguageDataModel> languageList() {
         flag: 'assets/flag/ic_us.png'),
     LanguageDataModel(
         id: 2,
-        name: 'Hindi',
-        languageCode: 'hi',
-        fullLanguageCode: 'hi-IN',
-        flag: 'assets/flag/ic_india.png'),
+        name: 'German',
+        languageCode: 'de',
+        fullLanguageCode: 'de-DE',
+        flag: 'assets/flag/ic_de.png'),
     LanguageDataModel(
         id: 3,
-        name: 'Arabic',
-        languageCode: 'ar',
-        fullLanguageCode: 'ar-AR',
-        flag: 'assets/flag/ic_ar.png'),
-    LanguageDataModel(
-        id: 4,
         name: 'French',
         languageCode: 'fr',
         fullLanguageCode: 'fr-FR',
         flag: 'assets/flag/ic_fr.png'),
+    LanguageDataModel(
+        id: 4,
+        name: 'Italian',
+        languageCode: 'it',
+        fullLanguageCode: 'it-IT',
+        flag: 'assets/flag/ic_it.png'),
+    LanguageDataModel(
+        id: 5,
+        name: 'Spanish',
+        languageCode: 'es',
+        fullLanguageCode: 'es-ES',
+        flag: 'assets/flag/ic_es.png'),
   ];
 
   /*if (getStringAsync(SERVER_LANGUAGES).isNotEmpty) {
@@ -137,10 +136,10 @@ List<LanguageDataModel> languageList() {
   } else {
     return [
       LanguageDataModel(id: 1, name: 'English', languageCode: 'en', fullLanguageCode: 'en-US', flag: 'assets/flag/ic_us.png'),
-      LanguageDataModel(id: 2, name: 'Hindi', languageCode: 'hi', fullLanguageCode: 'hi-IN', flag: 'assets/flag/ic_india.png'),
-      LanguageDataModel(id: 3, name: 'Arabic', languageCode: 'ar', fullLanguageCode: 'ar-AR', flag: 'assets/flag/ic_ar.png'),
-      LanguageDataModel(id: 4, name: 'French', languageCode: 'fr', fullLanguageCode: 'fr-FR', flag: 'assets/flag/ic_fr.png'),
-      LanguageDataModel(id: 5, name: 'German', languageCode: 'de', fullLanguageCode: 'de-DE', flag: 'assets/flag/ic_de.png'),
+      LanguageDataModel(id: 2, name: 'German', languageCode: 'de', fullLanguageCode: 'de-DE', flag: 'assets/flag/ic_de.png'),
+      LanguageDataModel(id: 3, name: 'French', languageCode: 'fr', fullLanguageCode: 'fr-FR', flag: 'assets/flag/ic_fr.png'),
+      LanguageDataModel(id: 4, name: 'Italian', languageCode: 'it', fullLanguageCode: 'it-IT', flag: 'assets/flag/ic_it.png'),
+      LanguageDataModel(id: 5, name: 'Spanish', languageCode: 'es', fullLanguageCode: 'es-ES', flag: 'assets/flag/ic_es.png'),
     ];
   }*/
 }
@@ -202,19 +201,6 @@ InputDecoration inputDecoration(
 
 String parseHtmlString(String? htmlString) {
   return parse(parse(htmlString).body!.text).documentElement!.text;
-}
-
-/// API `message` (and similar) fields are often a [String], but may be a [Map] / [List]
-/// (e.g. validation errors). Coerce to a display-safe string for models and toasts.
-String? apiJsonValueToNullableString(dynamic value) {
-  if (value == null) return null;
-  if (value is String) return value;
-  if (value is Map || value is List) return jsonEncode(value);
-  return value.toString();
-}
-
-String apiJsonValueToString(dynamic value, [String fallback = '']) {
-  return apiJsonValueToNullableString(value) ?? fallback;
 }
 
 String formatDate(String? dateTime,

@@ -1,5 +1,7 @@
 // ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
 
+import 'dart:convert';
+
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +46,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController passwordCont = TextEditingController();
   TextEditingController designationCont = TextEditingController();
 
-  /// Commission % (1-99) for handyman after a provider is selected - no dropdown.
+  /// Commission % (1–99) for handyman after a provider is selected — no dropdown.
   TextEditingController handymanCommissionCont = TextEditingController();
 
   /// FocusNodes
@@ -69,26 +71,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   UserData? selectedProvider;
 
   int? selectedProviderId;
-
-  bool _hasMinLength(String password) => password.length >= 8;
-
-  bool _hasLetter(String password) => RegExp(r'[A-Za-z]').hasMatch(password);
-
-  bool _hasNumber(String password) => RegExp(r'\d').hasMatch(password);
-
-  bool _isPasswordValid(String password) {
-    return _hasMinLength(password) &&
-        _hasLetter(password) &&
-        _hasNumber(password);
-  }
-
-  String? _passwordValidator(String? value) {
-    if (value == null || value.isEmpty) return languages.hintRequired;
-    if (!_hasMinLength(value)) return 'At least 8 characters';
-    if (!_hasLetter(value)) return 'At least one letter (A-Z or a-z)';
-    if (!_hasNumber(value)) return 'At least one number (0-9)';
-    return null;
-  }
 
   @override
   void dispose() {
@@ -145,6 +127,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           children: [
             Form(
               key: formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               child: SingleChildScrollView(
                 physics: BouncingScrollPhysics(),
                 padding: EdgeInsets.all(16),
@@ -433,13 +416,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
             controller: handymanCommissionCont,
             focus: handymanCommissionFocus,
             nextFocus: passwordFocus,
+            isValidationRequired: true,
             errorThisFieldRequired: languages.hintRequired,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             maxLength: 2,
             decoration: inputDecoration(
               context,
               hint:
-                  '${languages.handymanCommission} - ${languages.percentage} (1-99)',
+                  '${languages.handymanCommission} — ${languages.percentage} (1–99)',
               counterText: '',
             ),
             validator: (s) {
@@ -469,16 +453,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
           errorThisFieldRequired: languages.hintRequired,
           decoration: inputDecoration(context, hint: languages.hintPassword),
           isValidationRequired: true,
-          validator: _passwordValidator,
-          onChanged: (value) {
-            setState(() {});
+          validator: (val) {
+            if (val == null || val.isEmpty) {
+              return languages.hintRequired;
+            } else if (!_isPasswordValid(val)) {
+              return languages.passwordLengthShouldBe;
+            }
+            return null;
           },
           onFieldSubmitted: (s) {
             saveUser();
           },
         ),
-        12.height,
-        _buildPasswordRequirements(passwordCont.text),
+        _buildPasswordRequirements(),
         20.height,
         _buildTcAcceptWidget(),
         8.height,
@@ -507,46 +494,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildPasswordRequirements(String password) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: context.cardColor,
-        borderRadius: radius(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildPasswordRequirementItem(
-              'At least 8 characters', _hasMinLength(password)),
-          8.height,
-          _buildPasswordRequirementItem(
-              'At least one letter (A-Z or a-z)', _hasLetter(password)),
-          8.height,
-          _buildPasswordRequirementItem(
-              'At least one number (0-9)', _hasNumber(password)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPasswordRequirementItem(String text, bool isValid) {
-    final Color color = isValid ? Colors.green : textSecondaryColorGlobal;
-
-    return Row(
-      children: [
-        Icon(
-          isValid ? Icons.check_circle : Icons.radio_button_unchecked,
-          size: 16,
-          color: color,
-        ),
-        8.width,
-        Text(text, style: secondaryTextStyle(color: color)).expand(),
       ],
     );
   }
@@ -610,6 +557,55 @@ class _SignUpScreenState extends State<SignUpScreen> {
     ).paddingAll(16);
   }
 
+  Widget _buildPasswordRequirements() {
+    return ValueListenableBuilder<TextEditingValue>(
+      valueListenable: passwordCont,
+      builder: (context, value, child) {
+        final password = value.text;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            8.height,
+            Text('Your password must include:',
+                style: secondaryTextStyle(size: 12)),
+            8.height,
+            _buildPasswordRequirementItem(
+              '12 to 20 characters',
+              _hasValidPasswordLength(password),
+            ),
+            6.height,
+            _buildPasswordRequirementItem(
+              'At least one letter (A-Z or a-z)',
+              _hasPasswordLetter(password),
+            ),
+            6.height,
+            _buildPasswordRequirementItem(
+              'At least one number (0-9)',
+              _hasPasswordNumber(password),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildPasswordRequirementItem(String text, bool isValid) {
+    final color = isValid ? Colors.green : textSecondaryColorGlobal;
+
+    return Row(
+      children: [
+        Icon(
+          isValid ? Icons.check_box : Icons.check_box_outline_blank,
+          color: color,
+          size: 18,
+        ),
+        8.width,
+        Text(text, style: secondaryTextStyle(color: color, size: 12)),
+      ],
+    );
+  }
+
   // Already have an account with sign in text
   Widget _buildFooterWidget() {
     return Column(
@@ -671,71 +667,116 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
-  // Sign up user
-  void saveUser() async {
-    if (_isPasswordValid(passwordCont.text.trim()) &&
-        formKey.currentState!.validate()) {
-      if (selectedUserTypeValue == USER_TYPE_HANDYMAN) {
-        if (selectedProvider == null) {
-          toast(languages.pickAProviderYou);
-          return;
-        }
-        final c = handymanCommissionCont.text.trim();
-        final v = int.tryParse(c);
-        if (c.isEmpty || v == null || v < 1 || v > 99) {
-          toast(languages.advancePercentageShouldBeBetween);
-          return;
-        }
-      }
-
-      formKey.currentState!.save();
-
-      hideKeyboard(context);
-
-      if (isAcceptedTc) {
-        appStore.setLoading(true);
-
-        var request = {
-          UserKeys.firstName: fNameCont.text.trim(),
-          UserKeys.lastName: lNameCont.text.trim(),
-          UserKeys.userName: userNameCont.text.trim(),
-          UserKeys.userType: selectedUserTypeValue,
-          UserKeys.contactNumber: buildMobileNumber(),
-          UserKeys.email: emailCont.text.trim(),
-          UserKeys.password: passwordCont.text.trim(),
-          UserKeys.designation: designationCont.text.trim(),
-          UserKeys.status: 0,
-        };
-        print(request);
-        if (selectedProvider != null) {
-          request.putIfAbsent(UserKeys.providerId, () => selectedProviderId);
-        }
-
-        if (selectedUserTypeValue == USER_TYPE_HANDYMAN) {
-          request.putIfAbsent(
-            CommissionKey.commission,
-            () => handymanCommissionCont.text.trim(),
-          );
-        }
-
-        log(request);
-
-        await registerUser(request).then((userRegisterData) async {
-          appStore.setLoading(false);
-          toast(userRegisterData.message.validate());
-
-          push(SignInScreen(),
-              isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
-        }).catchError((e) {
-          toast(e.toString(), print: true);
-          appStore.setLoading(false);
-        });
-      } else {
-        toast(languages.lblTermCondition);
-        appStore.setLoading(false);
-      }
+  /// Backend requires known spoken languages (`known_languages` / `languages[]`) like the profile form;
+  /// we default to one language derived from the app UI locale — no signup UI field needed.
+  String _defaultSpokenLanguageKey() {
+    switch (appStore.selectedLanguageCode.toLowerCase()) {
+      case 'de':
+        return 'german';
+      case 'fr':
+        return 'french';
+      case 'it':
+        return 'italian';
+      case 'es':
+        return 'spanish';
+      case 'ar':
+        return 'arabic';
+      case 'hi':
+        return 'hindi';
+      default:
+        return 'english';
     }
   }
+
+  // Sign up user
+  void saveUser() async {
+    if (selectedUserTypeValue == USER_TYPE_HANDYMAN) {
+      if (selectedProvider == null) {
+        toast(languages.pickAProviderYou);
+        return;
+      }
+    }
+
+    if (!formKey.currentState!.validate()) {
+      return;
+    }
+
+    // Handyman: commission must be 1–99 (field validator + guard for regressions).
+    if (selectedUserTypeValue == USER_TYPE_HANDYMAN) {
+      final c = handymanCommissionCont.text.trim();
+      final v = int.tryParse(c);
+      if (c.isEmpty || v == null || v < 1 || v > 99) {
+        toast(c.isEmpty
+            ? '${languages.handymanCommission}: ${languages.hintRequired}'
+            : languages.advancePercentageShouldBeBetween);
+        return;
+      }
+    }
+
+    formKey.currentState!.save();
+
+    hideKeyboard(context);
+
+    if (isAcceptedTc) {
+      appStore.setLoading(true);
+
+      var request = {
+        UserKeys.firstName: fNameCont.text.trim(),
+        UserKeys.lastName: lNameCont.text.trim(),
+        UserKeys.userName: userNameCont.text.trim(),
+        UserKeys.userType: selectedUserTypeValue,
+        UserKeys.contactNumber: buildMobileNumber(),
+        UserKeys.email: emailCont.text.trim(),
+        UserKeys.password: passwordCont.text.trim(),
+        UserKeys.designation: designationCont.text.trim(),
+        UserKeys.status: 0,
+        UserKeys.knownLanguages: jsonEncode([_defaultSpokenLanguageKey()]),
+        'languages[0]': _defaultSpokenLanguageKey(),
+      };
+      print(request);
+      if (selectedProvider != null) {
+        request.putIfAbsent(UserKeys.providerId, () => selectedProviderId);
+      }
+
+      if (selectedUserTypeValue == USER_TYPE_HANDYMAN) {
+        request.putIfAbsent(
+          CommissionKey.commission,
+          () => handymanCommissionCont.text.trim(),
+        );
+      }
+
+      log(request);
+
+      await registerUser(request).then((userRegisterData) async {
+        appStore.setLoading(false);
+        toast(userRegisterData.message.validate());
+
+        push(SignInScreen(),
+            isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+      }).catchError((e) {
+        toast(e.toString(), print: true);
+        appStore.setLoading(false);
+      });
+    } else {
+      toast(languages.lblTermCondition);
+      appStore.setLoading(false);
+    }
+  }
+
+  bool _isPasswordValid(String password) {
+    return _hasValidPasswordLength(password) &&
+        _hasPasswordLetter(password) &&
+        _hasPasswordNumber(password);
+  }
+
+  bool _hasValidPasswordLength(String password) =>
+      password.length >= 12 && password.length <= 20;
+
+  bool _hasPasswordLetter(String password) =>
+      RegExp(r'[A-Za-z]').hasMatch(password);
+
+  bool _hasPasswordNumber(String password) =>
+      RegExp(r'[0-9]').hasMatch(password);
 
 //endregion
 }

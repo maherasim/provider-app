@@ -3,8 +3,8 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:handyman_provider_flutter/components/app_widgets.dart';
 import 'package:handyman_provider_flutter/components/cached_image_widget.dart';
 import 'package:handyman_provider_flutter/components/disabled_rating_bar_widget.dart';
-import 'package:handyman_provider_flutter/components/profile_report_dialog.dart';
 import 'package:handyman_provider_flutter/components/price_widget.dart';
+import 'package:handyman_provider_flutter/components/profile_report_dialog.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/models/service_model.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
@@ -17,7 +17,6 @@ import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/extensions/num_extenstions.dart';
-import 'package:handyman_provider_flutter/utils/job_posting_enum_localizations.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../../components/base_scaffold_widget.dart';
@@ -62,12 +61,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
     );
   }
 
-  /// POST `ugc/report-profile` via [ProfileReportDialog] (customer user id from job).
-  Future<void> _openCustomerProfileReportDialog(int reportedUserId) async {
-    if (reportedUserId == 0) {
-      toast(errorSomethingWentWrong);
-      return;
-    }
+  Future<void> _openProfileReportDialog(int reportedUserId) async {
     await showInDialog(
       context,
       contentPadding: EdgeInsets.zero,
@@ -144,8 +138,6 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
           parseHtmlString(content),
           style: primaryTextStyle(size: 14),
           colorClickableText: gradientBlue,
-          trimCollapsedText: languages.lblReadMore,
-          trimExpandedText: languages.lblReadLess,
         ),
       ],
     );
@@ -167,11 +159,12 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
     String location = "${data.cityName ?? ''}${data.countryName.validate().isEmpty ? "" : "${data.cityName.validate().isEmpty ? "" :  " - "}${data.countryName}"}";
     
     // Get travel_required value - convert to display string
-    String travelRequiredValue = languages.lblNo;
+    String travelRequiredValue = 'No'; // Default to "No"
     if (data.travelRequired != null) {
-      travelRequiredValue = data.travelRequired!.localizedLabel;
+      travelRequiredValue = data.travelRequired!.displayName;
     } else {
-      travelRequiredValue = languages.lblNo;
+      // If null, check if we can infer from other data or default to "No"
+      travelRequiredValue = 'No';
     }
     
     // Debug: Log the travel_required value
@@ -180,7 +173,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Job title + report (same flow as list card menu, without block on this screen)
+        // Job title + report (list screen ⋮ has report/block; detail: report only, next to name)
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -193,10 +186,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
             IconButton(
               tooltip: languages.lblReportJob,
               padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(
-                minWidth: 40,
-                minHeight: 40,
-              ),
+              constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
               icon: const Icon(
                 Icons.flag_outlined,
                 color: Colors.red,
@@ -224,7 +214,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
 
         // Simple key-value pairs
         _buildSimpleRow(
-          label: languages.lblJobType,
+          label: "Job Type",
           value: data.type?.displayName ?? '',
           valueBackgroundColor: data.type?.bgColor,
         ),
@@ -237,36 +227,36 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
           value: formatDate(data.endDate.validate()),
         ),
         _buildSimpleRow(
-          label: languages.lblBudgetOrPrice,
+          label: "Budget/Price",
           value: _formatPrice(data.price.validate(), data.priceType),
         ),
         _buildSimpleRow(
-          label: languages.lblTotalBudget,
+          label: "Total Budget",
           value: data.totalBudget.validate().toPriceFormat(),
         ),
         _buildSimpleRow(
-          label: languages.lblTotalDays,
+          label: "Total Days",
           value: data.totalDays?.toString() ?? '0',
         ),
         _buildSimpleRow(
-          label: languages.lblTotalHours,
+          label: "Total Hours",
           value: data.totalHours?.toString() ?? '0',
         ),
         _buildSimpleRow(
-          label: languages.lblRemoteWorkLevelHint,
-          value: data.remoteWorkLevel?.localizedLabel ?? '',
+          label: "Remote Work Level",
+          value: data.remoteWorkLevel?.displayName ?? '',
         ),
         _buildSimpleRow(
-          label: languages.lblTravelRequiredHint,
+          label: "Travel Required",
           value: travelRequiredValue,
         ),
         _buildSimpleRow(
-          label: languages.lblCareerLevelHint,
-          value: data.careerLevel?.localizedLabel ?? '',
+          label: "Career Level",
+          value: data.careerLevel?.displayName ?? '',
         ),
         _buildSimpleRow(
-          label: languages.lblEducationLevel,
-          value: data.educationLevel?.localizedLabel ?? '',
+          label: "Education Level",
+          value: data.educationLevel?.displayName ?? '',
         ),
 
         // Description, Requirements, Duties, Benefits - Simple sections
@@ -278,19 +268,19 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
         ],
         if (data.requirement.validate().isNotEmpty) ...[
           _buildSimpleSection(
-            title: languages.lblSkillsAndRequirements,
+            title: "Skills & Requirements",
             content: data.requirement.validate(),
           ),
         ],
         if (data.duties.validate().isNotEmpty) ...[
           _buildSimpleSection(
-            title: languages.lblDutiesAndResponsibilities,
+            title: "Duties & Responsibilities",
             content: data.duties.validate(),
           ),
         ],
         if (data.benefits.validate().isNotEmpty) ...[
           _buildSimpleSection(
-            title: languages.lblBenefits,
+            title: "Benefits",
             content: data.benefits.validate(),
           ),
         ],
@@ -445,7 +435,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                         directionMarguee: DirectionMarguee.oneDirection,
                         child: Row(
                           children: [
-                            Text(languages.lblBidPriceLabel, style: secondaryTextStyle(size: 12)),
+                            Text('Bid Price: ', style: secondaryTextStyle(size: 12)),
                             PriceWidget(
                               price: bidderData.price.validate(),
                               isHourlyService: bidderData.postJobData?.priceType == PriceType.hourly,
@@ -472,7 +462,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                       child: AppButton(
                         padding: EdgeInsets.zero,
                         child: Text(
-                          languages.lblViewJob,
+                          'View Job',
                           style: boldTextStyle(color: white, size: 12),
                         ),
                         color: Colors.transparent,
@@ -533,8 +523,11 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
     );
   }
   Widget customerWidget(PostJobData? data) {
-    if (data == null) return const SizedBox.shrink();
-    final int customerUserId = (data.customerId ?? 0).toInt();
+    final d = data!;
+    final int? customerUserId = d.customerId?.toInt();
+    final bool showReportCustomer = customerUserId != null &&
+        customerUserId > 0 &&
+        customerUserId != appStore.userId.validate().toInt();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -551,9 +544,10 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
               backgroundColor: context.cardColor,
               borderRadius: BorderRadius.all(Radius.circular(16))),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CachedImageWidget(
-                url: data.customerProfile.validate(),
+                url: d.customerProfile.validate(),
                 fit: BoxFit.cover,
                 height: 60,
                 width: 60,
@@ -564,38 +558,39 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Marquee(
                         directionMarguee: DirectionMarguee.oneDirection,
                         child: Text(
-                          data.customerName.validate(),
+                          d.customerName.validate(),
                           style: boldTextStyle(size: 14),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ).expand(),
-                      IconButton(
-                        tooltip: languages.lblReportProfileTitle,
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(
-                          minWidth: 40,
-                          minHeight: 40,
+                      if (showReportCustomer)
+                        IconButton(
+                          tooltip: languages.lblReportProfileTitle,
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(
+                            minWidth: 40,
+                            minHeight: 40,
+                          ),
+                          icon: const Icon(
+                            Icons.flag_outlined,
+                            color: Colors.red,
+                            size: 22,
+                          ),
+                          onPressed: () => _openProfileReportDialog(
+                            customerUserId!,
+                          ),
                         ),
-                        icon: const Icon(
-                          Icons.flag_outlined,
-                          color: Colors.red,
-                          size: 22,
-                        ),
-                        onPressed: () {
-                          _openCustomerProfileReportDialog(customerUserId);
-                        },
-                      ),
                     ],
                   ),
                   4.height,
                   Text(
-                    "${data.cityName ?? ''}${data.countryName.validate().isEmpty ? "" : "${data.cityName.validate().isEmpty ? "" :  " - "}${data.countryName}"}",
+                    "${d.cityName ?? ''}${d.countryName.validate().isEmpty ? "" : "${d.cityName.validate().isEmpty ? "" : " - "}${d.countryName}"}",
                     style: secondaryTextStyle(size: 12),
                   ),
                 ],

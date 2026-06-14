@@ -23,6 +23,10 @@ class AppLocalizations extends LocalizationsDelegate<Languages> {
         return LanguageDe();
       case 'fr':
         return LanguageFr();
+      case 'it':
+      case 'es':
+        // Full translations not bundled yet; use English strings until language_*.dart exists.
+        return LanguageEn();
       default:
         return LanguageEn();
     }

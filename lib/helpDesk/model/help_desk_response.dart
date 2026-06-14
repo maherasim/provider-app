@@ -1,11 +1,6 @@
 import '../../models/attachment_model.dart';
 import '../../models/bank_list_response.dart';
 
-String normalizeHelpDeskStatus(dynamic status) {
-  final normalizedStatus = status?.toString().trim().toLowerCase() ?? '';
-  return normalizedStatus == 'close' ? 'closed' : normalizedStatus;
-}
-
 class HelpDeskResponse {
   Pagination? pagination;
   List<HelpDeskListData>? data;
@@ -14,14 +9,8 @@ class HelpDeskResponse {
 
   factory HelpDeskResponse.fromJson(Map<String, dynamic> json) {
     return HelpDeskResponse(
-      data: json["data"] != null
-          ? (json['data'] as List)
-              .map((i) => HelpDeskListData.fromJson(i))
-              .toList()
-          : null,
-      pagination: json['pagination'] != null
-          ? Pagination.fromJson(json['pagination'])
-          : null,
+      data: json["data"] != null ? (json['data'] as List).map((i) => HelpDeskListData.fromJson(i)).toList() : null,
+      pagination: json['pagination'] != null ? Pagination.fromJson(json['pagination']) : null,
     );
   }
 
@@ -70,15 +59,9 @@ class HelpDeskListData {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     employeeName = json['employee_name'];
-    status = normalizeHelpDeskStatus(json['status']);
-    helDeskAttachments = json['attachments'] != null
-        ? new List<String>.from(json['attachments'])
-        : null;
-    attachments = json['attachments_array'] != null
-        ? (json['attachments_array'] as List)
-            .map((i) => Attachments.fromJson(i))
-            .toList()
-        : null;
+    status = json['status'];
+    helDeskAttachments = json['attachments'] != null ? new List<String>.from(json['attachments']) : null;
+    attachments = json['attachments_array'] != null ? (json['attachments_array'] as List).map((i) => Attachments.fromJson(i)).toList() : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -95,8 +78,7 @@ class HelpDeskListData {
       data['attachments'] = this.helDeskAttachments;
     }
     if (this.attachments != null) {
-      data['attachments_array'] =
-          this.attachments!.map((v) => v.toJson()).toList();
+      data['attachments_array'] = this.attachments!.map((v) => v.toJson()).toList();
     }
     return data;
   }

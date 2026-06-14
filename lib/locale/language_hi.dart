@@ -219,9 +219,6 @@ class LanguageHi extends Languages {
   String get lblBooking => 'बुकिंग';
 
   @override
-  String get lblBookingsCount => 'बुकिंग';
-
-  @override
   String get lblTotalBooking => 'कुल बुकिंग';
 
   @override
@@ -301,6 +298,9 @@ class LanguageHi extends Languages {
 
   @override
   String get lblChat => 'चैट';
+
+  @override
+  String get lblDirectMessage => 'सीधा संदेश';
 
   @override
   String get lblJob => 'नौकरी';
@@ -499,6 +499,9 @@ class LanguageHi extends Languages {
 
   @override
   String get lblHandymanType => "हैंडमैन प्रकार";
+
+  @override
+  String get handymanPlanLimitExceeded => 'आपकी वर्तमान योजना अधिक हैंडमैन की अनुमति नहीं देती। कृपया अपनी सदस्यता अपग्रेड करें।';
 
   @override
   String get lblFixed => "फिक्स्ड";
@@ -1297,9 +1300,6 @@ class LanguageHi extends Languages {
   String get published => 'प्रकाशित';
 
   @override
-  String get publish => 'प्रकाशित करें';
-
-  @override
   String get clearChatMessage => 'क्या आप इस चैट को साफ़ करना चाहते हैं?';
 
   @override
@@ -2063,15 +2063,6 @@ class LanguageHi extends Languages {
   String get sendMessage => 'मेसेज भेजें';
 
   @override
-  String messageHiddenDueToPolicy(List<String> policyTypes) {
-    final types = policyTypes
-        .map((e) => e.trim().toLowerCase() == 'phone' ? 'Phone' : e.trim())
-        .where((e) => e.isNotEmpty)
-        .join(', ');
-    return 'Message hidden due to policy${types.isNotEmpty ? ' ($types)' : ''}';
-  }
-
-  @override
   String get handymanLocation => 'सहायक स्थान';
 
   @override
@@ -2082,29 +2073,6 @@ class LanguageHi extends Languages {
 
   @override
   String get lastUpdatedAt => 'अंतिम बार अद्यतन किया गया:';
-
-  @override
-  String get workingAddress => 'काम का पता';
-
-  @override
-  String get addressNotAvailable => 'पता उपलब्ध नहीं है';
-
-  @override
-  String get resumeWork => 'काम फिर से शुरू करें';
-
-  @override
-  String get rateCustomer => 'ग्राहक को रेट करें';
-
-  @override
-  String get locationSharingStarted => 'लोकेशन शेयरिंग शुरू';
-
-  @override
-  String get allowLocationPermission =>
-      'कृपया अपना लोकेशन शेयर करने के लिए लोकेशन परमिशन दें';
-
-  @override
-  String get locationSharingOnlyWhenInProgress =>
-      'लोकेशन शेयरिंग केवल बुकिंग प्रगति में होने पर उपलब्ध है';
 
   String get lblBankDetails => "बैंक विवरण";
 
@@ -2607,344 +2575,6 @@ class LanguageHi extends Languages {
   @override
   String get waitingForProviderToMarkBidAsCompleted =>
       'प्रदाता के बोली को पूरा के रूप में चिह्नित करने की प्रतीक्षा कर रहा है';
-
-  @override
-  String get lblExtraChargesBreakdown => 'अतिरिक्त शुल्क विवरण';
-
-  @override
-  String get lblSplitPayment => 'भुगतान विभाजित करें';
-
-  @override
-  String get lblStartWork => 'काम शुरू करें';
-
-  @override
-  String get lblMarkComplete => 'पूर्ण करें';
-
-  @override
-  String get lblPlusExtraCharges => '+ अतिरिक्त शुल्क';
-
-  @override
-  String get lblDownload => 'डाउनलोड';
-
-  @override
-  String get lblEmployerReview => 'नियोक्ता समीक्षा';
-
-  @override
-  String get lblCustomerReview => 'ग्राहक समीक्षा';
-
-  @override
-  String get lblRateUnitPrice => 'दर (इकाई मूल्य)';
-
-  @override
-  String get lblNetAmount => 'शुल्क के बाद राशि';
-
-  @override
-  String get lblNetAmountFormula => '(उप-योग - कर)';
-
-  @override
-  String get lblGrandTotalAmount => 'कुल योग राशि';
-
-  @override
-  String get lblDirectMessage => 'सीधा संदेश';
-
-  @override
-  String get lblTotal => 'कुल';
-
-  @override
-  String get lblSearchLanguagesHint => 'भाषाएँ खोजें';
-
-  @override
-  String get lblCompanyNameHint => 'कंपनी का नाम';
-
-  @override
-  String get lblVatNumberHint => 'VAT नंबर';
-
-  @override
-  String get lblSelectAvailabilityHint => 'उপलब्धता चुनें';
-
-  @override
-  String get lblSelectCountryTaxHint => 'देश कर चुनें';
-
-  @override
-  String get lblMobilityHint => 'गतिशीलता (जैसे कार, बाइक, सार्वजनिक परिवहन)';
-
-  @override
-  String get lblExperienceDescHint => 'अनुभव (अपना कार्यानुभव बताएँ)';
-
-  @override
-  String get lblCareerLevelHint => 'करियर स्तर';
-
-  @override
-  String get lblEducationHint => 'शिक्षा';
-
-  @override
-  String get lblYearsOfExperienceHint => 'अनुभव के वर्ष';
-
-  @override
-  String get lblCertificationHint => 'प्रमाणपत्र (अल्पविराम से अलग)';
-
-  @override
-  String get lblSelectProviderHint => 'प्रदाता चुनें';
-
-  @override
-  String get lblRemoteWorkLevelHint => 'दूरस्थ कार्य स्तर';
-
-  @override
-  String get lblTravelRequiredHint => 'यात्रा आवश्यक';
-
-  @override
-  String get lblRemoteWorkOnsite100 => 'ऑन-साइट (100%)';
-
-  @override
-  String get lblRemoteWork25 => '25% दूरस्थ';
-
-  @override
-  String get lblRemoteWork50 => '50% दूरस्थ';
-
-  @override
-  String get lblRemoteWork75 => '75% दूरस्थ';
-
-  @override
-  String get lblRemoteWork100 => '100% दूरस्थ';
-
-  @override
-  String get lblCareerNotSpecified => 'निर्दिष्ट नहीं';
-
-  @override
-  String get lblCareerEntryLevel => 'प्रवेश स्तर';
-
-  @override
-  String get lblCareerIntermediateLevel => 'मध्यम स्तर';
-
-  @override
-  String get lblCareerExperienced => 'अनुभवी';
-
-  @override
-  String get lblCareerProfessional => 'पेशेवर';
-
-  @override
-  String get lblCareerMiddleManagement => 'मध्यम प्रबंधन';
-
-  @override
-  String get lblCareerExecutiveManagement => 'कार्यकारी प्रबंधन';
-
-  @override
-  String get lblCareerSeniorManagement => 'वरिष्ठ प्रबंधन';
-
-  @override
-  String get lblCareerDirector => 'निदेशक';
-
-  @override
-  String get lblCareerTechnician => 'तकनीशियन';
-
-  @override
-  String get lblCareerLeader => 'लीडर';
-
-  @override
-  String get lblCareerManager => 'प्रबंधक';
-
-  @override
-  String get lblEduHighSchool => 'हाई स्कूल';
-
-  @override
-  String get lblEduAssociate => 'सहयोगी डिग्री';
-
-  @override
-  String get lblEduUndergraduate => 'स्नातक';
-
-  @override
-  String get lblEduMasters => 'स्नातकोत्तर / मास्टर';
-
-  @override
-  String get lblEduDoctorate => 'डॉक्टरेट';
-
-  @override
-  String get lblAccountHolderNameHint => 'खाताधारक का नाम';
-
-  @override
-  String get lblMobileNumberHint => 'मोबाइल नंबर';
-
-  @override
-  String get lblIbanNumberHint => 'IBAN नंबर';
-
-  @override
-  String get lblBicSwiftHint => 'BIC / SWIFT कोड';
-
-  @override
-  String get lblStripeAccountHint => 'Stripe खाता';
-
-  @override
-  String get lblRegularPayments => '??????? ??????';
-
-  @override
-  String get lblJobRequestPayments => 'नौकरी अनुरोध भुगतान';
-
-  @override
-  String get lblUsers => 'Users';
-
-  @override
-  String get lblDateTime => 'Date & Time';
-
-  @override
-  String get lblJobRequest => 'Job Request';
-
-  @override
-  String get lblAttachment => 'अनुलग्नक';
-
-  @override
-  String get lblUpdateBid => 'बोली अपडेट करें';
-
-  @override
-  String get lblCompanyInformation => 'कंपनी की जानकारी';
-
-  @override
-  String get lblProfessionalDetails => 'पेशेवर विवरण';
-
-  @override
-  String get lblContactAndAddress => 'संपर्क और पता';
-
-  @override
-  String get lblLocationSection => 'स्थान';
-
-  @override
-  String get lblLanguagesSection => 'भाषाएँ';
-
-  @override
-  String get lblAddLanguage => 'भाषा जोड़ें';
-
-  @override
-  String get lblEducationAndBio => 'शिक्षा और जीवनी';
-
-  @override
-  String get lblSkillsHint => 'कौशल';
-
-  @override
-  String get lblExperienceHint => 'अनुभव';
-
-  @override
-  String get lblMobilityShortHint => 'गतिशीलता';
-
-  @override
-  String get lblCertificationShortHint => 'प्रमाणपत्र';
-
-  @override
-  String get lblHandymanCommissionHint => 'हैंडीमैन कमीशन (1-99)';
-
-  @override
-  String get lblAboutMeHint => 'मेरे बारे में';
-
-  @override
-  String get lblBidPriceLabel => 'बोली मूल्य: ';
-
-  @override
-  String get lblRequirementsColon => 'आवश्यकताएँ:';
-
-  @override
-  String get lblReadMore => ' ...और पढ़ें';
-
-  @override
-  String get lblReadLess => ' कम पढ़ें';
-
-  @override
-  String get lblJobType => 'नौकरी प्रकार';
-
-  @override
-  String get lblRateType => 'दर प्रकार';
-
-  @override
-  String get lblTotalBudget => 'कुल बजट';
-
-  @override
-  String get lblProposals => 'प्रस्ताव';
-
-  @override
-  String get lblWorker => 'कार्यकर्ता';
-
-  @override
-  String get lblHybrid => 'हाइब्रिड';
-
-  @override
-  String get lblBankTransferDetails => 'बैंक ट्रांसफर विवरण';
-
-  @override
-  String get lblBankTransfer => 'बैंक ट्रांसफर';
-
-  @override
-  String get lblBankTransferInstructions =>
-      'कृपया राशि निम्नलिखित बैंक खाते में ट्रांसफर करें:';
-
-  @override
-  String get lblCountry => 'देश';
-
-  @override
-  String get lblIban => 'IBAN';
-
-  @override
-  String get lblBicSwiftShort => 'BIC/Swift';
-
-  @override
-  String get lblPremiumPlansSoon => 'प्रीमियम प्लान जल्द ही';
-
-  @override
-  String get lblPremiumPlansSoonSubtitle =>
-      'हम आपके लिए कुछ बेहतरीन तैयार कर रहे हैं। जुड़े रहें।';
-
-  @override
-  String get lblBudgetOrPrice => 'बजट / मूल्य';
-
-  @override
-  String get lblTotalDays => 'कुल दिन';
-
-  @override
-  String get lblTotalHours => 'कुल घंटे';
-
-  @override
-  String get lblStartTime => 'Start Time';
-
-  @override
-  String get lblEndTime => 'End Time';
-
-  @override
-  String get lblNumberOfHours => 'Number of Hours';
-
-  @override
-  String get lblNumberOfDays => 'Number of Days';
-
-  @override
-  String get lblEducationLevel => 'शिक्षा स्तर';
-
-  @override
-  String get lblSkillsAndRequirements => 'कौशल और आवश्यकताएँ';
-
-  @override
-  String get lblDutiesAndResponsibilities => 'कर्तव्य और जिम्मेदारियाँ';
-
-  @override
-  String get lblBenefits => 'लाभ';
-
-  @override
-  String get lblViewJob => 'नौकरी देखें';
-
-  @override
-  String get lblBidDetails => 'बोली विवरण';
-
-  @override
-  String get lblWaitingForAdminApproval => 'व्यवस्थापक अनुमोदन की प्रतीक्षा';
-
-  @override
-  String get lblThisBidWasCancelled => 'यह बोली रद्द कर दी गई';
-
-  @override
-  String get lblProgressAdvance => 'अग्रिम';
-
-  @override
-  String get lblProgressAdvancePaidShort => 'अग्रिम सशुल्क';
-
-  @override
-  String get lblProgressLetsStart => 'शुरू करें';
-
-  @override
-  String get lblProgressWork => 'कार्य';
 
   @override
   String get lblFullTime => 'पूर्णकालिक';

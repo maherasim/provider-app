@@ -219,9 +219,6 @@ class LanguageFr extends Languages {
   String get lblBooking => 'Réservation';
 
   @override
-  String get lblBookingsCount => 'Réservations';
-
-  @override
   String get lblTotalBooking => 'Total des réservations';
 
   @override
@@ -301,6 +298,9 @@ class LanguageFr extends Languages {
 
   @override
   String get lblChat => 'Discuter';
+
+  @override
+  String get lblDirectMessage => 'Message direct';
 
   @override
   String get lblJob => 'Emplois';
@@ -504,6 +504,9 @@ class LanguageFr extends Languages {
 
   @override
   String get lblHandymanType => "Type de bricoleur";
+
+  @override
+  String get handymanPlanLimitExceeded => "Votre plan actuel ne permet pas d'ajouter plus d'artisans. Veuillez mettre à niveau votre abonnement.";
 
   @override
   String get lblFixed => "Fixé";
@@ -1311,9 +1314,6 @@ class LanguageFr extends Languages {
   String get published => 'Publié';
 
   @override
-  String get publish => 'Publier';
-
-  @override
   String get clearChatMessage => 'Voulez-vous effacer cette discussion?';
 
   @override
@@ -2087,15 +2087,6 @@ class LanguageFr extends Languages {
   String get sendMessage => 'Envoyer le message';
 
   @override
-  String messageHiddenDueToPolicy(List<String> policyTypes) {
-    final types = policyTypes
-        .map((e) => e.trim().toLowerCase() == 'phone' ? 'Telephone' : e.trim())
-        .where((e) => e.isNotEmpty)
-        .join(', ');
-    return 'Message masque en raison de la politique${types.isNotEmpty ? ' ($types)' : ''}';
-  }
-
-  @override
   String get handymanLocation => 'Emplacement du bricoleur';
 
   @override
@@ -2106,29 +2097,6 @@ class LanguageFr extends Languages {
 
   @override
   String get lastUpdatedAt => 'Dernière mise à jour à :';
-
-  @override
-  String get workingAddress => 'Adresse de travail';
-
-  @override
-  String get addressNotAvailable => 'Adresse non disponible';
-
-  @override
-  String get resumeWork => 'Reprendre le travail';
-
-  @override
-  String get rateCustomer => 'Évaluer le client';
-
-  @override
-  String get locationSharingStarted => 'Partage de position démarré';
-
-  @override
-  String get allowLocationPermission =>
-      'Veuillez autoriser l\'accès à la position pour partager votre position';
-
-  @override
-  String get locationSharingOnlyWhenInProgress =>
-      'Le partage de position est disponible uniquement lorsque la réservation est en cours';
 
   String get lblBankDetails => "Coordonnées bancaires";
 
@@ -2641,346 +2609,6 @@ class LanguageFr extends Languages {
   @override
   String get waitingForProviderToMarkBidAsCompleted =>
       'En attente du fournisseur pour marquer l\'offre comme terminée';
-
-  @override
-  String get lblExtraChargesBreakdown => 'Détail des frais supplémentaires';
-
-  @override
-  String get lblSplitPayment => 'Fractionner le paiement';
-
-  @override
-  String get lblStartWork => 'Commencer le travail';
-
-  @override
-  String get lblMarkComplete => 'Terminer';
-
-  @override
-  String get lblPlusExtraCharges => '+ Frais supplémentaires';
-
-  @override
-  String get lblDownload => 'Télécharger';
-
-  @override
-  String get lblEmployerReview => 'Avis employeur';
-
-  @override
-  String get lblCustomerReview => 'Avis client';
-
-  @override
-  String get lblRateUnitPrice => 'Tarif (prix unitaire)';
-
-  @override
-  String get lblNetAmount => 'Montant net';
-
-  @override
-  String get lblNetAmountFormula => '(Sous-total - Taxe)';
-
-  @override
-  String get lblGrandTotalAmount => 'Montant total général';
-
-  @override
-  String get lblDirectMessage => 'Message direct';
-
-  @override
-  String get lblTotal => 'Total';
-
-  @override
-  String get lblSearchLanguagesHint => 'Rechercher des langues';
-
-  @override
-  String get lblCompanyNameHint => 'Nom de l\'entreprise';
-
-  @override
-  String get lblVatNumberHint => 'Numéro de TVA';
-
-  @override
-  String get lblSelectAvailabilityHint => 'Sélectionner la disponibilité';
-
-  @override
-  String get lblSelectCountryTaxHint => 'Sélectionner la taxe pays';
-
-  @override
-  String get lblMobilityHint => 'Mobilité (ex. voiture, vélo, transports)';
-
-  @override
-  String get lblExperienceDescHint => 'Expérience (décrivez votre parcours)';
-
-  @override
-  String get lblCareerLevelHint => 'Niveau de carrière';
-
-  @override
-  String get lblEducationHint => 'Formation';
-
-  @override
-  String get lblYearsOfExperienceHint => 'Années d\'expérience';
-
-  @override
-  String get lblCertificationHint =>
-      'Certifications (séparées par des virgules)';
-
-  @override
-  String get lblSelectProviderHint => 'Sélectionner un fournisseur';
-
-  @override
-  String get lblRemoteWorkLevelHint => 'Niveau de télétravail';
-
-  @override
-  String get lblTravelRequiredHint => 'Déplacements requis';
-
-  @override
-  String get lblRemoteWorkOnsite100 => 'Sur site (100 %)';
-
-  @override
-  String get lblRemoteWork25 => '25 % à distance';
-
-  @override
-  String get lblRemoteWork50 => '50 % à distance';
-
-  @override
-  String get lblRemoteWork75 => '75 % à distance';
-
-  @override
-  String get lblRemoteWork100 => '100 % à distance';
-
-  @override
-  String get lblCareerNotSpecified => 'Non précisé';
-
-  @override
-  String get lblCareerEntryLevel => 'Niveau débutant';
-
-  @override
-  String get lblCareerIntermediateLevel => 'Niveau intermédiaire';
-
-  @override
-  String get lblCareerExperienced => 'Expérimenté';
-
-  @override
-  String get lblCareerProfessional => 'Professionnel';
-
-  @override
-  String get lblCareerMiddleManagement => 'Cadre intermédiaire';
-
-  @override
-  String get lblCareerExecutiveManagement => 'Direction exécutive';
-
-  @override
-  String get lblCareerSeniorManagement => 'Direction senior';
-
-  @override
-  String get lblCareerDirector => 'Directeur';
-
-  @override
-  String get lblCareerTechnician => 'Technicien';
-
-  @override
-  String get lblCareerLeader => 'Leader';
-
-  @override
-  String get lblCareerManager => 'Manager';
-
-  @override
-  String get lblEduHighSchool => 'Lycée';
-
-  @override
-  String get lblEduAssociate => 'Diplôme associé (Associate)';
-
-  @override
-  String get lblEduUndergraduate => 'Licence / premier cycle';
-
-  @override
-  String get lblEduMasters => 'Master / troisième cycle';
-
-  @override
-  String get lblEduDoctorate => 'Doctorat';
-
-  @override
-  String get lblAccountHolderNameHint => 'Nom du titulaire du compte';
-
-  @override
-  String get lblMobileNumberHint => 'Numéro de mobile';
-
-  @override
-  String get lblIbanNumberHint => 'Numéro IBAN';
-
-  @override
-  String get lblBicSwiftHint => 'Code BIC / SWIFT';
-
-  @override
-  String get lblStripeAccountHint => 'Compte Stripe';
-
-  @override
-  String get lblRegularPayments => 'Paiements generaux';
-
-  @override
-  String get lblJobRequestPayments => 'Paiements des demandes d\'emploi';
-
-  @override
-  String get lblUsers => 'Utilisateurs';
-
-  @override
-  String get lblDateTime => 'Date et heure';
-
-  @override
-  String get lblJobRequest => 'Demande de travail';
-
-  @override
-  String get lblAttachment => 'Pièce jointe';
-
-  @override
-  String get lblUpdateBid => 'Mettre à jour l\'offre';
-
-  @override
-  String get lblCompanyInformation => 'Informations sur l\'entreprise';
-
-  @override
-  String get lblProfessionalDetails => 'Détails professionnels';
-
-  @override
-  String get lblContactAndAddress => 'Contact et adresse';
-
-  @override
-  String get lblLocationSection => 'Lieu';
-
-  @override
-  String get lblLanguagesSection => 'Langues';
-
-  @override
-  String get lblAddLanguage => 'Ajouter une langue';
-
-  @override
-  String get lblEducationAndBio => 'Formation et bio';
-
-  @override
-  String get lblSkillsHint => 'Compétences';
-
-  @override
-  String get lblExperienceHint => 'Expérience';
-
-  @override
-  String get lblMobilityShortHint => 'Mobilité';
-
-  @override
-  String get lblCertificationShortHint => 'Certification';
-
-  @override
-  String get lblHandymanCommissionHint => 'Commission prestataire (1-99)';
-
-  @override
-  String get lblAboutMeHint => 'À propos de moi';
-
-  @override
-  String get lblBidPriceLabel => 'Prix de l\'offre : ';
-
-  @override
-  String get lblRequirementsColon => 'Exigences :';
-
-  @override
-  String get lblReadMore => ' ...lire plus';
-
-  @override
-  String get lblReadLess => ' lire moins';
-
-  @override
-  String get lblJobType => 'Type de mission';
-
-  @override
-  String get lblRateType => 'Type de tarif';
-
-  @override
-  String get lblTotalBudget => 'Budget total';
-
-  @override
-  String get lblProposals => 'Propositions';
-
-  @override
-  String get lblWorker => 'Prestataire';
-
-  @override
-  String get lblHybrid => 'Hybride';
-
-  @override
-  String get lblBankTransferDetails => 'Détails du virement bancaire';
-
-  @override
-  String get lblBankTransfer => 'Virement bancaire';
-
-  @override
-  String get lblBankTransferInstructions =>
-      'Veuillez transférer le montant sur le compte bancaire suivant :';
-
-  @override
-  String get lblCountry => 'Pays';
-
-  @override
-  String get lblIban => 'IBAN';
-
-  @override
-  String get lblBicSwiftShort => 'BIC/Swift';
-
-  @override
-  String get lblPremiumPlansSoon => 'Offres premium bientôt';
-
-  @override
-  String get lblPremiumPlansSoonSubtitle =>
-      'Nous préparons quelque chose de grand pour vous. Restez connecté.';
-
-  @override
-  String get lblBudgetOrPrice => 'Budget / Prix';
-
-  @override
-  String get lblTotalDays => 'Nombre de jours';
-
-  @override
-  String get lblTotalHours => 'Nombre d\'heures';
-
-  @override
-  String get lblStartTime => 'Heure de debut';
-
-  @override
-  String get lblEndTime => 'Heure de fin';
-
-  @override
-  String get lblNumberOfHours => 'Nombre d\'heures';
-
-  @override
-  String get lblNumberOfDays => 'Nombre de jours';
-
-  @override
-  String get lblEducationLevel => 'Niveau d\'éducation';
-
-  @override
-  String get lblSkillsAndRequirements => 'Compétences et exigences';
-
-  @override
-  String get lblDutiesAndResponsibilities => 'Fonctions et responsabilités';
-
-  @override
-  String get lblBenefits => 'Avantages';
-
-  @override
-  String get lblViewJob => 'Voir l\'offre';
-
-  @override
-  String get lblBidDetails => 'Détails de l\'offre';
-
-  @override
-  String get lblWaitingForAdminApproval =>
-      'En attente de l\'approbation de l\'administrateur';
-
-  @override
-  String get lblThisBidWasCancelled => 'Cette offre a été annulée';
-
-  @override
-  String get lblProgressAdvance => 'Acompte';
-
-  @override
-  String get lblProgressAdvancePaidShort => 'Acompte payé';
-
-  @override
-  String get lblProgressLetsStart => 'C\'est parti';
-
-  @override
-  String get lblProgressWork => 'Travail';
 
   @override
   String get lblFullTime => 'Temps plein';

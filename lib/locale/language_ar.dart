@@ -217,9 +217,6 @@ class LanguageAr extends Languages {
   String get lblBooking => 'الحجز';
 
   @override
-  String get lblBookingsCount => 'حجوزات';
-
-  @override
   String get lblTotalBooking => 'مجموع حجوزات';
 
   @override
@@ -299,6 +296,9 @@ class LanguageAr extends Languages {
 
   @override
   String get lblChat => 'دردشة';
+
+  @override
+  String get lblDirectMessage => 'رسالة مباشرة';
 
   @override
   String get lblJob => 'وظائف';
@@ -495,6 +495,9 @@ class LanguageAr extends Languages {
 
   @override
   String get lblHandymanType => "Handyman نوع";
+
+  @override
+  String get handymanPlanLimitExceeded => 'خطتك الحالية لا تسمح بإضافة المزيد من الحرفيين. يرجى ترقية اشتراكك.';
 
   @override
   String get lblFixed => "سعر ثابت";
@@ -1277,9 +1280,6 @@ class LanguageAr extends Languages {
   String get published => 'تم النشر';
 
   @override
-  String get publish => 'نشر';
-
-  @override
   String get clearChatMessage => 'هل تريد مسح هذه الدردشة؟';
 
   @override
@@ -2032,15 +2032,6 @@ class LanguageAr extends Languages {
   String get sendMessage => 'أرسل رسالة';
 
   @override
-  String messageHiddenDueToPolicy(List<String> policyTypes) {
-    final types = policyTypes
-        .map((e) => e.trim().toLowerCase() == 'phone' ? 'Phone' : e.trim())
-        .where((e) => e.isNotEmpty)
-        .join(', ');
-    return 'Message hidden due to policy${types.isNotEmpty ? ' ($types)' : ''}';
-  }
-
-  @override
   String get handymanLocation => 'موقع العامل الماهر';
 
   @override
@@ -2050,29 +2041,7 @@ class LanguageAr extends Languages {
   String get trackHandymanLocation => 'تتبع موقع العامل الماهر';
 
   @override
-  String get lastUpdatedAt => 'آخر تحديث في:';
-
-  @override
-  String get workingAddress => 'عنوان العمل';
-
-  @override
-  String get addressNotAvailable => 'العنوان غير متوفر';
-
-  @override
-  String get resumeWork => 'استئناف العمل';
-
-  @override
-  String get rateCustomer => 'تقييم العميل';
-
-  @override
-  String get locationSharingStarted => 'بدء مشاركة الموقع';
-
-  @override
-  String get allowLocationPermission => 'يرجى السماح بإذن الموقع لمشاركة موقعك';
-
-  @override
-  String get locationSharingOnlyWhenInProgress =>
-      'مشاركة الموقع متاحة فقط عندما تكون الحجز قيد التنفيذ';
+  String get lastUpdatedAt => 'अंतिम बार अद्यतन किया गया:';
 
   String get lblBankDetails => "التفاصيل المصرفية";
 
@@ -2566,344 +2535,6 @@ class LanguageAr extends Languages {
   @override
   String get waitingForProviderToMarkBidAsCompleted =>
       'في انتظار المزود لتمييز العرض كمكتمل';
-
-  @override
-  String get lblExtraChargesBreakdown => 'تفصيل الرسوم الإضافية';
-
-  @override
-  String get lblSplitPayment => 'تقسيم الدفع';
-
-  @override
-  String get lblStartWork => 'بدء العمل';
-
-  @override
-  String get lblMarkComplete => 'إكمال';
-
-  @override
-  String get lblPlusExtraCharges => '+ رسوم إضافية';
-
-  @override
-  String get lblDownload => 'تنزيل';
-
-  @override
-  String get lblEmployerReview => 'تقييم صاحب العمل';
-
-  @override
-  String get lblCustomerReview => 'تقييم العميل';
-
-  @override
-  String get lblRateUnitPrice => 'السعر (للوحدة)';
-
-  @override
-  String get lblNetAmount => 'المبلغ الصافي';
-
-  @override
-  String get lblNetAmountFormula => '(المجموع الفرعي - الضريبة)';
-
-  @override
-  String get lblGrandTotalAmount => 'المبلغ الإجمالي';
-
-  @override
-  String get lblDirectMessage => 'رسالة مباشرة';
-
-  @override
-  String get lblTotal => 'الإجمالي';
-
-  @override
-  String get lblSearchLanguagesHint => 'بحث عن اللغات';
-
-  @override
-  String get lblCompanyNameHint => 'اسم الشركة';
-
-  @override
-  String get lblVatNumberHint => 'رقم ضريبة القيمة المضافة';
-
-  @override
-  String get lblSelectAvailabilityHint => 'اختر التوفر';
-
-  @override
-  String get lblSelectCountryTaxHint => 'اختر ضريبة البلد';
-
-  @override
-  String get lblMobilityHint => 'التنقل (مثل سيارة، دراجة، مواصلات)';
-
-  @override
-  String get lblExperienceDescHint => 'الخبرة (صف خبرتك المهنية)';
-
-  @override
-  String get lblCareerLevelHint => 'المستوى المهني';
-
-  @override
-  String get lblEducationHint => 'التعليم';
-
-  @override
-  String get lblYearsOfExperienceHint => 'سنوات الخبرة';
-
-  @override
-  String get lblCertificationHint => 'الشهادات (مفصولة بفواصل)';
-
-  @override
-  String get lblSelectProviderHint => 'اختر مقدم الخدمة';
-
-  @override
-  String get lblRemoteWorkLevelHint => 'مستوى العمل عن بُعد';
-
-  @override
-  String get lblTravelRequiredHint => 'السفر مطلوب';
-
-  @override
-  String get lblRemoteWorkOnsite100 => 'في الموقع (100٪)';
-
-  @override
-  String get lblRemoteWork25 => 'عن بُعد 25٪';
-
-  @override
-  String get lblRemoteWork50 => 'عن بُعد 50٪';
-
-  @override
-  String get lblRemoteWork75 => 'عن بُعد 75٪';
-
-  @override
-  String get lblRemoteWork100 => 'عن بُعد 100٪';
-
-  @override
-  String get lblCareerNotSpecified => 'غير محدد';
-
-  @override
-  String get lblCareerEntryLevel => 'مستوى مبتدئ';
-
-  @override
-  String get lblCareerIntermediateLevel => 'مستوى متوسط';
-
-  @override
-  String get lblCareerExperienced => 'ذو خبرة';
-
-  @override
-  String get lblCareerProfessional => 'محترف';
-
-  @override
-  String get lblCareerMiddleManagement => 'إدارة متوسطة';
-
-  @override
-  String get lblCareerExecutiveManagement => 'إدارة تنفيذية';
-
-  @override
-  String get lblCareerSeniorManagement => 'إدارة عليا';
-
-  @override
-  String get lblCareerDirector => 'مدير';
-
-  @override
-  String get lblCareerTechnician => 'فني';
-
-  @override
-  String get lblCareerLeader => 'قائد';
-
-  @override
-  String get lblCareerManager => 'مدير';
-
-  @override
-  String get lblEduHighSchool => 'ثانوي';
-
-  @override
-  String get lblEduAssociate => 'درجة مشارك';
-
-  @override
-  String get lblEduUndergraduate => 'بكالوريوس';
-
-  @override
-  String get lblEduMasters => 'ماجستير / دراسات عليا';
-
-  @override
-  String get lblEduDoctorate => 'دكتوراه';
-
-  @override
-  String get lblAccountHolderNameHint => 'اسم صاحب الحساب';
-
-  @override
-  String get lblMobileNumberHint => 'رقم الجوال';
-
-  @override
-  String get lblIbanNumberHint => 'رقم الآيبان';
-
-  @override
-  String get lblBicSwiftHint => 'رمز BIC / SWIFT';
-
-  @override
-  String get lblStripeAccountHint => 'حساب Stripe';
-
-  @override
-  String get lblRegularPayments => '????????? ??????';
-
-  @override
-  String get lblJobRequestPayments => 'مدفوعات طلبات العمل';
-
-  @override
-  String get lblUsers => 'Users';
-
-  @override
-  String get lblDateTime => 'Date & Time';
-
-  @override
-  String get lblJobRequest => 'Job Request';
-
-  @override
-  String get lblAttachment => 'مرفق';
-
-  @override
-  String get lblUpdateBid => 'تحديث العرض';
-
-  @override
-  String get lblCompanyInformation => 'معلومات الشركة';
-
-  @override
-  String get lblProfessionalDetails => 'تفاصيل مهنية';
-
-  @override
-  String get lblContactAndAddress => 'جهة الاتصال والعنوان';
-
-  @override
-  String get lblLocationSection => 'الموقع';
-
-  @override
-  String get lblLanguagesSection => 'اللغات';
-
-  @override
-  String get lblAddLanguage => 'إضافة لغة';
-
-  @override
-  String get lblEducationAndBio => 'التعليم والنبذة';
-
-  @override
-  String get lblSkillsHint => 'المهارات';
-
-  @override
-  String get lblExperienceHint => 'الخبرة';
-
-  @override
-  String get lblMobilityShortHint => 'التنقل';
-
-  @override
-  String get lblCertificationShortHint => 'الشهادات';
-
-  @override
-  String get lblHandymanCommissionHint => 'عمولة الحرفي (1-99)';
-
-  @override
-  String get lblAboutMeHint => 'نبذة عني';
-
-  @override
-  String get lblBidPriceLabel => 'سعر العرض: ';
-
-  @override
-  String get lblRequirementsColon => 'المتطلبات:';
-
-  @override
-  String get lblReadMore => ' ...قراءة المزيد';
-
-  @override
-  String get lblReadLess => ' قراءة أقل';
-
-  @override
-  String get lblJobType => 'نوع العمل';
-
-  @override
-  String get lblRateType => 'نوع السعر';
-
-  @override
-  String get lblTotalBudget => 'الميزانية الإجمالية';
-
-  @override
-  String get lblProposals => 'العروض';
-
-  @override
-  String get lblWorker => 'العامل';
-
-  @override
-  String get lblHybrid => 'هجين';
-
-  @override
-  String get lblBankTransferDetails => 'تفاصيل التحويل البنكي';
-
-  @override
-  String get lblBankTransfer => 'تحويل بنكي';
-
-  @override
-  String get lblBankTransferInstructions =>
-      'يرجى تحويل المبلغ إلى الحساب البنكي التالي:';
-
-  @override
-  String get lblCountry => 'البلد';
-
-  @override
-  String get lblIban => 'IBAN';
-
-  @override
-  String get lblBicSwiftShort => 'BIC/Swift';
-
-  @override
-  String get lblPremiumPlansSoon => 'خطط مميزة قريبًا';
-
-  @override
-  String get lblPremiumPlansSoonSubtitle =>
-      'نبني لك شيئًا رائعًا. ترقّب المزيد.';
-
-  @override
-  String get lblBudgetOrPrice => 'الميزانية / السعر';
-
-  @override
-  String get lblTotalDays => 'إجمالي الأيام';
-
-  @override
-  String get lblTotalHours => 'إجمالي الساعات';
-
-  @override
-  String get lblStartTime => 'Start Time';
-
-  @override
-  String get lblEndTime => 'End Time';
-
-  @override
-  String get lblNumberOfHours => 'Number of Hours';
-
-  @override
-  String get lblNumberOfDays => 'Number of Days';
-
-  @override
-  String get lblEducationLevel => 'المستوى التعليمي';
-
-  @override
-  String get lblSkillsAndRequirements => 'المهارات والمتطلبات';
-
-  @override
-  String get lblDutiesAndResponsibilities => 'الواجبات والمسؤوليات';
-
-  @override
-  String get lblBenefits => 'المزايا';
-
-  @override
-  String get lblViewJob => 'عرض الطلب';
-
-  @override
-  String get lblBidDetails => 'تفاصيل العرض';
-
-  @override
-  String get lblWaitingForAdminApproval => 'في انتظار موافقة المسؤول';
-
-  @override
-  String get lblThisBidWasCancelled => 'تم إلغاء هذا العرض';
-
-  @override
-  String get lblProgressAdvance => 'دفعة مقدمة';
-
-  @override
-  String get lblProgressAdvancePaidShort => 'تم الدفع المقدم';
-
-  @override
-  String get lblProgressLetsStart => 'لنبدأ';
-
-  @override
-  String get lblProgressWork => 'العمل';
 
   @override
   String get lblFullTime => 'دوام كامل';

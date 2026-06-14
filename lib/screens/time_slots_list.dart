@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/utils/extensions/date_formatter.dart';
 import 'package:nb_utils/nb_utils.dart';
 
@@ -30,7 +29,7 @@ class TimeSlotsList extends StatelessWidget {
                     spacing: 8,
                     children: [
                       Text(
-                        '${languages.lblDate}:',
+                        'Date:',
                         style: secondaryTextStyle(),
                       ),
                       Marquee(
@@ -48,7 +47,7 @@ class TimeSlotsList extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        languages.lblStartTime,
+                        'Start Time',
                         style: secondaryTextStyle(),
                       ),
                       8.width,
@@ -66,7 +65,7 @@ class TimeSlotsList extends StatelessWidget {
                     spacing: 8,
                     children: [
                       Text(
-                        '${languages.lblEndTime}:',
+                        'End Time:',
                         style: secondaryTextStyle(),
                       ),
                       Marquee(
@@ -83,7 +82,7 @@ class TimeSlotsList extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${languages.lblNumberOfHours}:',
+                        'Nbr Hours:',
                         style: secondaryTextStyle(),
                       ),
                       8.width,
@@ -101,7 +100,7 @@ class TimeSlotsList extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${languages.lblNumberOfDays}:',
+                        'Nbr Days:',
                         style: secondaryTextStyle(),
                       ),
                       8.width,

@@ -102,7 +102,7 @@ abstract class Languages {
 
   String get notAvailable;
 
-  /// Short placeholder when a value is missing (e.g. location).
+  /// Short placeholder when a value is missing (e.g. city/country).
   String get lblNa;
 
   String get lblGallery;
@@ -146,9 +146,6 @@ abstract class Languages {
   String get lblAddHandyman;
 
   String get lblBooking;
-
-  /// Plural/stat label for counts (e.g. list card "12 …").
-  String get lblBookingsCount;
 
   String get lblTotalBooking;
 
@@ -203,6 +200,10 @@ abstract class Languages {
   String get lblAllService;
 
   String get lblChat;
+
+  /// Chat thread title when opening DM with customer/provider.
+  String get lblDirectMessage;
+
   String get lblJob;
 
   String get selectAddress;
@@ -332,6 +333,8 @@ abstract class Languages {
   String get lblType;
 
   String get lblHandymanType;
+
+  String get handymanPlanLimitExceeded;
 
   String get lblFixed;
 
@@ -848,8 +851,6 @@ abstract class Languages {
 
   String get published;
 
-  String get publish;
-
   String get clearChatMessage;
 
   String get all;
@@ -1328,8 +1329,6 @@ abstract class Languages {
 
   String get sendMessage;
 
-  String messageHiddenDueToPolicy(List<String> policyTypes);
-
   String get handymanLocation;
 
   String get track;
@@ -1337,20 +1336,6 @@ abstract class Languages {
   String get trackHandymanLocation;
 
   String get lastUpdatedAt;
-
-  String get workingAddress;
-
-  String get addressNotAvailable;
-
-  String get resumeWork;
-
-  String get rateCustomer;
-
-  String get locationSharingStarted;
-
-  String get allowLocationPermission;
-
-  String get locationSharingOnlyWhenInProgress;
 
   String get lblBankDetails;
 
@@ -1632,214 +1617,6 @@ abstract class Languages {
 
   String get waitingForProviderToMarkBidAsCompleted;
 
-  String get lblExtraChargesBreakdown;
-
-  String get lblSplitPayment;
-
-  String get lblStartWork;
-
-  String get lblMarkComplete;
-
-  String get lblPlusExtraCharges;
-
-  String get lblDownload;
-
-  String get lblEmployerReview;
-
-  String get lblCustomerReview;
-
-  String get lblRateUnitPrice;
-
-  String get lblNetAmount;
-
-  String get lblNetAmountFormula;
-
-  String get lblGrandTotalAmount;
-
-  String get lblDirectMessage;
-
-  String get lblTotal;
-
-  String get lblSearchLanguagesHint;
-
-  String get lblCompanyNameHint;
-
-  String get lblVatNumberHint;
-
-  String get lblSelectAvailabilityHint;
-
-  String get lblSelectCountryTaxHint;
-
-  String get lblMobilityHint;
-
-  String get lblExperienceDescHint;
-
-  String get lblCareerLevelHint;
-
-  String get lblEducationHint;
-
-  String get lblYearsOfExperienceHint;
-
-  String get lblCertificationHint;
-
-  String get lblSelectProviderHint;
-
-  String get lblRemoteWorkLevelHint;
-
-  String get lblTravelRequiredHint;
-
-  /// Remote work level dropdown values (maps to [RemoteWorkLevel] enum).
-  String get lblRemoteWorkOnsite100;
-  String get lblRemoteWork25;
-  String get lblRemoteWork50;
-  String get lblRemoteWork75;
-  String get lblRemoteWork100;
-
-  /// Career level dropdown values (maps to [CareerLevel] enum).
-  String get lblCareerNotSpecified;
-  String get lblCareerEntryLevel;
-  String get lblCareerIntermediateLevel;
-  String get lblCareerExperienced;
-  String get lblCareerProfessional;
-  String get lblCareerMiddleManagement;
-  String get lblCareerExecutiveManagement;
-  String get lblCareerSeniorManagement;
-  String get lblCareerDirector;
-  String get lblCareerTechnician;
-  String get lblCareerLeader;
-  String get lblCareerManager;
-
-  /// Education level labels for job detail (maps to [EducationLevel] enum).
-  String get lblEduHighSchool;
-  String get lblEduAssociate;
-  String get lblEduUndergraduate;
-  String get lblEduMasters;
-  String get lblEduDoctorate;
-
-  String get lblAccountHolderNameHint;
-
-  String get lblMobileNumberHint;
-
-  String get lblIbanNumberHint;
-
-  String get lblBicSwiftHint;
-
-  String get lblStripeAccountHint;
-
-  String get lblRegularPayments;
-
-  String get lblJobRequestPayments;
-
-  String get lblUsers;
-
-  String get lblDateTime;
-
-  String get lblJobRequest;
-
-  String get lblAttachment;
-
-  String get lblUpdateBid;
-
-  String get lblCompanyInformation;
-
-  String get lblProfessionalDetails;
-
-  String get lblContactAndAddress;
-
-  String get lblLocationSection;
-
-  String get lblLanguagesSection;
-
-  String get lblAddLanguage;
-
-  String get lblEducationAndBio;
-
-  String get lblSkillsHint;
-
-  String get lblExperienceHint;
-
-  String get lblMobilityShortHint;
-
-  String get lblCertificationShortHint;
-
-  String get lblHandymanCommissionHint;
-
-  String get lblAboutMeHint;
-
-  String get lblBidPriceLabel;
-
-  String get lblRequirementsColon;
-
-  String get lblReadMore;
-
-  String get lblReadLess;
-
-  String get lblJobType;
-
-  String get lblRateType;
-
-  String get lblTotalBudget;
-
-  String get lblProposals;
-
-  String get lblWorker;
-
-  String get lblHybrid;
-
-  String get lblBankTransferDetails;
-
-  String get lblBankTransfer;
-
-  String get lblBankTransferInstructions;
-
-  String get lblCountry;
-
-  String get lblIban;
-
-  String get lblBicSwiftShort;
-
-  String get lblPremiumPlansSoon;
-
-  String get lblPremiumPlansSoonSubtitle;
-
-  String get lblBudgetOrPrice;
-
-  String get lblTotalDays;
-
-  String get lblTotalHours;
-
-  String get lblStartTime;
-
-  String get lblEndTime;
-
-  String get lblNumberOfHours;
-
-  String get lblNumberOfDays;
-
-  String get lblEducationLevel;
-
-  String get lblSkillsAndRequirements;
-
-  String get lblDutiesAndResponsibilities;
-
-  String get lblBenefits;
-
-  String get lblViewJob;
-
-  String get lblBidDetails;
-
-  String get lblWaitingForAdminApproval;
-
-  String get lblThisBidWasCancelled;
-
-  String get lblProgressAdvance;
-
-  String get lblProgressAdvancePaidShort;
-
-  String get lblProgressLetsStart;
-
-  String get lblProgressWork;
-
   String get doYouWantToHoldThisBid;
 
   String get updatePaymentSplit;
@@ -1890,7 +1667,7 @@ abstract class Languages {
   String get lblReportReasonFraud;
   String get lblReportReasonOther;
 
-  /// UGC profile / review reporting
+  /// Profile report (UGC `/ugc/report-profile`)
   String get lblReportProfileTitle;
   String get lblReportProfileNoReasons;
   String get lblReportReviewTitle;

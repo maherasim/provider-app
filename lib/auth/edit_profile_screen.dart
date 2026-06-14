@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:handyman_provider_flutter/components/app_widgets.dart';
@@ -26,7 +25,6 @@ import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart
 import 'package:handyman_provider_flutter/utils/images.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
-import 'package:handyman_provider_flutter/utils/job_posting_enum_localizations.dart';
 import 'package:handyman_provider_flutter/utils/language_options.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
@@ -62,8 +60,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   /// Selected language values for Known Languages multi-select (e.g. ['english', 'german']).
   List<String> selectedLanguages = [];
 
-  /// Code ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ label: filled from [getSpokenLanguages], with [kLanguageOptions] as fallback if the API fails.
-  Map<String, String> knownLanguageOptions =
+  /// Code → display name from [getSpokenLanguages], falling back to [kLanguageOptions] until loaded.
+  Map<String, String> spokenLanguageOptions =
       Map<String, String>.from(kLanguageOptions);
 
   List<AddressResponse> serviceAddressList = [];
@@ -76,16 +74,21 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   CountryListResponse? selectedTaxCountry;
   int taxCountryId = 0;
 
-  static const List<String> _availabilityKeys = <String>[
-    'full_time',
-    'part_time'
-  ];
+  /// Blade: `''`, `full_time`, `part_time`
+  static const Map<String, String> _profileAvailabilityOptions = {
+    '': '—',
+    'full_time': 'Full time',
+    'part_time': 'Part time',
+  };
+
   String selectedAvailability = 'full_time';
-  int profileStatus = 1;
+
+  /// Account status: `1` active, `0` inactive (`profile_form` + validation).
+  int profileAccountStatus = 1;
 
   CareerLevel? selectedCareerLevel = CareerLevel.notSpecified;
-  ProfileEducationLevel? selectedEducation;
-  YearsOfExperience? selectedYearsOfExperience = YearsOfExperience.unselected;
+  ProfileEducationLevel? selectedEducation = ProfileEducationLevel.unspecified;
+  YearsOfExperience? selectedYearsOfExperience = YearsOfExperience.unspecified;
 
   TextEditingController fNameCont = TextEditingController();
   TextEditingController lNameCont = TextEditingController();
@@ -96,9 +99,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   TextEditingController designationCont = TextEditingController();
   TextEditingController knownLangCont = TextEditingController();
   TextEditingController skillsCont = TextEditingController();
-  TextEditingController descriptionCont = TextEditingController();
+  TextEditingController aboutMeCont = TextEditingController();
+  TextEditingController aboutDescriptionCont = TextEditingController();
   TextEditingController whyChooseMeCont = TextEditingController();
-  TextEditingController whyChooseAboutDescCont = TextEditingController();
   TextEditingController cNameCont = TextEditingController();
   TextEditingController vatNumCont = TextEditingController();
   TextEditingController experienceCont = TextEditingController();
@@ -114,9 +117,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   FocusNode knownLangFocus = FocusNode();
   FocusNode addressFocus = FocusNode();
   FocusNode skillsFocus = FocusNode();
-  FocusNode descriptionFocus = FocusNode();
+  FocusNode aboutMeFocus = FocusNode();
+  FocusNode aboutDescriptionFocus = FocusNode();
   FocusNode whyChooseMeFocus = FocusNode();
-  FocusNode whyChooseAboutDescFocus = FocusNode();
   FocusNode cNameFocus = FocusNode();
   FocusNode vatNumFocus = FocusNode();
   FocusNode experienceFocus = FocusNode();
@@ -134,23 +137,6 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
   bool isEmailVerified = getBoolAsync(IS_EMAIL_VERIFIED);
 
-  bool get _isProviderProfile => isUserTypeProvider;
-
-  Widget _buildRequiredLabel(String text) {
-    return Text.rich(
-      TextSpan(
-        text: text,
-        style: secondaryTextStyle(size: 14),
-        children: const [
-          TextSpan(
-            text: ' *',
-            style: TextStyle(color: Colors.red, fontWeight: FontWeight.w700),
-          )
-        ],
-      ),
-    );
-  }
-
   @override
   void initState() {
     super.initState();
@@ -158,8 +144,6 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> init() async {
-    await _loadKnownLanguageOptions();
-
     afterBuildCreated(() {
       setStatusBarColor(context.primaryColor);
       appStore.setLoading(true);
@@ -195,6 +179,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       displayNameNoCountryCode: "",
       e164Key: "",
     );
+    await _loadSpokenLanguageOptions();
     userDetailAPI();
 
     if (getIntAsync(COUNTRY_ID) != 0) {
@@ -210,12 +195,12 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
-  Future<void> _loadKnownLanguageOptions() async {
-    knownLanguageOptions = Map<String, String>.from(kLanguageOptions);
+  Future<void> _loadSpokenLanguageOptions() async {
+    spokenLanguageOptions = Map<String, String>.from(kLanguageOptions);
     try {
       final res = await getSpokenLanguages();
       if (res.options.isNotEmpty) {
-        knownLanguageOptions = Map<String, String>.from(res.options);
+        spokenLanguageOptions = Map<String, String>.from(res.options);
       }
     } catch (e) {
       log(e.toString());
@@ -223,28 +208,18 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     if (mounted) setState(() {});
   }
 
-  /// Normalize API string to language option value (key in [knownLanguageOptions]).
+  /// Normalize API string to language code (key in [spokenLanguageOptions]).
   String _languageStringToValue(String s) {
     if (s.isEmpty) return '';
     String normalized = s.toLowerCase().trim();
     String withUnderscore = normalized.replaceAll(' ', '_');
-    if (knownLanguageOptions.containsKey(normalized)) return normalized;
-    if (knownLanguageOptions.containsKey(withUnderscore)) return withUnderscore;
-    for (var e in knownLanguageOptions.entries) {
+    if (spokenLanguageOptions.containsKey(normalized)) return normalized;
+    if (spokenLanguageOptions.containsKey(withUnderscore))
+      return withUnderscore;
+    for (var e in spokenLanguageOptions.entries) {
       if (e.value.toLowerCase() == s.toLowerCase()) return e.key;
     }
     return withUnderscore.isNotEmpty ? withUnderscore : normalized;
-  }
-
-  String _availabilityLabel(String code) {
-    switch (code) {
-      case 'full_time':
-        return JobSchedule.fullTime.displayName;
-      case 'part_time':
-        return JobSchedule.partTime.displayName;
-      default:
-        return code;
-    }
   }
 
   void _parsePlainLanguageString(String knownLanguagesStr) {
@@ -299,7 +274,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         }
       }
       selectedLanguages
-          .removeWhere((k) => !knownLanguageOptions.containsKey(k));
+          .removeWhere((k) => !spokenLanguageOptions.containsKey(k));
       knownLanguages = List<String>.from(selectedLanguages);
 
       // Load skills - handle JSON string (from model) or plain string
@@ -334,76 +309,56 @@ class EditProfileScreenState extends State<EditProfileScreen> {
           selectedCareerLevel = CareerLevel.notSpecified;
         }
       }
-      {
-        String? ed = value.data!.education;
-        if (ed == null || ed.trim().isEmpty || ed.trim() == 'not_specified') {
-          selectedEducation = null;
-        } else {
-          try {
-            selectedEducation = ProfileEducationLevel.values.firstWhere(
-              (e) => e.backendValue == ed.trim(),
-              orElse: () => ProfileEducationLevel.unselected,
-            );
-            if (selectedEducation == ProfileEducationLevel.unselected) {
-              selectedEducation = null;
-            }
-          } catch (_) {
-            selectedEducation = null;
-          }
-        }
-      }
-      if (value.data!.yearsOfExperience != null &&
-          value.data!.yearsOfExperience!.trim().isNotEmpty) {
-        final y = value.data!.yearsOfExperience!.trim();
+      String eduRaw = value.data!.education.validate();
+      if (eduRaw == 'not_specified') eduRaw = '';
+      if (eduRaw.isNotEmpty) {
         try {
-          selectedYearsOfExperience = YearsOfExperience.values.firstWhere(
-            (e) => e.backendValue == y,
-            orElse: () => YearsOfExperience.unselected,
+          selectedEducation = ProfileEducationLevel.values.firstWhere(
+            (e) => e.backendValue == eduRaw,
+            orElse: () => ProfileEducationLevel.unspecified,
           );
         } catch (_) {
-          selectedYearsOfExperience = YearsOfExperience.unselected;
+          selectedEducation = ProfileEducationLevel.unspecified;
         }
       } else {
-        selectedYearsOfExperience = YearsOfExperience.unselected;
+        selectedEducation = ProfileEducationLevel.unspecified;
       }
 
-      if (value.data!.status != null) {
-        profileStatus = value.data!.status == 1 ? 1 : 0;
-      }
-
-      {
-        String? av = value.data!.availability;
-        if (av == null || av.trim().isEmpty) {
-          selectedAvailability = 'full_time';
-        } else {
-          final a = av.trim().toLowerCase();
-          if (a == 'full_time' || a == 'part_time') {
-            selectedAvailability = a;
-          } else if (a == 'hybrid' || a.contains('part') || a == 'part time') {
-            selectedAvailability = 'part_time';
-          } else {
-            selectedAvailability = 'full_time';
-          }
+      String yoeRaw = value.data!.yearsOfExperience.validate();
+      if (yoeRaw.isNotEmpty) {
+        try {
+          selectedYearsOfExperience = YearsOfExperience.values.firstWhere(
+            (e) => e.backendValue == yoeRaw,
+            orElse: () => YearsOfExperience.unspecified,
+          );
+        } catch (_) {
+          selectedYearsOfExperience = YearsOfExperience.unspecified;
         }
+      } else {
+        selectedYearsOfExperience = YearsOfExperience.unspecified;
       }
 
-      {
-        String about = _safeStringFromValue(value.data!.aboutMe);
-        String desc = _safeStringFromValue(value.data!.description);
-        descriptionCont.text = about.isNotEmpty ? about : desc;
+      final av = value.data!.availability
+          .validate()
+          .trim()
+          .toLowerCase()
+          .replaceAll(' ', '_');
+      if (av == 'full_time' || av == 'part_time') {
+        selectedAvailability = av;
+      } else if (av == 'hybrid') {
+        selectedAvailability = 'full_time';
+      } else {
+        selectedAvailability = '';
       }
+
+      profileAccountStatus = value.data!.status == 0 ? 0 : 1;
+
+      aboutMeCont.text = value.data!.aboutMe.validate();
+      if (aboutMeCont.text.isEmpty) {
+        aboutMeCont.text = value.data!.description.validate();
+      }
+      aboutDescriptionCont.text = value.data!.aboutDescription.validate();
       addressCont.text = value.data!.address.validate();
-
-      if (isUserTypeHandyman) {
-        final sid = value.data!.serviceAddressId;
-        if (sid != null && sid > 0) {
-          serviceAddressId = sid;
-          final found = serviceAddressList
-              .where((e) => e.id == serviceAddressId)
-              .firstOrNull;
-          if (found != null) selectedAddress = found;
-        }
-      }
 
       taxCountryId = value.data!.taxCountryId ?? countryId;
       if (countryList.isNotEmpty && taxCountryId > 0) {
@@ -415,22 +370,49 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       cNameCont.text = _safeStringFromValue(value.data!.companyName);
       vatNumCont.text = _safeStringFromValue(value.data!.vatNumber);
 
-      // Load why choose me (`why_choose_me` JSON: title, about_description, reason[])
+      // Load why choose me - handle JSON object, direct string, or List
       if (value.data != null) {
         whyChooseMeReasons.clear();
-        whyChooseAboutDescCont.clear();
         dynamic whyChooseMeData = value.data!.whyChooseMe;
-        final obj = value.data!.whyChooseMeObj;
-        whyChooseMeCont.text = obj.title;
-        whyChooseAboutDescCont.text = obj.aboutDescription;
-        whyChooseMeReasons.addAll(obj.reason);
-        if (whyChooseMeData is String &&
-            whyChooseMeData.isNotEmpty &&
-            obj.title.isEmpty &&
-            obj.aboutDescription.isEmpty &&
-            obj.reason.isEmpty &&
-            !whyChooseMeData.isJson()) {
-          whyChooseMeCont.text = whyChooseMeData;
+
+        // First try the parsed object
+        if (value.data!.whyChooseMeObj.reason.isNotEmpty) {
+          whyChooseMeReasons.addAll(value.data!.whyChooseMeObj.reason);
+        }
+        if (value.data!.whyChooseMeObj.title.isNotEmpty) {
+          whyChooseMeCont.text = value.data!.whyChooseMeObj.title;
+        } else if (whyChooseMeData != null) {
+          // Handle direct string (plain text)
+          if (whyChooseMeData is String && whyChooseMeData.isNotEmpty) {
+            // Check if it's JSON
+            if (whyChooseMeData.isJson()) {
+              try {
+                Map<String, dynamic> whyChooseMeJson =
+                    jsonDecode(whyChooseMeData);
+                if (whyChooseMeJson['title'] != null) {
+                  whyChooseMeCont.text = whyChooseMeJson['title'].toString();
+                }
+                if (whyChooseMeJson['reason'] != null &&
+                    whyChooseMeJson['reason'] is List) {
+                  whyChooseMeReasons.clear();
+                  whyChooseMeReasons.addAll((whyChooseMeJson['reason'] as List)
+                      .map((e) => e.toString())
+                      .toList());
+                }
+                if (whyChooseMeJson['about_description'] != null &&
+                    aboutDescriptionCont.text.isEmpty) {
+                  aboutDescriptionCont.text =
+                      whyChooseMeJson['about_description'].toString();
+                }
+              } catch (e) {
+                // If JSON parsing fails, treat as plain text
+                whyChooseMeCont.text = whyChooseMeData;
+              }
+            } else {
+              // Plain text string
+              whyChooseMeCont.text = whyChooseMeData;
+            }
+          }
         }
       }
 
@@ -488,15 +470,11 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     appStore.setLoading(true);
     await getStateList({'country_id': countryId}).then((value) async {
       stateList.clear();
-      selectedState = null;
       stateList.addAll(value);
 
-      final int persistedState = getIntAsync(STATE_ID);
-      if (persistedState > 0 &&
-          value.any((element) => element.id == persistedState)) {
+      if (value.any((element) => element.id == getIntAsync(STATE_ID))) {
         selectedState =
-            value.firstWhere((element) => element.id == persistedState);
-        stateId = persistedState;
+            value.firstWhere((element) => element.id == getIntAsync(STATE_ID));
       }
       if (!mounted) return;
       setState(() {});
@@ -511,20 +489,11 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
     await getCityList({'state_id': stateId}).then((value) async {
       cityList.clear();
-      selectedCity = null;
       cityList.addAll(value);
 
-      final int persistedCity = getIntAsync(CITY_ID);
-      CityListResponse? match;
-      if (persistedCity > 0 &&
-          value.any((element) => element.id == persistedCity)) {
-        match = value.firstWhere((element) => element.id == persistedCity);
-      } else if (cityId > 0 && value.any((element) => element.id == cityId)) {
-        match = value.firstWhere((element) => element.id == cityId);
-      }
-      if (match != null) {
-        selectedCity = match;
-        cityId = match.id!;
+      if (value.any((element) => element.id == getIntAsync(CITY_ID))) {
+        selectedCity =
+            value.firstWhere((element) => element.id == getIntAsync(CITY_ID));
       }
       if (!mounted) return;
       setState(() {});
@@ -535,44 +504,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> update() async {
-    if (!formKey.currentState!.validate()) return;
-    hideKeyboard(context);
-
-    if (_isProviderProfile && selectedLanguages.isEmpty) {
-      toast('${languages.knownLanguages}: ${languages.hintRequired}');
-      return;
-    }
-    if (_isProviderProfile && mobileCont.text.trim().isEmpty) {
-      toast('${languages.hintContactNumberTxt}: ${languages.hintRequired}');
-      return;
-    }
-    if (_isProviderProfile && vatNumCont.text.trim().isEmpty) {
-      toast('${languages.lblVatNumberHint}: ${languages.hintRequired}');
-      return;
-    }
-    if (_isProviderProfile) {
-      if (countryId <= 0 || selectedCountry == null) {
-        toast('${languages.selectCountry}: ${languages.hintRequired}');
-        return;
-      }
-      if (stateList.isNotEmpty && (stateId <= 0 || selectedState == null)) {
-        toast('${languages.selectState}: ${languages.hintRequired}');
-        return;
-      }
-      if (cityList.isNotEmpty && (cityId <= 0 || selectedCity == null)) {
-        toast('${languages.selectCity}: ${languages.hintRequired}');
-        return;
-      }
-      if (addressCont.text.trim().isEmpty) {
-        toast('${languages.hintAddress}: ${languages.hintRequired}');
-        return;
-      }
-    }
-    if (isUserTypeHandyman &&
-        (serviceAddressList.isEmpty ||
-            serviceAddressId == null ||
-            serviceAddressId == 0)) {
-      toast('${languages.lblSelectAddress}: ${languages.hintRequired}');
+    if (selectedLanguages.isEmpty) {
+      toast(languages.pleaseAddKnownLanguage);
       return;
     }
 
@@ -595,19 +528,14 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     multiPartRequest.fields[CommonKeys.address] = addressCont.text.validate();
     if (isUserTypeProvider) {
       multiPartRequest.fields[UserKeys.designation] =
-          designationCont.text.trim();
+          designationCont.text.validate();
     }
     multiPartRequest.fields['company_name'] = cNameCont.text.trim();
     multiPartRequest.fields['vat_number'] = vatNumCont.text.trim();
-    multiPartRequest.fields[UserKeys.status] = profileStatus.toString();
-    multiPartRequest.fields['availability'] = selectedAvailability;
-
-    for (int i = 0; i < selectedLanguages.length; i++) {
+    multiPartRequest.fields[UserKeys.knownLanguages] =
+        jsonEncode(selectedLanguages);
+    for (var i = 0; i < selectedLanguages.length; i++) {
       multiPartRequest.fields['languages[$i]'] = selectedLanguages[i];
-    }
-    if (selectedLanguages.isNotEmpty) {
-      multiPartRequest.fields[UserKeys.knownLanguages] =
-          jsonEncode(selectedLanguages);
     }
 
     if (skillsCont.text.trim().isNotEmpty) {
@@ -623,32 +551,36 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     if (certificationCont.text.trim().isNotEmpty) {
       multiPartRequest.fields['certification'] = certificationCont.text.trim();
     }
-    multiPartRequest.fields['education'] =
-        selectedEducation?.backendValue ?? '';
+    multiPartRequest.fields['education'] = selectedEducation?.backendValue ??
+        ProfileEducationLevel.unspecified.backendValue;
     multiPartRequest.fields['career_level'] =
         selectedCareerLevel?.backendValue ??
             CareerLevel.notSpecified.backendValue;
     multiPartRequest.fields['years_of_experience'] =
-        selectedYearsOfExperience?.backendValue ?? '';
+        selectedYearsOfExperience?.backendValue ??
+            YearsOfExperience.unspecified.backendValue;
+    multiPartRequest.fields['availability'] = selectedAvailability;
+    multiPartRequest.fields[UserKeys.status] = profileAccountStatus.toString();
+
+    multiPartRequest.fields['about_me'] = aboutMeCont.text.trim();
+    multiPartRequest.fields[UserKeys.description] = aboutMeCont.text.validate();
+
     if (isUserTypeProvider) {
-      multiPartRequest.fields[UserKeys.whyChooseReason] =
-          jsonEncode(whyChooseMeReasons);
       multiPartRequest.fields[UserKeys.whyChooseTitle] =
           whyChooseMeCont.text.trim();
-      multiPartRequest.fields[UserKeys.whyChooseAboutDescription] =
-          whyChooseAboutDescCont.text.trim();
+      multiPartRequest.fields['about_description'] =
+          aboutDescriptionCont.text.trim();
+      for (var i = 0; i < whyChooseMeReasons.length; i++) {
+        multiPartRequest.fields['reason[$i]'] = whyChooseMeReasons[i];
+      }
     }
-    multiPartRequest.fields['about_me'] = descriptionCont.text.trim();
-    multiPartRequest.fields[UserKeys.description] = descriptionCont.text.trim();
+
     multiPartRequest.fields[UserKeys.displayName] =
         '${fNameCont.text.validate() + " " + lNameCont.text.validate()}';
 
-    if (isUserTypeHandyman) {
+    if (isUserTypeHandyman && serviceAddressId != null)
       multiPartRequest.fields[UserKeys.serviceAddressId] =
-          (serviceAddressId == null || serviceAddressId == 0)
-              ? ''
-              : serviceAddressId.toString();
-    }
+          serviceAddressId == 0 ? '' : serviceAddressId.toString();
     if (imageFile != null) {
       multiPartRequest.files.add(
           await MultipartFile.fromPath(UserKeys.profileImage, imageFile!.path));
@@ -804,7 +736,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             controller: searchCont,
                             textFieldType: TextFieldType.OTHER,
                             decoration: inputDecoration(context,
-                                hint: languages.lblSearchLanguagesHint),
+                                hint: 'Search languages'),
                             onChanged: (v) {
                               searchNotifier.value = v;
                             },
@@ -828,7 +760,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       valueListenable: searchNotifier,
                       builder: (_, query, __) {
                         String q = query.toLowerCase().trim();
-                        var entries = knownLanguageOptions.entries
+                        var entries = spokenLanguageOptions.entries
                             .where((e) =>
                                 e.key.contains(q) ||
                                 e.value.toLowerCase().contains(q))
@@ -913,6 +845,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text('Profile photo', style: secondaryTextStyle()),
+                        4.height,
                         Align(
                           child: Stack(
                             children: [
@@ -960,40 +894,28 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           ),
                         ),
                         16.height,
-                        if (_isProviderProfile) ...[
-                          _buildRequiredLabel(languages.hintFirstNameTxt),
-                          8.height,
-                        ],
                         AppTextField(
                           textFieldType: TextFieldType.NAME,
                           controller: fNameCont,
                           focus: fNameFocus,
                           nextFocus: lNameFocus,
-                          isValidationRequired: _isProviderProfile,
                           decoration: inputDecoration(context,
                               hint: languages.hintFirstNameTxt),
                           suffix: profile.iconImage(size: 10).paddingAll(14),
                         ),
                         16.height,
-                        if (_isProviderProfile) ...[
-                          _buildRequiredLabel(languages.hintLastNameTxt),
-                          8.height,
-                        ],
                         AppTextField(
                           textFieldType: TextFieldType.NAME,
                           controller: lNameCont,
                           focus: lNameFocus,
-                          nextFocus: emailFocus,
-                          isValidationRequired: _isProviderProfile,
+                          nextFocus: userNameFocus,
                           decoration: inputDecoration(context,
                               hint: languages.hintLastNameTxt),
                           suffix: profile.iconImage(size: 10).paddingAll(14),
                         ),
                         16.height,
-                        _isProviderProfile
-                            ? _buildRequiredLabel(languages.knownLanguages)
-                            : Text(languages.knownLanguages,
-                                style: secondaryTextStyle()),
+                        Text(languages.knownLanguages,
+                            style: secondaryTextStyle()),
                         8.height,
                         InkWell(
                           onTap: () => _showLanguageMultiSelect(context),
@@ -1033,7 +955,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                     runSpacing: 6,
                                     children: selectedLanguages.map((value) {
                                       String label =
-                                          knownLanguageOptions[value] ?? value;
+                                          spokenLanguageOptions[value] ?? value;
                                       return Chip(
                                         label: Text(label,
                                             style: primaryTextStyle(size: 12)),
@@ -1056,28 +978,17 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           ),
                         ),
                         16.height,
-                        if (_isProviderProfile) ...[
-                          _buildRequiredLabel(languages.hintUserNameTxt),
-                          8.height,
-                        ],
-                        Offstage(
-                          offstage: !_isProviderProfile,
-                          child: AppTextField(
-                            textFieldType: TextFieldType.NAME,
-                            controller: userNameCont,
-                            focus: userNameFocus,
-                            nextFocus: emailFocus,
-                            isValidationRequired: _isProviderProfile,
-                            decoration: inputDecoration(context,
-                                hint: languages.hintUserNameTxt),
-                            suffix: profile.iconImage(size: 10).paddingAll(14),
-                          ),
+                        AppTextField(
+                          textFieldType: TextFieldType.NAME,
+                          controller: userNameCont,
+                          focus: userNameFocus,
+                          nextFocus: emailFocus,
+                          enabled: false,
+                          decoration: inputDecoration(context,
+                              hint: languages.hintUserNameTxt),
+                          suffix: profile.iconImage(size: 10).paddingAll(14),
                         ),
-                        if (_isProviderProfile) ...[
-                          _buildRequiredLabel(
-                              '${languages.selectCountry} / ${languages.selectState}'),
-                          8.height,
-                        ],
+                        16.height,
                         Row(
                           children: [
                             DropdownButtonFormField<CountryListResponse>(
@@ -1085,7 +996,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                   hint: languages.selectCountry),
                               isExpanded: true,
                               menuMaxHeight: 300,
-                              value: selectedCountry,
+                              initialValue: selectedCountry,
                               dropdownColor: context.cardColor,
                               items: countryList.map((CountryListResponse e) {
                                 return DropdownMenuItem<CountryListResponse>(
@@ -1103,12 +1014,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                 taxCountryId = value.id!;
                                 selectedState = null;
                                 selectedCity = null;
-                                stateId = 0;
-                                cityId = 0;
-                                cityList.clear();
                                 setState(() {});
 
-                                await getStates(value.id!);
+                                getStates(value.id!);
                               },
                             ).expand(),
                             8.width.visible(stateList.isNotEmpty),
@@ -1119,7 +1027,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                 isExpanded: true,
                                 dropdownColor: context.cardColor,
                                 menuMaxHeight: 300,
-                                value: selectedState,
+                                initialValue: selectedState,
                                 items: stateList.map((StateListResponse e) {
                                   return DropdownMenuItem<StateListResponse>(
                                     value: e,
@@ -1133,11 +1041,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                   selectedCity = null;
                                   selectedState = value;
                                   stateId = value!.id!;
-                                  cityId = 0;
-                                  cityList.clear();
                                   setState(() {});
 
-                                  await getCity(value.id!);
+                                  getCity(value.id!);
                                 },
                               ).expand(),
                           ],
@@ -1145,10 +1051,10 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         16.height,
                         DropdownButtonFormField<CountryListResponse>(
                           decoration: inputDecoration(context,
-                              hint: languages.lblSelectCountryTaxHint),
+                              hint: 'Select Country tax'),
                           isExpanded: true,
                           menuMaxHeight: 300,
-                          value: selectedTaxCountry,
+                          initialValue: selectedTaxCountry,
                           dropdownColor: context.cardColor,
                           items: countryList.map((CountryListResponse e) {
                             return DropdownMenuItem<CountryListResponse>(
@@ -1162,10 +1068,6 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           onChanged: null,
                         ),
                         16.height,
-                        if (_isProviderProfile) ...[
-                          _buildRequiredLabel(languages.selectCity),
-                          8.height,
-                        ],
                         if (cityList.isNotEmpty)
                           Column(
                             children: [
@@ -1175,17 +1077,19 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                     style: primaryTextStyle()),
                                 isExpanded: true,
                                 menuMaxHeight: 400,
-                                value: selectedCity,
+                                initialValue: selectedCity,
                                 dropdownColor: context.cardColor,
-                                items: cityList.map((CityListResponse e) {
-                                  return DropdownMenuItem<CityListResponse>(
-                                    value: e,
-                                    child: Text(e.name!,
-                                        style: primaryTextStyle(),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis),
-                                  );
-                                }).toList(),
+                                items: cityList.map(
+                                  (CityListResponse e) {
+                                    return DropdownMenuItem<CityListResponse>(
+                                      value: e,
+                                      child: Text(e.name!,
+                                          style: primaryTextStyle(),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis),
+                                    );
+                                  },
+                                ).toList(),
                                 onChanged: (CityListResponse? value) async {
                                   selectedCity = value;
                                   cityId = value!.id!;
@@ -1196,16 +1100,36 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               16.height,
                             ],
                           ),
-                        if (_isProviderProfile) ...[
-                          _buildRequiredLabel(languages.hintEmailAddressTxt),
-                          8.height,
-                        ],
+                        if (isUserTypeHandyman && serviceAddressList.isNotEmpty)
+                          DropdownButtonFormField<AddressResponse>(
+                            decoration: inputDecoration(context,
+                                hint: languages.lblSelectAddress),
+                            isExpanded: true,
+                            initialValue: selectedAddress != null
+                                ? selectedAddress
+                                : null,
+                            dropdownColor: context.cardColor,
+                            items:
+                                serviceAddressList.map((AddressResponse data) {
+                              return DropdownMenuItem<AddressResponse>(
+                                value: data,
+                                child: Text(data.address.validate(),
+                                    style: primaryTextStyle()),
+                              );
+                            }).toList(),
+                            onChanged: (AddressResponse? value) async {
+                              selectedAddress = value;
+                              serviceAddressId = selectedAddress!.id.validate();
+                              setState(() {});
+                            },
+                          ).paddingTop(16),
+                        if (isUserTypeHandyman && serviceAddressList.isNotEmpty)
+                          16.height,
                         AppTextField(
                           textFieldType: TextFieldType.EMAIL_ENHANCED,
                           controller: emailCont,
                           focus: emailFocus,
                           nextFocus: mobileFocus,
-                          isValidationRequired: _isProviderProfile,
                           decoration: inputDecoration(context,
                               hint: languages.hintEmailAddressTxt),
                           suffix: ic_message.iconImage(size: 10).paddingAll(14),
@@ -1250,10 +1174,14 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           ),
                         ).paddingSymmetric(vertical: 6),
                         10.height,
-                        if (_isProviderProfile) ...[
-                          _buildRequiredLabel(languages.hintContactNumberTxt),
-                          8.height,
-                        ],
+                        AppTextField(
+                          textFieldType: TextFieldType.NAME,
+                          controller: cNameCont,
+                          focus: cNameFocus,
+                          decoration:
+                              inputDecoration(context, hint: 'Company Name'),
+                        ),
+                        16.height,
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -1285,7 +1213,6 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                   : TextFieldType.NAME,
                               controller: mobileCont,
                               focus: mobileFocus,
-                              isValidationRequired: _isProviderProfile,
                               decoration: inputDecoration(context,
                                       hint: languages.hintContactNumberTxt)
                                   .copyWith(
@@ -1298,120 +1225,60 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           ],
                         ),
                         16.height,
-                        if (isUserTypeHandyman) ...[
-                          if (serviceAddressList.isEmpty)
-                            Text(
-                              '${languages.lblSelectAddress}: ${languages.hintRequired}',
-                              style: secondaryTextStyle(),
-                            )
-                          else
-                            DropdownButtonFormField<AddressResponse>(
-                              decoration: inputDecoration(context,
-                                  hint: languages.lblSelectAddress),
-                              isExpanded: true,
-                              value: selectedAddress == null
-                                  ? null
-                                  : serviceAddressList
-                                      .where((a) => a.id == selectedAddress!.id)
-                                      .firstOrNull,
-                              dropdownColor: context.cardColor,
-                              items: serviceAddressList
-                                  .map((AddressResponse data) {
-                                return DropdownMenuItem<AddressResponse>(
-                                  value: data,
-                                  child: Text(data.address.validate(),
-                                      style: primaryTextStyle()),
-                                );
-                              }).toList(),
-                              onChanged: (AddressResponse? value) async {
-                                selectedAddress = value;
-                                serviceAddressId =
-                                    selectedAddress?.id.validate();
-                                setState(() {});
-                              },
+                        DropdownButtonFormField<int>(
+                          decoration:
+                              inputDecoration(context, hint: 'Account status'),
+                          isExpanded: true,
+                          initialValue: profileAccountStatus,
+                          dropdownColor: context.cardColor,
+                          items: [
+                            DropdownMenuItem(
+                              value: 1,
+                              child: Text('Active',
+                                  style: primaryTextStyle(),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis),
                             ),
-                          16.height,
-                        ],
-                        if (_isProviderProfile) ...[
-                          _buildRequiredLabel(languages.lblStatus),
-                          8.height,
-                        ],
-                        Row(
-                          children: [
-                            DropdownButtonFormField<int>(
-                              decoration: inputDecoration(
-                                context,
-                                hint: languages.lblStatus,
-                              ),
-                              isExpanded: true,
-                              value: profileStatus,
-                              dropdownColor: context.cardColor,
-                              items: [
-                                DropdownMenuItem(
-                                  value: 1,
-                                  child: Text(
-                                    languages.active,
-                                    style: primaryTextStyle(),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                DropdownMenuItem(
-                                  value: 0,
-                                  child: Text(
-                                    languages.inactive,
-                                    style: primaryTextStyle(),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                              onChanged: (int? v) {
-                                if (v != null) {
-                                  profileStatus = v;
-                                  setState(() {});
-                                }
-                              },
-                            ).expand(),
+                            DropdownMenuItem(
+                              value: 0,
+                              child: Text('Inactive',
+                                  style: primaryTextStyle(),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis),
+                            ),
                           ],
+                          onChanged: (int? value) async {
+                            hideKeyboard(context);
+                            profileAccountStatus = value ?? 1;
+                            setState(() {});
+                          },
                         ),
                         16.height,
                         AppTextField(
-                          textFieldType: TextFieldType.NAME,
-                          controller: cNameCont,
-                          focus: cNameFocus,
-                          isValidationRequired: false,
-                          decoration: inputDecoration(context,
-                              hint: languages.lblCompanyNameHint),
-                        ),
-                        16.height,
-                        if (_isProviderProfile) ...[
-                          _buildRequiredLabel(languages.lblVatNumberHint),
-                          8.height,
-                        ],
-                        AppTextField(
-                          textFieldType: TextFieldType.NAME,
+                          textFieldType: TextFieldType.NUMBER,
                           controller: vatNumCont,
                           focus: vatNumFocus,
-                          nextFocus: skillsFocus,
-                          isValidationRequired: _isProviderProfile,
-                          decoration: inputDecoration(
-                            context,
-                            hint: languages.lblVatNumberHint,
-                            prefixIcon: Icon(
-                              Icons.receipt_long_outlined,
-                              size: 20,
-                              color: context.iconColor,
-                            ),
-                          ),
+                          nextFocus:
+                              isUserTypeProvider ? designationFocus : null,
+                          decoration:
+                              inputDecoration(context, hint: 'VAT Number'),
                         ),
                         16.height,
+                        if (isUserTypeProvider)
+                          AppTextField(
+                            textFieldType: TextFieldType.NAME,
+                            controller: designationCont,
+                            isValidationRequired: false,
+                            focus: designationFocus,
+                            decoration: inputDecoration(context,
+                                hint: languages.lblDesignation),
+                          ),
+                        if (isUserTypeProvider) 16.height,
                         AppTextField(
                           textFieldType: TextFieldType.NAME,
                           controller: skillsCont,
                           focus: skillsFocus,
-                          nextFocus: certificationFocus,
-                          isValidationRequired: false,
+                          nextFocus: null,
                           decoration: inputDecoration(context,
                               hint: languages.essentialSkills +
                                   ' (comma-separated)'),
@@ -1422,17 +1289,13 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         16.height,
                         DropdownButtonFormField<ProfileEducationLevel>(
                           decoration: inputDecoration(context,
-                              hint: languages.lblEducationHint,
+                              hint: 'Education',
                               fillColor: context.scaffoldBackgroundColor),
                           isExpanded: true,
-                          value: selectedEducation,
-                          hint: Text(languages.lblEducationHint,
-                              style: secondaryTextStyle()),
+                          initialValue: selectedEducation,
                           dropdownColor: context.cardColor,
                           menuMaxHeight: 300,
                           items: ProfileEducationLevel.values
-                              .where((level) =>
-                                  level != ProfileEducationLevel.unselected)
                               .map((ProfileEducationLevel level) {
                             return DropdownMenuItem<ProfileEducationLevel>(
                               value: level,
@@ -1452,10 +1315,10 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         16.height,
                         DropdownButtonFormField<CareerLevel>(
                           decoration: inputDecoration(context,
-                              hint: languages.lblCareerLevelHint,
+                              hint: 'Career Level',
                               fillColor: context.scaffoldBackgroundColor),
                           isExpanded: true,
-                          value: selectedCareerLevel,
+                          initialValue: selectedCareerLevel,
                           dropdownColor: context.cardColor,
                           menuMaxHeight: 300,
                           items: CareerLevel.values.map((CareerLevel level) {
@@ -1477,10 +1340,10 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         16.height,
                         DropdownButtonFormField<YearsOfExperience>(
                           decoration: inputDecoration(context,
-                              hint: languages.lblYearsOfExperienceHint,
+                              hint: 'Years of Experience',
                               fillColor: context.scaffoldBackgroundColor),
                           isExpanded: true,
-                          value: selectedYearsOfExperience,
+                          initialValue: selectedYearsOfExperience,
                           dropdownColor: context.cardColor,
                           menuMaxHeight: 300,
                           items: YearsOfExperience.values
@@ -1505,96 +1368,76 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           textFieldType: TextFieldType.NAME,
                           controller: certificationCont,
                           focus: certificationFocus,
-                          nextFocus: mobilityFocus,
-                          isValidationRequired: false,
+                          nextFocus: aboutMeFocus,
                           decoration: inputDecoration(context,
-                              hint: languages.lblCertificationHint),
+                              hint: 'Certification (comma-separated)'),
                           suffix: Icon(Icons.verified,
                                   size: 18, color: context.iconColor)
                               .paddingAll(14),
                         ),
                         16.height,
-                        Row(
-                          children: [
-                            DropdownButtonFormField<String>(
-                              decoration: inputDecoration(context,
-                                  hint: languages.lblSelectAvailabilityHint),
-                              isExpanded: true,
-                              value: _availabilityKeys
-                                      .contains(selectedAvailability)
-                                  ? selectedAvailability
-                                  : 'full_time',
-                              dropdownColor: context.cardColor,
-                              items: _availabilityKeys.map((String k) {
-                                return DropdownMenuItem<String>(
-                                  value: k,
-                                  child: Text(
-                                    _availabilityLabel(k),
-                                    style: primaryTextStyle(),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (String? value) {
-                                hideKeyboard(context);
-                                selectedAvailability = value ?? 'full_time';
-                                setState(() {});
-                              },
-                            ).expand(),
-                          ],
+                        DropdownButtonFormField<String>(
+                          decoration:
+                              inputDecoration(context, hint: 'Availability'),
+                          isExpanded: true,
+                          initialValue: _profileAvailabilityOptions
+                                  .containsKey(selectedAvailability)
+                              ? selectedAvailability
+                              : '',
+                          dropdownColor: context.cardColor,
+                          items: _profileAvailabilityOptions.entries.map((e) {
+                            return DropdownMenuItem<String>(
+                              value: e.key,
+                              child: Text(
+                                e.value,
+                                style: primaryTextStyle(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) async {
+                            hideKeyboard(context);
+                            selectedAvailability = value ?? '';
+                            setState(() {});
+                          },
                         ),
                         16.height,
                         AppTextField(
                           textFieldType: TextFieldType.NAME,
                           controller: mobilityCont,
                           focus: mobilityFocus,
-                          nextFocus: isUserTypeProvider
-                              ? designationFocus
-                              : experienceFocus,
-                          isValidationRequired: false,
+                          nextFocus: experienceFocus,
                           decoration: inputDecoration(context,
-                              hint: languages.lblMobilityHint),
+                              hint:
+                                  'Mobility (e.g., Car, Bike, Public Transport)'),
                           suffix: Icon(Icons.directions_car,
                                   size: 18, color: context.iconColor)
                               .paddingAll(14),
                         ),
                         16.height,
-                        if (isUserTypeProvider) ...[
-                          AppTextField(
-                            textFieldType: TextFieldType.NAME,
-                            controller: designationCont,
-                            isValidationRequired: false,
-                            focus: designationFocus,
-                            nextFocus: experienceFocus,
-                            decoration: inputDecoration(context,
-                                hint: languages.lblDesignation),
-                          ),
-                          16.height,
-                        ],
                         AppTextField(
                           textFieldType: TextFieldType.MULTILINE,
                           controller: experienceCont,
                           focus: experienceFocus,
-                          nextFocus: descriptionFocus,
-                          isValidationRequired: false,
+                          nextFocus: aboutMeFocus,
                           minLines: 3,
                           maxLines: 5,
                           decoration: inputDecoration(context,
-                              hint: languages.lblExperienceDescHint),
+                              hint:
+                                  'Experience (describe your work experience)'),
                           suffix: Icon(Icons.business_center,
                                   size: 18, color: context.iconColor)
                               .paddingAll(14),
                         ),
                         16.height,
                         AppTextField(
-                          controller: descriptionCont,
+                          controller: aboutMeCont,
                           textFieldType: TextFieldType.MULTILINE,
                           maxLines: 5,
                           minLines: 3,
-                          focus: descriptionFocus,
-                          nextFocus:
-                              isUserTypeProvider ? whyChooseMeFocus : null,
+                          focus: aboutMeFocus,
+                          nextFocus: addressFocus,
                           enableChatGPT: appConfigurationStore.chatGPTStatus,
                           promptFieldInputDecorationChatGPT:
                               inputDecoration(context).copyWith(
@@ -1605,12 +1448,24 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           testWithoutKeyChatGPT:
                               appConfigurationStore.testWithoutKey,
                           loaderWidgetForChatGPT: const ChatGPTLoadingWidget(),
-                          decoration: inputDecoration(context,
-                              hint: languages.aboutYou),
+                          decoration:
+                              inputDecoration(context, hint: 'About me'),
                           isValidationRequired: false,
                         ),
+                        16.height,
+                        AppTextField(
+                          controller: addressCont,
+                          textFieldType: TextFieldType.MULTILINE,
+                          maxLines: 5,
+                          focus: addressFocus,
+                          minLines: 3,
+                          nextFocus:
+                              isUserTypeProvider ? whyChooseMeFocus : null,
+                          decoration: inputDecoration(context,
+                              hint: languages.hintAddress),
+                        ),
+                        16.height,
                         if (isUserTypeProvider) ...[
-                          16.height,
                           AppTextField(
                             controller: whyChooseMeCont,
                             textFieldType: TextFieldType.NAME,
@@ -1618,6 +1473,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             focus: whyChooseMeFocus,
                             minLines: 2,
                             maxLength: 120,
+                            nextFocus: aboutDescriptionFocus,
                             enableChatGPT: appConfigurationStore.chatGPTStatus,
                             promptFieldInputDecorationChatGPT:
                                 inputDecoration(context).copyWith(
@@ -1632,15 +1488,14 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             decoration: inputDecoration(context,
                                 hint: languages.writeShortLineAbout),
                             isValidationRequired: false,
-                            nextFocus: whyChooseAboutDescFocus,
                           ),
                           16.height,
                           AppTextField(
-                            controller: whyChooseAboutDescCont,
+                            controller: aboutDescriptionCont,
                             textFieldType: TextFieldType.MULTILINE,
-                            maxLines: 5,
-                            minLines: 3,
-                            focus: whyChooseAboutDescFocus,
+                            maxLines: 8,
+                            minLines: 4,
+                            focus: aboutDescriptionFocus,
                             enableChatGPT: appConfigurationStore.chatGPTStatus,
                             promptFieldInputDecorationChatGPT:
                                 inputDecoration(context).copyWith(
@@ -1654,7 +1509,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                 const ChatGPTLoadingWidget(),
                             decoration: inputDecoration(context,
                                 hint:
-                                    '${languages.whyChooseMe}: ${languages.hintDescription}'),
+                                    'About description (why choose me — rich text)'),
                             isValidationRequired: false,
                           ),
                           16.height,
@@ -1671,9 +1526,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                           BorderRadius.all(Radius.circular(16)),
                                       backgroundColor: appStore.isDarkMode
                                           ? cardDarkColor
-                                          : primaryColor.withValues(
-                                              alpha: 0.1,
-                                            ),
+                                          : primaryColor.withValues(alpha: 0.1),
                                     ),
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 16, vertical: 8),
@@ -1714,21 +1567,6 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                     color: context.primaryColor)),
                           ),
                         ],
-                        16.height,
-                        if (_isProviderProfile) ...[
-                          _buildRequiredLabel(languages.hintAddress),
-                          8.height,
-                        ],
-                        AppTextField(
-                          controller: addressCont,
-                          textFieldType: TextFieldType.MULTILINE,
-                          maxLines: 5,
-                          focus: addressFocus,
-                          minLines: 3,
-                          isValidationRequired: _isProviderProfile,
-                          decoration: inputDecoration(context,
-                              hint: languages.hintAddress),
-                        ),
                         28.height,
                         Observer(
                           builder: (context) => DecoratedBox(

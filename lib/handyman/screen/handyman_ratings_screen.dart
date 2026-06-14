@@ -33,6 +33,10 @@ class _HandymanRatingsScreenState extends State<HandymanRatingsScreen> {
   }
 
   Future<void> _openReviewReportDialog({required int reviewId}) async {
+    if (reviewId <= 0) {
+      toast(errorSomethingWentWrong);
+      return;
+    }
     await showInDialog(
       context,
       contentPadding: EdgeInsets.zero,
@@ -217,38 +221,52 @@ class _HandymanRatingsScreenState extends State<HandymanRatingsScreen> {
           Divider(color: context.dividerColor, height: 20, thickness: 1),
           // Rating and Review Section
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Star Rating
               _buildStarRating(data.rating.validate()),
               8.width,
+              // Booking ID
               Text(
                 '#${data.bookingId.validate()}',
                 style: secondaryTextStyle(size: 12),
               ),
-              const Spacer(),
-              if (data.id != null)
-                IconButton(
-                  tooltip: languages.lblReportReviewTitle,
-                  padding: EdgeInsets.zero,
-                  visualDensity: VisualDensity.compact,
-                  constraints:
-                      const BoxConstraints(minWidth: 32, minHeight: 32),
-                  icon: Icon(
-                    Icons.flag_outlined,
-                    color: Colors.red,
-                    size: 20,
-                  ),
-                  onPressed: () =>
-                      _openReviewReportDialog(reviewId: data.id!),
-                ),
             ],
           ),
           12.height,
-          // Review Text
-          if (data.review.validate().isNotEmpty)
-            Text(
-              data.review.validate(),
-              style: primaryTextStyle(),
+          // Review text + report flag
+          if (data.review.validate().isNotEmpty ||
+              (data.id != null && data.id! > 0))
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (data.review.validate().isNotEmpty)
+                  Expanded(
+                    child: Text(
+                      data.review.validate(),
+                      style: primaryTextStyle(),
+                    ),
+                  )
+                else
+                  const Spacer(),
+                if (data.id != null && data.id! > 0)
+                  IconButton(
+                    tooltip: languages.lblReportReviewTitle,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(
+                      minWidth: 40,
+                      minHeight: 36,
+                    ),
+                    icon: const Icon(
+                      Icons.flag_outlined,
+                      color: Colors.red,
+                      size: 22,
+                    ),
+                    onPressed: () => _openReviewReportDialog(
+                      reviewId: data.id!,
+                    ),
+                  ),
+              ],
             ),
           // Date
           if (data.createdAt.validate().isNotEmpty) ...[

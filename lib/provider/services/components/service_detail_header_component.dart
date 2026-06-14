@@ -41,7 +41,7 @@ class _ServiceDetailHeaderComponentState
   String _getLocationText() {
     if (widget.serviceDetail.serviceAddressMapping == null ||
         widget.serviceDetail.serviceAddressMapping!.isEmpty) {
-      return languages.lblNa;
+      return 'N/A';
     }
 
     final mapping = widget.serviceDetail.serviceAddressMapping!.first;
@@ -56,7 +56,7 @@ class _ServiceDetailHeaderComponentState
       return mapping.providerAddressMapping!.address!;
     }
     
-    return languages.lblNa;
+    return 'N/A';
   }
 
   void removeService() {
@@ -337,7 +337,7 @@ class _ServiceDetailHeaderComponentState
                         TextIcon(
                           edgeInsets:
                               EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-                          text: languages.lblLocationSection,
+                          text: 'Location',
                           textStyle: secondaryTextStyle(size: 14),
                           expandedText: true,
                           suffix: Text(
@@ -361,7 +361,7 @@ class _ServiceDetailHeaderComponentState
                       TextIcon(
                         edgeInsets:
                             EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-                        text: '${languages.lblBookingsCount}:',
+                        text: 'Bookings:',
                         textStyle: secondaryTextStyle(size: 14),
                         expandedText: true,
                         suffix: Text(
@@ -372,7 +372,7 @@ class _ServiceDetailHeaderComponentState
                       TextIcon(
                         edgeInsets:
                             EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-                        text: languages.lblMinBooking,
+                        text: 'Minimum Bookings',
                         textStyle: secondaryTextStyle(size: 14),
                         expandedText: true,
                         suffix: Text(

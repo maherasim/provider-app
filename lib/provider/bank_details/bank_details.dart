@@ -5,6 +5,7 @@ import 'package:handyman_provider_flutter/components/empty_error_state_widget.da
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/provider/bank_details/add_bank_screen.dart';
+import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:nb_utils/nb_utils.dart';
 import '../../models/bank_list_response.dart';
 import '../../utils/common.dart';
@@ -37,7 +38,7 @@ class _BankDetailsState extends State<BankDetails> {
   Future<void> update() async {
     appStore.setLoading(true);
     chooseDefaulBank(bankId: _selectedAccount.id).then((value) async {
-      await init();
+     await init();
       setState(() {});
     }).catchError((value) async {
       toast(value);
@@ -86,9 +87,7 @@ class _BankDetailsState extends State<BankDetails> {
       OptionModel(
         title: languages.lblEdit,
         onTap: () {
-          AddBankScreen(data: bankHistory)
-              .launch(context, pageRouteAnimation: PageRouteAnimation.Fade)
-              .then((value) {
+          AddBankScreen(data: bankHistory).launch(context, pageRouteAnimation: PageRouteAnimation.Fade).then((value) {
             if (value[0]) {
               init();
               setState(() {});
@@ -96,22 +95,21 @@ class _BankDetailsState extends State<BankDetails> {
           });
         },
       ),
-      if (bankHistory.isDefault == 0)
-        OptionModel(
-          title: languages.lblDelete,
-          onTap: () {
-            showConfirmDialogCustom(
-              context,
-              dialogType: DialogType.DELETE,
-              title: languages.deleteBankTitle,
-              positiveText: languages.lblDelete,
-              negativeText: languages.lblCancel,
-              onAccept: (v) {
-                delete(bankHistory.id);
-              },
-            );
-          },
-        ),
+      if (bankHistory.isDefault == 0) OptionModel(
+        title: languages.lblDelete,
+        onTap: () {
+          showConfirmDialogCustom(
+            context,
+            dialogType: DialogType.DELETE,
+            title: languages.deleteBankTitle,
+            positiveText: languages.lblDelete,
+            negativeText: languages.lblCancel,
+            onAccept: (v) {
+              delete(bankHistory.id);
+            },
+          );
+        },
+      ),
       if (bankHistory.isDefault == 0)
         OptionModel(
           title: languages.setAsDefault,
@@ -161,8 +159,7 @@ class _BankDetailsState extends State<BankDetails> {
             physics: AlwaysScrollableScrollPhysics(),
             listAnimationType: ListAnimationType.FadeIn,
             fadeInConfiguration: FadeInConfiguration(duration: 2.seconds),
-            slideConfiguration: SlideConfiguration(
-                duration: 400.milliseconds, delay: 50.milliseconds),
+            slideConfiguration: SlideConfiguration(duration: 400.milliseconds, delay: 50.milliseconds),
             padding: EdgeInsets.all(8),
             itemCount: snap.length,
             itemBuilder: (BuildContext context, index) {
@@ -195,8 +192,7 @@ class _BankDetailsState extends State<BankDetails> {
                               gradient: kAppPrimaryGradient,
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(Icons.account_balance,
-                                color: white, size: 22),
+                            child: Icon(Icons.account_balance, color: white, size: 22),
                           ),
                           12.width,
                           Marquee(
@@ -208,48 +204,27 @@ class _BankDetailsState extends State<BankDetails> {
                             ),
                           ).expand(),
                           12.width,
-                          ConstrainedBox(
-                            constraints: BoxConstraints(maxWidth: 96),
-                            child: Container(
-                              alignment: Alignment.center,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                gradient: kAppPrimaryGradient,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                languages.lbldefault,
-                                style: boldTextStyle(size: 10, color: white),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                          Container(
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              gradient: kAppPrimaryGradient,
+                              borderRadius: BorderRadius.circular(20),
                             ),
+                            child: Text(languages.lbldefault, style: boldTextStyle(size: 10, color: white)),
                           ).visible(data.isDefault == 1),
                         ],
                       ),
                       12.height,
                       Row(
                         children: [
-                          Icon(Icons.credit_card,
-                              size: 16, color: textSecondaryColorGlobal),
+                          Icon(Icons.credit_card, size: 16, color: textSecondaryColorGlobal),
                           8.width,
-                          Expanded(
-                            child: Text(
-                              bankAccountWidget(data.accountNo.validate()),
-                              style: primaryTextStyle(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
+                          Text(bankAccountWidget(data.accountNo.validate()), style: primaryTextStyle()),
                         ],
                       ),
                       8.height,
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: OptionListWidget(
-                            optionList: optionList(bankHistory: data)),
-                      ),
+                      OptionListWidget(optionList: optionList(bankHistory: data)),
                     ],
                   ),
                 ),

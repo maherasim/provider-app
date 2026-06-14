@@ -1,10 +1,8 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
-import 'package:handyman_provider_flutter/utils/app_check_utils.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
@@ -14,55 +12,22 @@ import 'package:nb_utils/nb_utils.dart';
 
 import '../utils/model_keys.dart';
 
-/// [message] from APIs may be String or structured JSON (validation errors).
-String _throwableApiMessage(dynamic message) {
-  if (message == null) return errorSomethingWentWrong;
-  if (message is Map || message is List) return jsonEncode(message);
-  if (message is String) return parseHtmlString(message);
-  return message.toString();
-}
-
 Map<String, String> buildHeaderTokens() {
   Map<String, String> header = {};
 
-  if (appStore.isLoggedIn) {
+  if (appStore.isLoggedIn)
     header.putIfAbsent(
-      HttpHeaders.authorizationHeader,
-      () => 'Bearer ${appStore.token}',
-    );
-  }
+        HttpHeaders.authorizationHeader, () => 'Bearer ${appStore.token}');
   header.putIfAbsent(
-    HttpHeaders.contentTypeHeader,
-    () => 'application/json; charset=utf-8',
-  );
+      HttpHeaders.contentTypeHeader, () => 'application/json; charset=utf-8');
   header.putIfAbsent(
-    HttpHeaders.acceptHeader,
-    () => 'application/json; charset=utf-8',
-  );
+      HttpHeaders.acceptHeader, () => 'application/json; charset=utf-8');
   header.putIfAbsent(
-    CustomHeader.LanguageCode,
-    () => appStore.selectedLanguageCode,
-  );
-
-  final appCheckToken = cachedAppCheckToken;
-  if (appCheckToken != null && appCheckToken.isNotEmpty) {
-    header.putIfAbsent('X-Firebase-AppCheck', () => appCheckToken);
-  }
-
+      CustomHeader.LanguageCode, () => appStore.selectedLanguageCode);
   header.addAll(defaultHeaders());
 
   log(jsonEncode(header));
   return header;
-}
-
-Future<Map<String, String>> buildHeaderTokensWithAppCheck({
-  bool refreshAppCheck = false,
-}) async {
-  if (!isWeb) {
-    await refreshAppCheckToken(forceRefresh: refreshAppCheck);
-  }
-
-  return buildHeaderTokens();
 }
 
 Uri buildBaseUrl(String endPoint) {
@@ -80,13 +45,14 @@ Future<Response> buildHttpResponse(
   Map? request,
   Map<String, String>? header,
 }) async {
-  var headers = header ?? await buildHeaderTokensWithAppCheck();
+  var headers = header ?? buildHeaderTokens();
   Uri url = buildBaseUrl(endPoint);
 
   Response response;
 
   try {
     if (method == HttpMethodType.POST) {
+      // log('Request: ${jsonEncode(request)}');
       response =
           await http.post(url, body: jsonEncode(request), headers: headers);
     } else if (method == HttpMethodType.DELETE) {
@@ -107,37 +73,30 @@ Future<Response> buildHttpResponse(
       responseBody: response.body,
       methodtype: method.name,
     );
+    // log('Response (${method.name}) ${response.statusCode}: ${response.body}');
 
     if (appStore.isLoggedIn &&
         response.statusCode == 401 &&
         !endPoint.startsWith('http')) {
       return await reGenerateToken().then((value) async {
-        return await buildHttpResponse(
-          endPoint,
-          method: method,
-          request: request,
-          header: header,
-        );
+        return await buildHttpResponse(endPoint,
+            method: method, request: request, header: header);
       }).catchError((e) {
         throw errorSomethingWentWrong;
       });
     } else {
       return response;
     }
-  } on SocketException catch (_) {
+  } on Exception {
     throw errorInternetNotAvailable;
-  } on TimeoutException catch (_) {
-    throw errorInternetNotAvailable;
-  } on Exception catch (e) {
-    log('buildHttpResponse error: $e');
-    throw errorSomethingWentWrong;
   }
 }
 
-Future handleResponse(
-  Response response, {
-  HttpResponseType httpResponseType = HttpResponseType.JSON,
-}) async {
+Future handleResponse(Response response,
+    {HttpResponseType httpResponseType = HttpResponseType.JSON}) async {
+  if (!await isNetworkAvailable()) {
+    throw errorInternetNotAvailable;
+  }
   if (response.statusCode == 400) {
     throw '${languages.badRequest}';
   } else if (response.statusCode == 403) {
@@ -165,12 +124,12 @@ Future handleResponse(
             body.containsKey('status') &&
             body['status'] is bool &&
             !body['status']) {
-          throw _throwableApiMessage(body['message']);
+          throw parseHtmlString(body['message'] ?? errorSomethingWentWrong);
         } else {
           return body;
         }
       } else {
-        throw _throwableApiMessage(body['message']);
+        throw parseHtmlString(body['message'] ?? errorSomethingWentWrong);
       }
     } else {
       throw errorSomethingWentWrong;
@@ -218,29 +177,23 @@ Future<void> reGenerateToken() async {
 Future<MultipartRequest> getMultiPartRequest(String endPoint,
     {String? baseUrl}) async {
   String url = '${baseUrl ?? buildBaseUrl(endPoint).toString()}';
-  MultipartRequest request = MultipartRequest('POST', Uri.parse(url));
-  request.headers.addAll(await buildHeaderTokensWithAppCheck());
-  return request;
+  return MultipartRequest('POST', Uri.parse(url));
 }
 
-Future<void> sendMultiPartRequest(
-  MultipartRequest multiPartRequest, {
-  Function(dynamic)? onSuccess,
-  Function(dynamic)? onError,
-}) async {
+Future<void> sendMultiPartRequest(MultipartRequest multiPartRequest,
+    {Function(dynamic)? onSuccess, Function(dynamic)? onError}) async {
   try {
     http.Response response =
         await http.Response.fromStream(await multiPartRequest.send());
 
     apiPrint(
-      url: multiPartRequest.url.toString(),
-      headers: jsonEncode(multiPartRequest.headers),
-      request: jsonEncode(multiPartRequest.fields),
-      hasRequest: true,
-      statusCode: response.statusCode,
-      responseBody: response.body,
-      methodtype: 'MultiPart',
-    );
+        url: multiPartRequest.url.toString(),
+        headers: jsonEncode(multiPartRequest.headers),
+        request: jsonEncode(multiPartRequest.fields),
+        hasRequest: true,
+        statusCode: response.statusCode,
+        responseBody: response.body,
+        methodtype: "MultiPart");
 
     if (response.statusCode.isSuccessful()) {
       if (response.body.isJson()) {
@@ -266,34 +219,31 @@ Future<void> sendMultiPartRequest(
 }
 
 void apiPrint({
-  String url = '',
-  String endPoint = '',
-  String headers = '',
-  String request = '',
+  String url = "",
+  String endPoint = "",
+  String headers = "",
+  String request = "",
   int statusCode = 0,
-  String responseBody = '',
-  String methodtype = '',
+  String responseBody = "",
+  String methodtype = "",
   bool hasRequest = false,
 }) {
-  log('----------------------------------------------------------------');
-  log('Url: $url');
-  log('Header: $headers');
-  if (request.isNotEmpty) log('Request: $request');
+  log("┌───────────────────────────────────────────────────────────────────────────────────────────────────────");
+  log("\u001b[93mUrl: \u001B[39m $url");
+  log("\u001b[93mHeader: \u001B[39m \u001b[96m$headers\u001B[39m");
+  if (request.isNotEmpty)
+    log("\u001b[93mRequest: \u001B[39m \u001b[96m$request\u001B[39m");
   log('Response ($methodtype) $statusCode: $responseBody');
-  log('----------------------------------------------------------------');
+  log("└───────────────────────────────────────────────────────────────────────────────────────────────────────");
 }
 
 Map<String, String> buildHeaderForStripe(String stripeKeyPayment) {
   Map<String, String> header = defaultHeaders();
 
   header.putIfAbsent(
-    HttpHeaders.contentTypeHeader,
-    () => 'application/x-www-form-urlencoded',
-  );
+      HttpHeaders.contentTypeHeader, () => 'application/x-www-form-urlencoded');
   header.putIfAbsent(
-    HttpHeaders.authorizationHeader,
-    () => 'Bearer $stripeKeyPayment',
-  );
+      HttpHeaders.authorizationHeader, () => 'Bearer $stripeKeyPayment');
 
   return header;
 }
@@ -302,9 +252,8 @@ Map<String, String> buildHeaderForSadad({String? sadadToken}) {
   Map<String, String> header = defaultHeaders();
 
   header.putIfAbsent(HttpHeaders.contentTypeHeader, () => 'application/json');
-  if (sadadToken != null) {
+  if (sadadToken != null)
     header.putIfAbsent(HttpHeaders.authorizationHeader, () => sadadToken);
-  }
 
   return header;
 }
@@ -313,30 +262,21 @@ Map<String, String> buildHeaderForFlutterWave(String flutterWaveSecretKey) {
   Map<String, String> header = defaultHeaders();
 
   header.putIfAbsent(
-    HttpHeaders.authorizationHeader,
-    () => 'Bearer $flutterWaveSecretKey',
-  );
+      HttpHeaders.authorizationHeader, () => "Bearer $flutterWaveSecretKey");
 
   return header;
 }
 
 Map<String, String> buildHeaderForAirtelMoney(
-  String accessToken,
-  String xCountry,
-  String xCurrency,
-) {
+    String accessToken, String XCountry, String XCurrency) {
   Map<String, String> header = defaultHeaders();
 
   header.putIfAbsent(
-    HttpHeaders.contentTypeHeader,
-    () => 'application/json; charset=utf-8',
-  );
+      HttpHeaders.contentTypeHeader, () => 'application/json; charset=utf-8');
   header.putIfAbsent(
-    HttpHeaders.authorizationHeader,
-    () => 'Bearer $accessToken',
-  );
-  header.putIfAbsent('X-Country', () => xCountry);
-  header.putIfAbsent('X-Currency', () => xCurrency);
+      HttpHeaders.authorizationHeader, () => 'Bearer $accessToken');
+  header.putIfAbsent('X-Country', () => '$XCountry');
+  header.putIfAbsent('X-Currency', () => '$XCurrency');
 
   return header;
 }

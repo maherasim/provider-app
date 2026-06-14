@@ -8,6 +8,7 @@ import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
+import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -46,7 +47,6 @@ class _HandymanWidgetState extends State<HandymanWidget> {
   @override
   Widget build(BuildContext context) {
     final String cleanedAddress = parseHtmlString(widget.data!.address.validate());
-    print(widget.data?.address);
     return Stack(
       children: [
         Container(

@@ -11,6 +11,8 @@ import 'package:nb_utils/nb_utils.dart';
 import '../utils/model_keys.dart';
 import 'multi_language_request_model.dart';
 
+
+
 class ServiceData {
   int? id;
   String? name;
@@ -24,14 +26,13 @@ class ServiceData {
   String? duration;
   String? cancellationPolicy;
   String? minimumBookings;
-  String? countryTax;
+    String? countryTax;
   int? status;
   String? description;
   String? requirements;
   int? isFeatured;
   String? providerName;
   String? providerImage;
-  int? providerProfileComplete;
   int? countryId;
   String? countryName;
   int? cityId;
@@ -117,9 +118,9 @@ class ServiceData {
       this.providerName,
       this.subCategoryId,
       this.providerImage,
-      this.providerProfileComplete,
       this.countryId,
       this.stateId,
+      
       this.cityId,
       this.categoryName,
       this.attchments,
@@ -198,19 +199,13 @@ class ServiceData {
     }
     // Handle price - can be string or num
     if (json['price'] != null) {
-      price = json['price'] is num
-          ? json['price']
-          : (json['price'] is String ? double.tryParse(json['price']) : null);
+      price = json['price'] is num ? json['price'] : (json['price'] is String ? double.tryParse(json['price']) : null);
     }
     priceFormat = json['price_format'];
     type = json['type'];
     // Handle discount - can be string or num
     if (json['discount'] != null) {
-      discount = json['discount'] is num
-          ? json['discount']
-          : (json['discount'] is String
-              ? double.tryParse(json['discount'])
-              : null);
+      discount = json['discount'] is num ? json['discount'] : (json['discount'] is String ? double.tryParse(json['discount']) : null);
     }
     duration = _parseDuration(json['duration']);
     cancellationPolicy = json['cancellation_policy'];
@@ -253,17 +248,6 @@ class ServiceData {
       }
     }
     providerName = json['provider_name'];
-    // Handle provider_profile_complete - can be string or num
-    if (json['provider_profile_complete'] != null) {
-      var profileCompleteValue = json['provider_profile_complete'];
-      if (profileCompleteValue is int) {
-        providerProfileComplete = profileCompleteValue;
-      } else if (profileCompleteValue is num) {
-        providerProfileComplete = profileCompleteValue.toInt();
-      } else if (profileCompleteValue is String) {
-        providerProfileComplete = int.tryParse(profileCompleteValue);
-      }
-    }
     // Handle both camelCase and snake_case for country_id - can be string or num
     var countryIdValue = json['countryId'] ?? json['country_id'];
     if (countryIdValue != null) {
@@ -328,19 +312,11 @@ class ServiceData {
         : null;
     // Handle total_review - can be string or num
     if (json['total_review'] != null) {
-      totalReview = json['total_review'] is num
-          ? json['total_review']
-          : (json['total_review'] is String
-              ? double.tryParse(json['total_review'])
-              : null);
+      totalReview = json['total_review'] is num ? json['total_review'] : (json['total_review'] is String ? double.tryParse(json['total_review']) : null);
     }
     // Handle total_rating - can be string or num
     if (json['total_rating'] != null) {
-      totalRating = json['total_rating'] is num
-          ? json['total_rating']
-          : (json['total_rating'] is String
-              ? double.tryParse(json['total_rating'])
-              : null);
+      totalRating = json['total_rating'] is num ? json['total_rating'] : (json['total_rating'] is String ? double.tryParse(json['total_rating']) : null);
     }
     // Handle is_favourite - can be string or num
     if (json['is_favourite'] != null) {
@@ -374,7 +350,7 @@ class ServiceData {
         : null;
     advancePaymentSetting = json[AdvancePaymentKey.advancePaymentSetting];
     isEnableAdvancePayment = json[AdvancePaymentKey.isEnableAdvancePayment];
-
+    
     // Handle advance_payment_amount - just fetch the value directly, no calculation
     if (json[AdvancePaymentKey.advancePaymentAmount] != null) {
       var amountValue = json[AdvancePaymentKey.advancePaymentAmount];
@@ -383,34 +359,31 @@ class ServiceData {
       } else if (amountValue is String) {
         advancePaymentAmount = double.tryParse(amountValue);
       }
-      print(
-          '🔵 MODEL: Fetched advancePaymentAmount=$advancePaymentAmount directly from API');
+      print('🔵 MODEL: Fetched advancePaymentAmount=$advancePaymentAmount directly from API');
     }
-
+    
     // Handle advance_payment_percentage - store as string to preserve "%" sign for display
     if (json['advance_payment_percentage'] != null) {
       var percentageValue = json['advance_payment_percentage'];
       // Store as string to preserve the "%" sign (e.g., "20%")
       if (percentageValue is String) {
-        advancePaymentPercentage =
-            double.tryParse(percentageValue.replaceAll('%', '').trim());
+        advancePaymentPercentage = double.tryParse(percentageValue.replaceAll('%', '').trim());
       } else if (percentageValue is num) {
         advancePaymentPercentage = percentageValue.toDouble();
       }
-      print(
-          '🔵 MODEL: Fetched advance_payment_percentage=$percentageValue from API');
+      print('🔵 MODEL: Fetched advance_payment_percentage=$percentageValue from API');
     }
-
+    
     // Handle remote_work_level - can be string, null, or other types
     if (json['remote_work_level'] != null) {
       remoteWorkLevel = json['remote_work_level'].toString();
     }
-
+    
     // Handle career_level - can be string, null, or other types
     if (json['career_level'] != null) {
       careerLevel = json['career_level'].toString();
     }
-
+    
     // Handle travel_required - can be bool (0/1), int, string, or null
     if (json['travel_required'] != null) {
       if (json['travel_required'] is bool) {
@@ -463,7 +436,6 @@ class ServiceData {
     data['requirements'] = this.requirements;
     data['is_featured'] = this.isFeatured;
     data['provider_name'] = this.providerName;
-    data['provider_profile_complete'] = this.providerProfileComplete;
     data['city_id'] = this.cityId;
     data['subcategory_id'] = this.subCategoryId;
     data['subcategory_name'] = this.subCategoryName;

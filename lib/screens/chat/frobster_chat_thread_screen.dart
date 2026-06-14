@@ -25,8 +25,7 @@ class FrobsterChatThreadScreen extends StatefulWidget {
   });
 
   @override
-  State<FrobsterChatThreadScreen> createState() =>
-      _FrobsterChatThreadScreenState();
+  State<FrobsterChatThreadScreen> createState() => _FrobsterChatThreadScreenState();
 }
 
 class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
@@ -67,8 +66,7 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
   Future<void> _loadInitial() async {
     _safeSetState(() => _loading = true);
     try {
-      final res = await FrobsterChatApi.fetchMessages(
-          conversationId: widget.conversationId, limit: 50);
+      final res = await FrobsterChatApi.fetchMessages(conversationId: widget.conversationId, limit: 50);
       _messages
         ..clear()
         ..addAll(res.messages);
@@ -76,8 +74,7 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
         _messages.sort((a, b) => a.id.compareTo(b.id));
         _lastMessageId = _messages.last.id;
         // Mark as read up to latest
-        await FrobsterChatApi.markRead(
-            conversationId: widget.conversationId, upToId: _lastMessageId);
+        await FrobsterChatApi.markRead(conversationId: widget.conversationId, upToId: _lastMessageId);
         LiveStream().emit(LIVESTREAM_UPDATE_CHAT_UNREAD);
       }
       _safeSetState(() {});
@@ -96,16 +93,12 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
       return _loadInitial();
     }
     try {
-      final res = await FrobsterChatApi.fetchMessages(
-          conversationId: widget.conversationId,
-          afterId: _lastMessageId,
-          limit: 50);
+      final res = await FrobsterChatApi.fetchMessages(conversationId: widget.conversationId, afterId: _lastMessageId, limit: 50);
       if (res.messages.isNotEmpty) {
         _messages.addAll(res.messages);
         _messages.sort((a, b) => a.id.compareTo(b.id));
         _lastMessageId = _messages.last.id;
-        await FrobsterChatApi.markRead(
-            conversationId: widget.conversationId, upToId: _lastMessageId);
+        await FrobsterChatApi.markRead(conversationId: widget.conversationId, upToId: _lastMessageId);
         LiveStream().emit(LIVESTREAM_UPDATE_CHAT_UNREAD);
         _safeSetState(() {});
         _scrollToBottom();
@@ -120,8 +113,7 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
     _safeSetState(() => _loadingMore = true);
     try {
       final firstId = _messages.first.id;
-      final res = await FrobsterChatApi.fetchMessages(
-          conversationId: widget.conversationId, beforeId: firstId, limit: 50);
+      final res = await FrobsterChatApi.fetchMessages(conversationId: widget.conversationId, beforeId: firstId, limit: 50);
       if (res.messages.isNotEmpty) {
         _messages.insertAll(0, res.messages);
         _messages.sort((a, b) => a.id.compareTo(b.id));
@@ -142,10 +134,10 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
     _safeSetState(() => _sending = true);
 
     try {
-      final res = await FrobsterChatApi.sendMessage(
-          conversationId: widget.conversationId, message: text);
+      final res = await FrobsterChatApi.sendMessage(conversationId: widget.conversationId, message: text);
       if (res.flagged) {
-        toast(languages.messageHiddenDueToPolicy(res.piiTypes));
+        final types = res.piiTypes.join(', ');
+        toast('Message hidden due to policy (${types.isEmpty ? 'policy' : types})');
       }
       // Only show in listing after sent successfully: refresh from server then clear field
       await _fetchNew();
@@ -164,17 +156,14 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       if (_scrollController.hasClients) {
-        _scrollController
-            .jumpTo(_scrollController.position.maxScrollExtent + 64);
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent + 64);
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final title = widget.otherDisplayName?.trim().isNotEmpty == true
-        ? widget.otherDisplayName!
-        : widget.title;
+    final title = widget.otherDisplayName?.trim().isNotEmpty == true ? widget.otherDisplayName! : widget.title;
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -188,9 +177,7 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
               child: CircleAvatar(
                 radius: 14,
                 backgroundColor: context.cardColor,
-                backgroundImage: widget.otherAvatarUrl.validate().isNotEmpty
-                    ? NetworkImage(widget.otherAvatarUrl!)
-                    : null,
+                backgroundImage: widget.otherAvatarUrl.validate().isNotEmpty ? NetworkImage(widget.otherAvatarUrl!) : null,
                 child: widget.otherAvatarUrl.validate().isNotEmpty
                     ? null
                     : Text(
@@ -200,15 +187,11 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
               ),
             ),
             8.width,
-            Expanded(
-                child: Text(title,
-                    style: boldTextStyle(size: 16, color: white),
-                    overflow: TextOverflow.ellipsis)),
+            Expanded(child: Text(title, style: boldTextStyle(size: 16, color: white), overflow: TextOverflow.ellipsis)),
           ],
         ),
         backgroundColor: Colors.transparent,
-        flexibleSpace: Container(
-            decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
+        flexibleSpace: Container(decoration: const BoxDecoration(gradient: kAppPrimaryGradient)),
         iconTheme: const IconThemeData(color: white),
       ),
       body: Column(
@@ -222,27 +205,14 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
                       ? const SizedBox()
                       : ListView.builder(
                           controller: _scrollController,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                           itemCount: _messages.length,
                           itemBuilder: (context, index) {
                             final m = _messages[index];
                             final isMe = m.senderId == appStore.userId;
                             final isMeBg = isMe ? true : false;
-                            final align = isMe
-                                ? CrossAxisAlignment.end
-                                : CrossAxisAlignment.start;
-                            final radius = isMe
-                                ? const BorderRadius.only(
-                                    topLeft: Radius.circular(12),
-                                    topRight: Radius.circular(2),
-                                    bottomLeft: Radius.circular(12),
-                                    bottomRight: Radius.circular(12))
-                                : const BorderRadius.only(
-                                    topLeft: Radius.circular(2),
-                                    topRight: Radius.circular(12),
-                                    bottomLeft: Radius.circular(12),
-                                    bottomRight: Radius.circular(12));
+                            final align = isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start;
+                            final radius = isMe ? const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(2), bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12)) : const BorderRadius.only(topLeft: Radius.circular(2), topRight: Radius.circular(12), bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12));
                             return Column(
                               crossAxisAlignment: align,
                               children: [
@@ -250,38 +220,23 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
                                   decoration: BoxDecoration(
                                     borderRadius: radius,
                                     color: isMeBg ? null : context.cardColor,
-                                    gradient:
-                                        isMeBg ? kAppPrimaryGradient : null,
+                                    gradient: isMeBg ? kAppPrimaryGradient : null,
                                   ),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 10),
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                                   child: Column(
                                     crossAxisAlignment: align,
                                     children: [
                                       if (m.hidden || m.policyViolation)
                                         Text(
-                                          languages.messageHiddenDueToPolicy(
-                                              m.piiTypes),
-                                          style: secondaryTextStyle(
-                                              color: Colors.red, size: 12),
+                                          'Message hidden due to policy${m.piiTypes.isNotEmpty ? ' (${m.piiTypes.join(', ')})' : ''}',
+                                          style: secondaryTextStyle(color: Colors.red, size: 12),
                                         ),
-                                      if (!m.hidden &&
-                                          (m.message?.isNotEmpty == true))
-                                        Text(m.message!,
-                                            style: isMe
-                                                ? primaryTextStyle(
-                                                    size: 14, color: white)
-                                                : primaryTextStyle(size: 14)),
-                                      if (!m.hidden &&
-                                          (m.attachment?.isNotEmpty == true))
-                                        Text(languages.lblAttachment,
-                                            style: secondaryTextStyle(
-                                                size: 12, color: white)),
+                                      if (!m.hidden && (m.message?.isNotEmpty == true))
+                                        Text(m.message!, style: isMe ? primaryTextStyle(size: 14, color: white) : primaryTextStyle(size: 14)),
+                                      if (!m.hidden && (m.attachment?.isNotEmpty == true))
+                                        Text('Attachment', style: secondaryTextStyle(size: 12, color: white)),
                                       4.height,
-                                      Text(m.createdAt,
-                                          style: secondaryTextStyle(
-                                              size: 10,
-                                              color: isMe ? white : null)),
+                                      Text(m.createdAt, style: secondaryTextStyle(size: 10, color: isMe ? white : null)),
                                     ],
                                   ),
                                 ).paddingSymmetric(vertical: 4),
@@ -290,8 +245,7 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
                           },
                         ),
                 ),
-                Observer(
-                    builder: (_) => LoaderWidget().visible(appStore.isLoading)),
+                Observer(builder: (_) => LoaderWidget().visible(appStore.isLoading)),
               ],
             ),
           ),
@@ -308,9 +262,7 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
                       textFieldType: TextFieldType.MULTILINE,
                       maxLines: 3,
                       minLines: 1,
-                      decoration: inputDecoration(context).copyWith(
-                          hintText: languages.lblMessage,
-                          hintStyle: secondaryTextStyle()),
+                      decoration: inputDecoration(context).copyWith(hintText: languages.lblMessage, hintStyle: secondaryTextStyle()),
                     ),
                   ),
                   8.width,
@@ -319,17 +271,14 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
                     onTap: _sending ? null : _send,
                     child: Container(
                       padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: kAppPrimaryGradient),
+                      decoration: BoxDecoration(shape: BoxShape.circle, gradient: kAppPrimaryGradient),
                       child: _sending
                           ? SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(white),
+                                valueColor: AlwaysStoppedAnimation<Color>(white),
                               ),
                             )
                           : const Icon(Icons.send, color: white, size: 20),
@@ -344,3 +293,5 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
     );
   }
 }
+
+

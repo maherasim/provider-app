@@ -49,26 +49,6 @@ class _SignInScreenState extends State<SignInScreen> {
         end: Alignment.bottomRight,
       );
 
-  bool _hasMinLength(String password) => password.length >= 8;
-
-  bool _hasLetter(String password) => RegExp(r'[A-Za-z]').hasMatch(password);
-
-  bool _hasNumber(String password) => RegExp(r'\d').hasMatch(password);
-
-  bool _isPasswordValid(String password) {
-    return _hasMinLength(password) &&
-        _hasLetter(password) &&
-        _hasNumber(password);
-  }
-
-  String? _passwordValidator(String? value) {
-    if (value == null || value.isEmpty) return languages.hintRequired;
-    if (!_hasMinLength(value)) return 'At least 8 characters';
-    if (!_hasLetter(value)) return 'At least one letter (A-Z or a-z)';
-    if (!_hasNumber(value)) return 'At least one number (0-9)';
-    return null;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -156,16 +136,19 @@ class _SignInScreenState extends State<SignInScreen> {
                                   hint: languages.hintPassword),
                               autoFillHints: [AutofillHints.password],
                               isValidationRequired: true,
-                              validator: _passwordValidator,
-                              onChanged: (value) {
-                                setState(() {});
+                              validator: (val) {
+                                if (val == null || val.isEmpty) {
+                                  return languages.hintRequired;
+                                } else if (!_isPasswordValid(val)) {
+                                  return languages.passwordLengthShouldBe;
+                                }
+                                return null;
                               },
                               onFieldSubmitted: (s) {
                                 _handleLogin();
                               },
                             ),
-                            12.height,
-                            _buildPasswordRequirements(passwordCont.text),
+                            _buildPasswordRequirements(),
                             8.height,
                           ],
                         ),
@@ -272,42 +255,51 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  Widget _buildPasswordRequirements(String password) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: context.cardColor,
-        borderRadius: radius(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildPasswordRequirementItem(
-              'At least 8 characters', _hasMinLength(password)),
-          8.height,
-          _buildPasswordRequirementItem(
-              'At least one letter (A-Z or a-z)', _hasLetter(password)),
-          8.height,
-          _buildPasswordRequirementItem(
-              'At least one number (0-9)', _hasNumber(password)),
-        ],
-      ),
+  Widget _buildPasswordRequirements() {
+    return ValueListenableBuilder<TextEditingValue>(
+      valueListenable: passwordCont,
+      builder: (context, value, child) {
+        final password = value.text;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            8.height,
+            Text('Your password must include:',
+                style: secondaryTextStyle(size: 12)),
+            8.height,
+            _buildPasswordRequirementItem(
+              '12 to 20 characters',
+              _hasValidPasswordLength(password),
+            ),
+            6.height,
+            _buildPasswordRequirementItem(
+              'At least one letter (A-Z or a-z)',
+              _hasPasswordLetter(password),
+            ),
+            6.height,
+            _buildPasswordRequirementItem(
+              'At least one number (0-9)',
+              _hasPasswordNumber(password),
+            ),
+          ],
+        );
+      },
     );
   }
 
   Widget _buildPasswordRequirementItem(String text, bool isValid) {
-    final Color color = isValid ? Colors.green : textSecondaryColorGlobal;
+    final color = isValid ? Colors.green : textSecondaryColorGlobal;
 
     return Row(
       children: [
         Icon(
-          isValid ? Icons.check_circle : Icons.radio_button_unchecked,
-          size: 16,
+          isValid ? Icons.check_box : Icons.check_box_outline_blank,
           color: color,
+          size: 18,
         ),
         8.width,
-        Text(text, style: secondaryTextStyle(color: color)).expand(),
+        Text(text, style: secondaryTextStyle(color: color, size: 12)),
       ],
     );
   }
@@ -363,12 +355,26 @@ class _SignInScreenState extends State<SignInScreen> {
   //region Methods
   void _handleLogin() {
     hideKeyboard(context);
-    if (_isPasswordValid(passwordCont.text.trim()) &&
-        formKey.currentState!.validate()) {
+    if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
       _handleLoginUsers();
     }
   }
+
+  bool _isPasswordValid(String password) {
+    return _hasValidPasswordLength(password) &&
+        _hasPasswordLetter(password) &&
+        _hasPasswordNumber(password);
+  }
+
+  bool _hasValidPasswordLength(String password) =>
+      password.length >= 12 && password.length <= 20;
+
+  bool _hasPasswordLetter(String password) =>
+      RegExp(r'[A-Za-z]').hasMatch(password);
+
+  bool _hasPasswordNumber(String password) =>
+      RegExp(r'[0-9]').hasMatch(password);
 
   void _handleLoginUsers() async {
     hideKeyboard(context);

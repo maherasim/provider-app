@@ -16,25 +16,13 @@ class SearchListResponse {
       this.pagination});
 
   factory SearchListResponse.fromJson(Map<String, dynamic> json) {
-    int? profileComplete;
-    if (json['provider_profile_complete'] != null) {
-      var value = json['provider_profile_complete'];
-      if (value is int) {
-        profileComplete = value;
-      } else if (value is num) {
-        profileComplete = value.toInt();
-      } else if (value is String) {
-        profileComplete = int.tryParse(value);
-      }
-    }
-
     return SearchListResponse(
       data: json['data'] != null
           ? (json['data'] as List).map((i) => ServiceData.fromJson(i)).toList()
           : null,
       max: json['max'],
       min: json['min'],
-      providerProfileComplete: profileComplete,
+      providerProfileComplete: json['provider_profile_complete'],
       pagination: json['pagination'] != null
           ? Pagination.fromJson(json['pagination'])
           : null,
@@ -49,10 +37,10 @@ class SearchListResponse {
 
     data['max'] = this.max;
     data['min'] = this.min;
+    data['provider_profile_complete'] = this.providerProfileComplete;
     if (this.pagination != null) {
       data['pagination'] = this.pagination!.toJson();
     }
-    data['provider_profile_complete'] = this.providerProfileComplete;
     return data;
   }
 }

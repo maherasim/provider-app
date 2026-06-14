@@ -30,10 +30,13 @@ import 'package:handyman_provider_flutter/models/booking_detail_response.dart';
 import 'package:handyman_provider_flutter/models/booking_list_response.dart';
 import 'package:handyman_provider_flutter/models/extra_charges_model.dart';
 import 'package:handyman_provider_flutter/models/service_model.dart';
-import 'package:handyman_provider_flutter/networks/rest_apis.dart';
+import 'package:handyman_provider_flutter/networks/rest_apis.dart' hide getPaymentHistory;
 import 'package:handyman_provider_flutter/provider/components/assign_handyman_screen.dart';
 import 'package:handyman_provider_flutter/provider/handyman_info_screen.dart';
 import 'package:handyman_provider_flutter/provider/services/service_detail_screen.dart';
+import 'package:handyman_provider_flutter/screens/cash_management/cash_constant.dart';
+import 'package:handyman_provider_flutter/screens/cash_management/cash_repository.dart';
+import 'package:handyman_provider_flutter/screens/cash_management/model/payment_history_model.dart';
 import 'package:handyman_provider_flutter/screens/cash_management/component/cash_confirm_dialog.dart';
 import 'package:handyman_provider_flutter/screens/cash_management/view/cash_payment_history_screen.dart';
 import 'package:handyman_provider_flutter/screens/extra_charges/add_extra_charges_screen.dart';
@@ -197,6 +200,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
       },
     ).launch(context);
   }
+
 
   Future<void> updateBooking(BookingDetailResponse bookDetail, String updateReason, String updatedStatus) async {
     DateTime now = DateTime.now();
@@ -557,14 +561,14 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                   status: status, handymanID: handymanID);
             },
           );
-          if (mounted) toast(languages.locationSharingStarted);
+          if (mounted) toast('Location sharing started');
         }
       } else {
         if (mounted) toast('Please allow location permission to share your location');
       }
     } else {
       stopLocationUpdates();
-      if (mounted) toast(languages.locationSharingOnlyWhenInProgress);
+      if (mounted) toast('Location sharing is only available when the booking is in progress');
     }
   }
 
@@ -617,12 +621,12 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
   String getDateTimeText(BookingData bookingDetail) {
     try {
       final dateStr = bookingDetail.date.validate();
-      if (dateStr.isEmpty) return languages.notAvailable;
+      if (dateStr.isEmpty) return 'N/A';
       
       String dateTimeText = formatDate(dateStr, format: DATE_FORMAT_2);
     if (bookingDetail.bookingSlot == null) {
         final timeText = formatDate(dateStr, isTime: true);
-        return '${dateTimeText} ${languages.at} ${timeText}';
+        return '${dateTimeText} at ${timeText}';
       } else {
         try {
           final slotDate = getSlotWithDate(
@@ -630,18 +634,18 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
             slotTime: bookingDetail.bookingSlot.validate()
           );
           final timeText = formatDate(slotDate, isTime: true);
-          return '${dateTimeText} ${languages.at} ${timeText}';
+          return '${dateTimeText} at ${timeText}';
         } catch (e) {
           // If slot date parsing fails, fallback to regular date
           final timeText = formatDate(dateStr, isTime: true);
-          return '${dateTimeText} ${languages.at} ${timeText}';
+          return '${dateTimeText} at ${timeText}';
         }
       }
     } catch (e) {
       // If date parsing fails completely, return a safe fallback
       return bookingDetail.date.validate().isNotEmpty 
           ? bookingDetail.date.validate() 
-          : languages.notAvailable;
+          : 'N/A';
     }
   }
 
@@ -1566,32 +1570,44 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
       }
 
       if (res.bookingDetail!.paymentMethod == PAYMENT_METHOD_COD && res.bookingDetail!.paymentStatus == PENDING) {
-        return appStore.isLoading ? Offstage() : Row(
-          children: [
-            DecoratedBox(
-              decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
-              child: AppButton(
-                text: languages.lblConfirmPayment,
-                color: Colors.transparent,
-                elevation: 0,
-                textStyle: boldTextStyle(color: white),
-                onTap: () {
-                  confirmationRequestDialog(context, BookingStatusKeys.complete, res);
-                },
-              ),
-            ).expand(),
-            if (res.customer != null && res.showRateCustomerButton == "Rate Customer") ...[
-              16.width,
-              AppButton(
-                text: res.showRateCustomerButton ?? languages.rateCustomer,
-                color: Colors.yellow,
-                elevation: 0,
-                textStyle: boldTextStyle(color: Colors.black),
-                onTap: showRateCustomerDialog,
-              ).expand(),
-            ],
-          ],
-        );
+        final hasHandymen = res.handymanData.validate().isNotEmpty;
+        return appStore.isLoading
+            ? Offstage()
+            : Row(
+                children: [
+                  DecoratedBox(
+                    decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                    child: AppButton(
+                      text: languages.lblConfirmPayment,
+                      color: Colors.transparent,
+                      elevation: 0,
+                      textStyle: boldTextStyle(color: white),
+                      onTap: () {
+                        if (hasHandymen) {
+                          _handleCashTransfer(
+                            res,
+                            PROVIDER_APPROVED_CASH,
+                            APPROVED_BY_PROVIDER,
+                            PENDING_BY_PROVIDER,
+                          );
+                        } else {
+                          confirmationRequestDialog(context, BookingStatusKeys.complete, res);
+                        }
+                      },
+                    ),
+                  ).expand(),
+                  if (res.customer != null && res.showRateCustomerButton == "Rate Customer") ...[
+                    16.width,
+                    AppButton(
+                      text: res.showRateCustomerButton ?? 'Rate Customer',
+                      color: Colors.yellow,
+                      elevation: 0,
+                      textStyle: boldTextStyle(color: Colors.black),
+                      onTap: showRateCustomerDialog,
+                    ).expand(),
+                  ],
+                ],
+              );
       }
       else if (res.bookingDetail!.paymentStatus == PAID || res.bookingDetail!.paymentStatus == PENDING_BY_ADMINS) {
         return Row(
@@ -1615,7 +1631,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
             if (res.customer != null && res.showRateCustomerButton == "Rate Customer") ...[
               16.width,
               AppButton(
-                text: res.showRateCustomerButton ?? languages.rateCustomer,
+                text: res.showRateCustomerButton ?? 'Rate Customer',
                 color: Colors.yellow,
                 elevation: 0,
                 textStyle: boldTextStyle(color: Colors.black),
@@ -1629,7 +1645,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
         // Booking is complete, show rate customer button
         if (res.customer != null && res.showRateCustomerButton == "Rate Customer") {
           return AppButton(
-            text: res.showRateCustomerButton ?? languages.rateCustomer,
+            text: res.showRateCustomerButton ?? 'Rate Customer',
             color: Colors.yellow,
             elevation: 0,
             textStyle: boldTextStyle(color: Colors.black),
@@ -1743,7 +1759,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
       return DecoratedBox(
         decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
         child: AppButton(
-          text: languages.resumeWork,
+          text: 'Resume Work',
           color: Color(0x00000000),
           elevation: 0,
           textStyle: boldTextStyle(color: white),
@@ -1761,9 +1777,91 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
         ),
       );
     }
+    else if (res.bookingDetail!.status == BookingStatusKeys.complete &&
+             res.bookingDetail!.paymentMethod == PAYMENT_METHOD_COD) {
+      showBottomActionBar = true;
+      return DecoratedBox(
+        decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+        child: AppButton(
+          width: context.width(),
+          text: languages.sendToProvider,
+          color: Colors.transparent,
+          elevation: 0,
+          textStyle: boldTextStyle(color: white),
+          onTap: () => _handleCashTransfer(
+            res,
+            HANDYMAN_SEND_PROVIDER,
+            PENDING_BY_PROVIDER,
+            '',
+          ),
+        ),
+      );
+    }
     return Offstage();
   }
 
+
+  Future<void> _handleCashTransfer(
+    BookingDetailResponse res,
+    String action,
+    String newStatus,
+    String expectedPreviousStatus,
+  ) async {
+    await _showGradientConfirmDialog(
+      title: languages.confirmationRequestTxt,
+      positiveText: languages.lblYes,
+      negativeText: languages.lblNo,
+      onAccept: () async {
+        appStore.setLoading(true);
+        try {
+          final history = await getPaymentHistory(
+            bookingId: res.bookingDetail!.id.validate().toString(),
+          );
+
+          PaymentHistoryData? target;
+          if (expectedPreviousStatus.isEmpty) {
+            // Handyman creating first cash-transfer record — use the earliest payment entry.
+            target = history.isNotEmpty ? history.last : null;
+          } else {
+            final matches = history.where((h) => h.status == expectedPreviousStatus);
+            target = matches.isNotEmpty ? matches.first : null;
+          }
+
+          if (target == null) {
+            appStore.setLoading(false);
+            toast(languages.noDataFound);
+            return;
+          }
+
+          final req = <String, dynamic>{
+            'payment_id': target.paymentId.validate(),
+            'booking_id': target.bookingId.validate(),
+            'action': action,
+            'type': target.type ?? PAYMENT_METHOD_COD,
+            'sender_id': appStore.userId,
+            'receiver_id': action == HANDYMAN_SEND_PROVIDER
+                ? appStore.providerId
+                : target.senderId,
+            'txn_id': target.txnId ?? '',
+            'other_transaction_detail': '',
+            'datetime': formatBookingDate(DateTime.now().toString(), format: DATE_FORMAT_7),
+            'total_amount': target.totalAmount,
+            'status': newStatus,
+            'p_id': target.id,
+            'parent_id': target.parentId ?? target.id,
+          };
+
+          await transferCashAPI(req: req);
+          appStore.setLoading(false);
+          toast(languages.toastSuccess);
+          init(flag: true);
+        } catch (e) {
+          appStore.setLoading(false);
+          toast(e.toString());
+        }
+      },
+    );
+  }
 
   Future<void> _showGradientConfirmDialog({
     required String title,
@@ -1828,6 +1926,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
     );
   }
 
+  /// Provider reports a customer's review (`booking_ratings` → `booking_rating`).
   Future<void> _openReviewReportDialog({
     required int reviewId,
     String reviewType = 'booking_rating',
@@ -2102,7 +2201,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                               Icon(Icons.location_on, color: gradientBlue, size: 20),
                               8.width,
                               Text(
-                                languages.workingAddress,
+                                'Working Address',
                                 style: secondaryTextStyle(size: 12),
                               ),
                             ],
@@ -2135,7 +2234,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                               }
                               // 4. Fallback message
                               else {
-                                address = languages.addressNotAvailable;
+                                address = 'Address not available';
                               }
                               
                               return Text(
@@ -2497,7 +2596,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                                   Text(
                                     (() {
                                       final String status = res.data!.bookingDetail!.paymentStatus.validate();
-                                      if (status.isEmpty) return languages.notAvailable;
+                                      if (status.isEmpty) return 'N/A';
                                       final String methodRaw = res.data!.bookingDetail!.paymentMethod.validate();
                                       final String method = methodRaw.capitalizeFirstLetter();
                                       final String? bank = res.data!.bookingDetail!.bankTransferStatus;

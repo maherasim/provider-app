@@ -32,10 +32,9 @@ class _AddReasonsComponentState extends State<AddReasonsComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: context.cardColor,
-      borderRadius: BorderRadius.circular(8),
-      clipBehavior: Clip.antiAlias,
+    return Container(
+      width: context.width(),
+      color: Colors.transparent,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -59,12 +58,12 @@ class _AddReasonsComponentState extends State<AddReasonsComponent> {
           AppTextField(
             textFieldType: TextFieldType.NAME,
             controller: reasonsCont,
-            decoration: inputDecoration(context,
-                hint: languages.writeReason,
-                fillColor: context.scaffoldBackgroundColor),
+            textStyle: primaryTextStyle(),
+            decoration: inputDecoration(context, hint: languages.writeReason),
           ).paddingAll(16),
           DecoratedBox(
-            decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+            decoration: BoxDecoration(
+                gradient: kAppPrimaryGradient, borderRadius: radius(8)),
             child: AppButton(
               text: languages.btnSave,
               color: Colors.transparent,

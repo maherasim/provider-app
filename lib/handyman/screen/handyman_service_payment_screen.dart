@@ -163,7 +163,7 @@ class _HandymanServicePaymentScreenState extends State<HandymanServicePaymentScr
                     borderRadius: radius(20),
                   ),
                   child: Text(
-                    _localizedStatusLabel(data),
+                    data.statusLabel.validate(),
                     style: boldTextStyle(size: 12, color: white),
                   ),
                 ),
@@ -367,7 +367,7 @@ class _HandymanServicePaymentScreenState extends State<HandymanServicePaymentScr
                       Icon(Icons.calendar_month, size: 18, color: gradientRed),
                       8.width,
                       Text(
-                        languages.timeSlots,
+                        'Service Slots',
                         style: boldTextStyle(size: 15),
                       ),
                       if (data.serviceSlots != null) ...[
@@ -499,19 +499,5 @@ class _HandymanServicePaymentScreenState extends State<HandymanServicePaymentScr
         ],
       ),
     );
-  }
-
-  String _localizedStatusLabel(HandymanServicePaymentModel data) {
-    final status = data.paymentStatus.validate().toLowerCase().replaceAll('_', ' ').trim();
-    final label = data.statusLabel.validate().toLowerCase().trim();
-
-    if (status == 'advance paid' ||
-        status == 'advanced paid' ||
-        label == 'advance paid' ||
-        label == 'advanced paid') {
-      return languages.advancePaid;
-    }
-
-    return data.statusLabel.validate();
   }
 }

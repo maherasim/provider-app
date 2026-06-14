@@ -9,6 +9,7 @@ class ReviewListViewComponent extends StatelessWidget {
   final ScrollPhysics? physics;
   final bool isCustomer;
   final bool showServiceName;
+  /// When true and [onReportReviewTap] is set, shows report on rows with a non-null [RatingData.id].
   final bool showReportReview;
   final void Function(RatingData rating)? onReportReviewTap;
 

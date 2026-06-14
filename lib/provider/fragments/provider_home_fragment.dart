@@ -397,7 +397,7 @@ class _PlansComingSoonBannerState extends State<_PlansComingSoonBanner>
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                languages.lblPremiumPlansSoon,
+                                'Premium Plans Soon',
                                 style: boldTextStyle(
                                   size: 16,
                                   color: Colors.white,
@@ -406,7 +406,7 @@ class _PlansComingSoonBannerState extends State<_PlansComingSoonBanner>
                               ),
                               4.height,
                               Text(
-                                languages.lblPremiumPlansSoonSubtitle,
+                                "We're building something great for you. Stay tuned.",
                                 style: secondaryTextStyle(
                                   size: 13,
                                   color: Colors.white.withValues(alpha: 0.95),

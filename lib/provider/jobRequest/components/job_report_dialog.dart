@@ -8,7 +8,7 @@ import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 /// Report dialog for POST `/api/ugc/report-post-job`.
-/// Reasons from GET `/api/ugc/report-reasons`.
+/// Reasons from GET `/api/ugc/report-reasons` ([ReportProfileReason.value] / [ReportProfileReason.label]).
 class JobReportDialog extends StatefulWidget {
   final int postJobId;
 
@@ -185,11 +185,6 @@ class _JobReportDialogState extends State<JobReportDialog> {
                   TextButton(
                     onPressed:
                         _submitting ? null : () => finish(context, false),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      minimumSize: const Size(0, 40),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
                     child: Text(
                       languages.lblCancel,
                       style: primaryTextStyle(color: textSecondaryColorGlobal),
@@ -207,8 +202,8 @@ class _JobReportDialogState extends State<JobReportDialog> {
                       child: _submitting
                           ? Center(
                               child: SizedBox(
-                                width: 22,
-                                height: 22,
+                                width: 24,
+                                height: 24,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                   color: white,
@@ -220,8 +215,7 @@ class _JobReportDialogState extends State<JobReportDialog> {
                               text: languages.lblSubmitReport,
                               color: Colors.transparent,
                               elevation: 0,
-                              textStyle:
-                                  boldTextStyle(color: white, size: 14),
+                              textStyle: boldTextStyle(color: white),
                               height: 44,
                               width: double.infinity,
                               onTap: () {
@@ -234,7 +228,7 @@ class _JobReportDialogState extends State<JobReportDialog> {
                               },
                             ),
                     ),
-                  ).expand(),
+                  ).expand(flex: 2),
                 ],
               ),
             ],

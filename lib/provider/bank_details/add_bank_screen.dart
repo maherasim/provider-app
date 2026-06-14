@@ -31,19 +31,23 @@ class _AddBankScreenState extends State<AddBankScreen> {
   TextEditingController bankNameCont = TextEditingController();
   TextEditingController branchNameCont = TextEditingController();
   TextEditingController accNumberCont = TextEditingController();
-  TextEditingController ibanNoCont = TextEditingController();
   TextEditingController accountHolderCont = TextEditingController();
   TextEditingController bicNumberCont = TextEditingController();
+  TextEditingController ibanNoCont = TextEditingController();
   TextEditingController contactNumberCont = TextEditingController();
+  TextEditingController aadharCardNumberCont = TextEditingController();
+  TextEditingController panNumberCont = TextEditingController();
   TextEditingController stripeAccountCont = TextEditingController();
 
   FocusNode bankNameFocus = FocusNode();
   FocusNode branchNameFocus = FocusNode();
   FocusNode accNumberFocus = FocusNode();
-  FocusNode ibanNoFocus = FocusNode();
   FocusNode accountHolderFocus = FocusNode();
   FocusNode bicNumberFocus = FocusNode();
+  FocusNode ibanNoFocus = FocusNode();
   FocusNode contactNumberFocus = FocusNode();
+  FocusNode aadharCardNumberFocus = FocusNode();
+  FocusNode panNumberFocus = FocusNode();
   FocusNode stripeAccountFocus = FocusNode();
 
   Future<void> update() async {
@@ -66,17 +70,23 @@ class _AddBankScreenState extends State<AddBankScreen> {
     multiPartRequest.fields['status'] = getStatusValue().toString();
 
     // Optional fields (only include if not empty)
-    if (ibanNoCont.text.trim().isNotEmpty) {
-      multiPartRequest.fields['iban_no'] = ibanNoCont.text.trim();
-    }
     if (accountHolderCont.text.trim().isNotEmpty) {
       multiPartRequest.fields['account_holder'] = accountHolderCont.text.trim();
     }
     if (contactNumberCont.text.trim().isNotEmpty) {
       multiPartRequest.fields['mobile_no'] = contactNumberCont.text.trim();
     }
+    if (ibanNoCont.text.trim().isNotEmpty) {
+      multiPartRequest.fields['iban_no'] = ibanNoCont.text.trim();
+    }
     if (bicNumberCont.text.trim().isNotEmpty) {
       multiPartRequest.fields['bic_number'] = bicNumberCont.text.trim();
+    }
+    if (aadharCardNumberCont.text.trim().isNotEmpty) {
+      multiPartRequest.fields['aadhar_no'] = aadharCardNumberCont.text.trim();
+    }
+    if (panNumberCont.text.trim().isNotEmpty) {
+      multiPartRequest.fields['pan_no'] = panNumberCont.text.trim();
     }
     if (stripeAccountCont.text.trim().isNotEmpty) {
       multiPartRequest.fields['stripe_account'] = stripeAccountCont.text.trim();
@@ -151,20 +161,21 @@ class _AddBankScreenState extends State<AddBankScreen> {
     bankNameCont.clear();
     branchNameCont.clear();
     accNumberCont.clear();
-    ibanNoCont.clear();
     accountHolderCont.clear();
+    ibanNoCont.clear();
     bicNumberCont.clear();
     contactNumberCont.clear();
+    aadharCardNumberCont.clear();
+    panNumberCont.clear();
     stripeAccountCont.clear();
 
     if (isUpdate && widget.data != null) {
       log('Loading bank data for editing - ID: ${widget.data!.id}');
-      log('Raw data - Account Holder: "${widget.data!.accountHolder}", BIC: "${widget.data!.bicNumber}"');
+      log('Raw data - Account Holder: "${widget.data!.accountHolder}", IBAN: "${widget.data!.ibanNo}", BIC: "${widget.data!.bicNumber}"');
 
       bankNameCont.text = widget.data!.bankName.validate();
       branchNameCont.text = widget.data!.branchName.validate();
       accNumberCont.text = widget.data!.accountNo.validate();
-      ibanNoCont.text = widget.data!.ibanNo.validate();
 
       // Handle account holder - ensure null values don't show as "null"
       String accountHolder = widget.data!.accountHolder.validate();
@@ -172,6 +183,11 @@ class _AddBankScreenState extends State<AddBankScreen> {
           (accountHolder.isEmpty || accountHolder.toLowerCase() == "null")
               ? ""
               : accountHolder;
+
+      // Handle IBAN - ensure null values don't show as "null"
+      String ibanNo = widget.data!.ibanNo.validate();
+      ibanNoCont.text =
+          (ibanNo.isEmpty || ibanNo.toLowerCase() == "null") ? "" : ibanNo;
 
       // Handle BIC - ensure null values don't show as "null"
       String bicNumber = widget.data!.bicNumber.validate();
@@ -181,6 +197,8 @@ class _AddBankScreenState extends State<AddBankScreen> {
               : bicNumber;
 
       contactNumberCont.text = widget.data!.mobileNo.validate();
+      aadharCardNumberCont.text = widget.data!.aadharNo.validate();
+      panNumberCont.text = widget.data!.panNo.validate();
 
       // Handle stripe account - ensure null values don't show as "null"
       String stripeAccount = widget.data!.stripeAccount.validate();
@@ -189,7 +207,7 @@ class _AddBankScreenState extends State<AddBankScreen> {
               ? ""
               : stripeAccount;
 
-      log('After setting - Account Holder: "${accountHolderCont.text}", BIC: "${bicNumberCont.text}"');
+      log('After setting - Account Holder: "${accountHolderCont.text}", IBAN: "${ibanNoCont.text}", BIC: "${bicNumberCont.text}"');
       log('Status: ${widget.data!.status}');
 
       // Set status dropdown based on bank status (1 = ACTIVE, 0 = INACTIVE)
@@ -281,8 +299,7 @@ class _AddBankScreenState extends State<AddBankScreen> {
                     focus: accountHolderFocus,
                     nextFocus: contactNumberFocus,
                     decoration: inputDecoration(context,
-                        hint: languages.lblAccountHolderNameHint,
-                        counter: false),
+                        hint: 'Account Holder Name', counter: false),
                     suffix: profile.iconImage(size: 10).paddingAll(14),
                     isValidationRequired: false,
                   ),
@@ -291,9 +308,9 @@ class _AddBankScreenState extends State<AddBankScreen> {
                     textFieldType: TextFieldType.NAME,
                     controller: contactNumberCont,
                     focus: contactNumberFocus,
-                    nextFocus: bicNumberFocus,
+                    nextFocus: ibanNoFocus,
                     decoration: inputDecoration(context,
-                        hint: languages.lblMobileNumberHint, counter: false),
+                        hint: 'Mobile Number', counter: false),
                     suffix: profile.iconImage(size: 10).paddingAll(14),
                     isValidationRequired: false,
                   ),
@@ -304,7 +321,7 @@ class _AddBankScreenState extends State<AddBankScreen> {
                     focus: ibanNoFocus,
                     nextFocus: bicNumberFocus,
                     decoration: inputDecoration(context,
-                        hintText: languages.lblIbanNumberHint, counter: false),
+                        hint: 'IBAN Number', counter: false),
                     suffix: profile.iconImage(size: 10).paddingAll(14),
                     isValidationRequired: false,
                   ),
@@ -313,9 +330,31 @@ class _AddBankScreenState extends State<AddBankScreen> {
                     textFieldType: TextFieldType.NAME,
                     controller: bicNumberCont,
                     focus: bicNumberFocus,
+                    nextFocus: aadharCardNumberFocus,
+                    decoration: inputDecoration(context,
+                        hint: 'BIC / SWIFT Code', counter: false),
+                    suffix: profile.iconImage(size: 10).paddingAll(14),
+                    isValidationRequired: false,
+                  ),
+                  16.height,
+                  AppTextField(
+                    textFieldType: TextFieldType.NAME,
+                    controller: aadharCardNumberCont,
+                    focus: aadharCardNumberFocus,
+                    nextFocus: panNumberFocus,
+                    decoration: inputDecoration(context,
+                        hint: 'Aadhar Number', counter: false),
+                    suffix: profile.iconImage(size: 10).paddingAll(14),
+                    isValidationRequired: false,
+                  ),
+                  16.height,
+                  AppTextField(
+                    textFieldType: TextFieldType.NAME,
+                    controller: panNumberCont,
+                    focus: panNumberFocus,
                     nextFocus: stripeAccountFocus,
                     decoration: inputDecoration(context,
-                        hint: languages.lblBicSwiftHint, counter: false),
+                        hint: 'PAN Number', counter: false),
                     suffix: profile.iconImage(size: 10).paddingAll(14),
                     isValidationRequired: false,
                   ),
@@ -325,7 +364,7 @@ class _AddBankScreenState extends State<AddBankScreen> {
                     controller: stripeAccountCont,
                     focus: stripeAccountFocus,
                     decoration: inputDecoration(context,
-                        hint: languages.lblStripeAccountHint, counter: false),
+                        hint: 'Stripe Account', counter: false),
                     suffix: profile.iconImage(size: 10).paddingAll(14),
                     isValidationRequired: false,
                   ),
@@ -333,7 +372,7 @@ class _AddBankScreenState extends State<AddBankScreen> {
                   DropdownButtonFormField<StaticDataModel>(
                     isExpanded: true,
                     dropdownColor: context.cardColor,
-                    value: blogStatusModel != null
+                    initialValue: blogStatusModel != null
                         ? blogStatusModel
                         : statusListStaticData.first,
                     items: statusListStaticData.map((StaticDataModel data) {

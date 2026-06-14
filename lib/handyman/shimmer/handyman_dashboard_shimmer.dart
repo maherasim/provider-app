@@ -168,19 +168,10 @@ class HandymanDashboardShimmer extends StatelessWidget {
                                   children: [
                                     ShimmerWidget(height: 10, width: context.width() * 0.25).flexible(),
                                     Row(
-                                      mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        // Placeholder for report-review flag (matches ReviewWidget)
-                                        ShimmerWidget(height: 20, width: 20)
-                                            .cornerRadiusWithClipRRect(4),
+                                        Image.asset(ic_star_fill, height: 16, color: getRatingBarColor(5)),
                                         4.width,
-                                        Row(
-                                          children: [
-                                            Image.asset(ic_star_fill, height: 16, color: getRatingBarColor(5)),
-                                            4.width,
-                                            Text('5', style: boldTextStyle(color: getRatingBarColor(5))),
-                                          ],
-                                        ),
+                                        Text('5', style: boldTextStyle(color: getRatingBarColor(5))),
                                       ],
                                     ),
                                   ],

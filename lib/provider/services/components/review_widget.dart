@@ -13,6 +13,7 @@ class ReviewWidget extends StatelessWidget {
   final RatingData data;
   final bool isCustomer;
   final bool showServiceName;
+  /// When set, shows a report flag (e.g. provider reporting a customer review).
   final VoidCallback? onReportPressed;
 
   ReviewWidget({
@@ -58,10 +59,8 @@ class ReviewWidget extends StatelessWidget {
                                 tooltip: languages.lblReportReviewTitle,
                                 padding: EdgeInsets.zero,
                                 visualDensity: VisualDensity.compact,
-                                constraints:
-                                    BoxConstraints(minWidth: 32, minHeight: 32),
-                                icon: Icon(Icons.flag_outlined,
-                                    color: Colors.red, size: 20),
+                                constraints: BoxConstraints(minWidth: 32, minHeight: 32),
+                                icon: Icon(Icons.flag_outlined, color: Colors.red, size: 20),
                                 onPressed: onReportPressed,
                               ),
                             Container(

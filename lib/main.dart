@@ -28,7 +28,6 @@ import 'package:handyman_provider_flutter/store/filter_store.dart';
 import 'package:handyman_provider_flutter/store/roles_and_permission_store.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
-import 'package:handyman_provider_flutter/utils/app_check_utils.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'app_theme.dart';
@@ -55,55 +54,54 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   Firebase.initializeApp();
   try {
     // More flexible chat detection (Laravel format)
-    final isChatMessage = message.data['is_chat'] == '1' ||
-        message.data['is_chat'] == 1 ||
-        message.data.containsKey('conversation_id') ||
-        message.data.containsKey('conversationId') ||
-        message.data.containsKey('sender_id') || // Laravel sends this
-        message.data.containsKey('sender_name') || // Laravel sends this
-        message.data['type'] == 'chat';
+    final isChatMessage = message.data['is_chat'] == '1' || 
+                        message.data['is_chat'] == 1 ||
+                        message.data.containsKey('conversation_id') ||
+                        message.data.containsKey('conversationId') ||
+                        message.data.containsKey('sender_id') || // Laravel sends this
+                        message.data.containsKey('sender_name') || // Laravel sends this
+                        message.data['type'] == 'chat';
     log('Detected as Chat Message (Background): $isChatMessage');
-
+    
     String title = 'New message';
     String body = 'You have a new message';
-
+    
     if (isChatMessage) {
       // Laravel format: sender_name or first_name/last_name
       final senderName = message.data['sender_name']?.toString() ?? '';
       final firstName = message.data['first_name']?.toString() ?? '';
       final lastName = message.data['last_name']?.toString() ?? '';
-
+      
       if (senderName.isNotEmpty) {
         title = senderName;
       } else if (firstName.isNotEmpty || lastName.isNotEmpty) {
         title = '$firstName $lastName'.trim();
       }
-
+      
       // Laravel sends 'message' field
-      body = message.data['message']?.toString() ??
-          message.data['preview']?.toString() ??
-          message.notification?.body ??
-          'You have a new message';
+      body = message.data['message']?.toString() ?? 
+            message.data['preview']?.toString() ?? 
+            message.notification?.body ?? 
+            'You have a new message';
     } else {
-      title = message.notification?.title ??
-          message.data['title']?.toString() ??
-          'New message';
-      body = message.notification?.body ??
-          message.data['preview']?.toString() ??
-          message.data['body']?.toString() ??
-          'You have a new message';
+      title = message.notification?.title ?? 
+             message.data['title']?.toString() ?? 
+             'New message';
+      body = message.notification?.body ?? 
+            message.data['preview']?.toString() ?? 
+            message.data['body']?.toString() ??
+            'You have a new message';
     }
-
+    
     log('Showing notification - Title: $title, Body: $body');
-    await showNotification(currentTimeStamp(), title, body, message,
-        isChatMessage: isChatMessage);
+    await showNotification(currentTimeStamp(), title, body, message, isChatMessage: isChatMessage);
     log('Background notification shown successfully');
-
+    
     // Update counts based on notification type
     if (isChatMessage) {
       log('Emitting LIVESTREAM_UPDATE_CHAT_UNREAD from background handler');
       LiveStream().emit(LIVESTREAM_UPDATE_CHAT_UNREAD);
-
+      
       // Increment notification count for chat messages
       try {
         final current = appStore.notificationCount;
@@ -121,7 +119,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         final next = (current > 0) ? current + 1 : 1;
         await appStore.setNotificationCount(next);
         log('Updated notification count for booking status: $next (background)');
-
+        
         // Emit event to refresh notification list
         LiveStream().emit(LIVESTREAM_UPDATE_NOTIFICATIONS);
       } catch (e) {
@@ -153,7 +151,7 @@ NotificationService notificationService = NotificationService();
 //endregion
 
 //region In App Purchase Service
-InAppPurchaseService inAppPurchaseService = InAppPurchaseService();
+InAppPurchaseService inAppPurchaseService=InAppPurchaseService();
 //region
 
 //region Global Variables
@@ -184,10 +182,7 @@ void main() async {
   await initialize();
 
   if (!isDesktop) {
-    try {
-      await Firebase.initializeApp();
-      await initializeAppCheck();
-
+    Firebase.initializeApp().then((value) {
       if (kReleaseMode) {
         FlutterError.onError =
             FirebaseCrashlytics.instance.recordFlutterFatalError;
@@ -195,18 +190,23 @@ void main() async {
 
       /// Subscribe Firebase Topic
       subscribeToFirebaseTopic();
-    } catch (e) {
+    }).catchError((e) {
       log(e.toString());
-    }
+    });
   }
-  HttpOverrides.global = MyHttpOverrides();
+ HttpOverrides.global = MyHttpOverrides();
 
   defaultSettings();
 
   localeLanguageList = languageList();
 
-  appStore.setLanguage(
-      getStringAsync(SELECTED_LANGUAGE_CODE, defaultValue: DEFAULT_LANGUAGE));
+  String initialLang = getStringAsync(SELECTED_LANGUAGE_CODE,
+      defaultValue: DEFAULT_LANGUAGE);
+  if (!LanguageDataModel.languages().contains(initialLang)) {
+    initialLang = DEFAULT_LANGUAGE;
+    setValue(SELECTED_LANGUAGE_CODE, initialLang);
+  }
+  appStore.setLanguage(initialLang);
 
   runApp(MyApp());
 }
@@ -250,6 +250,7 @@ class _MyAppState extends State<MyApp> {
     return RestartAppWidget(
       child: Observer(
         builder: (_) => MaterialApp(
+         
           debugShowCheckedModeBanner: false,
           navigatorKey: navigatorKey,
           home: SplashScreen(),
@@ -264,12 +265,11 @@ class _MyAppState extends State<MyApp> {
             GlobalCupertinoLocalizations.delegate,
           ],
           builder: (context, child) {
-            return MediaQuery(
-              child: child!,
-              data: MediaQuery.of(context)
-                  .copyWith(textScaler: TextScaler.linear(1.0)),
-            );
-          },
+                  return MediaQuery(
+                    child: child!,
+                    data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
+                  );
+                },
           localeResolutionCallback: (locale, supportedLocales) => locale,
           locale: Locale(appStore.selectedLanguageCode),
         ),
@@ -281,8 +281,6 @@ class _MyAppState extends State<MyApp> {
 class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
+    return super.createHttpClient(context)..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
   }
 }

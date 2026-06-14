@@ -8,6 +8,7 @@ import 'package:handyman_provider_flutter/utils/configs.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 /// Report dialog for POST `/api/ugc/report-review` with reasons from GET `/api/ugc/report-reasons`.
+/// Provider → customer review on booking: [reviewType] `booking_rating` (default).
 class ReviewReportDialog extends StatefulWidget {
   final int reviewId;
   final String reviewType;
@@ -186,16 +187,11 @@ class _ReviewReportDialogState extends State<ReviewReportDialog> {
                   TextButton(
                     onPressed:
                         _submitting ? null : () => finish(context, false),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      minimumSize: const Size(0, 40),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
                     child: Text(
                       languages.lblCancel,
                       style: primaryTextStyle(color: textSecondaryColorGlobal),
                     ),
-                  ).expand(flex: 2),
+                  ).expand(),
                   8.width,
                   DecoratedBox(
                     decoration: BoxDecoration(
@@ -203,13 +199,13 @@ class _ReviewReportDialogState extends State<ReviewReportDialog> {
                       borderRadius: radius(8),
                     ),
                     child: SizedBox(
-                      height: 40,
+                      height: 44,
                       width: double.infinity,
                       child: _submitting
                           ? Center(
                               child: SizedBox(
-                                width: 22,
-                                height: 22,
+                                width: 24,
+                                height: 24,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                   color: white,
@@ -221,9 +217,8 @@ class _ReviewReportDialogState extends State<ReviewReportDialog> {
                               text: languages.lblSubmitReport,
                               color: Colors.transparent,
                               elevation: 0,
-                              textStyle:
-                                  boldTextStyle(color: white, size: 14),
-                              height: 40,
+                              textStyle: boldTextStyle(color: white),
+                              height: 44,
                               width: double.infinity,
                               onTap: () {
                                 if (_loadingReasons ||
@@ -235,7 +230,7 @@ class _ReviewReportDialogState extends State<ReviewReportDialog> {
                               },
                             ),
                     ),
-                  ).expand(flex: 1),
+                  ).expand(flex: 2),
                 ],
               ),
             ],

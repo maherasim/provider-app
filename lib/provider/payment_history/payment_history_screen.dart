@@ -187,13 +187,13 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
               children: [
                 // Regular Payments Section
                 if (regularPayments.isNotEmpty) ...[
-                  Text('Regular Payments', style: boldTextStyle(size: 16)).paddingOnly(left: 16, top: 16, bottom: 8),
+                  Text(languages.lblRegularPayments, style: boldTextStyle(size: 16)).paddingOnly(left: 16, top: 16, bottom: 8),
                   _buildPaymentTable(regularPayments, "Service"),
                   16.height,
                 ],
                 // Post Job Payments Section
                 if (postJobPayments.isNotEmpty) ...[
-                  Text('Job Request Payments', style: boldTextStyle(size: 16)).paddingOnly(left: 16, top: 8, bottom: 8),
+                  Text(languages.lblJobRequestPayments, style: boldTextStyle(size: 16)).paddingOnly(left: 16, top: 8, bottom: 8),
                   _buildPaymentTable(postJobPayments, "Job Request"),
                 ],
               ],

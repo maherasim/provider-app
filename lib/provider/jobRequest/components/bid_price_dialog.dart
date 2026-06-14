@@ -86,7 +86,7 @@ class _BidPriceDialogState extends State<BidPriceDialog> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if(widget.isUpdateBid) Center(child: Text("Update Bid", style: boldTextStyle())).paddingBottom(16),
+                  if(widget.isUpdateBid) Center(child: Text(languages.lblUpdateBid, style: boldTextStyle())).paddingBottom(16),
                   Container(
                     decoration: boxDecorationDefault(color: context.scaffoldBackgroundColor),
                     padding: EdgeInsets.all(16),

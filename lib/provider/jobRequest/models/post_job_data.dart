@@ -165,7 +165,7 @@ class PostJobData {
     jobSchedule: json["job_schedule"] == null ? null : JobSchedule.values.firstWhere((e) => e.backendValue == json["job_schedule"], orElse: () => JobSchedule.fullTime),
     remoteWorkLevel: json["remote_work_level"] == null ? null : RemoteWorkLevel.values.firstWhere((e) => e.backendValue == json["remote_work_level"], orElse: () => RemoteWorkLevel.onsite0),
     careerLevel: json["career_level"] == null ? null : CareerLevel.values.firstWhere((e) => e.backendValue == json["career_level"], orElse: () => CareerLevel.notSpecified),
-    educationLevel: json["education_level"] == null ? null : EducationLevel.values.firstWhere((e) => e.backendValue == json["education_level"], orElse: () => EducationLevel.highSchool),
+    educationLevel: json["education_level"] == null ? null : EducationLevel.values.firstWhere((e) => e.backendValue == json["education_level"], orElse: () => EducationLevel.notSpecified),
     travelRequired: () {
       if (json["travel_required"] == null) return null;
       final rawValue = json["travel_required"];
@@ -361,11 +361,20 @@ enum TravelRequirement {
 
 /// Education Level
 enum EducationLevel {
-  highSchool("High School", "high_school"),
-  associate("Associate Degree", "associate"),
-  undergraduate("Undergraduate Degree", "undergraduate"),
-  masters("Graduate/Master's", "masters"),
-  doctorate("Doctorate", "doctorate");
+  notSpecified("Not Specified", "not_specified"),
+  anyGraduate("Any Graduate", "any_graduate"),
+  apprenticeshipDegree("Apprenticeship Degree", "apprenticeship_degree"),
+  traineeshipDegree("Traineeship Degree", "traineeship_degree"),
+  secondaryDegree("Secondary Degree", "secondary_degree"),
+  undergraduateDiploma("Undergraduate Diploma", "undergraduate_diploma"),
+  highSchoolGraduate("High school graduate", "high_school_graduate"),
+  associateDegree("Associate degree", "associate_degree"),
+  collegeDegree("College Degree", "college_degree"),
+  universityDegree("University Degree", "university_degree"),
+  bachelorsDegree("Bachelor's Degree", "bachelors_degree"),
+  mastersDegree("Master's Degree", "masters_degree"),
+  doctorateDegree("Doctorate Degree", "doctorate_degree"),
+  professionalDegree("Professional Degree", "professional_degree");
 
   final String displayName;
   final String backendValue;
@@ -415,6 +424,8 @@ enum YearsOfExperience {
 
 /// Education Level
 enum RequestStatus {
+  pending('pending',defaultStatus),
+  assigned('assigned',primaryColorWithOpacity),
   requested('requested',defaultStatus),
   accepted('accepted',accept),
   pendingAdvance('advance_payment_pending',primaryColorWithOpacity),
@@ -434,6 +445,8 @@ enum RequestStatus {
   const RequestStatus(this.backendValue,this.bgColor);
 
   String get displayName => switch (this) {
+    RequestStatus.pending                 => languages.statusPending,
+    RequestStatus.assigned                => languages.statusAssigned,
     RequestStatus.requested               => languages.statusRequested,
     RequestStatus.accepted                => languages.statusAccepted,
     RequestStatus.pendingAdvance          => languages.statusAdvancePaymentPending,

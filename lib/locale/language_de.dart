@@ -3028,6 +3028,8 @@ class LanguageDe extends Languages {
   @override
   String get messageHiddenDueToPolicy => 'Nachricht aufgrund von Richtlinien ausgeblendet';
 
+  @override String get statusPending => 'Ausstehend';
+  @override String get statusAssigned => 'Zugewiesen';
   @override String get statusRequested => 'Angefragt';
   @override String get statusAccepted => 'Akzeptiert';
   @override String get statusAdvancePaymentPending => 'Anzahlung ausstehend';

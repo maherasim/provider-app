@@ -2638,4 +2638,275 @@ class LanguageHi extends Languages {
 
   @override
   String get lblReportReviewTitle => 'समीक्षा की रिपोर्ट करें';
+
+  @override
+  String get lblBookingsCount => 'Bookings';
+  @override
+  String get workingAddress => 'Working Address';
+  @override
+  String get addressNotAvailable => 'Address Not Available';
+  @override
+  String get resumeWork => 'Resume Work';
+  @override
+  String get rateCustomer => 'Rate Customer';
+  @override
+  String get locationSharingStarted => 'Location sharing started';
+  @override
+  String get allowLocationPermission => 'Please allow location permission to share your location';
+  @override
+  String get locationSharingOnlyWhenInProgress => 'Location sharing is only available when a booking is in progress';
+  @override
+  String get lblExtraChargesBreakdown => 'Extra Charges Breakdown';
+  @override
+  String get lblSplitPayment => 'Split Payment';
+  @override
+  String get lblStartWork => 'Start Work';
+  @override
+  String get lblMarkComplete => 'Mark Complete';
+  @override
+  String get lblPlusExtraCharges => '+ Extra Charges';
+  @override
+  String get lblDownload => 'Download';
+  @override
+  String get lblEmployerReview => 'Employer Review';
+  @override
+  String get lblCustomerReview => 'Customer Review';
+  @override
+  String get lblRateUnitPrice => 'Rate (Unit Price)';
+  @override
+  String get lblNetAmount => 'Net Amount';
+  @override
+  String get lblNetAmountFormula => '(Subtotal - Tax)';
+  @override
+  String get lblGrandTotalAmount => 'Grand Total Amount';
+  @override
+  String get lblTotal => 'Total';
+  @override
+  String get lblSearchLanguagesHint => 'Search languages';
+  @override
+  String get lblCompanyNameHint => 'Company Name';
+  @override
+  String get lblVatNumberHint => 'VAT Number';
+  @override
+  String get lblSelectAvailabilityHint => 'Select Availability';
+  @override
+  String get lblSelectCountryTaxHint => 'Select Country Tax';
+  @override
+  String get lblMobilityHint => 'Mobility (e.g. Worldwide, Europe, DACH region, Berlin area)';
+  @override
+  String get lblExperienceDescHint => 'Experience (Please enter each experience on a new line)';
+  @override
+  String get lblCareerLevelHint => 'Career Level';
+  @override
+  String get lblEducationHint => 'Education Level';
+  @override
+  String get lblYearsOfExperienceHint => 'Years of Experience';
+  @override
+  String get lblCertificationHint => 'Certifications (comma-separated)';
+  @override
+  String get lblSelectProviderHint => 'Select Provider';
+  @override
+  String get lblRemoteWorkLevelHint => 'Remote Work Level';
+  @override
+  String get lblTravelRequiredHint => 'Travel Required';
+  @override
+  String get lblRemoteWorkOnsite100 => '100% On-Site';
+  @override
+  String get lblRemoteWork25 => '25% Remote';
+  @override
+  String get lblRemoteWork50 => '50% Remote';
+  @override
+  String get lblRemoteWork75 => '75% Remote';
+  @override
+  String get lblRemoteWork100 => '100% Remote';
+  @override
+  String get lblCareerNotSpecified => 'Not Specified';
+  @override
+  String get lblCareerEntryLevel => 'Entry Level';
+  @override
+  String get lblCareerIntermediateLevel => 'Intermediate Level';
+  @override
+  String get lblCareerExperienced => 'Experienced';
+  @override
+  String get lblCareerProfessional => 'Professional';
+  @override
+  String get lblCareerMiddleManagement => 'Middle Management';
+  @override
+  String get lblCareerExecutiveManagement => 'Executive Management';
+  @override
+  String get lblCareerSeniorManagement => 'Senior Management';
+  @override
+  String get lblCareerDirector => 'Director';
+  @override
+  String get lblCareerTechnician => 'Technician';
+  @override
+  String get lblCareerLeader => 'Team Leader';
+  @override
+  String get lblCareerManager => 'Manager';
+  @override
+  String get lblEduHighSchool => 'High School';
+  @override
+  String get lblEduAssociate => 'Associate Degree';
+  @override
+  String get lblEduUndergraduate => 'Undergraduate Degree';
+  @override
+  String get lblEduMasters => "Master's Degree";
+  @override
+  String get lblEduDoctorate => 'Doctorate';
+  @override
+  String get lblAccountHolderNameHint => 'Account Holder Name';
+  @override
+  String get lblMobileNumberHint => 'Mobile Number';
+  @override
+  String get lblIbanNumberHint => 'IBAN Number';
+  @override
+  String get lblBicSwiftHint => 'BIC / SWIFT';
+  @override
+  String get lblStripeAccountHint => 'Stripe Account';
+  @override
+  String get lblRegularPayments => 'Regular Payments';
+  @override
+  String get lblJobRequestPayments => 'Job Request Payments';
+  @override
+  String get lblAttachment => 'Attachment';
+  @override
+  String get lblUpdateBid => 'Update Bid';
+  @override
+  String get lblCompanyInformation => 'Company Information';
+  @override
+  String get lblProfessionalDetails => 'Professional Details';
+  @override
+  String get lblContactAndAddress => 'Contact & Address';
+  @override
+  String get lblLocationSection => 'Location';
+  @override
+  String get lblLanguagesSection => 'Languages';
+  @override
+  String get lblAddLanguage => 'Add Language';
+  @override
+  String get lblEducationAndBio => 'Education & Bio';
+  @override
+  String get lblSkillsHint => 'Skills';
+  @override
+  String get lblExperienceHint => 'Experience';
+  @override
+  String get lblMobilityShortHint => 'Mobility';
+  @override
+  String get lblCertificationShortHint => 'Certifications';
+  @override
+  String get lblHandymanCommissionHint => 'Handyman Commission (1-99%)';
+  @override
+  String get lblAboutMeHint => 'About Me';
+  @override
+  String get lblBidPriceLabel => 'Your Bid:';
+  @override
+  String get lblRequirementsColon => 'Requirements:';
+  @override
+  String get lblJobType => 'Job Type';
+  @override
+  String get lblRateType => 'Rate Type';
+  @override
+  String get lblTotalBudget => 'Total Budget';
+  @override
+  String get lblProposals => 'Proposals';
+  @override
+  String get lblWorker => 'Worker';
+  @override
+  String get lblHybrid => 'Hybrid';
+  @override
+  String get lblBankTransferDetails => 'Bank Transfer Details';
+  @override
+  String get lblBankTransfer => 'Bank Transfer';
+  @override
+  String get lblBankTransferInstructions => 'Please transfer the amount to the following bank account:';
+  @override
+  String get lblCountry => 'Country';
+  @override
+  String get lblIban => 'IBAN';
+  @override
+  String get lblBicSwiftShort => 'BIC / SWIFT';
+  @override
+  String get lblPremiumPlansSoon => 'Premium Plans Coming Soon';
+  @override
+  String get lblPremiumPlansSoonSubtitle => 'Discover job requests that perfectly match your skills.';
+  @override
+  String get lblBudgetOrPrice => 'Budget';
+  @override
+  String get lblTotalDays => 'Total Days';
+  @override
+  String get lblTotalHours => 'Total Hours';
+  @override
+  String get lblEducationLevel => 'Education Level';
+  @override
+  String get lblSkillsAndRequirements => 'Skills & Requirements';
+  @override
+  String get lblDutiesAndResponsibilities => 'Duties & Responsibilities';
+  @override
+  String get lblBenefits => 'Benefits';
+  @override
+  String get lblViewJob => 'View Job';
+  @override
+  String get lblBidDetails => 'Bid Details';
+  @override
+  String get lblWaitingForAdminApproval => 'Waiting for admin approval';
+  @override
+  String get lblThisBidWasCancelled => 'This bid has been cancelled';
+  @override
+  String get lblProgressAdvance => 'Advance Payment';
+  @override
+  String get lblProgressAdvancePaidShort => 'Advance Paid';
+  @override
+  String get lblProgressLetsStart => "Let's Start";
+  @override
+  String get lblProgressWork => 'Work';
+  @override
+  String get lblQuantity => 'Quantity';
+  @override
+  String get lblTotalExtraCharges => 'Total Extra Charges';
+  @override
+  String get lblPasswordMustInclude => 'Your password must include:';
+  @override
+  String get lblProfilePhoto => 'Profile photo';
+  @override
+  String get lblPleaseSelectRating => 'Please select a rating';
+  @override
+  String get lblPleaseSelectNewImageFile => 'Please select a new image file';
+  @override
+  String get lblSelectedFileDoesNotExist => 'Selected file does not exist';
+  @override
+  String get lblChooseValidImageFormat => 'Please choose a PNG, GIF, JPG, or JPEG image.';
+  @override
+  String get lblErrorImageFileNotAdded => 'Error: Image file not added to request';
+  @override
+  String get lblPleaseSelectRemoteWorkLevel => 'Please select remote work level';
+  @override
+  String get lblPleaseSelectCareerLevel => 'Please select career level';
+  @override
+  String get lblPleaseSelectTravelRequired => 'Please select travel required';
+  @override
+  String get lblPleaseSelectProvider => 'Please select provider';
+  @override
+  String get lblPleaseSelectValidImages => 'Please select valid images';
+  @override
+  String get lblCompleteProfileBeforeService => 'Please complete your profile before creating a service';
+  @override
+  String get lblCantFindRevenueCatProduct => "Can't find revenueCat product";
+  @override
+  String get lblLocationSharingStarted => 'Location sharing started';
+  @override
+  String get lblAllowLocationPermission => 'Please allow location permission to share your location';
+  @override
+  String get lblLocationSharingOnlyInProgress => 'Location sharing is only available when the booking is in progress';
+  @override
+  String get lblSavingSubscription => "Wait for a while we're saving your subscription";
+  @override
+  String get lblChoosePaymentMethodFirst => 'Choose any one payment method first';
+  @override
+  String get lblErrorCapturingImage => 'Error capturing image';
+  @override
+  String get lblErrorAddingProfileImage => 'Error adding profile image';
+  @override
+  String get lblFileSizeLimitPrefix => 'File size should be less than';
+  @override
+  String get lblInvalidUrlPrefix => 'Invalid URL';
 }

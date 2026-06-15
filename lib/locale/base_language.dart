@@ -1808,4 +1808,5 @@ abstract class Languages {
   String get lblErrorAddingProfileImage;
   String get lblFileSizeLimitPrefix;
   String get lblInvalidUrlPrefix;
+  String get messageHiddenDueToPolicy;
 }

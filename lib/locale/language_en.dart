@@ -2921,4 +2921,7 @@ class LanguageEn extends Languages {
 
   @override
   String get lblInvalidUrlPrefix => 'Invalid URL';
+
+  @override
+  String get messageHiddenDueToPolicy => 'Message hidden due to policy';
 }

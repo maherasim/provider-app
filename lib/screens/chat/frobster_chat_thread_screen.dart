@@ -137,7 +137,7 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
       final res = await FrobsterChatApi.sendMessage(conversationId: widget.conversationId, message: text);
       if (res.flagged) {
         final types = res.piiTypes.join(', ');
-        toast('Message hidden due to policy (${types.isEmpty ? 'policy' : types})');
+        toast(languages.messageHiddenDueToPolicy + (types.isNotEmpty ? ' ($types)' : ''));
       }
       // Only show in listing after sent successfully: refresh from server then clear field
       await _fetchNew();

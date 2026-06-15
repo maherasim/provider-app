@@ -1651,7 +1651,7 @@ abstract class Languages {
 
   String get invoice;
 
-  /// Provider job list ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â report / block (UGC APIs)
+  /// Provider job list — report / block (UGC APIs)
   String get lblReportJob;
   String get lblBlock;
   String get lblBlockCustomer;

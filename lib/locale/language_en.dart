@@ -2925,6 +2925,8 @@ class LanguageEn extends Languages {
   @override
   String get messageHiddenDueToPolicy => 'Message hidden due to policy';
 
+  @override String get statusPending => 'Pending';
+  @override String get statusAssigned => 'Assigned';
   @override String get statusRequested => 'Requested';
   @override String get statusAccepted => 'Accepted';
   @override String get statusAdvancePaymentPending => 'Advance Payment Pending';

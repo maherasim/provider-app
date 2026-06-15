@@ -1810,6 +1810,8 @@ abstract class Languages {
   String get lblInvalidUrlPrefix;
   String get messageHiddenDueToPolicy;
 
+  String get statusPending;
+  String get statusAssigned;
   String get statusRequested;
   String get statusAccepted;
   String get statusAdvancePaymentPending;

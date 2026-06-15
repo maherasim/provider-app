@@ -23,6 +23,7 @@ import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/extensions/string_extension.dart';
 import 'package:handyman_provider_flutter/utils/images.dart';
+import 'package:handyman_provider_flutter/provider/service_address/components/add_service_component.dart';
 import 'package:handyman_provider_flutter/utils/language_options.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
 import 'package:http/http.dart';
@@ -805,7 +806,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
       toast('${languages.lblHandymanType}: ${languages.hintRequired}');
       return false;
     }
-    if (serviceAddressId == null || serviceAddressId == -1) {
+    if (serviceAddressList.isNotEmpty && (serviceAddressId == null || serviceAddressId == -1)) {
       toast('${languages.lblServiceAddress}: ${languages.hintRequired}');
       return false;
     }
@@ -1603,38 +1604,77 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                         },
                       ).visible(providerList.isNotEmpty),
                     if (_isAdminUser()) 16.height,
-                    _buildRequiredLabel(languages.lblServiceAddress),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(languages.lblServiceAddress, style: boldTextStyle(size: 14)),
+                        TextButton.icon(
+                          onPressed: () {
+                            showInDialog(
+                              context,
+                              contentPadding: EdgeInsets.all(0),
+                              dialogAnimation: DialogAnimation.SCALE,
+                              builder: (_) => AddServiceComponent(),
+                            ).then((value) {
+                              if (value == true) {
+                                getAddressList();
+                              }
+                            });
+                          },
+                          icon: Icon(Icons.add_circle_outline, size: 18, color: primaryColor),
+                          label: Text(languages.lblAddServiceAddress, style: boldTextStyle(size: 13, color: primaryColor)),
+                          style: TextButton.styleFrom(padding: EdgeInsets.zero, visualDensity: VisualDensity.compact),
+                        ),
+                      ],
+                    ),
                     8.height,
-                    DropdownButtonFormField<AddressResponse>(
-                      decoration: inputDecoration(
-                        context,
-                        hint: '${languages.lblService} ${languages.lblAddress}',
-                        fillColor: context.scaffoldBackgroundColor,
+                    if (serviceAddressList.isEmpty)
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: context.cardColor,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.orange.shade300),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.info_outline, size: 16, color: Colors.orange),
+                            8.width,
+                            Expanded(child: Text(languages.noServiceAddressTitle, style: secondaryTextStyle(size: 13))),
+                          ],
+                        ),
+                      )
+                    else
+                      DropdownButtonFormField<AddressResponse>(
+                        decoration: inputDecoration(
+                          context,
+                          hint: '${languages.lblService} ${languages.lblAddress}',
+                          fillColor: context.scaffoldBackgroundColor,
+                        ),
+                        isExpanded: true,
+                        dropdownColor: context.cardColor,
+                        initialValue: selectedServiceAddress != null
+                            ? selectedServiceAddress
+                            : null,
+                        validator: (value) {
+                          if (value == null) return languages.hintRequired;
+                          return null;
+                        },
+                        items: serviceAddressList.map((data) {
+                          return DropdownMenuItem<AddressResponse>(
+                            value: data,
+                            child: Text(
+                              data.address.validate(),
+                              style: primaryTextStyle(),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (AddressResponse? value) async {
+                          selectedServiceAddress = value;
+                          serviceAddressId = selectedServiceAddress?.id;
+                          setState(() {});
+                        },
                       ),
-                      isExpanded: true,
-                      dropdownColor: context.cardColor,
-                      initialValue: selectedServiceAddress != null
-                          ? selectedServiceAddress
-                          : null,
-                      validator: (value) {
-                        if (value == null) return languages.hintRequired;
-                        return null;
-                      },
-                      items: serviceAddressList.map((data) {
-                        return DropdownMenuItem<AddressResponse>(
-                          value: data,
-                          child: Text(
-                            data.address.validate(),
-                            style: primaryTextStyle(),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (AddressResponse? value) async {
-                        selectedServiceAddress = value;
-                        serviceAddressId = selectedServiceAddress?.id;
-                        setState(() {});
-                      },
-                    ).visible(serviceAddressList.isNotEmpty),
                     16.height,
                     // Country dropdown - Required
                     _buildRequiredLabel(languages.selectCountry),

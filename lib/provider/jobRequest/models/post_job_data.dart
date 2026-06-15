@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'dart:developer' as developer;
 
+import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/models/user_data.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
 
@@ -414,24 +415,39 @@ enum YearsOfExperience {
 
 /// Education Level
 enum RequestStatus {
-  requested('Requested','requested',defaultStatus),
-  accepted('Accepted','accepted',accept),
-  pendingAdvance('Advance Payment Pending','advance_payment_pending',primaryColorWithOpacity),
-  advancePaid('Advance Paid','advance_paid',primaryColorWithOpacity),
-  inProcess('In Process','in_process',primaryColorWithOpacity),
-  inProgress('In Progress','in_progress',primaryColorWithOpacity),
-  hold('Hold','hold',primaryColorWithOpacity),
-  done('Done','done',primaryColorWithOpacity),
-  confirmDone( 'Confirm Done','confirm_done',primaryColorWithOpacity),
-  completed( 'Completed','completed',primaryColorWithOpacity),
-  remainingPaymentPending('Waiting for admin approval','remaining_payment_pending',primaryColorWithOpacity),
-  remainingPaid( 'Remaining Paid','remaining_paid',primaryColorWithOpacity),
+  requested('requested',defaultStatus),
+  accepted('accepted',accept),
+  pendingAdvance('advance_payment_pending',primaryColorWithOpacity),
+  advancePaid('advance_paid',primaryColorWithOpacity),
+  inProcess('in_process',primaryColorWithOpacity),
+  inProgress('in_progress',primaryColorWithOpacity),
+  hold('hold',primaryColorWithOpacity),
+  done('done',primaryColorWithOpacity),
+  confirmDone('confirm_done',primaryColorWithOpacity),
+  completed('completed',primaryColorWithOpacity),
+  remainingPaymentPending('remaining_payment_pending',primaryColorWithOpacity),
+  remainingPaid('remaining_paid',primaryColorWithOpacity),
+  cancel('cancelled',cancelled);
 
-  cancel( 'Cancelled','cancelled',cancelled);
-  final String displayName;
   final String backendValue;
   final Color bgColor;
-  const RequestStatus(this.displayName,this.backendValue,this.bgColor);
+  const RequestStatus(this.backendValue,this.bgColor);
+
+  String get displayName => switch (this) {
+    RequestStatus.requested               => languages.statusRequested,
+    RequestStatus.accepted                => languages.statusAccepted,
+    RequestStatus.pendingAdvance          => languages.statusAdvancePaymentPending,
+    RequestStatus.advancePaid             => languages.statusAdvancePaid,
+    RequestStatus.inProcess               => languages.statusInProcess,
+    RequestStatus.inProgress              => languages.statusInProgress,
+    RequestStatus.hold                    => languages.statusHold,
+    RequestStatus.done                    => languages.statusDone,
+    RequestStatus.confirmDone             => languages.statusConfirmDone,
+    RequestStatus.completed               => languages.statusCompleted,
+    RequestStatus.remainingPaymentPending => languages.statusRemainingPaymentPending,
+    RequestStatus.remainingPaid           => languages.statusRemainingPaid,
+    RequestStatus.cancel                  => languages.statusCancelled,
+  };
 
   /// Parses status from API. Accepts snake_case and "Display Form" for pending statuses.
   static RequestStatus fromJson(dynamic value) {

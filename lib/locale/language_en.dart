@@ -2924,4 +2924,18 @@ class LanguageEn extends Languages {
 
   @override
   String get messageHiddenDueToPolicy => 'Message hidden due to policy';
+
+  @override String get statusRequested => 'Requested';
+  @override String get statusAccepted => 'Accepted';
+  @override String get statusAdvancePaymentPending => 'Advance Payment Pending';
+  @override String get statusAdvancePaid => 'Advance Paid';
+  @override String get statusInProcess => 'In Process';
+  @override String get statusInProgress => 'In Progress';
+  @override String get statusHold => 'Hold';
+  @override String get statusDone => 'Done';
+  @override String get statusConfirmDone => 'Confirm Done';
+  @override String get statusCompleted => 'Completed';
+  @override String get statusRemainingPaymentPending => 'Remaining Payment Pending';
+  @override String get statusRemainingPaid => 'Remaining Paid';
+  @override String get statusCancelled => 'Cancelled';
 }

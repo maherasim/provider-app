@@ -3027,4 +3027,18 @@ class LanguageDe extends Languages {
 
   @override
   String get messageHiddenDueToPolicy => 'Nachricht aufgrund von Richtlinien ausgeblendet';
+
+  @override String get statusRequested => 'Angefragt';
+  @override String get statusAccepted => 'Akzeptiert';
+  @override String get statusAdvancePaymentPending => 'Anzahlung ausstehend';
+  @override String get statusAdvancePaid => 'Anzahlung geleistet';
+  @override String get statusInProcess => 'In Bearbeitung';
+  @override String get statusInProgress => 'In Ausfuehrung';
+  @override String get statusHold => 'Angehalten';
+  @override String get statusDone => 'Erledigt';
+  @override String get statusConfirmDone => 'Erledigung bestaetigt';
+  @override String get statusCompleted => 'Abgeschlossen';
+  @override String get statusRemainingPaymentPending => 'Restzahlung ausstehend';
+  @override String get statusRemainingPaid => 'Restzahlung geleistet';
+  @override String get statusCancelled => 'Storniert';
 }

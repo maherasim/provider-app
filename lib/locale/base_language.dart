@@ -1809,4 +1809,18 @@ abstract class Languages {
   String get lblFileSizeLimitPrefix;
   String get lblInvalidUrlPrefix;
   String get messageHiddenDueToPolicy;
+
+  String get statusRequested;
+  String get statusAccepted;
+  String get statusAdvancePaymentPending;
+  String get statusAdvancePaid;
+  String get statusInProcess;
+  String get statusInProgress;
+  String get statusHold;
+  String get statusDone;
+  String get statusConfirmDone;
+  String get statusCompleted;
+  String get statusRemainingPaymentPending;
+  String get statusRemainingPaid;
+  String get statusCancelled;
 }

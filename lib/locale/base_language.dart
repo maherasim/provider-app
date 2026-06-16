@@ -1730,6 +1730,15 @@ abstract class Languages {
   String get lblEduUndergraduate;
   String get lblEduMasters;
   String get lblEduDoctorate;
+  String get lblEduNotSpecified;
+  String get lblEduAnyGraduate;
+  String get lblEduApprenticeship;
+  String get lblEduTraineeship;
+  String get lblEduSecondaryDegree;
+  String get lblEduCollege;
+  String get lblEduUniversity;
+  String get lblEduBachelors;
+  String get lblEduProfessional;
   String get lblAccountHolderNameHint;
   String get lblMobileNumberHint;
   String get lblIbanNumberHint;

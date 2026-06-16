@@ -1806,6 +1806,7 @@ abstract class Languages {
   String get lblChoosePaymentMethodFirst;
   String get lblErrorCapturingImage;
   String get lblErrorAddingProfileImage;
+  String get lblError;
   String get lblFileSizeLimitPrefix;
   String get lblInvalidUrlPrefix;
   String get messageHiddenDueToPolicy;

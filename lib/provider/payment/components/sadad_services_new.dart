@@ -83,7 +83,7 @@ class SadadServicesNew {
       }
     }).catchError((e) {
       appStore.setLoading(false);
-      toast('Error: $e', print: true);
+      toast('${languages.lblError}: $e', print: true);
     });
   }
 }

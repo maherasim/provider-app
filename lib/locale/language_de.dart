@@ -3020,6 +3020,9 @@ class LanguageDe extends Languages {
   String get lblErrorAddingProfileImage => 'Fehler beim Hinzufuegen des Profilbildes';
 
   @override
+  String get lblError => 'Fehler';
+
+  @override
   String get lblFileSizeLimitPrefix => 'Dateigroesse muss kleiner sein als';
 
   @override

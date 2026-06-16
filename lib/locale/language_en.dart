@@ -2917,6 +2917,9 @@ class LanguageEn extends Languages {
   String get lblErrorAddingProfileImage => 'Error adding profile image';
 
   @override
+  String get lblError => 'Error';
+
+  @override
   String get lblFileSizeLimitPrefix => 'File size should be less than';
 
   @override

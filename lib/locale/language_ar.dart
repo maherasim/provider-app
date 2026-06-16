@@ -2714,6 +2714,24 @@ class LanguageAr extends Languages {
   @override
   String get lblEduDoctorate => 'Doctorate';
   @override
+  String get lblEduNotSpecified => 'Not Specified';
+  @override
+  String get lblEduAnyGraduate => 'Any Graduate';
+  @override
+  String get lblEduApprenticeship => 'Apprenticeship Degree';
+  @override
+  String get lblEduTraineeship => 'Traineeship Degree';
+  @override
+  String get lblEduSecondaryDegree => 'Secondary Degree';
+  @override
+  String get lblEduCollege => 'College Degree';
+  @override
+  String get lblEduUniversity => 'University Degree';
+  @override
+  String get lblEduBachelors => "Bachelor's Degree";
+  @override
+  String get lblEduProfessional => 'Professional Degree';
+  @override
   String get lblAccountHolderNameHint => 'Account Holder Name';
   @override
   String get lblMobileNumberHint => 'Mobile Number';

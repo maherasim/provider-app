@@ -2720,6 +2720,24 @@ class LanguageDe extends Languages {
   String get lblEduDoctorate => 'Promotion (Doktor)';
 
   @override
+  String get lblEduNotSpecified => '—';
+  @override
+  String get lblEduAnyGraduate => 'Beliebiger Abschluss';
+  @override
+  String get lblEduApprenticeship => 'Berufsausbildung';
+  @override
+  String get lblEduTraineeship => 'Trainee-Abschluss';
+  @override
+  String get lblEduSecondaryDegree => 'Realschulabschluss';
+  @override
+  String get lblEduCollege => 'Fachhochschule';
+  @override
+  String get lblEduUniversity => 'Universitätsabschluss';
+  @override
+  String get lblEduBachelors => 'Bachelor';
+  @override
+  String get lblEduProfessional => 'Beruflicher Abschluss';
+  @override
   String get lblAccountHolderNameHint => 'Name des Kontoinhabers';
 
   @override

@@ -63,16 +63,34 @@ extension TravelRequirementLocalization on TravelRequirement {
 extension EducationLevelLocalization on EducationLevel {
   String get localizedLabel {
     switch (this) {
-      case EducationLevel.highSchool:
-        return languages.lblEduHighSchool;
-      case EducationLevel.associate:
-        return languages.lblEduAssociate;
-      case EducationLevel.undergraduate:
+      case EducationLevel.notSpecified:
+        return languages.lblEduNotSpecified;
+      case EducationLevel.anyGraduate:
+        return languages.lblEduAnyGraduate;
+      case EducationLevel.apprenticeshipDegree:
+        return languages.lblEduApprenticeship;
+      case EducationLevel.traineeshipDegree:
+        return languages.lblEduTraineeship;
+      case EducationLevel.secondaryDegree:
+        return languages.lblEduSecondaryDegree;
+      case EducationLevel.undergraduateDiploma:
         return languages.lblEduUndergraduate;
-      case EducationLevel.masters:
+      case EducationLevel.highSchoolGraduate:
+        return languages.lblEduHighSchool;
+      case EducationLevel.associateDegree:
+        return languages.lblEduAssociate;
+      case EducationLevel.collegeDegree:
+        return languages.lblEduCollege;
+      case EducationLevel.universityDegree:
+        return languages.lblEduUniversity;
+      case EducationLevel.bachelorsDegree:
+        return languages.lblEduBachelors;
+      case EducationLevel.mastersDegree:
         return languages.lblEduMasters;
-      case EducationLevel.doctorate:
+      case EducationLevel.doctorateDegree:
         return languages.lblEduDoctorate;
+      case EducationLevel.professionalDegree:
+        return languages.lblEduProfessional;
     }
   }
 }

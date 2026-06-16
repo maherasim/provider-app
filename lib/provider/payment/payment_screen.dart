@@ -433,7 +433,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   controller: referenceIdController,
                   textFieldType: TextFieldType.NAME,
                   decoration: InputDecoration(
-                    hintText: 'Reference Number',
+                    hintText: languages.referenceNumber,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),

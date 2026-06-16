@@ -2941,6 +2941,19 @@ class LanguageEn extends Languages {
   String get lblFileSizeLimitPrefix => 'File size should be less than';
 
   @override
+  String get lblAccountStatus => 'Account status';
+  @override
+  String get lblEnterValidNumber => 'Please enter a valid number';
+  @override
+  String get referenceNumber => 'Reference Number';
+  @override
+  String get lblStartDate => 'Start Date';
+  @override
+  String get lblEndDate => 'End Date';
+  @override
+  String get location => 'Location';
+
+  @override
   String get lblInvalidUrlPrefix => 'Invalid URL';
 
   @override

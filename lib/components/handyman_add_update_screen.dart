@@ -1466,7 +1466,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     16.height,
                     Divider(),
                     12.height,
-                    Text('Contact & Address', style: boldTextStyle(size: 16)),
+                    Text(languages.lblContactAndAddress, style: boldTextStyle(size: 16)),
                     12.height,
                     _buildRequiredLabel(languages.hintContactNumberTxt),
                     8.height,
@@ -1541,7 +1541,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     Text(languages.commission, style: boldTextStyle(size: 16)),
                     12.height,
                     // Handyman Commission - Number input (1-99)
-                    _buildRequiredLabel('Handyman commission (1-99)'),
+                    _buildRequiredLabel(languages.lblHandymanCommissionHint),
                     8.height,
                     AppTextField(
                       textFieldType: TextFieldType.PHONE,
@@ -1552,7 +1552,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                       isValidationRequired: true,
                       decoration: inputDecoration(
                         context,
-                        hint: 'Handyman commission (1-99)',
+                        hint: languages.lblHandymanCommissionHint,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
                       validator: (value) {
@@ -1560,7 +1560,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                           return languages.hintRequired;
                         double? commission = double.tryParse(value.trim());
                         if (commission == null) {
-                          return 'Please enter a valid number';
+                          return languages.lblEnterValidNumber;
                         }
                         if (commission < 1 || commission > 99) {
                           return 'Commission must be between 1 and 99';
@@ -1979,7 +1979,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     ),
                     Divider(),
                     12.height,
-                    Text('Education & Bio', style: boldTextStyle(size: 16)),
+                    Text(languages.lblEducationAndBio, style: boldTextStyle(size: 16)),
                     12.height,
                     // Education - Text Input (Optional)
                     AppTextField(

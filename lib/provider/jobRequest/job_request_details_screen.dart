@@ -187,13 +187,13 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
         message = languages.jobCompletedWaitingForCustomer;
         break;
       case RequestStatus.remainingPaymentPending:
-        message = 'Waiting for admin approval';
+        message = languages.lblWaitingForAdminApproval;
         break;
       case RequestStatus.remainingPaid:
         message = languages.paymentCompletedDownloadInvoice;
         break;
       case RequestStatus.cancel:
-        message = "This bid was cancelled";
+        message = languages.lblThisBidWasCancelled;
         break;
       case RequestStatus.pending:
         message = languages.statusPending;
@@ -404,7 +404,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   _buildInfoCard(
                     icon: Icons.location_on,
                     iconColor: Colors.green,
-                    title: 'Location',
+                    title: languages.location,
                     value: "${postJobDetail!.postRequest?.city?.name}${(postJobDetail!.postRequest?.country?.name??'').isEmpty ? '' : ', ${postJobDetail!.postRequest?.country?.name}' }",
                   ),
                   _buildInfoCard(
@@ -423,14 +423,14 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   _buildInfoCard(
                     icon: Icons.event_available,
                     iconColor: Colors.blue,
-                    title: 'Start Date',
+                    title: languages.lblStartDate,
                     value: formatDate(postJobDetail!.postRequest?.startDate?.toIso8601String().validate(),showDateWithTime: true),
                     isDate: true,
                   ),
                   _buildInfoCard(
                     icon: Icons.event_busy,
                     iconColor: Colors.red,
-                    title: 'End Date',
+                    title: languages.lblEndDate,
                     value:  formatDate(postJobDetail!.postRequest?.endDate?.toIso8601String().validate(),showDateWithTime: true),
                     isDate: true,
                   ),
@@ -456,7 +456,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   _buildInfoCard(
                     icon: Icons.person_outline,
                     iconColor: Colors.green,
-                    title: 'Customer',
+                    title: languages.lblAboutCustomer,
                     value:  postJobDetail!.customer?.displayName.validate() ?? '',
                     profileUserIdToReport: postJobDetail!.customer?.id,
                   ),

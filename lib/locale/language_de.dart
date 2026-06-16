@@ -3044,6 +3044,19 @@ class LanguageDe extends Languages {
   String get lblFileSizeLimitPrefix => 'Dateigroesse muss kleiner sein als';
 
   @override
+  String get lblAccountStatus => 'Kontostatus';
+  @override
+  String get lblEnterValidNumber => 'Bitte geben Sie eine gültige Zahl ein';
+  @override
+  String get referenceNumber => 'Referenznummer';
+  @override
+  String get lblStartDate => 'Startdatum';
+  @override
+  String get lblEndDate => 'Enddatum';
+  @override
+  String get location => 'Standort';
+
+  @override
   String get lblInvalidUrlPrefix => 'Ungueltige URL';
 
   @override

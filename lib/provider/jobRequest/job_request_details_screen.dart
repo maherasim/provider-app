@@ -195,6 +195,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
       case RequestStatus.cancel:
         message = "This bid was cancelled";
         break;
+      case RequestStatus.pending:
+        message = languages.statusPending;
+        break;
+      case RequestStatus.assigned:
+        message = languages.statusAssigned;
+        break;
     }
 
     return message;

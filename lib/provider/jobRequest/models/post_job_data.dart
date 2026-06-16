@@ -385,19 +385,19 @@ enum EducationLevel {
 /// Profile Education (edit profile dropdown). Blade first option is `''`.
 enum ProfileEducationLevel {
   unspecified("—", ""),
-  anyGraduate("Any Graduate", "any_graduate"),
-  apprenticeshipDegree("Apprenticeship Degree", "apprenticeship_degree"),
-  traineeshipDegree("Traineeship Degree", "traineeship_degree"),
-  secondaryDegree("Secondary Degree", "secondary_degree"),
-  undergraduateDiploma("Undergraduate Diploma", "undergraduate_diploma"),
-  highSchoolGraduate("High school graduate", "high_school_graduate"),
-  associateDegree("Associate degree", "associate_degree"),
-  collegeDegree("College Degree", "college_degree"),
-  universityDegree("University Degree", "university_degree"),
-  bachelorsDegree("Bachelor's Degree", "bachelors_degree"),
-  mastersDegree("Master's Degree", "masters_degree"),
-  doctorateDegree("Doctorate Degree", "doctorate_degree"),
-  professionalDegree("Professional Degree", "professional_degree");
+  anyGraduate("Beliebiger Abschluss", "any_graduate"),
+  apprenticeshipDegree("Berufsausbildung", "apprenticeship_degree"),
+  traineeshipDegree("Trainee-Abschluss", "traineeship_degree"),
+  secondaryDegree("Realschulabschluss", "secondary_degree"),
+  undergraduateDiploma("Fachhochschulreife", "undergraduate_diploma"),
+  highSchoolGraduate("Abitur", "high_school_graduate"),
+  associateDegree("Associate-Abschluss", "associate_degree"),
+  collegeDegree("Fachhochschule", "college_degree"),
+  universityDegree("Universitätsabschluss", "university_degree"),
+  bachelorsDegree("Bachelor", "bachelors_degree"),
+  mastersDegree("Master", "masters_degree"),
+  doctorateDegree("Promotion (Doktor)", "doctorate_degree"),
+  professionalDegree("Beruflicher Abschluss", "professional_degree");
 
   final String displayName;
   final String backendValue;

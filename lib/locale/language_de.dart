@@ -1598,7 +1598,7 @@ class LanguageDe extends Languages {
   @override
   String
       get selectABankTransferMoneyAndEnterTheReferenceIDInTheTextFieldBelow =>
-          '?berweise den Betrag per Bank?berweisung und gib die Referenz-ID in das Textfeld unten ein.';
+          'Überweise den Betrag per Banküberweisung und gib die Referenz-ID in das Textfeld unten ein.';
 
   @override
   String get noBanksAvailable => 'Keine Banken verfügbar';

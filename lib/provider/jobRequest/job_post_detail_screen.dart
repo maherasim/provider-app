@@ -268,19 +268,19 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
         ],
         if (data.requirement.validate().isNotEmpty) ...[
           _buildSimpleSection(
-            title: "Skills & Requirements",
+            title: languages.lblSkillsAndRequirements,
             content: data.requirement.validate(),
           ),
         ],
         if (data.duties.validate().isNotEmpty) ...[
           _buildSimpleSection(
-            title: "Duties & Responsibilities",
+            title: languages.lblDutiesAndResponsibilities,
             content: data.duties.validate(),
           ),
         ],
         if (data.benefits.validate().isNotEmpty) ...[
           _buildSimpleSection(
-            title: "Benefits",
+            title: languages.lblBenefits,
             content: data.benefits.validate(),
           ),
         ],

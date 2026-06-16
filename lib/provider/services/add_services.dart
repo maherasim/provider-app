@@ -868,7 +868,7 @@ class _AddServicesState extends State<AddServices> {
                 if (_isAdminUser() && providerList.isNotEmpty) DropdownButtonFormField<UserData>(
                   decoration: inputDecoration(
                     context,
-                    hint: 'Select Provider',
+                    hint: languages.lblSelectProviderHint,
                     fillColor: context.scaffoldBackgroundColor,
                   ),
                   isExpanded: true,
@@ -1489,7 +1489,7 @@ class _AddServicesState extends State<AddServices> {
                     validator: (s) {
                       if (s!.trim().isEmpty) return errorThisFieldRequired;
                       final v = int.tryParse(s.trim());
-                      if (v == null) return 'Please enter a valid number';
+                      if (v == null) return languages.lblEnterValidNumber;
                       if (v < 20 || v > 99) return 'Advance payment must be between 20 and 99';
                       return null;
                     },

@@ -94,7 +94,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
                               return context.translate.hintRequired;
                             }
                             final advanceValue = int.tryParse(value.trim());
-                            if (advanceValue == null) return 'Please enter a valid number';
+                            if (advanceValue == null) return context.translate.lblEnterValidNumber;
                             if (advanceValue < 20 || advanceValue > 99) {
                               return 'Advance payment must be between 20 and 99';
                             }

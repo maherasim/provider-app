@@ -1051,7 +1051,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         16.height,
                         DropdownButtonFormField<CountryListResponse>(
                           decoration: inputDecoration(context,
-                              hint: 'Select Country tax'),
+                              hint: languages.lblSelectCountryTaxHint),
                           isExpanded: true,
                           menuMaxHeight: 300,
                           initialValue: selectedTaxCountry,
@@ -1179,7 +1179,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           controller: cNameCont,
                           focus: cNameFocus,
                           decoration:
-                              inputDecoration(context, hint: 'Company Name'),
+                              inputDecoration(context, hint: languages.lblCompanyNameHint),
                         ),
                         16.height,
                         Row(
@@ -1227,7 +1227,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         16.height,
                         DropdownButtonFormField<int>(
                           decoration:
-                              inputDecoration(context, hint: 'Account status'),
+                              inputDecoration(context, hint: languages.lblAccountStatus),
                           isExpanded: true,
                           initialValue: profileAccountStatus,
                           dropdownColor: context.cardColor,
@@ -1370,7 +1370,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           focus: certificationFocus,
                           nextFocus: aboutMeFocus,
                           decoration: inputDecoration(context,
-                              hint: 'Certification (comma-separated)'),
+                              hint: languages.lblCertificationHint),
                           suffix: Icon(Icons.verified,
                                   size: 18, color: context.iconColor)
                               .paddingAll(14),
@@ -1378,7 +1378,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         16.height,
                         DropdownButtonFormField<String>(
                           decoration:
-                              inputDecoration(context, hint: 'Availability'),
+                              inputDecoration(context, hint: languages.lblSelectAvailabilityHint),
                           isExpanded: true,
                           initialValue: _profileAvailabilityOptions
                                   .containsKey(selectedAvailability)

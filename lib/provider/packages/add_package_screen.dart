@@ -80,7 +80,12 @@ class _AddPackageScreenState extends State<AddPackageScreen> {
   void initState() {
     super.initState();
     init();
-    appStore.setSelectedLanguage(languageList().first);
+    appStore.setSelectedLanguage(
+      languageList().firstWhere(
+        (l) => l.languageCode == DEFAULT_LANGUAGE,
+        orElse: () => languageList().first,
+      ),
+    );
   }
 
   void init() async {

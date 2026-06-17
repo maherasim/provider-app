@@ -2977,6 +2977,7 @@ class LanguageEn extends Languages {
   @override String get lblSelectLanguagesHint => 'Select languages';
   @override String get lblAboutDescriptionHint => 'About description';
   @override String get lblPublish => 'Publish';
+  @override String get lblAdvancePaymentRange => 'Advance payment must be between 20 and 99';
   @override String get lblExpUnspecified => '—';
   @override String get lblExpLessThan1Year => 'Less than 1 Year';
   @override String get lblExp1To3Years => '1 to 3 Years';

@@ -2933,4 +2933,7 @@ class LanguageAr extends Languages {
   String get location => 'Location';
   @override
   String get lblInvalidUrlPrefix => 'Invalid URL';
+  @override String get lblSelectLanguagesHint => 'Select languages';
+  @override String get lblAboutDescriptionHint => 'About description';
+  @override String get lblPublish => 'Publish';
 }

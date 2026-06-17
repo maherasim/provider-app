@@ -1841,4 +1841,7 @@ abstract class Languages {
   String get statusRemainingPaymentPending;
   String get statusRemainingPaid;
   String get statusCancelled;
+  String get lblSelectLanguagesHint;
+  String get lblAboutDescriptionHint;
+  String get lblPublish;
 }

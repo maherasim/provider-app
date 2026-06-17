@@ -937,7 +937,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                     8.width,
                                     Text(
                                       selectedLanguages.isEmpty
-                                          ? 'Select languages'
+                                          ? languages.lblSelectLanguagesHint
                                           : '${selectedLanguages.length} selected',
                                       style: selectedLanguages.isEmpty
                                           ? secondaryTextStyle()
@@ -983,7 +983,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           controller: userNameCont,
                           focus: userNameFocus,
                           nextFocus: emailFocus,
-                          enabled: false,
+                          enabled: true,
                           decoration: inputDecoration(context,
                               hint: languages.hintUserNameTxt),
                           suffix: profile.iconImage(size: 10).paddingAll(14),
@@ -1261,7 +1261,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           nextFocus:
                               isUserTypeProvider ? designationFocus : null,
                           decoration:
-                              inputDecoration(context, hint: 'VAT Number'),
+                              inputDecoration(context, hint: languages.lblVatNumberHint),
                         ),
                         16.height,
                         if (isUserTypeProvider)
@@ -1280,8 +1280,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           focus: skillsFocus,
                           nextFocus: null,
                           decoration: inputDecoration(context,
-                              hint: languages.essentialSkills +
-                                  ' (comma-separated)'),
+                              hint: languages.essentialSkills),
                           suffix: Icon(Icons.work,
                                   size: 18, color: context.iconColor)
                               .paddingAll(14),
@@ -1386,10 +1385,15 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               : '',
                           dropdownColor: context.cardColor,
                           items: _profileAvailabilityOptions.entries.map((e) {
+                            final label = e.key == 'full_time'
+                                ? languages.lblFullTime
+                                : e.key == 'part_time'
+                                    ? languages.lblPartTime
+                                    : '—';
                             return DropdownMenuItem<String>(
                               value: e.key,
                               child: Text(
-                                e.value,
+                                label,
                                 style: primaryTextStyle(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -1409,8 +1413,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           focus: mobilityFocus,
                           nextFocus: experienceFocus,
                           decoration: inputDecoration(context,
-                              hint:
-                                  'Mobility (e.g., Car, Bike, Public Transport)'),
+                              hint: languages.lblMobilityHint),
                           suffix: Icon(Icons.directions_car,
                                   size: 18, color: context.iconColor)
                               .paddingAll(14),
@@ -1424,8 +1427,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           minLines: 3,
                           maxLines: 5,
                           decoration: inputDecoration(context,
-                              hint:
-                                  'Experience (describe your work experience)'),
+                              hint: languages.lblExperienceDescHint),
                           suffix: Icon(Icons.business_center,
                                   size: 18, color: context.iconColor)
                               .paddingAll(14),
@@ -1508,8 +1510,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             loaderWidgetForChatGPT:
                                 const ChatGPTLoadingWidget(),
                             decoration: inputDecoration(context,
-                                hint:
-                                    'About description (why choose me — rich text)'),
+                                hint: languages.lblAboutDescriptionHint),
                             isValidationRequired: false,
                           ),
                           16.height,

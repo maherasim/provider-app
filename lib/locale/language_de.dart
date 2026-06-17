@@ -3077,4 +3077,7 @@ class LanguageDe extends Languages {
   @override String get statusRemainingPaymentPending => 'Restzahlung ausstehend';
   @override String get statusRemainingPaid => 'Restzahlung geleistet';
   @override String get statusCancelled => 'Storniert';
+  @override String get lblSelectLanguagesHint => 'Sprachen auswählen';
+  @override String get lblAboutDescriptionHint => 'Über die Beschreibung';
+  @override String get lblPublish => 'Veröffentlichen';
 }

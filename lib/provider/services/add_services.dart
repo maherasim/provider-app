@@ -1610,7 +1610,7 @@ class _AddServicesState extends State<AddServices> {
                   ),
                   child: AppButton(
                     margin: EdgeInsets.zero,
-                    text: 'Publish',
+                    text: languages.lblPublish,
                     height: 40,
                     color: Colors.transparent,
                     textStyle: boldTextStyle(color: white),

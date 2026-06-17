@@ -2974,4 +2974,7 @@ class LanguageEn extends Languages {
   @override String get statusRemainingPaymentPending => 'Remaining Payment Pending';
   @override String get statusRemainingPaid => 'Remaining Paid';
   @override String get statusCancelled => 'Cancelled';
+  @override String get lblSelectLanguagesHint => 'Select languages';
+  @override String get lblAboutDescriptionHint => 'About description';
+  @override String get lblPublish => 'Publish';
 }

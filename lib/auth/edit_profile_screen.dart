@@ -1321,10 +1321,24 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           dropdownColor: context.cardColor,
                           menuMaxHeight: 300,
                           items: CareerLevel.values.map((CareerLevel level) {
+                            final label = switch (level) {
+                              CareerLevel.notSpecified => languages.lblCareerNotSpecified,
+                              CareerLevel.entryLevel => languages.lblCareerEntryLevel,
+                              CareerLevel.intermediateLevel => languages.lblCareerIntermediateLevel,
+                              CareerLevel.experienced => languages.lblCareerExperienced,
+                              CareerLevel.professional => languages.lblCareerProfessional,
+                              CareerLevel.middleManagement => languages.lblCareerMiddleManagement,
+                              CareerLevel.executiveManagement => languages.lblCareerExecutiveManagement,
+                              CareerLevel.seniorManagement => languages.lblCareerSeniorManagement,
+                              CareerLevel.director => languages.lblCareerDirector,
+                              CareerLevel.technician => languages.lblCareerTechnician,
+                              CareerLevel.leader => languages.lblCareerLeader,
+                              CareerLevel.manager => languages.lblCareerManager,
+                            };
                             return DropdownMenuItem<CareerLevel>(
                               value: level,
                               child: Text(
-                                level.displayName,
+                                label,
                                 style: primaryTextStyle(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -1347,10 +1361,19 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           menuMaxHeight: 300,
                           items: YearsOfExperience.values
                               .map((YearsOfExperience val) {
+                            final label = switch (val) {
+                              YearsOfExperience.unspecified => languages.lblExpUnspecified,
+                              YearsOfExperience.lessThan1Year => languages.lblExpLessThan1Year,
+                              YearsOfExperience.oneTo3Years => languages.lblExp1To3Years,
+                              YearsOfExperience.threeTo5Years => languages.lblExp3To5Years,
+                              YearsOfExperience.fiveTo8Years => languages.lblExp5To8Years,
+                              YearsOfExperience.eightTo10Years => languages.lblExp8To10Years,
+                              YearsOfExperience.moreThan10Years => languages.lblExpMoreThan10Years,
+                            };
                             return DropdownMenuItem<YearsOfExperience>(
                               value: val,
                               child: Text(
-                                val.displayName,
+                                label,
                                 style: primaryTextStyle(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,

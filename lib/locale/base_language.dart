@@ -1844,4 +1844,11 @@ abstract class Languages {
   String get lblSelectLanguagesHint;
   String get lblAboutDescriptionHint;
   String get lblPublish;
+  String get lblExpUnspecified;
+  String get lblExpLessThan1Year;
+  String get lblExp1To3Years;
+  String get lblExp3To5Years;
+  String get lblExp5To8Years;
+  String get lblExp8To10Years;
+  String get lblExpMoreThan10Years;
 }

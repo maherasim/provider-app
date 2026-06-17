@@ -3010,4 +3010,11 @@ class LanguageFr extends Languages {
   @override String get lblSelectLanguagesHint => 'Select languages';
   @override String get lblAboutDescriptionHint => 'About description';
   @override String get lblPublish => 'Publish';
+  @override String get lblExpUnspecified => '—';
+  @override String get lblExpLessThan1Year => 'Less than 1 Year';
+  @override String get lblExp1To3Years => '1 to 3 Years';
+  @override String get lblExp3To5Years => '3 to 5 Years';
+  @override String get lblExp5To8Years => '5 to 8 Years';
+  @override String get lblExp8To10Years => '8 to 10 Years';
+  @override String get lblExpMoreThan10Years => 'More than 10 Years';
 }

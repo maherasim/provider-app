@@ -98,11 +98,6 @@ class _AddServicesState extends State<AddServices> {
   VisitTypeData? selectedVisitType;
   List<VisitTypeData> visitTypeData = [
     VisitTypeData(
-      isEnabled: false,
-      title: languages.lblHybrid,
-      key: VISIT_OPTION_HYBRID,
-    ),
-    VisitTypeData(
         isEnabled: false,
         title: languages.onSiteVisit,
         key: VISIT_OPTION_ON_SITE),
@@ -111,6 +106,11 @@ class _AddServicesState extends State<AddServices> {
           isEnabled: false,
           title: languages.onlineRemoteService,
           key: VISIT_OPTION_ONLINE),
+    VisitTypeData(
+      isEnabled: false,
+      title: languages.lblHybrid,
+      key: VISIT_OPTION_HYBRID,
+    ),
   ];
 
   List<StaticDataModel> typeStaticData = [
@@ -1503,7 +1503,7 @@ class _AddServicesState extends State<AddServices> {
                       if (s!.trim().isEmpty) return errorThisFieldRequired;
                       final v = int.tryParse(s.trim());
                       if (v == null) return languages.lblEnterValidNumber;
-                      if (v < 20 || v > 99) return 'Advance payment must be between 20 and 99';
+                      if (v < 20 || v > 99) return languages.lblAdvancePaymentRange;
                       return null;
                     },
                   ),

@@ -66,7 +66,12 @@ class AddHandymanCommissionTypeListScreenState extends State<AddHandymanCommissi
           name: widget.typeData?.name.validate() ?? "",
         );
     }
-    appStore.setSelectedLanguage(languageList().first);
+    appStore.setSelectedLanguage(
+      languageList().firstWhere(
+        (l) => l.languageCode == DEFAULT_LANGUAGE,
+        orElse: () => languageList().first,
+      ),
+    );
   }
 
   // Add Provider & Handyman Type List

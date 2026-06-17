@@ -158,7 +158,12 @@ class _AddServicesState extends State<AddServices> {
   void init() async {
     isUpdate = widget.data != null;
     selectedVisitType = visitTypeData.first;
-    appStore.setSelectedLanguage(languageList().first);
+    appStore.setSelectedLanguage(
+      languageList().firstWhere(
+        (l) => l.languageCode == DEFAULT_LANGUAGE,
+        orElse: () => languageList().first,
+      ),
+    );
     if (isUpdate) {
       // Log the data being loaded for debugging
       print('🔵 LOADING SERVICE DATA FOR EDITING:');

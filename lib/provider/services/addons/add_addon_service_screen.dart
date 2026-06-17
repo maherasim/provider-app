@@ -69,7 +69,12 @@ class _AddAddonServiceScreenState extends State<AddAddonServiceScreen> {
   void initState() {
     super.initState();
     init();
-    appStore.setSelectedLanguage(languageList().first);
+    appStore.setSelectedLanguage(
+      languageList().firstWhere(
+        (l) => l.languageCode == DEFAULT_LANGUAGE,
+        orElse: () => languageList().first,
+      ),
+    );
   }
 
   @override

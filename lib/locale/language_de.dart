@@ -3080,4 +3080,11 @@ class LanguageDe extends Languages {
   @override String get lblSelectLanguagesHint => 'Sprachen auswählen';
   @override String get lblAboutDescriptionHint => 'Über die Beschreibung';
   @override String get lblPublish => 'Veröffentlichen';
+  @override String get lblExpUnspecified => '—';
+  @override String get lblExpLessThan1Year => 'Weniger als 1 Jahr';
+  @override String get lblExp1To3Years => '1 bis 3 Jahre';
+  @override String get lblExp3To5Years => '3 bis 5 Jahre';
+  @override String get lblExp5To8Years => '5 bis 8 Jahre';
+  @override String get lblExp8To10Years => '8 bis 10 Jahre';
+  @override String get lblExpMoreThan10Years => 'Mehr als 10 Jahre';
 }

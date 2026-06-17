@@ -916,12 +916,16 @@ class _AddServicesState extends State<AddServices> {
                     return null;
                   },
                   items: RemoteWorkLevel.values.map((RemoteWorkLevel level) {
+                    final label = switch (level) {
+                      RemoteWorkLevel.onsite0 => languages.lblRemoteWorkOnsite100,
+                      RemoteWorkLevel.remote25 => languages.lblRemoteWork25,
+                      RemoteWorkLevel.remote50 => languages.lblRemoteWork50,
+                      RemoteWorkLevel.remote75 => languages.lblRemoteWork75,
+                      RemoteWorkLevel.remote100 => languages.lblRemoteWork100,
+                    };
                     return DropdownMenuItem<RemoteWorkLevel>(
                       value: level,
-                      child: Text(
-                        level.displayName,
-                        style: primaryTextStyle(),
-                      ),
+                      child: Text(label, style: primaryTextStyle()),
                     );
                   }).toList(),
                   onChanged: (RemoteWorkLevel? value) {
@@ -944,12 +948,23 @@ class _AddServicesState extends State<AddServices> {
                     return null;
                   },
                   items: CareerLevel.values.map((CareerLevel level) {
+                    final label = switch (level) {
+                      CareerLevel.notSpecified => languages.lblCareerNotSpecified,
+                      CareerLevel.entryLevel => languages.lblCareerEntryLevel,
+                      CareerLevel.intermediateLevel => languages.lblCareerIntermediateLevel,
+                      CareerLevel.experienced => languages.lblCareerExperienced,
+                      CareerLevel.professional => languages.lblCareerProfessional,
+                      CareerLevel.middleManagement => languages.lblCareerMiddleManagement,
+                      CareerLevel.executiveManagement => languages.lblCareerExecutiveManagement,
+                      CareerLevel.seniorManagement => languages.lblCareerSeniorManagement,
+                      CareerLevel.director => languages.lblCareerDirector,
+                      CareerLevel.technician => languages.lblCareerTechnician,
+                      CareerLevel.leader => languages.lblCareerLeader,
+                      CareerLevel.manager => languages.lblCareerManager,
+                    };
                     return DropdownMenuItem<CareerLevel>(
                       value: level,
-                      child: Text(
-                        level.displayName,
-                        style: primaryTextStyle(),
-                      ),
+                      child: Text(label, style: primaryTextStyle()),
                     );
                   }).toList(),
                   onChanged: (CareerLevel? value) {
@@ -972,12 +987,10 @@ class _AddServicesState extends State<AddServices> {
                     return null;
                   },
                   items: TravelRequirement.values.map((TravelRequirement req) {
+                    final label = req == TravelRequirement.yes ? languages.lblYes : languages.lblNo;
                     return DropdownMenuItem<TravelRequirement>(
                       value: req,
-                      child: Text(
-                        req.displayName,
-                        style: primaryTextStyle(),
-                      ),
+                      child: Text(label, style: primaryTextStyle()),
                     );
                   }).toList(),
                   onChanged: (TravelRequirement? value) {

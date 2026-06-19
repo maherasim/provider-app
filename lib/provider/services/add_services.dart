@@ -440,6 +440,21 @@ class _AddServicesState extends State<AddServices> {
       return;
     }
 
+    if (subCategoryId == -1) {
+      toast(languages.lblSelectSubCategory);
+      return;
+    }
+
+    if (minBookingCont.text.trim().isEmpty) {
+      toast(languages.lblMinBooking);
+      return;
+    }
+
+    if (currentTime == null) {
+      toast(languages.hintRequired);
+      return;
+    }
+
     if (selectedRemoteWorkLevel == null) {
       toast(languages.lblPleaseSelectRemoteWorkLevel);
       return;
@@ -758,6 +773,7 @@ class _AddServicesState extends State<AddServices> {
                   categoryId: categoryId == -1 ? null : categoryId,
                   subCategoryId: subCategoryId == -1 ? null : subCategoryId,
                   isCategoryValidate: true,
+                  isSubCategoryValidate: true,
                   onCategorySelect: (int? val) {
                     categoryId = val!;
                     setState(() {});
@@ -1139,7 +1155,8 @@ class _AddServicesState extends State<AddServices> {
                     AppTextField(
                       textFieldType: TextFieldType.NAME,
                       controller: minBookingCont,
-                      isValidationRequired: false,
+                      isValidationRequired: true,
+                      errorThisFieldRequired: languages.hintRequired,
                       enabled: true,
                       focus: minBookingFocus,
                       nextFocus: priceFocus,

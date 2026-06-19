@@ -337,7 +337,7 @@ class _ServiceDetailHeaderComponentState
                         TextIcon(
                           edgeInsets:
                               EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-                          text: 'Location',
+                          text: '${languages.lblLocationSection}',
                           textStyle: secondaryTextStyle(size: 14),
                           expandedText: true,
                           suffix: Text(
@@ -361,7 +361,7 @@ class _ServiceDetailHeaderComponentState
                       TextIcon(
                         edgeInsets:
                             EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-                        text: 'Bookings:',
+                        text: '${languages.lblBookingsCount}',
                         textStyle: secondaryTextStyle(size: 14),
                         expandedText: true,
                         suffix: Text(
@@ -372,7 +372,7 @@ class _ServiceDetailHeaderComponentState
                       TextIcon(
                         edgeInsets:
                             EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-                        text: 'Minimum Bookings',
+                        text: '${languages.lblMinBooking}',
                         textStyle: secondaryTextStyle(size: 14),
                         expandedText: true,
                         suffix: Text(

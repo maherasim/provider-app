@@ -29,6 +29,7 @@ class AssignHandymanScreen extends StatefulWidget {
 
 class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
   ScrollController scrollController = ScrollController();
+  TextEditingController _commissionController = TextEditingController();
 
   Future<List<UserData>>? future;
   List<UserData> handymanList = [];
@@ -58,6 +59,10 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
   Future<void> _handleAssignHandyman() async {
     if (appStore.isLoading) return;
 
+    // Pre-fill with the selected handyman's default commission
+    final defaultCommission = userListData?.handymanCommission?.toString() ?? '';
+    _commissionController.text = defaultCommission;
+
     await showInDialog(
       context,
       contentPadding: EdgeInsets.all(0),
@@ -69,7 +74,24 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('${languages.lblAreYouSureYouWantToAssignThisServiceTo(userListData!.firstName.validate())}', style: boldTextStyle()),
+              Text(
+                '${languages.lblAreYouSureYouWantToAssignThisServiceTo(userListData!.firstName.validate())}',
+                style: boldTextStyle(),
+              ),
+              16.height,
+              // Commission input
+              Text(languages.commission, style: secondaryTextStyle()),
+              8.height,
+              TextFormField(
+                controller: _commissionController,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                decoration: InputDecoration(
+                  hintText: '1 – 99',
+                  suffixText: '%',
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+              ),
               16.height,
               Row(
                 children: [
@@ -91,10 +113,16 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
                       color: Colors.transparent,
                       textStyle: boldTextStyle(color: white),
                       onTap: () async {
+                        final commissionVal = double.tryParse(_commissionController.text.trim());
+                        if (commissionVal == null || commissionVal < 1 || commissionVal > 99) {
+                          toast('Commission must be between 1 and 99');
+                          return;
+                        }
                         finish(context);
                         var request = {
                           CommonKeys.id: widget.bookingId,
                           CommonKeys.handymanId: [userListData!.id.validate()],
+                          'handyman_commission': commissionVal,
                         };
 
                         appStore.setLoading(true);
@@ -269,9 +297,11 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
           if (userData.isHandymanAvailable.validate()) {
             if (userListData == userData) {
               userListData = null;
+              _commissionController.clear();
               setState(() {});
             } else {
               userListData = userData;
+              _commissionController.text = userData.handymanCommission?.toString() ?? '';
               setState(() {});
             }
           } else {
@@ -304,9 +334,11 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
         if (userData.isHandymanAvailable.validate()) {
           if (userListData == userData) {
             userListData = null;
+            _commissionController.clear();
             setState(() {});
           } else {
             userListData = userData;
+            _commissionController.text = userData.handymanCommission?.toString() ?? '';
             setState(() {});
           }
         } else {
@@ -325,6 +357,7 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
   @override
   void dispose() {
     scrollController.dispose();
+    _commissionController.dispose();
     super.dispose();
   }
 

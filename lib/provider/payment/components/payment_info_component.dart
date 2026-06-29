@@ -84,7 +84,7 @@ class _PaymentInfoComponentState extends State<PaymentInfoComponent> {
                                 children: [
                                   PriceWidget(price: data.totalAmount.validate()),
                                   8.width,
-                                  Text('(${data.paymentMethod.validate().capitalizeFirstLetter()})', style: primaryTextStyle()).expand(),
+                                  Text('(${formatPaymentMethod(data.paymentMethod.validate())})', style: primaryTextStyle()).expand(),
                                 ],
                               ).expand(),
                               8.width,

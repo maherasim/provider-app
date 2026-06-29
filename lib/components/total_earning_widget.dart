@@ -32,7 +32,7 @@ class TotalEarningWidget extends StatelessWidget {
             children: [
               Text(languages.paymentMethod, style: primaryTextStyle()),
               Text(
-                totalEarning.paymentMethod.validate().capitalizeFirstLetter(),
+                formatPaymentMethod(totalEarning.paymentMethod.validate()),
                 style: boldTextStyle(color: primaryColor),
               ),
             ],

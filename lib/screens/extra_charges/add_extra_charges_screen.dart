@@ -36,6 +36,12 @@ class _AddExtraChargesScreenState extends State<AddExtraChargesScreen> {
     }
   }
 
+  String _fmtQty(num? v) {
+    if (v == null) return '0';
+    final d = v.toDouble();
+    return d == d.truncateToDouble() ? d.toInt().toString() : d.toString();
+  }
+
   void openDialog({ExtraChargesModel? data, int? indexOfextraCharge}) async {
     bool? res = await showInDialog(
       context,
@@ -190,7 +196,7 @@ class _AddExtraChargesScreenState extends State<AddExtraChargesScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(languages.quantity, style: secondaryTextStyle()),
-                            Text(data.qty.toString().validate(), style: boldTextStyle()),
+                            Text(_fmtQty(data.qty), style: boldTextStyle()),
                           ],
                         ),
                         8.height,
@@ -213,66 +219,91 @@ class _AddExtraChargesScreenState extends State<AddExtraChargesScreen> {
       ),
       bottomNavigationBar: Container(
         padding: EdgeInsets.all(16),
-        child: DecoratedBox(
-          decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
-          child: AppButton(
-            text: languages.btnSave,
-            color: Color(0x00000000),
-            textStyle: boldTextStyle(color: white),
-            elevation: 0,
-            onTap: () {
-              showInDialog(
-                context,
-                contentPadding: EdgeInsets.all(0),
-                builder: (_) {
-                  return Container(
-                    decoration: boxDecorationDefault(color: context.cardColor, borderRadius: radius(12)),
-                    padding: EdgeInsets.all(16),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(languages.thisOrderWillBe, style: boldTextStyle()),
-                        16.height,
-                        Row(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (chargesList.isNotEmpty) ...[
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                decoration: boxDecorationDefault(color: context.cardColor, borderRadius: radius(8)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(languages.lblTotalCharges, style: boldTextStyle()),
+                    PriceWidget(
+                      price: chargesList.fold(0.0, (sum, c) => sum + (c.price.validate() * c.qty.validate())),
+                      size: 16,
+                      color: textPrimaryColorGlobal,
+                      isBoldText: true,
+                    ),
+                  ],
+                ),
+              ),
+              12.height,
+            ],
+            DecoratedBox(
+              decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+              child: AppButton(
+                text: languages.btnSave,
+                color: Color(0x00000000),
+                textStyle: boldTextStyle(color: white),
+                elevation: 0,
+                onTap: () {
+                  showInDialog(
+                    context,
+                    contentPadding: EdgeInsets.all(0),
+                    builder: (_) {
+                      return Container(
+                        decoration: boxDecorationDefault(color: context.cardColor, borderRadius: radius(12)),
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            AppButton(
-                              text: languages.lblNo,
-                              elevation: 0,
-                              color: appStore.isDarkMode ? context.scaffoldBackgroundColor : white,
-                              textColor: textPrimaryColorGlobal,
-                              onTap: () {
-                                finish(context);
-                              },
-                            ).expand(),
-                            16.width,
-                            DecoratedBox(
-                              decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
-                              child: AppButton(
-                                text: languages.lblYes,
-                                elevation: 0,
-                                color: Color(0x00000000),
-                                textStyle: boldTextStyle(color: white),
-                                onTap: () {
-                                  finish(context);
-                                  if (chargesList.isNotEmpty) {
-                                    toast(languages.lblSuccessFullyAddExtraCharges);
-                                    finish(context, true);
-                                  }
-                                },
-                              ),
-                            ).expand(),
+                            Text(languages.thisOrderWillBe, style: boldTextStyle()),
+                            16.height,
+                            Row(
+                              children: [
+                                AppButton(
+                                  text: languages.lblNo,
+                                  elevation: 0,
+                                  color: appStore.isDarkMode ? context.scaffoldBackgroundColor : white,
+                                  textColor: textPrimaryColorGlobal,
+                                  onTap: () {
+                                    finish(context);
+                                  },
+                                ).expand(),
+                                16.width,
+                                DecoratedBox(
+                                  decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                                  child: AppButton(
+                                    text: languages.lblYes,
+                                    elevation: 0,
+                                    color: Color(0x00000000),
+                                    textStyle: boldTextStyle(color: white),
+                                    onTap: () {
+                                      finish(context);
+                                      if (chargesList.isNotEmpty) {
+                                        toast(languages.lblSuccessFullyAddExtraCharges);
+                                        finish(context, true);
+                                      }
+                                    },
+                                  ),
+                                ).expand(),
+                              ],
+                            ),
                           ],
                         ),
-                      ],
-                    ),
+                      );
+                    },
                   );
                 },
-              );
-            },
-          ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+

@@ -88,7 +88,7 @@ class _HandymanPayoutListScreenState extends State<HandymanPayoutListScreen> {
                       children: [
                         Text(languages.paymentMethod, style: secondaryTextStyle(size: 16)),
                         Text(
-                          data.paymentMethod.validate().capitalizeFirstLetter(),
+                          formatPaymentMethod(data.paymentMethod.validate()),
                           style: boldTextStyle(color: primaryColor),
                         ),
                       ],

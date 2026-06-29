@@ -251,11 +251,12 @@ class _ExtraChargesDialogState extends State<ExtraChargesDialog> {
             children: [
               Expanded(
                 child: AppTextField(
-                  textFieldType: TextFieldType.PHONE,
+                  textFieldType: TextFieldType.OTHER,
                   controller: row.amountController,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   validator: (s) {
                     if (s!.isEmpty) return languages.hintRequired;
-                    if (s.toDouble() <= 0) return languages.priceAmountValidationMessage;
+                    if ((double.tryParse(s) ?? 0) <= 0) return languages.priceAmountValidationMessage;
                     return null;
                   },
                   decoration: inputDecoration(context).copyWith(
@@ -270,11 +271,12 @@ class _ExtraChargesDialogState extends State<ExtraChargesDialog> {
               8.width,
               Expanded(
                 child: AppTextField(
-                  textFieldType: TextFieldType.NUMBER,
+                  textFieldType: TextFieldType.OTHER,
                   controller: row.qtyController,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   validator: (s) {
                     if (s!.isEmpty) return languages.hintRequired;
-                    if (s.toInt() < 1) return languages.quantityMustBeAtLeast1;
+                    if ((double.tryParse(s) ?? 0) <= 0) return languages.quantityMustBeAtLeast1;
                     return null;
                   },
                   decoration: inputDecoration(context).copyWith(
@@ -315,7 +317,7 @@ class ExtraChargeRow {
     return ExtraChargesModel(
       title: titleController.text.trim(),
       price: double.tryParse(amountController.text) ?? 0.0,
-      qty: int.tryParse(qtyController.text) ?? 1,
+      qty: double.tryParse(qtyController.text) ?? 1.0,
     );
   }
 

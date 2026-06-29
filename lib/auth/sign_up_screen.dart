@@ -21,7 +21,6 @@ import 'package:handyman_provider_flutter/utils/model_keys.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../components/back_widget.dart';
-import '../components/cached_image_widget.dart';
 import '../models/user_data.dart';
 import '../provider/provider_list_screen.dart';
 
@@ -290,10 +289,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Text(languages.provider, style: primaryTextStyle()),
                 value: USER_TYPE_PROVIDER,
               ),
-              DropdownMenuItem(
-                child: Text(languages.handyman, style: primaryTextStyle()),
-                value: USER_TYPE_HANDYMAN,
-              ),
             ],
             focusNode: userTypeFocus,
             dropdownColor: context.cardColor,
@@ -307,139 +302,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
               hideKeyboard(context);
               selectedUserTypeValue = c.validate();
               setState(() {});
-
-              if (selectedProvider != null) {
-                selectedProvider = null;
-                setState(() {});
-              }
-
-              handymanCommissionCont.clear();
-
               _valueNotifier.notifyListeners();
             },
           ),
         ),
-        if (selectedUserTypeValue != USER_TYPE_HANDYMAN) 16.height,
-        if (selectedUserTypeValue == USER_TYPE_HANDYMAN)
-          Container(
-            width: double.infinity,
-            decoration: boxDecorationDefault(
-                color: context.cardColor, borderRadius: radius()),
-            padding: EdgeInsets.only(
-              top: selectedProvider != null ? 16 : 12,
-              bottom: selectedProvider != null ? 16 : 12,
-              left: selectedProvider != null ? 16 : 12,
-              right: selectedProvider != null ? 4 : 12,
-            ),
-            margin: EdgeInsets.symmetric(vertical: 16),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                if (selectedProvider != null) ...[
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        pickProvider();
-                      },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(languages.selectedProvider,
-                                  style: secondaryTextStyle())
-                              .paddingOnly(bottom: 8),
-                          Row(
-                            children: [
-                              CachedImageWidget(
-                                url: selectedProvider!.profileImage.validate(),
-                                height: 24,
-                                width: 24,
-                                circle: true,
-                                fit: BoxFit.cover,
-                              ),
-                              8.width,
-                              Expanded(
-                                child: Text(
-                                  selectedProvider!.displayName.validate(),
-                                  style: primaryTextStyle(size: 12),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    constraints:
-                        const BoxConstraints(minWidth: 40, minHeight: 40),
-                    onPressed: () {
-                      selectedProvider = null;
-                      setState(() {});
-
-                      handymanCommissionCont.clear();
-
-                      _valueNotifier.notifyListeners();
-                    },
-                    icon: Icon(Icons.close),
-                  ),
-                ] else
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () async {
-                        pickProvider();
-                      },
-                      style: TextButton.styleFrom(
-                        alignment: AlignmentDirectional.centerStart,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                      ),
-                      child: Text(
-                        languages.pickAProviderYou,
-                        style: primaryTextStyle(),
-                        textAlign: TextAlign.start,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        if (selectedUserTypeValue == USER_TYPE_HANDYMAN &&
-            selectedProvider != null) ...[
-          AppTextField(
-            textFieldType: TextFieldType.NUMBER,
-            controller: handymanCommissionCont,
-            focus: handymanCommissionFocus,
-            nextFocus: passwordFocus,
-            isValidationRequired: true,
-            errorThisFieldRequired: languages.hintRequired,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            maxLength: 2,
-            decoration: inputDecoration(
-              context,
-              hint:
-                  '${languages.handymanCommission} — ${languages.percentage} (1–99)',
-              counterText: '',
-            ),
-            validator: (s) {
-              if (s == null || s.trim().isEmpty) {
-                return languages.hintRequired;
-              }
-              final v = int.tryParse(s.trim());
-              if (v == null) return languages.enterValidCommissionValue;
-              if (v < 1 || v > 99) {
-                return languages.advancePercentageShouldBeBetween;
-              }
-              return null;
-            },
-          ),
-          16.height,
-        ],
+        16.height,
         // Password text field...
         AppTextField(
           textFieldType: TextFieldType.PASSWORD,
@@ -690,27 +557,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   // Sign up user
   void saveUser() async {
-    if (selectedUserTypeValue == USER_TYPE_HANDYMAN) {
-      if (selectedProvider == null) {
-        toast(languages.pickAProviderYou);
-        return;
-      }
-    }
-
     if (!formKey.currentState!.validate()) {
       return;
-    }
-
-    // Handyman: commission must be 1–99 (field validator + guard for regressions).
-    if (selectedUserTypeValue == USER_TYPE_HANDYMAN) {
-      final c = handymanCommissionCont.text.trim();
-      final v = int.tryParse(c);
-      if (c.isEmpty || v == null || v < 1 || v > 99) {
-        toast(c.isEmpty
-            ? '${languages.handymanCommission}: ${languages.hintRequired}'
-            : languages.advancePercentageShouldBeBetween);
-        return;
-      }
     }
 
     formKey.currentState!.save();
@@ -733,17 +581,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         UserKeys.knownLanguages: jsonEncode([_defaultSpokenLanguageKey()]),
         'languages[0]': _defaultSpokenLanguageKey(),
       };
-      print(request);
-      if (selectedProvider != null) {
-        request.putIfAbsent(UserKeys.providerId, () => selectedProviderId);
-      }
-
-      if (selectedUserTypeValue == USER_TYPE_HANDYMAN) {
-        request.putIfAbsent(
-          CommissionKey.commission,
-          () => handymanCommissionCont.text.trim(),
-        );
-      }
 
       log(request);
 

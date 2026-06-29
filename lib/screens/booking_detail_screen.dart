@@ -109,6 +109,12 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
     super.initState();
   }
 
+  String _fmtQty(num? v) {
+    if (v == null) return '0';
+    final d = v.toDouble();
+    return d == d.truncateToDouble() ? d.toInt().toString() : d.toString();
+  }
+
   void init({bool flag = false, bool isStartDrive = false}) async {
     future = bookingDetail({CommonKeys.bookingId: widget.bookingId.toString()},
         callbackForStatus: (status, id) async {
@@ -2102,7 +2108,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                       16.width,
                       Row(
                         children: [
-                          Text('${data.qty} * ${data.price.validate()} = ',
+                          Text('${_fmtQty(data.qty)} * ${data.price.validate()} = ',
                               style: secondaryTextStyle()),
                           4.width,
                           PriceWidget(
@@ -2580,7 +2586,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                                     Text(
                                     (() {
                                       final String method = res.data!.bookingDetail!.paymentMethod.validate();
-                                      return method.isNotEmpty ? method.capitalizeFirstLetter() : 'N/A';
+                                      return method.isNotEmpty ? formatPaymentMethod(method) : 'N/A';
                                     })(),
                                       style: boldTextStyle(),
                                     ),
@@ -2598,7 +2604,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                                       final String status = res.data!.bookingDetail!.paymentStatus.validate();
                                       if (status.isEmpty) return 'N/A';
                                       final String methodRaw = res.data!.bookingDetail!.paymentMethod.validate();
-                                      final String method = methodRaw.capitalizeFirstLetter();
+                                      final String method = formatPaymentMethod(methodRaw);
                                       final String? bank = res.data!.bookingDetail!.bankTransferStatus;
                                       if (methodRaw.toLowerCase() == 'bank_transfer' && bank == '0') {
                                         return languages.waitingForPaymentApproval;

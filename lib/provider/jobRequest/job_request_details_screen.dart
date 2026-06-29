@@ -120,6 +120,11 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
     future = getPostJobDetailByBid(widget.acceptedBidId);
   }
 
+  String _fmtNum(double? v) {
+    if (v == null) return '0';
+    return v == v.truncateToDouble() ? v.toInt().toString() : v.toString();
+  }
+
   @override
   void setState(fn) {
     if (mounted) super.setState(fn);
@@ -1309,8 +1314,8 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
       child: Row(
         children: [
           Text(charge.title ?? '', style: secondaryTextStyle(size: 12)).expand(),
-          Text('${charge.amount} × ', style: secondaryTextStyle(size: 12)),
-          Text('${charge.quantity}', style: secondaryTextStyle(size: 12)),
+          Text('${_fmtNum(charge.amount)} × ', style: secondaryTextStyle(size: 12)),
+          Text(_fmtNum(charge.quantity), style: secondaryTextStyle(size: 12)),
           Text(' = ', style: secondaryTextStyle(size: 12)),
           PriceWidget(
             price: (charge.amount ?? 0) * (charge.quantity ?? 0),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
@@ -23,10 +22,10 @@ class _AddExtraChargesDialogState extends State<AddExtraChargesDialog> {
 
   TextEditingController titleCont = TextEditingController();
   TextEditingController priceCont = TextEditingController();
+  TextEditingController qtyCont = TextEditingController();
 
   FocusNode priceFocus = FocusNode();
-
-  int qty = 1;
+  FocusNode qtyFocus = FocusNode();
 
   bool isEdit = false;
 
@@ -41,8 +40,11 @@ class _AddExtraChargesDialogState extends State<AddExtraChargesDialog> {
     if (isEdit) {
       titleCont.text = widget.data!.title.validate();
       priceCont.text = widget.data!.price.validate().toString();
-      qty = widget.data!.qty.validate().toInt();
+      final q = widget.data!.qty.validate().toDouble();
+      qtyCont.text = q == q.truncateToDouble() ? q.toInt().toString() : q.toString();
       setState(() {});
+    } else {
+      qtyCont.text = '1';
     }
   }
 
@@ -53,7 +55,7 @@ class _AddExtraChargesDialogState extends State<AddExtraChargesDialog> {
       ExtraChargesModel data = ExtraChargesModel();
       data.title = titleCont.text.validate();
       data.price = priceCont.text.toDouble().validate();
-      data.qty = qty.validate();
+      data.qty = double.tryParse(qtyCont.text.trim()) ?? 1.0;
       if (isEdit) {
         log('ISEDIT: $isEdit');
         chargesList[widget.indexOfextraCharge.validate()] = data;
@@ -114,22 +116,21 @@ class _AddExtraChargesDialogState extends State<AddExtraChargesDialog> {
                         autoFocus: true,
                         nextFocus: priceFocus,
                         validator: (s) {
-                          if (s!.isEmpty)
-                            return languages.hintRequired;
-                          else
-                            return null;
+                          if (s!.isEmpty) return languages.hintRequired;
+                          return null;
                         },
                         errorThisFieldRequired: languages.hintRequired,
                         decoration: inputDecoration(context, hint: languages.lblEnterExtraChargesDetail, fillColor: context.cardColor),
                       ),
                       16.height,
                       AppTextField(
-                        textFieldType: TextFieldType.PHONE,
+                        textFieldType: TextFieldType.OTHER,
                         controller: priceCont,
                         focus: priceFocus,
+                        nextFocus: qtyFocus,
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
                         validator: (s) {
                           if (s!.isEmpty) return errorThisFieldRequired;
-
                           if (s.toDouble() <= 0) return languages.priceAmountValidationMessage;
                           return null;
                         },
@@ -137,34 +138,19 @@ class _AddExtraChargesDialogState extends State<AddExtraChargesDialog> {
                         decoration: inputDecoration(context, hint: languages.lblEnterAmount, fillColor: context.cardColor),
                       ),
                       16.height,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(languages.quantity, style: boldTextStyle()),
-                          Container(
-                            height: 40,
-                            padding: EdgeInsets.all(8),
-                            decoration: boxDecorationWithRoundedCorners(backgroundColor: context.cardColor),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Feather.minus, size: 24).onTap(() {
-                                  if (qty > 1) {
-                                    qty = qty - 1;
-                                  }
-                                  setState(() {});
-                                }),
-                                16.width,
-                                Text(qty.toString(), style: primaryTextStyle()),
-                                16.width,
-                                Icon(Icons.add, size: 24).onTap(() {
-                                  qty = qty + 1;
-                                  setState(() {});
-                                }),
-                              ],
-                            ),
-                          ),
-                        ],
+                      AppTextField(
+                        textFieldType: TextFieldType.OTHER,
+                        controller: qtyCont,
+                        focus: qtyFocus,
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
+                        validator: (s) {
+                          if (s == null || s.trim().isEmpty) return languages.hintRequired;
+                          final v = double.tryParse(s.trim());
+                          if (v == null || v <= 0) return languages.hintRequired;
+                          return null;
+                        },
+                        errorThisFieldRequired: languages.hintRequired,
+                        decoration: inputDecoration(context, hint: languages.quantity, fillColor: context.cardColor),
                       ),
                       24.height,
                       DecoratedBox(

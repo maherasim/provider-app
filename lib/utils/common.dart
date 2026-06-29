@@ -529,6 +529,10 @@ void checkIfLink(BuildContext context, String value, {String? title}) {
   }
 }
 
+String formatPaymentMethod(String raw) {
+  return raw.split('_').map((w) => w.isNotEmpty ? w[0].toUpperCase() + w.substring(1).toLowerCase() : '').join(' ');
+}
+
 String buildPaymentStatusWithMethod(String status, String method) {
   final text = getPaymentStatusText(status, method);
   return '$text${(status == BOOKING_STATUS_PAID) ? ' ${languages.by} $method' : ''}';

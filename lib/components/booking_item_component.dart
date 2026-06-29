@@ -425,7 +425,7 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                             (() {
                               final String status = widget.bookingData.paymentStatus.validate();
                               final String methodRaw = widget.bookingData.paymentMethod.validate();
-                              final String method = methodRaw.capitalizeFirstLetter();
+                              final String method = formatPaymentMethod(methodRaw);
                               if (methodRaw.toLowerCase() == 'bank_transfer' && widget.bookingData.bankTransferStatus == '0') {
                                 return languages.waitingForPaymentApproval;
                               }

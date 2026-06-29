@@ -135,7 +135,7 @@ class _ProviderPaymentFragmentState extends State<ProviderPaymentFragment> {
                               children: [
                                 Text(languages.paymentMethod, style: secondaryTextStyle(size: 12)),
                                 Text(
-                                  (data.paymentMethod.validate().isNotEmpty ? data.paymentMethod.validate() : languages.notAvailable).capitalizeFirstLetter(),
+                                  data.paymentMethod.validate().isNotEmpty ? formatPaymentMethod(data.paymentMethod.validate()) : languages.notAvailable,
                                   style: boldTextStyle(size: 12),
                                 ),
                               ],

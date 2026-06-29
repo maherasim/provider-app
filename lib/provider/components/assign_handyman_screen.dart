@@ -15,6 +15,7 @@ import '../../components/empty_error_state_widget.dart';
 import '../../components/handyman_add_update_screen.dart';
 import '../../utils/constant.dart';
 import '../../utils/colors.dart';
+import '../../utils/common.dart';
 
 class AssignHandymanScreen extends StatefulWidget {
   final int? bookingId;
@@ -37,6 +38,7 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
   bool isLastPage = false;
 
   UserData? userListData;
+  TextEditingController _commissionController = TextEditingController();
 
   @override
   void initState() {
@@ -71,6 +73,13 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
             children: [
               Text('${languages.lblAreYouSureYouWantToAssignThisServiceTo(userListData!.firstName.validate())}', style: boldTextStyle()),
               16.height,
+              AppTextField(
+                controller: _commissionController,
+                textFieldType: TextFieldType.OTHER,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                decoration: inputDecoration(context, hint: languages.commission).copyWith(suffixText: '%'),
+              ),
+              16.height,
               Row(
                 children: [
                   AppButton(
@@ -91,10 +100,16 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
                       color: Colors.transparent,
                       textStyle: boldTextStyle(color: white),
                       onTap: () async {
+                        final commissionVal = double.tryParse(_commissionController.text.trim());
+                        if (commissionVal == null || commissionVal < 1 || commissionVal > 99) {
+                          toast('Please enter a commission between 1 and 99');
+                          return;
+                        }
                         finish(context);
                         var request = {
                           CommonKeys.id: widget.bookingId,
                           CommonKeys.handymanId: [userListData!.id.validate()],
+                          'handyman_commission': commissionVal,
                         };
 
                         appStore.setLoading(true);
@@ -269,9 +284,11 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
           if (userData.isHandymanAvailable.validate()) {
             if (userListData == userData) {
               userListData = null;
+              _commissionController.clear();
               setState(() {});
             } else {
               userListData = userData;
+              _commissionController.clear();
               setState(() {});
             }
           } else {
@@ -304,9 +321,11 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
         if (userData.isHandymanAvailable.validate()) {
           if (userListData == userData) {
             userListData = null;
+            _commissionController.clear();
             setState(() {});
           } else {
             userListData = userData;
+            _commissionController.clear();
             setState(() {});
           }
         } else {
@@ -325,6 +344,7 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
   @override
   void dispose() {
     scrollController.dispose();
+    _commissionController.dispose();
     super.dispose();
   }
 

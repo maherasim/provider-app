@@ -361,7 +361,7 @@ class LanguageEn extends Languages {
   String get confirmationUpload => "Are you sure you want to upload this document?";
 
   @override
-  String get toastSuccess => "Provider Document has been save successfully";
+  String get toastSuccess => "Agency  Document has been save successfully";
 
   @override
   String get lblSelectDoc => "Select Document";
@@ -490,7 +490,7 @@ class LanguageEn extends Languages {
   String get lblType => "Type";
 
   @override
-  String get lblHandymanType => "Handyman Type";
+  String get lblHandymanType => "Freelancer Type";
 
   @override
   String get lblFixed => "Fixed";
@@ -721,7 +721,7 @@ class LanguageEn extends Languages {
   String get lblDesignation => "Designation";
 
   @override
-  String get lblHandymanIsOffline => "Handyman is Offline";
+  String get lblHandymanIsOffline => "Freelancer is Offline";
 
   @override
   String get lblDoYouWantToRestore => "Do you want to Restore?";
@@ -1976,13 +1976,13 @@ class LanguageEn extends Languages {
   String get sendMessage => 'Send Message';
 
   @override
-  String get handymanLocation => 'Handyman Location';
+  String get handymanLocation => 'Freelancer Location';
 
   @override
   String get track => 'Track';
 
   @override
-  String get trackHandymanLocation => 'Track Handyman Location';
+  String get trackHandymanLocation => 'Track Freelancer Location';
 
   @override
   String get lastUpdatedAt => 'Last updated at:';
@@ -2120,10 +2120,10 @@ class LanguageEn extends Languages {
   String get typeName => 'Type Name';
 
   @override
-  String get addHandymanCommission => 'Add Handyman Commission';
+  String get addHandymanCommission => 'Add Freelancer Commission';
 
   @override
-  String get editHandymanCommission => 'Edit Handyman Commission';
+  String get editHandymanCommission => 'Edit Freelancer Commission';
 
   @override
   String get enterValidCommissionValue => 'Enter Valid Commission Value';
@@ -2559,7 +2559,7 @@ class LanguageEn extends Languages {
   String get lblCertificationHint => 'Certification (comma-separated)';
 
   @override
-  String get lblSelectProviderHint => 'Select Provider';
+  String get lblSelectProviderHint => 'Select Agency';
 
   @override
   String get lblRemoteWorkLevelHint => 'Remote Work Level';
@@ -2714,7 +2714,7 @@ class LanguageEn extends Languages {
   String get lblCertificationShortHint => 'Certification';
 
   @override
-  String get lblHandymanCommissionHint => 'Handyman Commission (1-99)';
+  String get lblHandymanCommissionHint => 'Freelancer Commission (1-99)';
 
   @override
   String get lblAboutMeHint => 'About Me';
@@ -2762,7 +2762,7 @@ class LanguageEn extends Languages {
   String get lblBicSwiftShort => 'BIC/Swift';
 
   @override
-  String get lblPremiumPlansSoon => 'Empowering Freelancers & Handyman';
+  String get lblPremiumPlansSoon => 'Empowering Freelancers';
 
   @override
   String get lblPremiumPlansSoonSubtitle => "Right People. Right Place. Right Time.";
@@ -2899,7 +2899,7 @@ class LanguageEn extends Languages {
   String get lblPleaseSelectTravelRequired => 'Please select travel required';
 
   @override
-  String get lblPleaseSelectProvider => 'Please select provider';
+  String get lblPleaseSelectProvider => 'Please select agency';
 
   @override
   String get lblPleaseSelectValidImages => 'Please select valid images';

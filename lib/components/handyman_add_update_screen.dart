@@ -802,10 +802,6 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
   }
 
   bool _validateRequiredSelections() {
-    if (selectedHandymanCommission == null || selectedHandymanCommission!.id == -1) {
-      toast('${languages.lblHandymanType}: ${languages.hintRequired}');
-      return false;
-    }
     if (serviceAddressList.isNotEmpty && (serviceAddressId == null || serviceAddressId == -1)) {
       toast('${languages.lblServiceAddress}: ${languages.hintRequired}');
       return false;

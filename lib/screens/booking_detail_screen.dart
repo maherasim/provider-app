@@ -290,13 +290,6 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
           ? SERVICE_PAYMENT_STATUS_ADVANCE_PAID
           : bookDetail.bookingDetail!.paymentStatus.validate();
     }
-    // Only recreate countDownKey if the widget needs to be reset
-    // Don't recreate on every updateBooking call to avoid widget tree inconsistencies
-    if (updatedStatus == BookingStatusKeys.inProgress || 
-        updatedStatus == BookingStatusKeys.hold ||
-        updatedStatus == BookingStatusKeys.complete) {
-    countDownKey = GlobalKey();
-    }
     setState(() {});
 
     hideKeyboard(context);

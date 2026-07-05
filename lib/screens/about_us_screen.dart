@@ -44,20 +44,25 @@ class AboutUsScreen extends StatelessWidget {
             ),
           ).onTap(
             () async {
-              if (index == 0) {
-                checkIfLink(context, appConfigurationStore.termConditions, title: languages.lblTermsAndConditions);
-              } else if (index == 1) {
-                checkIfLink(context, appConfigurationStore.privacyPolicy, title: languages.lblPrivacyPolicy);
-              } else if (index == 2) {
-                if(appConfigurationStore.helpAndSupport.isNotEmpty){
-                  checkIfLink(context, appConfigurationStore.helpAndSupport, title: languages.lblHelpAndSupport);
-                }else{
-                checkIfLink(context, appConfigurationStore.inquiryEmail, title: languages.lblHelpAndSupport);
-                }
-              } else if (index == 3) {
-                checkIfLink(context, appConfigurationStore.helplineNumber, title: languages.lblHelpLineNum);
-              } else if (index == 4) {
-                {
+              final item = aboutList[index];
+              switch (item.type) {
+                case AboutType.terms:
+                  checkIfLink(context, appConfigurationStore.termConditions, title: languages.lblTermsAndConditions);
+                  break;
+                case AboutType.privacy:
+                  checkIfLink(context, appConfigurationStore.privacyPolicy, title: languages.lblPrivacyPolicy);
+                  break;
+                case AboutType.helpSupport:
+                  if (appConfigurationStore.helpAndSupport.isNotEmpty) {
+                    checkIfLink(context, appConfigurationStore.helpAndSupport, title: languages.lblHelpAndSupport);
+                  } else {
+                    checkIfLink(context, appConfigurationStore.inquiryEmail, title: languages.lblHelpAndSupport);
+                  }
+                  break;
+                case AboutType.helpline:
+                  checkIfLink(context, appConfigurationStore.helplineNumber, title: languages.lblHelpLineNum);
+                  break;
+                case AboutType.rateUs:
                   if (isAndroid) {
                     if (getStringAsync(PROVIDER_PLAY_STORE_URL).isNotEmpty) {
                       commonLaunchUrl(getStringAsync(PROVIDER_PLAY_STORE_URL), launchMode: LaunchMode.externalApplication);
@@ -71,7 +76,7 @@ class AboutUsScreen extends StatelessWidget {
                       commonLaunchUrl(IOS_LINK_FOR_PARTNER, launchMode: LaunchMode.externalApplication);
                     }
                   }
-                }
+                  break;
               }
             },
             borderRadius: radius(),

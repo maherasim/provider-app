@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
@@ -22,6 +23,13 @@ class WithdrawRequest extends StatefulWidget {
 
   @override
   State<WithdrawRequest> createState() => _WithdrawRequestState();
+}
+
+bool isValidWithdrawAmount(String? value, num availableBalance) {
+  if (value == null || value.trim().isEmpty) return false;
+
+  final parsedAmount = num.tryParse(value.trim());
+  return parsedAmount != null && parsedAmount > 0 && parsedAmount <= availableBalance;
 }
 
 class _WithdrawRequestState extends State<WithdrawRequest> {
@@ -91,6 +99,12 @@ class _WithdrawRequestState extends State<WithdrawRequest> {
   }
 
   withdrawMoney() {
+    final parsedAmount = num.tryParse(amount.text.trim());
+    if (parsedAmount == null || parsedAmount <= 0 || parsedAmount > widget.availableBalance.validate()) {
+      toast('Please enter a valid amount', print: true);
+      return;
+    }
+
     appStore.setLoading(true);
     Map request = {
       "_token": appStore.token.validate(),
@@ -98,7 +112,7 @@ class _WithdrawRequestState extends State<WithdrawRequest> {
       "payment_gateway": "manual",
       "user_id": appStore.userId,
       "bank": selectedBank?.id,
-      "amount": amount.text.toDouble(),
+      "amount": parsedAmount,
     };
     peoviderWithdrawMoney(request: request).then((value) {
       showDialog(
@@ -197,6 +211,7 @@ class _WithdrawRequestState extends State<WithdrawRequest> {
                     controller: amount,
                     focus: amountFocus,
                     nextFocus: chooseBankFocus,
+                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
                     decoration: inputDecoration(
                       context,
                       hint: languages.eg3000,
@@ -204,9 +219,14 @@ class _WithdrawRequestState extends State<WithdrawRequest> {
                     ),
                     isValidationRequired: true,
                     validator: (value) {
-                      if (value?.isEmpty ?? false) {
+                      if (value?.trim().isEmpty ?? true) {
                         return errorThisFieldRequired;
-                      } else if (num.parse(value.toString()) > num.parse(widget.availableBalance.toString())) {
+                      }
+
+                      final parsedAmount = num.tryParse(value!.trim());
+                      if (parsedAmount == null || parsedAmount <= 0) {
+                        return 'Please enter a valid amount';
+                      } else if (parsedAmount > widget.availableBalance.validate()) {
                         return "${languages.pleaseAddLessThanOrEqualTo} ${widget.availableBalance.validate().toPriceFormat()}";
                       }
                       return null;

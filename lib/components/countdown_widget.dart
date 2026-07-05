@@ -25,38 +25,55 @@ class _CountdownWidgetState extends State<CountdownWidget> {
 
   @override
   void initState() {
-    if (widget.bookingDetailResponse.bookingDetail!.status.validate() == BookingStatusKeys.inProgress) {
-      value = "${(widget.bookingDetailResponse.bookingDetail!.durationDiff.toInt() + DateTime.now().difference(DateTime.parse(widget.bookingDetailResponse.bookingDetail!.startAt.validate())).inSeconds)}".toInt();
-      stopTimer = false;
-
-      init();
-    } else {
-      value = widget.bookingDetailResponse.bookingDetail!.durationDiff.validate().toInt();
-    }
-    LiveStream().on(LIVESTREAM_START_TIMER, (value) {
-      Map<String, dynamic> data = value as Map<String, dynamic>;
-
+    _startOrStopTimer(widget.bookingDetailResponse);
+    LiveStream().on(LIVESTREAM_START_TIMER, (streamValue) {
+      if (!mounted) return;
+      final data = streamValue as Map<String, dynamic>;
+      this.value = data['inSeconds'] as int;
       if (data['status'] == BookingStatusKeys.hold || data['status'] == BookingStatusKeys.complete) {
-        value = data['inSeconds'] as int;
         stopTimer = true;
+        timer?.cancel();
         setState(() {});
       } else {
-        value = data['inSeconds'] as int;
         stopTimer = false;
         init();
       }
-      //
     });
-
-    LiveStream().on(LIVESTREAM_PAUSE_TIMER, (value) {
+    LiveStream().on(LIVESTREAM_PAUSE_TIMER, (streamValue) {
+      if (!mounted) return;
       timer?.cancel();
-      //
     });
     super.initState();
   }
 
+  @override
+  void didUpdateWidget(CountdownWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final newStatus = widget.bookingDetailResponse.bookingDetail!.status.validate();
+    final oldStatus = oldWidget.bookingDetailResponse.bookingDetail!.status.validate();
+    if (newStatus != oldStatus) {
+      timer?.cancel();
+      _startOrStopTimer(widget.bookingDetailResponse);
+    }
+  }
+
+  void _startOrStopTimer(BookingDetailResponse response) {
+    if (response.bookingDetail!.status.validate() == BookingStatusKeys.inProgress) {
+      value = (response.bookingDetail!.durationDiff.toInt() +
+          DateTime.now()
+              .difference(DateTime.parse(response.bookingDetail!.startAt.validate()))
+              .inSeconds);
+      stopTimer = false;
+      init();
+    } else {
+      value = response.bookingDetail!.durationDiff.validate().toInt();
+      stopTimer = true;
+    }
+  }
+
   void init() async {
     timer = Timer(1.seconds, () {
+      if (!mounted) return;
       if (!stopTimer) init();
       value += 1;
       setState(() {});
@@ -90,9 +107,14 @@ class _CountdownWidgetState extends State<CountdownWidget> {
   }
 
   @override
+  void deactivate() {
+    timer?.cancel();
+    super.deactivate();
+  }
+
+  @override
   void dispose() {
     timer?.cancel();
-
     LiveStream().dispose(LIVESTREAM_START_TIMER);
     LiveStream().dispose(LIVESTREAM_PAUSE_TIMER);
     super.dispose();

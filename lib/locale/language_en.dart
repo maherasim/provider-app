@@ -2,7 +2,7 @@ import 'package:handyman_provider_flutter/locale/base_language.dart';
 
 class LanguageEn extends Languages {
   @override
-  String planAboutToExpire(int days) => 'Your Plan Is About to Expire In $days Days';
+  String planAboutToExpire(int days) => 'Right People. Right Place. Right Time.';
 
   @override
   String get appName => 'Agency';
@@ -940,13 +940,13 @@ class LanguageEn extends Languages {
   String get jobPrice => 'Job Rate';
 
   @override
-  String get estimatedPrice => 'Estimated Rate';
+  String get estimatedPrice => 'Rate';
 
   @override
   String get assignedProvider => 'Assigned Freelancer';
 
   @override
-  String get giveYourEstimatePriceHere => 'Give your estimate Rate here';
+  String get giveYourEstimatePriceHere => 'Give your Rate here';
 
   @override
   String get pleaseEnterValidBidPrice => 'Please enter valid Bid Rate';
@@ -2060,10 +2060,10 @@ class LanguageEn extends Languages {
   String get branchName => "Branch Name";
 
   @override
-  String get aadharNumber => "Aadhar Number";
+  String get aadharNumber => "Country";
 
   @override
-  String get panNumber => "PAN Number";
+  String get panNumber => "PayPal Account (Optional)";
 
   @override
   String get lblPleaseEnterAccountNumber => "Please Enter Account Number";
@@ -2096,7 +2096,7 @@ class LanguageEn extends Languages {
   String get credit => 'Credit';
 
   @override
-  String get fullNameOnBankAccount => 'Full name on bank account';
+  String get fullNameOnBankAccount => 'Branch';
 
   @override
   String get updateYourLocation => 'Update your location';
@@ -2330,7 +2330,7 @@ class LanguageEn extends Languages {
   String get chooseYourDateRange => 'Choose your Date Range';
 
   @override
-  String get advancedRefund => 'Advanced Refund';
+  String get advancedRefund => 'Advance Refund';
 
   @override
   String get taxAmount => 'Tax Amount';
@@ -2506,7 +2506,7 @@ class LanguageEn extends Languages {
   String get lblCustomerReview => 'Customer Review';
 
   @override
-  String get lblRateUnitPrice => 'Rate (Unit Price)';
+  String get lblRateUnitPrice => 'Rate (per Unit)';
 
   @override
   String get lblNetAmount => 'Net Amount';
@@ -2666,7 +2666,7 @@ class LanguageEn extends Languages {
   String get lblBicSwiftHint => 'BIC / SWIFT Code';
 
   @override
-  String get lblStripeAccountHint => 'Stripe Account';
+  String get lblStripeAccountHint => 'Stripe Account (Optional)';
 
   @override
   String get lblRegularPayments => 'Regular Payments';
@@ -2768,7 +2768,7 @@ class LanguageEn extends Languages {
   String get lblPremiumPlansSoonSubtitle => "Right People. Right Place. Right Time.";
 
   @override
-  String get lblBudgetOrPrice => 'Budget / Rate';
+  String get lblBudgetOrPrice => 'Budget/Rate';
 
   @override
   String get lblTotalDays => 'Total Days';

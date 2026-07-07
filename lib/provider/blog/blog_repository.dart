@@ -17,7 +17,7 @@ import 'model/blog_response_model.dart';
 Future<List<BlogData>> getBlogListAPI({int? page, required List<BlogData> blogData, Function(bool)? lastPageCallback}) async {
   try {
     BlogResponse res = BlogResponse.fromJson(
-      await handleResponse(await buildHttpResponse('blog-list?provider_id=${appStore.userId}&per_page=$PER_PAGE_ITEM&page=$page', method: HttpMethodType.GET)),
+      await handleResponse(await buildHttpResponse('blog-list?status=1&per_page=$PER_PAGE_ITEM&page=$page', method: HttpMethodType.GET)),
     );
 
     if (page == 1) blogData.clear();

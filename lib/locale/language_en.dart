@@ -2654,7 +2654,7 @@ class LanguageEn extends Languages {
   String get lblEduProfessional => 'Professional Degree';
 
   @override
-  String get lblAccountHolderNameHint => 'Account Holder Name';
+  String get lblAccountHolderNameHint => 'Account Holder';
 
   @override
   String get lblMobileNumberHint => 'Mobile Number';

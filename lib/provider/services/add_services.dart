@@ -493,8 +493,8 @@ class _AddServicesState extends State<AddServices> {
   Map<String, dynamic> _buildServiceRequest() {
     final req = {
       AddServiceKey.name: enTranslations.name.validate(),
-      AddServiceKey.providerId: _isAdminUser() && selectedProviderId != null 
-          ? selectedProviderId!.validate() 
+      AddServiceKey.providerId: _isAdminUser() && selectedProviderId != null
+          ? selectedProviderId!.validate()
           : appStore.userId.validate(),
       AddServiceKey.categoryId: categoryId,
       AddServiceKey.type: serviceType.validate(),
@@ -1270,50 +1270,16 @@ class _AddServicesState extends State<AddServices> {
             Column(
               spacing: 16,
               children: [
-                AppTextField(
-                  textFieldType: TextFieldType.MULTILINE,
-                  minLines: 5,
+                _buildRichEditor(
                   controller: descriptionCont,
-                  focus: descriptionFocus,
-                  nextFocus: cancellationPolicyFocus,
-                  enableChatGPT: appConfigurationStore.chatGPTStatus,
-                  promptFieldInputDecorationChatGPT:
-                      inputDecoration(context).copyWith(
-                    hintText: languages.writeHere,
-                    fillColor: context.scaffoldBackgroundColor,
-                    filled: true,
-                  ),
-                  testWithoutKeyChatGPT: appConfigurationStore.testWithoutKey,
-                  loaderWidgetForChatGPT: const ChatGPTLoadingWidget(),
-                  errorThisFieldRequired: languages.hintRequired,
-                  isValidationRequired: checkValidationLanguage(),
-                  decoration: inputDecoration(
-                    context,
-                    hint: languages.hintDescription,
-                    fillColor: context.scaffoldBackgroundColor,
-                  ),
+                  focusNode: descriptionFocus,
+                  hint: languages.hintDescription,
+                  isRequired: checkValidationLanguage(),
                 ),
-                AppTextField(
-                  textFieldType: TextFieldType.MULTILINE,
-                  minLines: 5,
+                _buildRichEditor(
                   controller: cancellationPolicyCont,
-                  focus: cancellationPolicyFocus,
-                  enableChatGPT: appConfigurationStore.chatGPTStatus,
-                  promptFieldInputDecorationChatGPT:
-                  inputDecoration(context).copyWith(
-                    hintText: languages.writeHere,
-                    fillColor: context.scaffoldBackgroundColor,
-                    filled: true,
-                  ),
-                  testWithoutKeyChatGPT: appConfigurationStore.testWithoutKey,
-                  loaderWidgetForChatGPT: const ChatGPTLoadingWidget(),
-                  errorThisFieldRequired: languages.hintRequired,
-                  isValidationRequired: checkValidationLanguage(),
-                  decoration: inputDecoration(
-                    context,
-                    hint: languages.lblCancellationPolicy,
-                    fillColor: context.scaffoldBackgroundColor,
-                  ),
+                  focusNode: cancellationPolicyFocus,
+                  hint: languages.lblCancellationPolicy,
                 ),
                 if (isAdmin) Container(
                     decoration: boxDecorationDefault(
@@ -1518,6 +1484,125 @@ class _AddServicesState extends State<AddServices> {
         ),
       ),
     );
+  }
+
+  Widget _buildRichEditor({
+    required TextEditingController controller,
+    required FocusNode focusNode,
+    required String hint,
+    bool isRequired = false,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: context.scaffoldBackgroundColor,
+        borderRadius: radius(),
+        border: Border.all(color: context.dividerColor.withOpacity(0.5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Formatting toolbar
+          Container(
+            decoration: BoxDecoration(
+              color: context.cardColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(defaultRadius),
+                topRight: Radius.circular(defaultRadius),
+              ),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            child: Row(
+              children: [
+                _fmtBtn(Icons.format_bold, () => _applyFormat(controller, '<strong>', '</strong>')),
+                _fmtBtn(Icons.format_italic, () => _applyFormat(controller, '<em>', '</em>')),
+                _fmtBtn(Icons.format_underline, () => _applyFormat(controller, '<u>', '</u>')),
+                _fmtBtn(Icons.format_strikethrough, () => _applyFormat(controller, '<s>', '</s>')),
+                _fmtBtn(Icons.format_list_bulleted, () => _applyFormat(controller, '<ul>\n<li>', '</li>\n</ul>')),
+                _fmtBtn(Icons.format_list_numbered, () => _applyFormat(controller, '<ol>\n<li>', '</li>\n</ol>')),
+              ],
+            ),
+          ),
+          Divider(height: 1, color: context.dividerColor.withOpacity(0.4)),
+          AppTextField(
+            textFieldType: TextFieldType.MULTILINE,
+            minLines: 5,
+            controller: controller,
+            focus: focusNode,
+            isValidationRequired: isRequired,
+            errorThisFieldRequired: languages.hintRequired,
+            decoration: inputDecoration(
+              context,
+              hint: hint,
+              fillColor: context.scaffoldBackgroundColor,
+            ).copyWith(
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(defaultRadius),
+                  bottomRight: Radius.circular(defaultRadius),
+                ),
+                borderSide: BorderSide(color: Colors.red.shade400),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(defaultRadius),
+                  bottomRight: Radius.circular(defaultRadius),
+                ),
+                borderSide: BorderSide(color: Colors.red.shade400),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _fmtBtn(IconData icon, VoidCallback onTap) {
+    return InkWell(
+      borderRadius: radius(4),
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        child: Icon(icon, size: 18, color: context.iconColor),
+      ),
+    );
+  }
+
+  void _applyFormat(TextEditingController cont, String open, String close) {
+    final sel = cont.selection;
+    final text = cont.text;
+
+    if (!sel.isValid) {
+      cont.value = TextEditingValue(
+        text: '$text$open$close',
+        selection: TextSelection.collapsed(offset: text.length + open.length),
+      );
+      setState(() {});
+      return;
+    }
+
+    if (sel.isCollapsed) {
+      final offset = sel.baseOffset.clamp(0, text.length);
+      final before = text.substring(0, offset);
+      final after = text.substring(offset);
+      cont.value = TextEditingValue(
+        text: '$before$open$close$after',
+        selection: TextSelection.collapsed(offset: offset + open.length),
+      );
+    } else {
+      final selected = sel.textInside(text);
+      final before = sel.textBefore(text);
+      final after = sel.textAfter(text);
+      cont.value = TextEditingValue(
+        text: '$before$open$selected$close$after',
+        selection: TextSelection.collapsed(
+          offset: before.length + open.length + selected.length + close.length,
+        ),
+      );
+    }
+    setState(() {});
   }
 
 //endregion

@@ -91,7 +91,8 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                 ? Align(
                     alignment: Alignment.centerRight,
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
                         color: valueBackgroundColor,
                         borderRadius: BorderRadius.circular(8),
@@ -156,20 +157,18 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
   }
 
   Widget postJobDetailWidget({required PostJobData data}) {
-    String location = "${data.cityName ?? ''}${data.countryName.validate().isEmpty ? "" : "${data.cityName.validate().isEmpty ? "" :  " - "}${data.countryName}"}";
-    
+    String location =
+        "${data.cityName ?? ''}${data.countryName.validate().isEmpty ? "" : "${data.cityName.validate().isEmpty ? "" : " - "}${data.countryName}"}";
+
     // Get travel_required value - convert to display string
-    String travelRequiredValue = 'No'; // Default to "No"
+    String travelRequiredValue = languages.lblNo; // Default to "No"
     if (data.travelRequired != null) {
       travelRequiredValue = data.travelRequired!.displayName;
-    } else {
-      // If null, check if we can infer from other data or default to "No"
-      travelRequiredValue = 'No';
     }
-    
+
     // Debug: Log the travel_required value
     log('Travel Required - Raw: ${data.travelRequired}, Display: $travelRequiredValue');
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -204,7 +203,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
           ],
         ),
         8.height,
-        
+
         // Location in red
         Text(
           location,
@@ -214,7 +213,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
 
         // Simple key-value pairs
         _buildSimpleRow(
-          label: "Job Type",
+          label: languages.lblJobType,
           value: data.type?.displayName ?? '',
           valueBackgroundColor: data.type?.bgColor,
         ),
@@ -227,35 +226,37 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
           value: formatDate(data.endDate.validate()),
         ),
         _buildSimpleRow(
-          label: "Budget/Price",
+          label: languages.lblBudgetOrPrice,
           value: _formatPrice(data.price.validate(), data.priceType),
         ),
         _buildSimpleRow(
-          label: "Total Budget",
+          label: languages.lblTotalBudget,
           value: data.totalBudget.validate().toPriceFormat(),
         ),
         _buildSimpleRow(
-          label: "Total Days",
+          label: languages.lblTotalDays,
           value: data.totalDays?.toString() ?? '0',
         ),
         _buildSimpleRow(
-          label: "Total Hours",
+          label: languages.lblTotalHours,
           value: data.totalHours?.toString() ?? '0',
         ),
         _buildSimpleRow(
-          label: "Remote Work Level",
+          label: languages.lblRemoteWorkLevelHint,
           value: data.remoteWorkLevel?.displayName ?? '',
         ),
         _buildSimpleRow(
-          label: "Travel Required",
-          value: travelRequiredValue,
+          label: languages.lblTravelRequiredHint,
+          value: travelRequiredValue == languages.lblNo
+              ? languages.lblNo
+              : data.travelRequired?.displayName ?? '',
         ),
         _buildSimpleRow(
-          label: "Career Level",
+          label: languages.lblCareerLevelHint,
           value: data.careerLevel?.displayName ?? '',
         ),
         _buildSimpleRow(
-          label: "Education Level",
+          label: languages.lblEducationLevel,
           value: data.educationLevel?.displayName ?? '',
         ),
 
@@ -341,21 +342,25 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
     try {
       BidderData? myBid;
       if (bidderList.any((element) => element.providerId == appStore.userId)) {
-        myBid = bidderList.firstWhere((element) => element.providerId == appStore.userId);
+        myBid = bidderList
+            .firstWhere((element) => element.providerId == appStore.userId);
       }
-      final otherBids = bidderList.where((element) => element.providerId != appStore.userId).toList();
+      final otherBids = bidderList
+          .where((element) => element.providerId != appStore.userId)
+          .toList();
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if(myBid != null) ...[
+          if (myBid != null) ...[
             16.height,
             Text(languages.myBid, style: boldTextStyle(size: LABEL_TEXT_SIZE)),
             16.height,
             ProviderBidWidget(myBid),
           ],
-          if(otherBids.isNotEmpty)...[
-            Text(languages.bidList, style: boldTextStyle(size: LABEL_TEXT_SIZE)),
+          if (otherBids.isNotEmpty) ...[
+            Text(languages.bidList,
+                style: boldTextStyle(size: LABEL_TEXT_SIZE)),
             16.height,
             AnimatedListView(
               itemCount: otherBids.length,
@@ -369,8 +374,6 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
               },
             ),
           ]
-
-
         ],
       ).paddingOnly(left: 16, right: 16);
     } catch (e) {
@@ -381,7 +384,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
   }
 
   Widget ProviderBidWidget(BidderData bidderData) {
-    if(bidderData.provider == null) return Offstage();
+    if (bidderData.provider == null) return Offstage();
     return Column(
       children: [
         Container(
@@ -417,37 +420,51 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      if (bidderData.provider!.designation.validate().isNotEmpty)
+                      if (bidderData.provider!.designation
+                          .validate()
+                          .isNotEmpty)
                         Marquee(
                           directionMarguee: DirectionMarguee.oneDirection,
-                          child: Text(bidderData.provider!.designation.validate(),
+                          child: Text(
+                              bidderData.provider!.designation.validate(),
                               style: primaryTextStyle(size: 14)),
                         ),
-                      if(bidderData.provider!.cityName.validate().isNotEmpty || bidderData.provider!.countryName.validate().isNotEmpty) Text(
-                        "${bidderData.provider!.cityName ?? ''}${bidderData.provider!.countryName.validate().isEmpty ? "" : "${bidderData.provider!.cityName.validate().isEmpty ? "" :  " - "}${bidderData.provider!.countryName}"}",
-                        style: secondaryTextStyle(size: 12),
-                      ),
+                      if (bidderData.provider!.cityName.validate().isNotEmpty ||
+                          bidderData.provider!.countryName
+                              .validate()
+                              .isNotEmpty)
+                        Text(
+                          "${bidderData.provider!.cityName ?? ''}${bidderData.provider!.countryName.validate().isEmpty ? "" : "${bidderData.provider!.cityName.validate().isEmpty ? "" : " - "}${bidderData.provider!.countryName}"}",
+                          style: secondaryTextStyle(size: 12),
+                        ),
                       DisabledRatingBarWidget(
-                        rating: bidderData.provider!.providerServiceRating.validate(),
+                        rating: bidderData.provider!.providerServiceRating
+                            .validate(),
                         size: 14,
                       ),
                       Marquee(
                         directionMarguee: DirectionMarguee.oneDirection,
                         child: Row(
                           children: [
-                            Text(languages.lblBidPriceLabel, style: secondaryTextStyle(size: 12)),
+                            Text(languages.lblBidPriceLabel,
+                                style: secondaryTextStyle(size: 12)),
                             PriceWidget(
                               price: bidderData.price.validate(),
-                              isHourlyService: bidderData.postJobData?.priceType == PriceType.hourly,
-                              isDailyService: bidderData.postJobData?.priceType == PriceType.daily,
-                              isFixesService: bidderData.postJobData?.priceType == PriceType.fixed,
+                              isHourlyService:
+                                  bidderData.postJobData?.priceType ==
+                                      PriceType.hourly,
+                              isDailyService:
+                                  bidderData.postJobData?.priceType ==
+                                      PriceType.daily,
+                              isFixesService:
+                                  bidderData.postJobData?.priceType ==
+                                      PriceType.fixed,
                               hourlyTextColor: gradientBlue,
                               size: 14,
                             ),
                           ],
                         ),
                       ),
-
                     ],
                   ).expand(),
                 ],
@@ -458,11 +475,13 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                 children: [
                   Expanded(
                     child: DecoratedBox(
-                      decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                      decoration: BoxDecoration(
+                          gradient: kAppPrimaryGradient,
+                          borderRadius: radius(8)),
                       child: AppButton(
                         padding: EdgeInsets.zero,
                         child: Text(
-                          'View Job',
+                          languages.lblViewJob,
                           style: boldTextStyle(color: white, size: 12),
                         ),
                         color: Colors.transparent,
@@ -477,7 +496,9 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                   ),
                   Expanded(
                     child: DecoratedBox(
-                      decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
+                      decoration: BoxDecoration(
+                          gradient: kAppPrimaryGradient,
+                          borderRadius: radius(8)),
                       child: AppButton(
                         padding: EdgeInsets.symmetric(horizontal: 8),
                         child: Text(
@@ -498,15 +519,15 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                                 ),
                                 GestureDetector(
                                   onTap: () => finish(context),
-                                  child: Icon(
-                                    Icons.close
-                                  ),
+                                  child: Icon(Icons.close),
                                 )
                               ],
                             ),
                             builder: (context) => Text(
-                               parseHtmlString(bidderData.whyChooseMe.validate()),
-                              style: secondaryTextStyle(size: 12,color: textPrimaryColorGlobal),
+                              parseHtmlString(
+                                  bidderData.whyChooseMe.validate()),
+                              style: secondaryTextStyle(
+                                  size: 12, color: textPrimaryColorGlobal),
                             ),
                           );
                         },
@@ -522,6 +543,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
       ],
     );
   }
+
   Widget customerWidget(PostJobData? data) {
     final d = data!;
     final int? customerUserId = d.customerId?.toInt();
@@ -615,7 +637,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
     if (images.isEmpty) return Offstage();
     image = images.first;
     return StatefulBuilder(
-      builder: (context,set) {
+      builder: (context, set) {
         return Column(
           children: [
             if (images.isNotEmpty)
@@ -634,7 +656,8 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                       top: 16,
                       left: 16,
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
                           color: Colors.black.withValues(alpha: 0.45),
                           borderRadius: radius(20),
@@ -649,7 +672,8 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                       right: 16,
                       bottom: 16,
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                         decoration: BoxDecoration(
                           gradient: kAppPrimaryGradient,
                           borderRadius: radius(24),
@@ -658,7 +682,8 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                           children: [
                             PriceWidget(
                               price: data.price.validate(),
-                              isHourlyService: data.priceType == PriceType.hourly,
+                              isHourlyService:
+                                  data.priceType == PriceType.hourly,
                               isDailyService: data.priceType == PriceType.daily,
                               isFixesService: data.priceType == PriceType.fixed,
                               color: Colors.white,
@@ -699,6 +724,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
@@ -707,7 +733,12 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
         children: [
           SnapHelperWidget<PostJobDetailResponse>(
             future: future,
-            initialData: cachedPostJobList.firstWhere((element) => element?.$1 == widget.postJobData.id.validate(), orElse: () => null)?.$2,
+            initialData: cachedPostJobList
+                .firstWhere(
+                    (element) =>
+                        element?.$1 == widget.postJobData.id.validate(),
+                    orElse: () => null)
+                ?.$2,
             onSuccess: (data) {
               return Stack(
                 children: [
@@ -715,9 +746,9 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                     padding: EdgeInsets.only(bottom: 60),
                     physics: AlwaysScrollableScrollPhysics(),
                     listAnimationType: ListAnimationType.FadeIn,
-                    fadeInConfiguration: FadeInConfiguration(duration: 2.seconds),
+                    fadeInConfiguration:
+                        FadeInConfiguration(duration: 2.seconds),
                     onSwipeRefresh: () async {
-
                       init();
                       setState(() {});
 
@@ -728,7 +759,8 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           jobImagesSection(data.postRequestDetail!),
-                          postJobDetailWidget(data: data.postRequestDetail!).paddingSymmetric(horizontal: 16),
+                          postJobDetailWidget(data: data.postRequestDetail!)
+                              .paddingSymmetric(horizontal: 16),
                           customerWidget(data.postRequestDetail!),
                           providerWidget(data.bidderData.validate()),
                           // postJobServiceWidget(serviceList: data.postRequestDetail!.service.validate()),
@@ -745,54 +777,56 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                       if (data.showUpdateBid == false) {
                         return SizedBox.shrink();
                       }
-                      
+
                       // Get user's bid for the dialog
                       BidderData? myBid;
-                      if (data.bidderData.any((element) => element.providerId == appStore.userId)) {
-                        myBid = data.bidderData.firstWhere((element) => element.providerId == appStore.userId);
+                      if (data.bidderData.any(
+                          (element) => element.providerId == appStore.userId)) {
+                        myBid = data.bidderData.firstWhere(
+                            (element) => element.providerId == appStore.userId);
                       }
-                      
-                      return Positioned(
-                    bottom: 16,
-                    left: 16,
-                    right: 16,
-                    child: InkWell(
-                      borderRadius: radius(14),
-                      onTap: () async {
-                        bool? res = await showInDialog(
-                          context,
-                          contentPadding: EdgeInsets.zero,
-                          hideSoftKeyboard: true,
-                          backgroundColor: context.cardColor,
-                          builder: (_) {
-                            return BidPriceDialog(
-                              data: widget.postJobData,
-                              price: myBid?.price,
-                              whyText: myBid?.whyChooseMe,
-                              isUpdateBid: myBid != null,
-                            );
-                          }
-                        );
 
-                        if (res ?? false) {
-                          init();
-                          setState(() {});
-                        }
-                      },
-                      child: Container(
-                        width: context.width(),
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          gradient: kAppPrimaryGradient,
+                      return Positioned(
+                        bottom: 16,
+                        left: 16,
+                        right: 16,
+                        child: InkWell(
                           borderRadius: radius(14),
+                          onTap: () async {
+                            bool? res = await showInDialog(context,
+                                contentPadding: EdgeInsets.zero,
+                                hideSoftKeyboard: true,
+                                backgroundColor: context.cardColor,
+                                builder: (_) {
+                              return BidPriceDialog(
+                                data: widget.postJobData,
+                                price: myBid?.price,
+                                whyText: myBid?.whyChooseMe,
+                                isUpdateBid: myBid != null,
+                              );
+                            });
+
+                            if (res ?? false) {
+                              init();
+                              setState(() {});
+                            }
+                          },
+                          child: Container(
+                            width: context.width(),
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              gradient: kAppPrimaryGradient,
+                              borderRadius: radius(14),
+                            ),
+                            child: Text(
+                              data.postRequestDetail!.canBid.validate()
+                                  ? languages.bid
+                                  : "${languages.lblUpdate} ${languages.bid}",
+                              style: boldTextStyle(color: white),
+                            ),
+                          ),
                         ),
-                        child: Text(
-                          data.postRequestDetail!.canBid.validate() ? languages.bid : "${languages.lblUpdate} ${languages.bid}",
-                          style: boldTextStyle(color: white),
-                        ),
-                      ),
-                    ),
                       );
                     },
                   ),

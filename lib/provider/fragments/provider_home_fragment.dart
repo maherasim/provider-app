@@ -117,7 +117,7 @@ class _ProviderHomeFragmentState extends State<ProviderHomeFragment> {
                   fadeInConfiguration: FadeInConfiguration(duration: 2.seconds),
                   children: [
                     // if (appStore.earningTypeSubscription)
-                      planBanner(snap.data!),
+                    planBanner(snap.data!),
                     _buildHeaderWidget(snap.data!),
                     TodayCashComponent(
                         totalCashInHand: snap.data!.totalCashInHand.validate()),
@@ -309,8 +309,8 @@ class _PlansComingSoonBannerState extends State<_PlansComingSoonBanner>
                       right: -30,
                       top: -30,
                       child: Transform.translate(
-                        offset: Offset(
-                            0, 15 * (0.5 - (0.5 - shimmerValue).abs())),
+                        offset:
+                            Offset(0, 15 * (0.5 - (0.5 - shimmerValue).abs())),
                         child: Container(
                           width: 140,
                           height: 140,
@@ -326,8 +326,8 @@ class _PlansComingSoonBannerState extends State<_PlansComingSoonBanner>
                       left: -20,
                       bottom: -40,
                       child: Transform.translate(
-                        offset: Offset(
-                            0, -10 * (0.5 - (0.5 - shimmerValue).abs())),
+                        offset:
+                            Offset(0, -10 * (0.5 - (0.5 - shimmerValue).abs())),
                         child: Container(
                           width: 90,
                           height: 90,
@@ -346,10 +346,9 @@ class _PlansComingSoonBannerState extends State<_PlansComingSoonBanner>
                         return Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              begin: Alignment(
-                                  -2.5 + (shimmerValue * 5), -1.0), // Fast sweep
-                              end: Alignment(
-                                  -0.5 + (shimmerValue * 5), 1.0),
+                              begin: Alignment(-2.5 + (shimmerValue * 5),
+                                  -1.0), // Fast sweep
+                              end: Alignment(-0.5 + (shimmerValue * 5), 1.0),
                               colors: [
                                 Colors.transparent,
                                 Colors.white.withValues(alpha: 0.15),
@@ -397,7 +396,7 @@ class _PlansComingSoonBannerState extends State<_PlansComingSoonBanner>
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'Premium Plans Soon',
+                                languages.lblPremiumPlansSoon,
                                 style: boldTextStyle(
                                   size: 16,
                                   color: Colors.white,
@@ -406,7 +405,7 @@ class _PlansComingSoonBannerState extends State<_PlansComingSoonBanner>
                               ),
                               4.height,
                               Text(
-                                "We're building something great for you. Stay tuned.",
+                                languages.lblPremiumPlansSoonSubtitle,
                                 style: secondaryTextStyle(
                                   size: 13,
                                   color: Colors.white.withValues(alpha: 0.95),

@@ -163,6 +163,14 @@ class SubscriptionWidgetState extends State<SubscriptionWidget> {
                 ),
               ],
             ),
+          16.height,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(languages.lblStatus, style: secondaryTextStyle()),
+              Text(widget.data.status.validate().capitalizeFirstLetter(), style: boldTextStyle()),
+            ],
+          ),
           if (widget.data.status.validate() == SUBSCRIPTION_STATUS_ACTIVE && !appConfigurationStore.isInAppPurchaseEnable) 
             AppButton(
               text: languages.lblCancelPlan.toUpperCase(),

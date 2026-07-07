@@ -47,6 +47,7 @@ class HandymanListScreenState extends State<HandymanListScreen> {
       appStore.setLoading(true);
       setState(() {});
     }
+
   }
 
   @override
@@ -76,8 +77,7 @@ class HandymanListScreenState extends State<HandymanListScreen> {
             },
             icon: Icon(Icons.add, size: 28, color: white),
             tooltip: languages.lblAddHandyman,
-          )
-          // .visible(rolesAndPermissionStore.handymanAdd),
+          ),
         ],
       ),
       body: Stack(

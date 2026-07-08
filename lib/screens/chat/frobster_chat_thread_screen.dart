@@ -6,6 +6,7 @@ import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/models/frobster_chat_models.dart';
 import 'package:handyman_provider_flutter/networks/frobster_chat_api.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
+import 'package:handyman_provider_flutter/utils/pusher_chat_service.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
@@ -48,11 +49,13 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
     super.initState();
     _loadInitial();
     _startPolling();
+    _connectPusher();
   }
 
   @override
   void dispose() {
     _pollTimer?.cancel();
+    PusherChatService.instance.dispose();
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -60,7 +63,24 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
 
   void _startPolling() {
     _pollTimer?.cancel();
-    _pollTimer = Timer.periodic(const Duration(seconds: 5), (_) => _fetchNew());
+    // Keep polling as fallback (slower when Pusher is connected)
+    _pollTimer = Timer.periodic(
+      const Duration(seconds: 15),
+      (_) { if (!PusherChatService.instance.isConnected) _fetchNew(); },
+    );
+  }
+
+  Future<void> _connectPusher() async {
+    await PusherChatService.instance.subscribe(
+      conversationId: widget.conversationId,
+      bearerToken: appStore.token,
+      onMessage: (payload) {
+        final id = payload['id'];
+        if (id == null) return;
+        if (_messages.any((m) => m.id == id)) return;
+        _fetchNew();
+      },
+    );
   }
 
   Future<void> _loadInitial() async {

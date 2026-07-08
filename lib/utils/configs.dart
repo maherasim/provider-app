@@ -12,6 +12,10 @@ const DOMAIN_URL = "https://frobster.com";
 
 const BASE_URL = "$DOMAIN_URL/api/";
 
+// Pusher — fill in after creating your Pusher Channels app at pusher.com
+const PUSHER_APP_KEY     = '82c4fc5181123cb5e639';
+const PUSHER_APP_CLUSTER = 'eu';
+
 /// You can specify in Admin Panel, These will be used if you don't specify in Admin Panel
 const IOS_LINK_FOR_PARTNER =
     "https://apps.apple.com/in/app/handyman-provider-app/id1596025324";

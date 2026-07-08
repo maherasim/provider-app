@@ -18,6 +18,8 @@ import '../screens/chat/frobster_chat_thread_screen.dart';
 import 'constant.dart';
 import '../networks/push_api.dart';
 
+bool _notificationListenersRegistered = false;
+
 Future<void> initFirebaseMessaging() async {
   await FirebaseMessaging.instance
       .requestPermission(
@@ -58,6 +60,8 @@ Future<void> initFirebaseMessaging() async {
 }
 
 Future<void> registerNotificationListeners() async {
+  if (_notificationListenersRegistered) return;
+  _notificationListenersRegistered = true;
   FirebaseMessaging.instance.setAutoInitEnabled(true).then((value) {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       log('=== FOREGROUND MESSAGE RECEIVED ===');
@@ -69,13 +73,10 @@ Future<void> registerNotificationListeners() async {
       log('Is Chat: ${message.data['is_chat']}');
       log('Has Conversation ID: ${message.data.containsKey('conversation_id')}');
       
-      // Check if this is a chat message - be more flexible with detection
-      final isChatMessage = message.data['is_chat'] == '1' || 
-                           message.data['is_chat'] == 1 ||
-                           message.data.containsKey('conversation_id') ||
-                           message.data.containsKey('conversationId') ||
-                           (message.notification?.title?.contains('message') ?? false) ||
-                           (message.notification?.title?.contains('Message') ?? false);
+      // Reliable chat detection: backend sets type='chat_message' in FCM data
+      final isChatMessage = message.data['type'] == 'chat_message' ||
+                           message.data['is_chat'] == '1' ||
+                           message.data['is_chat'] == 1;
       
       log('Detected as Chat Message: $isChatMessage');
       
@@ -124,15 +125,7 @@ Future<void> registerNotificationListeners() async {
       
       // Foreground notification handling - Update counts for both chat and booking status updates
       try {
-        final data = message.data;
-        final isChat = data['type'] == 'chat' || 
-                      data['is_chat'] == '1' || 
-                      data['is_chat'] == 1 ||
-                      data.containsKey('conversation_id') ||
-                      data.containsKey('conversationId') ||
-                      data.containsKey('sender_id') || // Laravel format
-                      data.containsKey('sender_name') || // Laravel format
-                      isChatMessage;
+        final isChat = isChatMessage;
         
         if (isChat) {
           log('Processing chat notification - emitting LIVESTREAM_UPDATE_CHAT_UNREAD');
@@ -253,6 +246,7 @@ Future<bool> subscribeToFirebaseTopic() async {
 }
 
 Future<bool> unsubscribeFirebaseTopic(int userId) async {
+  _notificationListenersRegistered = false;
   bool result = appStore.isSubscribedForPushNotification;
   await FirebaseMessaging.instance.unsubscribeFromTopic('user_$userId').then((_) {
     result = false;
@@ -272,16 +266,19 @@ void handleNotificationClick(RemoteMessage message) {
   log('=== NOTIFICATION CLICKED ===');
   log('Notification data: ${message.data}');
   
-  // Try multiple ways to detect chat notification (Laravel format)
-  final conversationId = message.data['conversation_id'] ?? 
-                        message.data['conversationId'] ?? 
-                        message.data['conversation_id'];
-  final isChat = message.data['type'] == 'chat' || 
-                message.data['is_chat'] == '1' || 
-                message.data['is_chat'] == 1 ||
-                message.data.containsKey('sender_id') || // Laravel sends sender_id
-                message.data.containsKey('sender_name') || // Laravel sends sender_name
-                conversationId != null;
+  // Backend sends type='chat_message' and conversation_id inside additional_data JSON
+  final isChat = message.data['type'] == 'chat_message' ||
+                message.data['is_chat'] == '1' ||
+                message.data['is_chat'] == 1;
+
+  // conversation_id is nested inside additional_data JSON string
+  dynamic conversationId = message.data['conversation_id'];
+  if (conversationId == null && message.data.containsKey('additional_data')) {
+    try {
+      final extra = jsonDecode(message.data['additional_data'] as String);
+      conversationId = extra['conversation_id'];
+    } catch (_) {}
+  }
   
   log('Is Chat: $isChat, Conversation ID: $conversationId');
   

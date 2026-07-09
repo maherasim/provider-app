@@ -105,6 +105,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
     'part_time',
   ];
   String selectedAvailability = 'full_time';
+  String? _selectedEducation;
   final List<String> mobilityList = [];
   final List<String> certifications = [];
 
@@ -199,8 +200,12 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
       mobilityCont.text = widget.data!.mobility.validate();
       certificationCont.text = widget.data!.certification.validate();
       aboutMeCont.text = parseHtmlString(widget.data!.aboutMe.validate());
-      educationCont.text = parseHtmlString(
-          widget.data!.education.validate()); // Use education field directly
+      final storedEdu = parseHtmlString(widget.data!.education.validate());
+      educationCont.text = storedEdu;
+      if (storedEdu.isNotEmpty) {
+        final opts = _getEducationOptions();
+        _selectedEducation = opts.contains(storedEdu) ? storedEdu : null;
+      }
 
       // Initialize availability - normalize the value to match dropdown items
       if (widget.data!.availability != null) {
@@ -1096,6 +1101,23 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
     });
   }
 
+  List<String> _getEducationOptions() {
+    return [
+      languages.lblEduNotSpecified,
+      languages.lblEduSecondaryDegree,
+      languages.lblEduApprenticeship,
+      languages.lblEduTraineeship,
+      languages.lblEduAnyGraduate,
+      languages.lblEduCollege,
+      languages.lblEduUniversity,
+      languages.lblEduBachelors,
+      languages.lblEduUndergraduate,
+      languages.lblEduMasters,
+      languages.lblEduDoctorate,
+      languages.lblEduProfessional,
+    ];
+  }
+
   @override
   void setState(fn) {
     if (mounted) super.setState(fn);
@@ -1977,19 +1999,27 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     12.height,
                     Text(languages.lblEducationAndBio, style: boldTextStyle(size: 16)),
                     12.height,
-                    // Education - Text Input (Optional)
-                    AppTextField(
-                      textFieldType: TextFieldType.NAME,
-                      controller: educationCont,
-                      focus: educationFocus,
-                      nextFocus: aboutMeFocus,
-                      enabled: true,
-                      isValidationRequired: false,
+                    // Education - Dropdown
+                    DropdownButtonFormField<String>(
+                      initialValue: _selectedEducation,
                       decoration: inputDecoration(
                         context,
                         hint: languages.lblEducationHint,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
+                      isExpanded: true,
+                      icon: Icon(Icons.keyboard_arrow_down, color: context.iconColor),
+                      dropdownColor: context.cardColor,
+                      items: _getEducationOptions().map((option) {
+                        return DropdownMenuItem<String>(
+                          value: option,
+                          child: Text(option, style: primaryTextStyle()),
+                        );
+                      }).toList(),
+                      onChanged: (String? value) {
+                        _selectedEducation = value;
+                        educationCont.text = value ?? '';
+                      },
                     ),
                     16.height,
                     // About Me - Textarea (Optional)

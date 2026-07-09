@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:handyman_provider_flutter/components/app_widgets.dart';
 import 'package:handyman_provider_flutter/components/cached_image_widget.dart';
 import 'package:handyman_provider_flutter/components/disabled_rating_bar_widget.dart';
@@ -122,23 +123,35 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
     );
   }
 
+  /// Pass-through if already HTML, otherwise preserve plain-text line breaks.
+  String _toHtml(String? text) {
+    if (text == null || text.trim().isEmpty) return '';
+    final t = text.trim();
+    if (t.contains(RegExp(r'<[a-zA-Z]'))) return t;
+    return t.replaceAll('\n', '<br>');
+  }
+
   Widget _buildSimpleSection({
     required String title,
     required String content,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Divider(height: 32, thickness: 1),
-        Text(
-          title,
-          style: boldTextStyle(size: 16),
-        ),
+        Text(title, style: boldTextStyle(size: 16)),
         12.height,
-        ReadMoreText(
-          parseHtmlString(content),
-          style: primaryTextStyle(size: 14),
-          colorClickableText: gradientBlue,
+        HtmlWidget(
+          _toHtml(content),
+          textStyle: primaryTextStyle(size: 14),
+          customStylesBuilder: isDark
+              ? (element) {
+                  final style = element.attributes['style'] ?? '';
+                  if (style.contains('color')) return {'color': '#eeeeee'};
+                  return null;
+                }
+              : null,
         ),
       ],
     );
@@ -605,7 +618,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                             size: 22,
                           ),
                           onPressed: () => _openProfileReportDialog(
-                            customerUserId!,
+                            customerUserId,
                           ),
                         ),
                     ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:handyman_provider_flutter/components/app_widgets.dart';
 import 'package:handyman_provider_flutter/main.dart';
@@ -254,6 +255,7 @@ class _ExtraChargesDialogState extends State<ExtraChargesDialog> {
                   textFieldType: TextFieldType.OTHER,
                   controller: row.amountController,
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
                   validator: (s) {
                     if (s!.isEmpty) return languages.hintRequired;
                     if ((double.tryParse(s) ?? 0) <= 0) return languages.priceAmountValidationMessage;
@@ -274,6 +276,7 @@ class _ExtraChargesDialogState extends State<ExtraChargesDialog> {
                   textFieldType: TextFieldType.OTHER,
                   controller: row.qtyController,
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
                   validator: (s) {
                     if (s!.isEmpty) return languages.hintRequired;
                     if ((double.tryParse(s) ?? 0) <= 0) return languages.quantityMustBeAtLeast1;

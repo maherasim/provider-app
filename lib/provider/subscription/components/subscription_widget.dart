@@ -171,18 +171,25 @@ class SubscriptionWidgetState extends State<SubscriptionWidget> {
               Text(widget.data.status.validate().capitalizeFirstLetter(), style: boldTextStyle()),
             ],
           ),
-          if (widget.data.status.validate() == SUBSCRIPTION_STATUS_ACTIVE && !appConfigurationStore.isInAppPurchaseEnable) 
-            AppButton(
-              text: languages.lblCancelPlan.toUpperCase(),
-              margin: EdgeInsets.only(top: 16),
-              width: context.width(),
-              elevation: 0,
-              color: primaryColor,
-              onTap: () {
-                ifNotTester(context, () {
-                  cancelPlan();
-                });
-              },
+          if (widget.data.status.validate() == SUBSCRIPTION_STATUS_ACTIVE && !appConfigurationStore.isInAppPurchaseEnable)
+            DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: redBlueGradient,
+                borderRadius: radius(),
+              ),
+              child: AppButton(
+                text: languages.lblCancelPlan.toUpperCase(),
+                margin: EdgeInsets.only(top: 16),
+                width: context.width(),
+                elevation: 0,
+                color: Colors.transparent,
+                textStyle: boldTextStyle(color: white),
+                onTap: () {
+                  ifNotTester(context, () {
+                    cancelPlan();
+                  });
+                },
+              ),
             )
         ],
       ),

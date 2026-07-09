@@ -70,7 +70,7 @@ class JobRequestDetailResponse {
   int? postRequestId;
   int? providerId;
   int? customerId;
-  int? price;
+  double? price;
   String? holdReason;
   num? advancePercent;
   String? whyChooseMe;
@@ -121,11 +121,11 @@ class JobRequestDetailResponse {
   });
 
   factory JobRequestDetailResponse.fromJson(Map<String, dynamic> json) => JobRequestDetailResponse(
-    id: json["id"],
-    postRequestId: json["post_request_id"],
-    providerId: json["provider_id"],
-    customerId: json["customer_id"],
-    price: json["price"],
+    id: json["id"] is int ? json["id"] : int.tryParse(json["id"]?.toString() ?? ''),
+    postRequestId: json["post_request_id"] is int ? json["post_request_id"] : int.tryParse(json["post_request_id"]?.toString() ?? ''),
+    providerId: json["provider_id"] is int ? json["provider_id"] : int.tryParse(json["provider_id"]?.toString() ?? ''),
+    customerId: json["customer_id"] is int ? json["customer_id"] : int.tryParse(json["customer_id"]?.toString() ?? ''),
+    price: (json["price"] as num?)?.toDouble(),
     holdReason: json["hold_reason"],
     advancePercent: json["advance_percent"],
     whyChooseMe: json["why_choose_me"],
@@ -299,16 +299,16 @@ class PostRequest {
     type: JobType.values.firstWhere((e) => e.backendValue == json['type'],orElse:() => JobType.onSite),
     startDate: json["start_date"] == null ? null : DateTime.parse(json["start_date"]),
     endDate: json["end_date"] == null ? null : DateTime.parse(json["end_date"]),
-    totalBudget: json["total_budget"],
-    cityId: json["city_id"],
-    countryId: json["country_id"],
+    totalBudget: (json["total_budget"] as num?)?.toInt(),
+    cityId: (json["city_id"] as num?)?.toInt(),
+    countryId: (json["country_id"] as num?)?.toInt(),
     jobPrice: json["job_price"],
     streetAddress: json["street_address"],
     houseNumber: json["house_number"],
     workingAddress: json["working_address"],
-    totalHours: json["total_hours"],
+    totalHours: (json["total_hours"] as num?)?.toInt(),
     priceType: PriceType.values.firstWhere((e) => e.backendValue == json['price_type'],orElse:() => PriceType.fixed),
-    totalDays: json["total_days"],
+    totalDays: (json["total_days"] as num?)?.toInt(),
     city: json["city"] == null ? null : City.fromJson(json["city"]),
     country: json["country"] == null ? null : City.fromJson(json["country"]),
     postBidList: json["post_bid_list"] == null ? [] : List<PostBidList>.from(json["post_bid_list"]!.map((x) => PostBidList.fromJson(x))),

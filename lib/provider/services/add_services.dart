@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'package:handyman_provider_flutter/components/app_widgets.dart';
 import 'package:handyman_provider_flutter/components/back_widget.dart';
 import 'package:handyman_provider_flutter/components/custom_image_picker.dart';
@@ -1270,15 +1271,13 @@ class _AddServicesState extends State<AddServices> {
             Column(
               spacing: 16,
               children: [
-                _buildRichEditor(
+                _WysiwygField(
                   controller: descriptionCont,
-                  focusNode: descriptionFocus,
                   hint: languages.hintDescription,
                   isRequired: checkValidationLanguage(),
                 ),
-                _buildRichEditor(
+                _WysiwygField(
                   controller: cancellationPolicyCont,
-                  focusNode: cancellationPolicyFocus,
                   hint: languages.lblCancellationPolicy,
                 ),
                 if (isAdmin) Container(
@@ -1486,125 +1485,6 @@ class _AddServicesState extends State<AddServices> {
     );
   }
 
-  Widget _buildRichEditor({
-    required TextEditingController controller,
-    required FocusNode focusNode,
-    required String hint,
-    bool isRequired = false,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: context.scaffoldBackgroundColor,
-        borderRadius: radius(),
-        border: Border.all(color: context.dividerColor.withOpacity(0.5)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Formatting toolbar
-          Container(
-            decoration: BoxDecoration(
-              color: context.cardColor,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(defaultRadius),
-                topRight: Radius.circular(defaultRadius),
-              ),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-            child: Row(
-              children: [
-                _fmtBtn(Icons.format_bold, () => _applyFormat(controller, '<strong>', '</strong>')),
-                _fmtBtn(Icons.format_italic, () => _applyFormat(controller, '<em>', '</em>')),
-                _fmtBtn(Icons.format_underline, () => _applyFormat(controller, '<u>', '</u>')),
-                _fmtBtn(Icons.format_strikethrough, () => _applyFormat(controller, '<s>', '</s>')),
-                _fmtBtn(Icons.format_list_bulleted, () => _applyFormat(controller, '<ul>\n<li>', '</li>\n</ul>')),
-                _fmtBtn(Icons.format_list_numbered, () => _applyFormat(controller, '<ol>\n<li>', '</li>\n</ol>')),
-              ],
-            ),
-          ),
-          Divider(height: 1, color: context.dividerColor.withOpacity(0.4)),
-          AppTextField(
-            textFieldType: TextFieldType.MULTILINE,
-            minLines: 5,
-            controller: controller,
-            focus: focusNode,
-            isValidationRequired: isRequired,
-            errorThisFieldRequired: languages.hintRequired,
-            decoration: inputDecoration(
-              context,
-              hint: hint,
-              fillColor: context.scaffoldBackgroundColor,
-            ).copyWith(
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(defaultRadius),
-                  bottomRight: Radius.circular(defaultRadius),
-                ),
-                borderSide: BorderSide(color: Colors.red.shade400),
-              ),
-              focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(defaultRadius),
-                  bottomRight: Radius.circular(defaultRadius),
-                ),
-                borderSide: BorderSide(color: Colors.red.shade400),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _fmtBtn(IconData icon, VoidCallback onTap) {
-    return InkWell(
-      borderRadius: radius(4),
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-        child: Icon(icon, size: 18, color: context.iconColor),
-      ),
-    );
-  }
-
-  void _applyFormat(TextEditingController cont, String open, String close) {
-    final sel = cont.selection;
-    final text = cont.text;
-
-    if (!sel.isValid) {
-      cont.value = TextEditingValue(
-        text: '$text$open$close',
-        selection: TextSelection.collapsed(offset: text.length + open.length),
-      );
-      setState(() {});
-      return;
-    }
-
-    if (sel.isCollapsed) {
-      final offset = sel.baseOffset.clamp(0, text.length);
-      final before = text.substring(0, offset);
-      final after = text.substring(offset);
-      cont.value = TextEditingValue(
-        text: '$before$open$close$after',
-        selection: TextSelection.collapsed(offset: offset + open.length),
-      );
-    } else {
-      final selected = sel.textInside(text);
-      final before = sel.textBefore(text);
-      final after = sel.textAfter(text);
-      cont.value = TextEditingValue(
-        text: '$before$open$selected$close$after',
-        selection: TextSelection.collapsed(
-          offset: before.length + open.length + selected.length + close.length,
-        ),
-      );
-    }
-    setState(() {});
-  }
-
 //endregion
 
   @override
@@ -1766,5 +1646,154 @@ class _AddServicesState extends State<AddServices> {
         currentTime = null;
       }
     }
+  }
+}
+
+class _WysiwygField extends StatefulWidget {
+  final TextEditingController controller;
+  final String hint;
+  final bool isRequired;
+
+  const _WysiwygField({
+    required this.controller,
+    required this.hint,
+    this.isRequired = false,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<_WysiwygField> createState() => _WysiwygFieldState();
+}
+
+class _WysiwygFieldState extends State<_WysiwygField> {
+  late final WebViewController _wvc;
+  bool _pageLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _wvc = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..addJavaScriptChannel('Flutter', onMessageReceived: (msg) {
+        widget.controller.text = msg.message;
+      })
+      ..setNavigationDelegate(NavigationDelegate(onPageFinished: (_) {
+        _pageLoaded = true;
+        _injectContent();
+      }))
+      ..loadHtmlString(_editorHtml());
+  }
+
+  void _injectContent() {
+    if (!_pageLoaded) return;
+    final isDark = appStore.isDarkMode;
+    final escaped = _jsStr(widget.controller.text);
+    final hint = _jsStr(widget.hint);
+    _wvc.runJavaScript("init('$escaped','$hint',$isDark)");
+  }
+
+  static String _jsStr(String s) => s
+      .replaceAll('\\', '\\\\')
+      .replaceAll("'", "\\'")
+      .replaceAll('\n', '\\n')
+      .replaceAll('\r', '');
+
+  String _editorHtml() => r'''
+<!DOCTYPE html><html><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+#tb{display:flex;flex-wrap:wrap;padding:4px 6px;gap:4px;border-bottom:1px solid var(--br)}
+.b{padding:5px 11px;border:1px solid var(--br);border-radius:5px;background:var(--btn);
+   cursor:pointer;font-size:14px;line-height:1.3;-webkit-tap-highlight-color:transparent;color:var(--tx)}
+.b:active{opacity:.7}
+#ed{min-height:130px;padding:10px 12px;outline:none;font-size:15px;line-height:1.6;color:var(--tx)}
+#ed ul,#ed ol{padding-left:22px}
+#ph{color:var(--ph);pointer-events:none;position:absolute;top:10px;left:12px;font-size:15px}
+.wrap{position:relative}
+:root{--bg:#fff;--card:#f5f5f5;--btn:#fff;--tx:#212121;--ph:#9e9e9e;--br:#ddd}
+.dk{--bg:#1e1e1e;--card:#2a2a2a;--btn:#333;--tx:#e0e0e0;--ph:#666;--br:#444}
+body{background:var(--bg)}#tb{background:var(--card)}
+</style></head><body>
+<div id="tb">
+  <button class="b" onmousedown="return false" onclick="fmt('bold')"><b>B</b></button>
+  <button class="b" onmousedown="return false" onclick="fmt('italic')"><i>I</i></button>
+  <button class="b" onmousedown="return false" onclick="fmt('underline')"><u>U</u></button>
+  <button class="b" onmousedown="return false" onclick="fmt('strikeThrough')"><s>S</s></button>
+  <button class="b" onmousedown="return false" onclick="fmt('insertUnorderedList')">&#x2022; List</button>
+  <button class="b" onmousedown="return false" onclick="fmt('insertOrderedList')">1. List</button>
+</div>
+<div class="wrap">
+  <div id="ph"></div>
+  <div id="ed" contenteditable="true"></div>
+</div>
+<script>
+var ed=document.getElementById('ed'),ph=document.getElementById('ph');
+function fmt(cmd){ed.focus();document.execCommand(cmd,false,null);sync()}
+function sync(){
+  var h=ed.innerHTML;
+  Flutter.postMessage(h);
+  ph.style.display=(h===''||h==='<br>')?'block':'none';
+}
+function init(html,hint,dark){
+  if(dark)document.body.classList.add('dk');
+  ph.textContent=hint;
+  ed.innerHTML=html||'';
+  ph.style.display=(!html||html==='')?'block':'none';
+}
+ed.addEventListener('input',sync);
+ed.addEventListener('paste',function(e){
+  e.preventDefault();
+  var t=(e.clipboardData||window.clipboardData).getData('text/plain');
+  document.execCommand('insertText',false,t);
+});
+</script></body></html>
+''';
+
+  @override
+  Widget build(BuildContext context) {
+    return FormField<String>(
+      initialValue: widget.controller.text,
+      validator: widget.isRequired
+          ? (v) {
+              final val = widget.controller.text.trim();
+              if (val.isEmpty || val == '<br>' || val == '<p><br></p>') {
+                return languages.hintRequired;
+              }
+              return null;
+            }
+          : null,
+      builder: (state) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 220,
+            decoration: BoxDecoration(
+              color: context.scaffoldBackgroundColor,
+              borderRadius: radius(),
+              border: Border.all(
+                color: state.hasError
+                    ? Colors.red.shade400
+                    : context.dividerColor.withOpacity(0.5),
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: radius(),
+              child: WebViewWidget(controller: _wvc),
+            ),
+          ),
+          if (state.hasError)
+            Padding(
+              padding: const EdgeInsets.only(left: 12, top: 4),
+              child: Text(
+                state.errorText!,
+                style: secondaryTextStyle(color: Colors.red.shade400, size: 12),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }

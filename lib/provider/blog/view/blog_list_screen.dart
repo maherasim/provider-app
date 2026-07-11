@@ -73,7 +73,7 @@ class _BlogListScreenState extends State<BlogListScreen> {
                 setState(() {});
               }
             },
-          ).visible(appStore.isLoggedIn && appConfigurationStore.blogStatus),
+          ).visible(appStore.isLoggedIn && appConfigurationStore.blogStatus && appStore.userType != USER_TYPE_PROVIDER),
         ],
       ),
       body: Stack(

@@ -2530,7 +2530,7 @@ class LanguageEn extends Languages {
   String get lblCompanyNameHint => 'Company Name';
 
   @override
-  String get lblVatNumberHint => 'VAT Number';
+  String get lblVatNumberHint => 'TAX/VAT Number';
 
   @override
   String get lblSelectAvailabilityHint => 'Select Availability';
@@ -2660,7 +2660,7 @@ class LanguageEn extends Languages {
   String get lblMobileNumberHint => 'Mobile Number';
 
   @override
-  String get lblIbanNumberHint => 'IBAN Number';
+  String get lblIbanNumberHint => 'Bank Address';
 
   @override
   String get lblBicSwiftHint => 'BIC / SWIFT Code';

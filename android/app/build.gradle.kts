@@ -28,7 +28,7 @@ android {
         applicationId = "com.frobster.pro"
         minSdk = flutter.minSdkVersion
         targetSdk = 36
-        versionCode = 93
+        versionCode = 94
         versionName = "11.13.0"
         ndk {
             debugSymbolLevel = "none"

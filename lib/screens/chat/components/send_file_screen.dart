@@ -37,6 +37,15 @@ class _SendFilePreviewScreenState extends State<SendFilePreviewScreen> {
   }
 
   @override
+  void dispose() {
+    messageFocus.unfocus();
+    messageFocus.dispose();
+    messageCont.dispose();
+    pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBarWidget(

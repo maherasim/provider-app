@@ -264,6 +264,10 @@ class _UserChatScreenState extends State<UserChatScreen> with WidgetsBindingObse
 
     _streamSubscription?.cancel();
 
+    messageFocus.unfocus();
+    messageFocus.dispose();
+    messageCont.dispose();
+
     setStatusBarColor(transparentColor, statusBarBrightness: Brightness.dark, statusBarIconBrightness: Brightness.dark);
 
     super.dispose();

@@ -158,17 +158,9 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
   Widget postJobDetailWidget({required PostJobData data}) {
     String location = "${data.cityName ?? ''}${data.countryName.validate().isEmpty ? "" : "${data.cityName.validate().isEmpty ? "" :  " - "}${data.countryName}"}";
     
-    // Get travel_required value - convert to display string
-    String travelRequiredValue = 'No'; // Default to "No"
-    if (data.travelRequired != null) {
-      travelRequiredValue = data.travelRequired!.displayName;
-    } else {
-      // If null, check if we can infer from other data or default to "No"
-      travelRequiredValue = 'No';
-    }
-    
-    // Debug: Log the travel_required value
-    log('Travel Required - Raw: ${data.travelRequired}, Display: $travelRequiredValue');
+    String travelRequiredValue = data.travelRequired == TravelRequirement.yes
+        ? languages.lblYes
+        : languages.lblNo;
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,8 +206,12 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
 
         // Simple key-value pairs
         _buildSimpleRow(
-          label: "Job Type",
-          value: data.type?.displayName ?? '',
+          label: languages.lblJobType,
+          value: data.type == null ? '' : switch (data.type!) {
+            JobType.onSite => languages.onSiteVisit,
+            JobType.hybrid => languages.lblHybrid,
+            JobType.remote => languages.onlineRemoteService,
+          },
           valueBackgroundColor: data.type?.bgColor,
         ),
         _buildSimpleRow(
@@ -227,36 +223,70 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
           value: formatDate(data.endDate.validate()),
         ),
         _buildSimpleRow(
-          label: "Budget/Price",
+          label: languages.lblBudgetOrPrice,
           value: _formatPrice(data.price.validate(), data.priceType),
         ),
         _buildSimpleRow(
-          label: "Total Budget",
+          label: languages.lblTotalBudget,
           value: data.totalBudget.validate().toPriceFormat(),
         ),
         _buildSimpleRow(
-          label: "Total Days",
+          label: languages.lblTotalDays,
           value: data.totalDays?.toString() ?? '0',
         ),
         _buildSimpleRow(
-          label: "Total Hours",
+          label: languages.lblTotalHours,
           value: data.totalHours?.toString() ?? '0',
         ),
         _buildSimpleRow(
-          label: "Remote Work Level",
-          value: data.remoteWorkLevel?.displayName ?? '',
+          label: languages.lblRemoteWorkLevelHint,
+          value: data.remoteWorkLevel == null ? '' : switch (data.remoteWorkLevel!) {
+            RemoteWorkLevel.onsite0 => languages.lblRemoteWorkOnsite100,
+            RemoteWorkLevel.remote25 => languages.lblRemoteWork25,
+            RemoteWorkLevel.remote50 => languages.lblRemoteWork50,
+            RemoteWorkLevel.remote75 => languages.lblRemoteWork75,
+            RemoteWorkLevel.remote100 => languages.lblRemoteWork100,
+          },
         ),
         _buildSimpleRow(
-          label: "Travel Required",
+          label: languages.lblTravelRequiredHint,
           value: travelRequiredValue,
         ),
         _buildSimpleRow(
-          label: "Career Level",
-          value: data.careerLevel?.displayName ?? '',
+          label: languages.lblCareerLevelHint,
+          value: data.careerLevel == null ? '' : switch (data.careerLevel!) {
+            CareerLevel.notSpecified => languages.lblCareerNotSpecified,
+            CareerLevel.entryLevel => languages.lblCareerEntryLevel,
+            CareerLevel.intermediateLevel => languages.lblCareerIntermediateLevel,
+            CareerLevel.experienced => languages.lblCareerExperienced,
+            CareerLevel.professional => languages.lblCareerProfessional,
+            CareerLevel.middleManagement => languages.lblCareerMiddleManagement,
+            CareerLevel.executiveManagement => languages.lblCareerExecutiveManagement,
+            CareerLevel.seniorManagement => languages.lblCareerSeniorManagement,
+            CareerLevel.director => languages.lblCareerDirector,
+            CareerLevel.technician => languages.lblCareerTechnician,
+            CareerLevel.leader => languages.lblCareerLeader,
+            CareerLevel.manager => languages.lblCareerManager,
+          },
         ),
         _buildSimpleRow(
-          label: "Education Level",
-          value: data.educationLevel?.displayName ?? '',
+          label: languages.lblEducationLevel,
+          value: data.educationLevel == null ? '' : switch (data.educationLevel!) {
+            EducationLevel.notSpecified => languages.lblEduNotSpecified,
+            EducationLevel.anyGraduate => languages.lblEduAnyGraduate,
+            EducationLevel.apprenticeshipDegree => languages.lblEduApprenticeship,
+            EducationLevel.traineeshipDegree => languages.lblEduTraineeship,
+            EducationLevel.secondaryDegree => languages.lblEduSecondaryDegree,
+            EducationLevel.undergraduateDiploma => languages.lblEduUndergraduate,
+            EducationLevel.highSchoolGraduate => languages.lblEduHighSchool,
+            EducationLevel.associateDegree => languages.lblEduAssociate,
+            EducationLevel.collegeDegree => languages.lblEduCollege,
+            EducationLevel.universityDegree => languages.lblEduUniversity,
+            EducationLevel.bachelorsDegree => languages.lblEduBachelors,
+            EducationLevel.mastersDegree => languages.lblEduMasters,
+            EducationLevel.doctorateDegree => languages.lblEduDoctorate,
+            EducationLevel.professionalDegree => languages.lblEduProfessional,
+          },
         ),
 
         // Description, Requirements, Duties, Benefits - Simple sections

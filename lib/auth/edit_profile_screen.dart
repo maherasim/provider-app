@@ -1299,7 +1299,22 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             return DropdownMenuItem<ProfileEducationLevel>(
                               value: level,
                               child: Text(
-                                level.displayName,
+                                switch (level) {
+                                  ProfileEducationLevel.unspecified => languages.lblEduNotSpecified,
+                                  ProfileEducationLevel.anyGraduate => languages.lblEduAnyGraduate,
+                                  ProfileEducationLevel.apprenticeshipDegree => languages.lblEduApprenticeship,
+                                  ProfileEducationLevel.traineeshipDegree => languages.lblEduTraineeship,
+                                  ProfileEducationLevel.secondaryDegree => languages.lblEduSecondaryDegree,
+                                  ProfileEducationLevel.undergraduateDiploma => languages.lblEduUndergraduate,
+                                  ProfileEducationLevel.highSchoolGraduate => languages.lblEduHighSchool,
+                                  ProfileEducationLevel.associateDegree => languages.lblEduAssociate,
+                                  ProfileEducationLevel.collegeDegree => languages.lblEduCollege,
+                                  ProfileEducationLevel.universityDegree => languages.lblEduUniversity,
+                                  ProfileEducationLevel.bachelorsDegree => languages.lblEduBachelors,
+                                  ProfileEducationLevel.mastersDegree => languages.lblEduMasters,
+                                  ProfileEducationLevel.doctorateDegree => languages.lblEduDoctorate,
+                                  ProfileEducationLevel.professionalDegree => languages.lblEduProfessional,
+                                },
                                 style: primaryTextStyle(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,

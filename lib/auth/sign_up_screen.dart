@@ -61,7 +61,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   FocusNode designationFocus = FocusNode();
   FocusNode handymanCommissionFocus = FocusNode();
 
-  String? selectedUserTypeValue;
+  String? selectedUserTypeValue = USER_TYPE_PROVIDER;
 
   bool isAcceptedTc = false;
   Country selectedCountry = defaultCountry();
@@ -289,10 +289,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               DropdownMenuItem(
                 child: Text(languages.provider, style: primaryTextStyle()),
                 value: USER_TYPE_PROVIDER,
-              ),
-              DropdownMenuItem(
-                child: Text(languages.handyman, style: primaryTextStyle()),
-                value: USER_TYPE_HANDYMAN,
               ),
             ],
             focusNode: userTypeFocus,

@@ -17,6 +17,7 @@ import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:handyman_provider_flutter/utils/extensions/num_extenstions.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../../components/base_scaffold_widget.dart';
@@ -129,15 +130,11 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Divider(height: 32, thickness: 1),
-        Text(
-          title,
-          style: boldTextStyle(size: 16),
-        ),
+        Text(title, style: boldTextStyle(size: 16)),
         12.height,
-        ReadMoreText(
-          parseHtmlString(content),
-          style: primaryTextStyle(size: 14),
-          colorClickableText: gradientBlue,
+        HtmlWidget(
+          content,
+          textStyle: primaryTextStyle(size: 14),
         ),
       ],
     );
@@ -534,9 +531,9 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                                 )
                               ],
                             ),
-                            builder: (context) => Text(
-                               parseHtmlString(bidderData.whyChooseMe.validate()),
-                              style: secondaryTextStyle(size: 12,color: textPrimaryColorGlobal),
+                            builder: (context) => HtmlWidget(
+                              bidderData.whyChooseMe.validate(),
+                              textStyle: secondaryTextStyle(size: 12, color: textPrimaryColorGlobal),
                             ),
                           );
                         },

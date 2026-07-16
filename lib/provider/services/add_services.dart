@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter_quill/flutter_quill.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,7 +27,6 @@ import 'package:handyman_provider_flutter/utils/constant.dart';
 import 'package:handyman_provider_flutter/utils/model_keys.dart';
 import 'package:handyman_provider_flutter/utils/colors.dart';
 import 'package:nb_utils/nb_utils.dart';
-import '../../components/chat_gpt_loder.dart';
 import '../../models/multi_language_request_model.dart';
 import '../../models/static_data_model.dart';
 import '../../models/user_data.dart';
@@ -49,7 +50,6 @@ class _AddServicesState extends State<AddServices> {
   TextEditingController serviceNameCont = TextEditingController();
   TextEditingController priceCont = TextEditingController();
   TextEditingController discountCont = TextEditingController();
-  TextEditingController descriptionCont = TextEditingController();
   TextEditingController durationContDay = TextEditingController();
   TextEditingController durationContHr = TextEditingController();
   TextEditingController durationContMin = TextEditingController();
@@ -58,7 +58,9 @@ class _AddServicesState extends State<AddServices> {
   TextEditingController miutesCont = TextEditingController();
   TextEditingController countryTaxCont = TextEditingController();
   TextEditingController minBookingCont = TextEditingController();
-  TextEditingController cancellationPolicyCont = TextEditingController();
+
+  QuillController descriptionQuillController = QuillController.basic();
+  QuillController cancellationQuillController = QuillController.basic();
 
   /// FocusNode
   FocusNode serviceNameFocus = FocusNode();
@@ -184,7 +186,7 @@ class _AddServicesState extends State<AddServices> {
       
       print('🔵 SETTING IDs: countryId=$countryId, stateId=$stateId, cityId=$cityId');
       minBookingCont.text = widget.data!.minimumBookings.validate();
-      cancellationPolicyCont.text = widget.data!.cancellationPolicy.validate();
+      _setControllerText(cancellationQuillController, widget.data!.cancellationPolicy.validate());
       tempAttachments = widget.data!.attchments.validate();
       imageFiles = widget.data!.attchments
           .validate()
@@ -205,7 +207,7 @@ class _AddServicesState extends State<AddServices> {
       if (serviceDescription.isEmpty) {
         serviceDescription = widget.data?.description.validate() ?? "";
       }
-      descriptionCont.text = serviceDescription;
+      _setControllerText(descriptionQuillController, serviceDescription);
       categoryId = widget.data!.categoryId.validate();
       subCategoryId = widget.data!.subCategoryId.validate();
       isFeature = widget.data!.isFeatured.validate() == 1 ? true : false;
@@ -526,7 +528,7 @@ class _AddServicesState extends State<AddServices> {
       CommonKeys.stateId: stateId.toString(),
       CommonKeys.cityId: cityId.toString(),
       AddServiceKey.countryTax: countryId.toString(),
-      AddServiceKey.cancellationPolicy: cancellationPolicyCont.text.validate(),
+      AddServiceKey.cancellationPolicy: _controllerToHtml(cancellationQuillController),
       AddServiceKey.minBooking: minBookingCont.text.validate(),
       AddServiceKey.remoteWorkLevel: selectedRemoteWorkLevel!.backendValue,
       AddServiceKey.careerLevel: selectedCareerLevel!.backendValue,
@@ -655,22 +657,23 @@ class _AddServicesState extends State<AddServices> {
   void updateTranslation() {
     appStore.setLoading(true);
     final languageCode = appStore.selectedLanguage.languageCode.validate();
-    if (serviceNameCont.text.isEmpty && descriptionCont.text.isEmpty) {
+    final descText = _controllerToHtml(descriptionQuillController);
+    if (serviceNameCont.text.isEmpty && descText.isEmpty) {
       translations.remove(languageCode);
     } else {
       if (languageCode != DEFAULT_LANGUAGE) {
         translations[languageCode] = translations[languageCode]?.copyWith(
               name: serviceNameCont.text.validate(),
-              description: descriptionCont.text.validate(),
+              description: descText,
             ) ??
             MultiLanguageRequest(
               name: serviceNameCont.text.validate(),
-              description: descriptionCont.text.validate(),
+              description: descText,
             );
       } else {
         enTranslations = enTranslations.copyWith(
           name: serviceNameCont.text.validate(),
-          description: descriptionCont.text.validate(),
+          description: descText,
         );
       }
     }
@@ -684,11 +687,11 @@ class _AddServicesState extends State<AddServices> {
     final languageCode = appStore.selectedLanguage.languageCode;
     if (languageCode == DEFAULT_LANGUAGE) {
       serviceNameCont.text = enTranslations.name.validate();
-      descriptionCont.text = enTranslations.description.validate();
+      _setControllerText(descriptionQuillController, enTranslations.description.validate());
     } else {
       final translation = translations[languageCode] ?? MultiLanguageRequest();
       serviceNameCont.text = translation.name.validate();
-      descriptionCont.text = translation.description.validate();
+      _setControllerText(descriptionQuillController, translation.description.validate());
     }
     setState(() {});
   }
@@ -698,7 +701,7 @@ class _AddServicesState extends State<AddServices> {
 //region Dispose All TextControllers
   void disposeAllTextFieldsController() {
     serviceNameCont.clear();
-    descriptionCont.clear();
+    descriptionQuillController.clear();
     setState(() {});
   }
 
@@ -738,6 +741,167 @@ class _AddServicesState extends State<AddServices> {
     });
   }
 
+//endregion
+
+//region Rich text helpers
+  void _setControllerText(QuillController ctrl, String content) {
+    final text = _htmlToPlain(content);
+    ctrl.clear();
+    if (text.isNotEmpty) {
+      ctrl.replaceText(0, ctrl.document.length - 1, text, null);
+    }
+  }
+
+  String _htmlToPlain(String html) {
+    if (html.isEmpty) return '';
+    return html
+        .replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n')
+        .replaceAll(RegExp(r'</li>', caseSensitive: false), '\n')
+        .replaceAll(RegExp(r'</p>', caseSensitive: false), '\n')
+        .replaceAll(RegExp(r'<[^>]+>'), '')
+        .replaceAll('&amp;', '&')
+        .replaceAll('&lt;', '<')
+        .replaceAll('&gt;', '>')
+        .replaceAll('&nbsp;', ' ')
+        .replaceAll(RegExp(r'\n{3,}'), '\n\n')
+        .trim();
+  }
+
+  String _controllerToHtml(QuillController ctrl) {
+    final plainText = ctrl.document.toPlainText();
+    if (plainText.trim().isEmpty) return '';
+    final ops = ctrl.document.toDelta().toJson() as List<dynamic>;
+    final html = StringBuffer();
+    final lineBuf = StringBuffer();
+    bool inUl = false, inOl = false;
+
+    String esc(String s) => s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+
+    void flushLine(String? listType) {
+      final content = lineBuf.toString();
+      lineBuf.clear();
+      if (listType == 'bullet') {
+        if (inOl) { html.write('</ol>'); inOl = false; }
+        if (!inUl) { html.write('<ul>'); inUl = true; }
+        html.write('<li>$content</li>');
+      } else if (listType == 'ordered') {
+        if (inUl) { html.write('</ul>'); inUl = false; }
+        if (!inOl) { html.write('<ol>'); inOl = true; }
+        html.write('<li>$content</li>');
+      } else {
+        if (inUl) { html.write('</ul>'); inUl = false; }
+        if (inOl) { html.write('</ol>'); inOl = false; }
+        html.write('$content<br>');
+      }
+    }
+
+    String applyInline(String text, Map<String, dynamic>? attrs) {
+      String result = esc(text);
+      if (attrs == null) return result;
+      if (attrs['bold'] == true) result = '<strong>$result</strong>';
+      if (attrs['italic'] == true) result = '<em>$result</em>';
+      if (attrs['underline'] == true) result = '<u>$result</u>';
+      return result;
+    }
+
+    for (final rawOp in ops) {
+      final op = rawOp as Map<String, dynamic>;
+      final insert = op['insert'];
+      if (insert is! String) continue;
+      final attrs = op['attributes'] as Map<String, dynamic>?;
+      final listType = attrs?['list'] as String?;
+      final segments = insert.split('\n');
+      for (int i = 0; i < segments.length; i++) {
+        if (segments[i].isNotEmpty) lineBuf.write(applyInline(segments[i], attrs));
+        if (i < segments.length - 1) flushLine(listType);
+      }
+    }
+
+    if (lineBuf.isNotEmpty) {
+      if (inUl) { html.write('</ul>'); }
+      if (inOl) { html.write('</ol>'); }
+      html.write(lineBuf.toString());
+    } else {
+      if (inUl) html.write('</ul>');
+      if (inOl) html.write('</ol>');
+    }
+
+    String result = html.toString();
+    while (result.endsWith('<br>')) result = result.substring(0, result.length - 4);
+    return result;
+  }
+
+  Widget _buildRichField({
+    required String label,
+    required QuillController controller,
+    required FocusNode focusNode,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: secondaryTextStyle(size: 12)),
+        6.height,
+        Container(
+          decoration: BoxDecoration(
+            color: context.scaffoldBackgroundColor,
+            border: Border.all(color: context.dividerColor),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              QuillSimpleToolbar(
+                controller: controller,
+                config: QuillSimpleToolbarConfig(
+                  multiRowsDisplay: false,
+                  showBoldButton: true,
+                  showItalicButton: true,
+                  showUnderLineButton: true,
+                  showStrikeThrough: false,
+                  showListBullets: true,
+                  showListNumbers: true,
+                  showUndo: true,
+                  showRedo: false,
+                  showFontFamily: false,
+                  showFontSize: false,
+                  showColorButton: false,
+                  showBackgroundColorButton: false,
+                  showClearFormat: false,
+                  showLink: false,
+                  showSearchButton: false,
+                  showHeaderStyle: false,
+                  showIndent: false,
+                  showCodeBlock: false,
+                  showInlineCode: false,
+                  showQuote: false,
+                  showAlignmentButtons: false,
+                  showDirection: false,
+                  showSubscript: false,
+                  showSuperscript: false,
+                  showDividers: false,
+                  showSmallButton: false,
+                  showListCheck: false,
+                  showLineHeightButton: false,
+                ),
+              ),
+              Divider(height: 1, color: context.dividerColor),
+              Container(
+                constraints: const BoxConstraints(minHeight: 100),
+                child: QuillEditor.basic(
+                  controller: controller,
+                  focusNode: focusNode,
+                  config: QuillEditorConfig(
+                    placeholder: languages.writeHere,
+                    padding: const EdgeInsets.all(10),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 //endregion
 
 //region Build Widget
@@ -1287,50 +1451,15 @@ class _AddServicesState extends State<AddServices> {
             Column(
               spacing: 16,
               children: [
-                AppTextField(
-                  textFieldType: TextFieldType.MULTILINE,
-                  minLines: 5,
-                  controller: descriptionCont,
-                  focus: descriptionFocus,
-                  nextFocus: cancellationPolicyFocus,
-                  enableChatGPT: appConfigurationStore.chatGPTStatus,
-                  promptFieldInputDecorationChatGPT:
-                      inputDecoration(context).copyWith(
-                    hintText: languages.writeHere,
-                    fillColor: context.scaffoldBackgroundColor,
-                    filled: true,
-                  ),
-                  testWithoutKeyChatGPT: appConfigurationStore.testWithoutKey,
-                  loaderWidgetForChatGPT: const ChatGPTLoadingWidget(),
-                  errorThisFieldRequired: languages.hintRequired,
-                  isValidationRequired: checkValidationLanguage(),
-                  decoration: inputDecoration(
-                    context,
-                    hint: languages.hintDescription,
-                    fillColor: context.scaffoldBackgroundColor,
-                  ),
+                _buildRichField(
+                  label: languages.hintDescription,
+                  controller: descriptionQuillController,
+                  focusNode: descriptionFocus,
                 ),
-                AppTextField(
-                  textFieldType: TextFieldType.MULTILINE,
-                  minLines: 5,
-                  controller: cancellationPolicyCont,
-                  focus: cancellationPolicyFocus,
-                  enableChatGPT: appConfigurationStore.chatGPTStatus,
-                  promptFieldInputDecorationChatGPT:
-                  inputDecoration(context).copyWith(
-                    hintText: languages.writeHere,
-                    fillColor: context.scaffoldBackgroundColor,
-                    filled: true,
-                  ),
-                  testWithoutKeyChatGPT: appConfigurationStore.testWithoutKey,
-                  loaderWidgetForChatGPT: const ChatGPTLoadingWidget(),
-                  errorThisFieldRequired: languages.hintRequired,
-                  isValidationRequired: checkValidationLanguage(),
-                  decoration: inputDecoration(
-                    context,
-                    hint: languages.lblCancellationPolicy,
-                    fillColor: context.scaffoldBackgroundColor,
-                  ),
+                _buildRichField(
+                  label: languages.lblCancellationPolicy,
+                  controller: cancellationQuillController,
+                  focusNode: cancellationPolicyFocus,
                 ),
                 if (isAdmin) Container(
                     decoration: boxDecorationDefault(
@@ -1546,6 +1675,8 @@ class _AddServicesState extends State<AddServices> {
 
   @override
   void dispose() {
+    descriptionQuillController.dispose();
+    cancellationQuillController.dispose();
     setStatusBarColor(Colors.transparent);
     super.dispose();
   }

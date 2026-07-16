@@ -5,6 +5,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_quill/flutter_quill.dart' show FlutterQuillLocalizations;
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:handyman_provider_flutter/locale/applocalizations.dart';
 import 'package:handyman_provider_flutter/locale/base_language.dart';
@@ -260,6 +261,7 @@ class _MyAppState extends State<MyApp> {
           supportedLocales: LanguageDataModel.languageLocales(),
           localizationsDelegates: [
             AppLocalizations(),
+            FlutterQuillLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,

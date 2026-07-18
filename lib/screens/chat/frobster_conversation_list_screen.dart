@@ -25,15 +25,20 @@ class _FrobsterConversationListScreenState extends State<FrobsterConversationLis
   bool _hasError = false;
   String? _errorMessage;
   final ScrollController _controller = ScrollController();
+  bool _disposed = false;
 
   @override
   void initState() {
     super.initState();
+    _disposed = false;
     log('FrobsterConversationListScreen initState called');
     _controller.addListener(_onScroll);
     LiveStream().on(LIVESTREAM_UPDATE_CHAT_UNREAD, (p0) {
+      // Guard with _disposed flag so stale listeners from prior state instances
+      // (nb_utils LiveStream has no per-listener removal) do nothing after dispose.
+      if (_disposed || !mounted) return;
       log('LIVESTREAM_UPDATE_CHAT_UNREAD received, refreshing chat list');
-      if (mounted) _fetch(page: 1, refresh: true);
+      _fetch(page: 1, refresh: true);
     });
     // Call fetch immediately and also after build
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -44,8 +49,11 @@ class _FrobsterConversationListScreenState extends State<FrobsterConversationLis
 
   @override
   void dispose() {
+    _disposed = true;
     _controller.dispose();
-    LiveStream().dispose(LIVESTREAM_UPDATE_CHAT_UNREAD);
+    // Do NOT call LiveStream().dispose(LIVESTREAM_UPDATE_CHAT_UNREAD) here —
+    // that would also remove the dashboard's listener for the same key.
+    // The _disposed flag above prevents stale callbacks from doing anything.
     super.dispose();
   }
 

@@ -1949,14 +1949,6 @@ class LanguageDe extends Languages {
   @override
   String get sendMessage => 'Nachricht senden';
 
-  @override
-  String messageHiddenDueToPolicy(List<String> policyTypes) {
-    final types = policyTypes
-        .map((e) => e.trim().toLowerCase() == 'phone' ? 'Telefon' : e.trim())
-        .where((e) => e.isNotEmpty)
-        .join(', ');
-    return 'Nachricht aufgrund der Richtlinie ausgeblendet${types.isNotEmpty ? ' ($types)' : ''}';
-  }
 
   @override
   String get handymanLocation => 'Fachkraft-Standort';

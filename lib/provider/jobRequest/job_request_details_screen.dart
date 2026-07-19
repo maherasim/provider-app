@@ -128,7 +128,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      appBarTitle: 'Bid Details',
+      appBarTitle: languages.lblBidDetails,
       body: SnapHelperWidget<JobRequestDetailResponse?>(
         future: future,
         onSuccess: (data) {
@@ -262,7 +262,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
 
     Widget _progressSteps() {
       final activeTill = currentStep();
-      final labels = ['Accept', 'Advance', 'Advance P.', "Let's Start", 'Work'];
+      final labels = [languages.accept, languages.lblProgressAdvance, languages.lblProgressAdvancePaidShort, languages.lblProgressLetsStart, languages.lblProgressWork];
       return Column(
         children: [
           Row(
@@ -395,7 +395,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   _buildInfoCard(
                     icon: Icons.h_mobiledata,
                     iconColor: gradientBlue,
-                    title: 'Title',
+                    title: languages.lblTitle,
                     value: postJobDetail!.postRequest?.title?.validate() ??
                         postJobDetail!.title?.validate() ??
                         '',
@@ -418,7 +418,12 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                     icon: Icons.attach_money,
                     iconColor: Colors.green[600]!,
                     title: languages.lblRateType,
-                    value: postJobDetail!.postRequest?.priceType.displayName.validate() ?? '',
+                    value: switch (postJobDetail!.postRequest?.priceType) {
+                      PriceType.hourly => languages.lblHourly,
+                      PriceType.fixed => languages.lblFixed,
+                      PriceType.daily => languages.lblDaily,
+                      null => '',
+                    },
                   ),
                   _buildInfoCard(
                     icon: Icons.event_available,
@@ -515,7 +520,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                     Icon(Icons.flag, color: gradientBlue, size: 24),
                     6.height,
                     Text(
-                      'Status',
+                      languages.lblStatus,
                       style: secondaryTextStyle(size: 11),
                     ),
                     4.height,
@@ -547,7 +552,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
 
               // Employer Review (reviews from customer about provider)
               _buildReviewSection(
-                'Employer Review',
+                languages.lblEmployerReview,
                 postJobDetail!.providerReview,
                 reviewReportType: _ugcReviewTypePostJobBidCustomerRating,
                 showReportOnReviews:
@@ -555,7 +560,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               ),
 
               // Customer Review (reviews from provider about customer / employer)
-              _buildReviewSection('Customer Review', postJobDetail!.customerReview),
+              _buildReviewSection(languages.lblCustomerReview, postJobDetail!.customerReview),
 
               24.height,
 
@@ -569,7 +574,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               if(postJobDetail!.status == RequestStatus.accepted) Row(
                 children: [
                   Expanded(
-                    child: _gradientButton(context, 'Split Payment', () async {
+                    child: _gradientButton(context, languages.lblSplitPayment, () async {
                         bool? res = await showInDialog(
                             context,
                             contentPadding: EdgeInsets.zero,
@@ -586,7 +591,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   ),
                   16.width,
                   Expanded(
-                    child: _gradientButton(context, 'Cancel', () async {
+                    child: _gradientButton(context, languages.lblCancel, () async {
                         confirmationRequestDialog(context,RequestStatus.cancel);
                     }),
                   ),
@@ -598,7 +603,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                 children: [
                   Expanded(
                     child: AppButton(
-                      text: 'hold',
+                      text: languages.hold,
                       textStyle: boldTextStyle(color: white, size: 16),
                       color: hold,
                       width: context.width(),
@@ -619,7 +624,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   ),
                   16.width,
                   Expanded(
-                    child: _gradientButton(context, 'Done', () async {
+                    child: _gradientButton(context, languages.done, () async {
                       confirmationRequestDialog(context, RequestStatus.done);
                     }),
                   ),
@@ -629,7 +634,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: _gradientButton(context, 'Chat', () async {
+                        child: _gradientButton(context, languages.lblChat, () async {
                             final customerId = postJobDetail?.customer?.id;
                             if (customerId == null) {
                               toast(languages.somethingWentWrong);
@@ -661,13 +666,13 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               if(postJobDetail!.status == RequestStatus.hold) Row(
                 children: [
                   Expanded(
-                    child: _gradientButton(context, 'Resume Work', () async {
+                    child: _gradientButton(context, languages.resumeWork, () async {
                   confirmationRequestDialog(context, RequestStatus.inProgress);
                     }),
                   ),
                   16.width,
                   Expanded(
-                    child: _gradientButton(context, 'Chat', () async {
+                    child: _gradientButton(context, languages.lblChat, () async {
                         final customerId = postJobDetail?.customer?.id;
                         if (customerId == null) {
                           toast(languages.somethingWentWrong);
@@ -699,13 +704,13 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   Row(
                 children: [
                   Expanded(
-                    child: _gradientButton(context, 'Complete', () async {
+                    child: _gradientButton(context, languages.lblMarkComplete, () async {
                       confirmationRequestDialog(context, RequestStatus.completed);
                     }),
                   ),
                   16.width,
                   Expanded(
-                        child: _gradientButton(context, '+ Extra Charges', () async {
+                        child: _gradientButton(context, '+ ${languages.lblExtraCharges}', () async {
                         bool? res = await showInDialog(
                           context,
                           contentPadding: EdgeInsets.zero,
@@ -725,7 +730,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: _gradientButton(context, 'Chat', () async {
+                        child: _gradientButton(context, languages.lblChat, () async {
                             final customerId = postJobDetail?.customer?.id;
                             if (customerId == null) {
                               toast(languages.somethingWentWrong);
@@ -757,13 +762,13 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               if(postJobDetail!.status == RequestStatus.advancePaid) Row(
                 children: [
                   Expanded(
-                    child: _gradientButton(context, 'Start Work', () async {
+                    child: _gradientButton(context, languages.lblStartWork, () async {
                       confirmationRequestDialog(context, RequestStatus.inProcess);
                     }),
                   ),
                   16.width,
                   Expanded(
-                    child: _gradientButton(context, 'Chat', () async {
+                    child: _gradientButton(context, languages.lblChat, () async {
                         final customerId = postJobDetail?.customer?.id;
                         if (customerId == null) {
                           toast(languages.somethingWentWrong);
@@ -793,7 +798,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
               if([RequestStatus.inProcess, RequestStatus.done, RequestStatus.completed].contains(postJobDetail!.status)) Row(
                 children: [
                   Expanded(
-                    child: _gradientButton(context, 'Chat', () async {
+                    child: _gradientButton(context, languages.lblChat, () async {
                         final customerId = postJobDetail?.customer?.id;
                         if (customerId == null) {
                           toast(languages.somethingWentWrong);
@@ -825,7 +830,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: _gradientButton(context, 'Chat', () async {
+                        child: _gradientButton(context, languages.lblChat, () async {
                             final customerId = postJobDetail?.customer?.id;
                             if (customerId == null) {
                               toast(languages.somethingWentWrong);
@@ -852,7 +857,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                       ),
                       16.width,
                       Expanded(
-                        child: _gradientButton(context, 'Download', () async {
+                        child: _gradientButton(context, languages.lblDownload, () async {
                         if(postJobDetail!.id == null) {
                           toast(languages.somethingWentWrong);
                           return;
@@ -874,7 +879,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                     Row(
                       children: [
                         Expanded(
-                          child: _gradientButton(context, 'Rate Customer', () async {
+                          child: _gradientButton(context, languages.rateCustomer, () async {
                             if (postJobDetail?.id == null || postJobDetail?.providerId == null || postJobDetail?.customer?.id == null) {
                               toast(languages.somethingWentWrong);
                               return;
@@ -1087,7 +1092,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                       children: [
                         Row(
                           children: [
-                            Text('Tax', style: secondaryTextStyle(size: 12)),
+                            Text(languages.lblTax, style: secondaryTextStyle(size: 12)),
                             Text(' ($taxPercent%)', style: boldTextStyle(color: gradientBlue, size: 12)).expand()
                           ],
                         ).expand(),
@@ -1124,7 +1129,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                 children: [
                   Row(
                     children: [
-                      Text('Advance Payment(${postJobDetail?.advancePercent ?? 0}%)', style: secondaryTextStyle(size: 12)).expand(),
+                      Text('${languages.advancePayment} (${postJobDetail?.advancePercent ?? 0}%)', style: secondaryTextStyle(size: 12)).expand(),
                       16.width,
                       PriceWidget(
                         price: advance,

@@ -938,7 +938,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                     Text(
                                       selectedLanguages.isEmpty
                                           ? languages.lblSelectLanguagesHint
-                                          : '${selectedLanguages.length} selected',
+                                          : '${selectedLanguages.length} ${languages.lblSelected}',
                                       style: selectedLanguages.isEmpty
                                           ? secondaryTextStyle()
                                           : primaryTextStyle(size: 14),
@@ -1314,6 +1314,12 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                   ProfileEducationLevel.mastersDegree => languages.lblEduMasters,
                                   ProfileEducationLevel.doctorateDegree => languages.lblEduDoctorate,
                                   ProfileEducationLevel.professionalDegree => languages.lblEduProfessional,
+                                  ProfileEducationLevel.notSpecified2 => languages.lblEduNotSpecified2,
+                                  ProfileEducationLevel.anyGraduate2 => languages.lblEduAnyGraduate2,
+                                  ProfileEducationLevel.apprenticeshipDegree2 => languages.lblEduApprenticeship2,
+                                  ProfileEducationLevel.traineeshipDegree2 => languages.lblEduTraineeship2,
+                                  ProfileEducationLevel.secondaryDegree2 => languages.lblEduSecondaryDegree2,
+                                  ProfileEducationLevel.undergraduateDiploma2 => languages.lblEduUndergraduate2,
                                 },
                                 style: primaryTextStyle(),
                                 maxLines: 1,

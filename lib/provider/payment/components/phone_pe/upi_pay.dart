@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
+import '../../../../main.dart';
+
 import '../../../../components/base_scaffold_widget.dart';
 import '../../../../components/cached_image_widget.dart';
 import 'upi_app_model.dart';
@@ -31,7 +33,7 @@ class _UpiPayScreenState extends State<UpiPayScreen> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      appBarTitle: "Upi Apps",
+      appBarTitle: languages.upiApps,
       body: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
         itemCount: upiApps.length,

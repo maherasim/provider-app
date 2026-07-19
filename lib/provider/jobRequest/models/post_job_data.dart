@@ -374,7 +374,13 @@ enum EducationLevel {
   bachelorsDegree("Bachelor's Degree", "bachelors_degree"),
   mastersDegree("Master's Degree", "masters_degree"),
   doctorateDegree("Doctorate Degree", "doctorate_degree"),
-  professionalDegree("Professional Degree", "professional_degree");
+  professionalDegree("Professional Degree", "professional_degree"),
+  notSpecified2("Bachelor", "not_specified_2"),
+  anyGraduate2("Master", "any_graduate_2"),
+  apprenticeshipDegree2("Staatsexamen", "apprenticeship_degree_2"),
+  traineeshipDegree2("Promotion (Doktor)", "traineeship_degree_2"),
+  secondaryDegree2("Habilitation", "secondary_degree_2"),
+  undergraduateDiploma2("Professur", "undergraduate_diploma_2");
 
   final String displayName;
   final String backendValue;
@@ -397,7 +403,13 @@ enum ProfileEducationLevel {
   bachelorsDegree("Bachelor", "bachelors_degree"),
   mastersDegree("Master", "masters_degree"),
   doctorateDegree("Promotion (Doktor)", "doctorate_degree"),
-  professionalDegree("Beruflicher Abschluss", "professional_degree");
+  professionalDegree("Beruflicher Abschluss", "professional_degree"),
+  notSpecified2("Bachelor", "not_specified_2"),
+  anyGraduate2("Master", "any_graduate_2"),
+  apprenticeshipDegree2("Staatsexamen", "apprenticeship_degree_2"),
+  traineeshipDegree2("Promotion (Doktor)", "traineeship_degree_2"),
+  secondaryDegree2("Habilitation", "secondary_degree_2"),
+  undergraduateDiploma2("Professur", "undergraduate_diploma_2");
 
   final String displayName;
   final String backendValue;

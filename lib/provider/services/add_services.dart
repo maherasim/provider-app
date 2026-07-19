@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_quill/quill_delta.dart';
+import 'package:html/dom.dart' as dom;
+import 'package:html/parser.dart' as html_parser;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -745,26 +748,89 @@ class _AddServicesState extends State<AddServices> {
 
 //region Rich text helpers
   void _setControllerText(QuillController ctrl, String content) {
-    final text = _htmlToPlain(content);
-    ctrl.clear();
-    if (text.isNotEmpty) {
-      ctrl.replaceText(0, ctrl.document.length - 1, text, null);
+    if (content.isEmpty) {
+      ctrl.clear();
+      return;
+    }
+    final delta = _htmlToDelta(content);
+    ctrl.document = Document.fromDelta(delta);
+    ctrl.updateSelection(
+      TextSelection.collapsed(offset: 0),
+      ChangeSource.local,
+    );
+  }
+
+  Delta _htmlToDelta(String html) {
+    final doc = html_parser.parse(html);
+    final delta = Delta();
+    _processDeltaNodes(doc.body?.nodes ?? [], delta, {});
+    final ops = delta.toJson() as List;
+    if (ops.isEmpty || !(ops.last['insert'] as String? ?? '').endsWith('\n')) {
+      delta.insert('\n');
+    }
+    return delta;
+  }
+
+  void _processDeltaNodes(Iterable<dom.Node> nodes, Delta delta, Map<String, dynamic> inlineAttrs) {
+    for (final node in nodes) {
+      _processDeltaNode(node, delta, inlineAttrs);
     }
   }
 
-  String _htmlToPlain(String html) {
-    if (html.isEmpty) return '';
-    return html
-        .replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n')
-        .replaceAll(RegExp(r'</li>', caseSensitive: false), '\n')
-        .replaceAll(RegExp(r'</p>', caseSensitive: false), '\n')
-        .replaceAll(RegExp(r'<[^>]+>'), '')
-        .replaceAll('&amp;', '&')
-        .replaceAll('&lt;', '<')
-        .replaceAll('&gt;', '>')
-        .replaceAll('&nbsp;', ' ')
-        .replaceAll(RegExp(r'\n{3,}'), '\n\n')
-        .trim();
+  void _processDeltaNode(dom.Node node, Delta delta, Map<String, dynamic> inlineAttrs) {
+    if (node is dom.Text) {
+      final text = node.text;
+      if (text.isEmpty) return;
+      if (inlineAttrs.isEmpty) {
+        delta.insert(text);
+      } else {
+        delta.insert(text, Map.from(inlineAttrs));
+      }
+    } else if (node is dom.Element) {
+      final tag = node.localName ?? '';
+      switch (tag) {
+        case 'ul':
+          for (final child in node.nodes) {
+            if (child is dom.Element && child.localName == 'li') {
+              _processDeltaNodes(child.nodes, delta, inlineAttrs);
+              delta.insert('\n', {'list': 'bullet'});
+            }
+          }
+          break;
+        case 'ol':
+          for (final child in node.nodes) {
+            if (child is dom.Element && child.localName == 'li') {
+              _processDeltaNodes(child.nodes, delta, inlineAttrs);
+              delta.insert('\n', {'list': 'ordered'});
+            }
+          }
+          break;
+        case 'p':
+          _processDeltaNodes(node.nodes, delta, inlineAttrs);
+          delta.insert('\n');
+          break;
+        case 'br':
+          delta.insert('\n');
+          break;
+        case 'strong':
+        case 'b':
+          _processDeltaNodes(node.nodes, delta, {...inlineAttrs, 'bold': true});
+          break;
+        case 'em':
+        case 'i':
+          _processDeltaNodes(node.nodes, delta, {...inlineAttrs, 'italic': true});
+          break;
+        case 'u':
+          _processDeltaNodes(node.nodes, delta, {...inlineAttrs, 'underline': true});
+          break;
+        case 's':
+        case 'strike':
+          _processDeltaNodes(node.nodes, delta, {...inlineAttrs, 'strike': true});
+          break;
+        default:
+          _processDeltaNodes(node.nodes, delta, inlineAttrs);
+      }
+    }
   }
 
   String _controllerToHtml(QuillController ctrl) {

@@ -188,12 +188,12 @@ class _VerifyProviderScreenState extends State<VerifyProviderScreen> {
               8.height,
               // Instruction text
               Text(
-                'Upload New Document',
+                languages.uploadNewDocument,
                 style: boldTextStyle(size: 16),
               ).paddingOnly(bottom: 8),
               if (documents.isEmpty && !appStore.isLoading)
                 Text(
-                  'No document types available. Please contact support.',
+                  languages.noDocumentTypesAvailableContactSupport,
                   style: secondaryTextStyle(color: Colors.orange),
                 ).paddingOnly(bottom: 8),
               8.height,
@@ -228,7 +228,7 @@ class _VerifyProviderScreenState extends State<VerifyProviderScreen> {
                         borderRadius: radius(),
                       ),
                       child: Text(
-                        'No document types available',
+                        languages.noDocumentTypesAvailable,
                         style: secondaryTextStyle(),
                       ),
                     ).expand(),

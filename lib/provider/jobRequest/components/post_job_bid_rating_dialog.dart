@@ -66,7 +66,7 @@ class _PostJobBidRatingDialogState extends State<PostJobBidRatingDialog> {
       // Show success message - use API message if available, otherwise use default
       String successMessage = res.message.validate().isNotEmpty 
           ? res.message.validate() 
-          : 'Rating submitted successfully';
+          : languages.ratingSubmittedSuccessfully;
       toast(successMessage);
       // Add a delay to ensure toast is visible before closing dialog
       Future.delayed(Duration(milliseconds: 1000), () {
@@ -173,7 +173,7 @@ class _PostJobBidRatingDialogState extends State<PostJobBidRatingDialog> {
             textFieldType: TextFieldType.MULTILINE,
             decoration: inputDecoration(
               context,
-              hint: languages.yourComment.validate().isNotEmpty ? languages.yourComment : 'Write your review (optional)',
+              hint: languages.yourComment,
             ),
             minLines: 3,
             maxLines: 5,

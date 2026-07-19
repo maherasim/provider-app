@@ -198,7 +198,7 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                                 widget.bookingData.status == BookingStatusKeys.accept &&
                                     (widget.bookingData.paymentStatus == null ||
                                         widget.bookingData.paymentStatus == '' ||
-                                        widget.bookingData.paymentStatus == PENDING) ? 'Waiting for client advance payment' : widget.bookingData.status.validate().toBookingStatus(),
+                                        widget.bookingData.paymentStatus == PENDING) ? languages.waitingForAdvancePayment : widget.bookingData.status.validate().toBookingStatus(),
                                 style: boldTextStyle(
                                   color: widget.bookingData.status
                                       .validate()
@@ -319,7 +319,7 @@ class BookingItemComponentState extends State<BookingItemComponent> {
                         } else if (visitType == VISIT_OPTION_ON_SITE) {
                           displayText = languages.onSiteVisit;
                         } else if (visitType == VISIT_OPTION_HYBRID) {
-                          displayText = 'Hybrid';
+                          displayText = languages.hybrid;
                         }
                         return displayText.isNotEmpty
                             ? Padding(

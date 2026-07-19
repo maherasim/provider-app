@@ -87,13 +87,13 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildHeaderCell("No.", 70),
+                  _buildHeaderCell(languages.serialNumber, 70),
                   _buildHeaderCell(serviceHeader, 140),
-                  _buildHeaderCell("Users", 130),
-                  _buildHeaderCell("Payment Type", 110),
-                  _buildHeaderCell("Status", 90),
-                  _buildHeaderCell("Date & Time", 140),
-                  _buildHeaderCell("Amount", 100),
+                  _buildHeaderCell(languages.users, 130),
+                  _buildHeaderCell(languages.paymentType, 110),
+                  _buildHeaderCell(languages.status, 90),
+                  _buildHeaderCell(languages.dateAndTime, 140),
+                  _buildHeaderCell(languages.amount, 100),
                 ],
               ),
             ),
@@ -188,13 +188,13 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                 // Regular Payments Section
                 if (regularPayments.isNotEmpty) ...[
                   Text(languages.lblRegularPayments, style: boldTextStyle(size: 16)).paddingOnly(left: 16, top: 16, bottom: 8),
-                  _buildPaymentTable(regularPayments, "Service"),
+                  _buildPaymentTable(regularPayments, languages.lblServices),
                   16.height,
                 ],
                 // Post Job Payments Section
                 if (postJobPayments.isNotEmpty) ...[
                   Text(languages.lblJobRequestPayments, style: boldTextStyle(size: 16)).paddingOnly(left: 16, top: 8, bottom: 8),
-                  _buildPaymentTable(postJobPayments, "Job Request"),
+                  _buildPaymentTable(postJobPayments, languages.jobRequest),
                 ],
               ],
               onNextPage: () {

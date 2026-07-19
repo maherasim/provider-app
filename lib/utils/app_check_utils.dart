@@ -15,8 +15,6 @@ Future<void> initializeAppCheck() async {
           kDebugMode ? AppleProvider.debug : AppleProvider.deviceCheck,
     );
 
-    await FirebaseAppCheck.instance.setTokenAutoRefreshEnabled(true);
-
     FirebaseAppCheck.instance.onTokenChange.listen((token) {
       _appCheckToken = token;
       if (token != null && token.isNotEmpty) {

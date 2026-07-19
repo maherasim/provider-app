@@ -12,14 +12,14 @@ import 'package:handyman_provider_flutter/utils/colors.dart';
 
 class FrobsterChatThreadScreen extends StatefulWidget {
   final int conversationId;
-  final String title;
+  final String? title;
   final String? otherDisplayName;
   final String? otherAvatarUrl;
 
   const FrobsterChatThreadScreen({
     super.key,
     required this.conversationId,
-    this.title = 'Direct Message',
+    this.title,
     this.otherDisplayName,
     this.otherAvatarUrl,
   });
@@ -163,7 +163,7 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final title = widget.otherDisplayName?.trim().isNotEmpty == true ? widget.otherDisplayName! : widget.title;
+    final title = widget.otherDisplayName?.trim().isNotEmpty == true ? widget.otherDisplayName! : (widget.title ?? languages.directMessage);
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -228,7 +228,7 @@ class _FrobsterChatThreadScreenState extends State<FrobsterChatThreadScreen> {
                                     children: [
                                       if (m.hidden || m.policyViolation)
                                         Text(
-                                          'Message hidden due to policy${m.piiTypes.isNotEmpty ? ' (${m.piiTypes.join(', ')})' : ''}',
+                                          '${languages.messageHiddenDueToPolicy}${m.piiTypes.isNotEmpty ? ' (${m.piiTypes.join(', ')})' : ''}',
                                           style: secondaryTextStyle(color: Colors.red, size: 12),
                                         ),
                                       if (!m.hidden && (m.message?.isNotEmpty == true))

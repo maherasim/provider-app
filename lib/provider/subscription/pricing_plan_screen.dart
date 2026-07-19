@@ -284,7 +284,7 @@ class _PricingPlanScreenState extends State<PricingPlanScreen> {
                                           children: [
                                             Image.asset(getPlanStatusImage(limitData: data.planLimitation!.service!), width: 14, height: 14),
                                             8.width,
-                                            getPlanStatus(limitData: data.planLimitation!.service!, name: 'Services'),
+                                            getPlanStatus(limitData: data.planLimitation!.service!, name: languages.lblServices),
                                           ],
                                         ),
                                         8.height,
@@ -292,7 +292,7 @@ class _PricingPlanScreenState extends State<PricingPlanScreen> {
                                           children: [
                                             Image.asset(getPlanStatusImage(limitData: data.planLimitation!.handyman!), width: 14, height: 14),
                                             8.width,
-                                            getPlanStatus(limitData: data.planLimitation!.handyman!, name: 'Handyman'),
+                                            getPlanStatus(limitData: data.planLimitation!.handyman!, name: languages.handyman),
                                           ],
                                         ),
                                         8.height,
@@ -300,7 +300,7 @@ class _PricingPlanScreenState extends State<PricingPlanScreen> {
                                           children: [
                                             Image.asset(getPlanStatusImage(limitData: data.planLimitation!.featuredService!), width: 14, height: 14),
                                             8.width,
-                                            getPlanStatus(limitData: data.planLimitation!.featuredService!, name: 'Featured Services'),
+                                            getPlanStatus(limitData: data.planLimitation!.featuredService!, name: languages.featuredServices),
                                           ],
                                         )
                                       ],

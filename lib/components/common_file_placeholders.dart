@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
+import '../main.dart';
 import '../utils/configs.dart';
 
 class CommonPdfPlaceHolder extends StatelessWidget {
@@ -35,7 +36,7 @@ class CommonPdfPlaceHolder extends StatelessWidget {
             size: 32,
           ),
           15.height,
-          Marquee(child: Text(text == "file" ? "File" : text, overflow: TextOverflow.ellipsis, style: primaryTextStyle(), maxLines: 1, textAlign: TextAlign.center)),
+          Marquee(child: Text(text == "file" ? languages.file : text, overflow: TextOverflow.ellipsis, style: primaryTextStyle(), maxLines: 1, textAlign: TextAlign.center)),
         ],
       ).center(),
     );

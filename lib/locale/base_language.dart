@@ -1,6 +1,37 @@
 import 'package:flutter/material.dart';
 
 abstract class Languages {
+  String get hybrid => 'Hybrid';
+  String get file => 'File';
+  String get vatNumber => 'VAT number';
+  String get bicSwiftCode => 'BIC / SWIFT Code';
+  String get commissionRange => 'Commission must be between 1 and 99';
+  String get ratingSubmittedSuccessfully => 'Rating submitted successfully';
+  String get uploadNewDocument => 'Upload New Document';
+  String get noDocumentTypesAvailable => 'No document types available';
+  String get noDocumentTypesAvailableContactSupport =>
+      'No document types available. Please contact support.';
+  String get directMessage => 'Direct Message';
+  String get bankTransferInstruction =>
+      'Please transfer the amount to the following bank account:';
+  String get bankNameLabel => 'Bank Name:';
+  String get countryLabel => 'Country:';
+  String get accountNumberLabel => 'Account Number:';
+  String get ibanLabel => 'IBAN:';
+  String get bicSwiftLabel => 'BIC/Swift:';
+  String get serialNumber => 'No.';
+  String get users => 'Users';
+  String get status => 'Status';
+  String get dateAndTime => 'Date & Time';
+  String get amount => 'Amount';
+  String get jobRequest => 'Job Request';
+  String get featuredServices => 'Featured Services';
+  String get adminCommission => 'Admin Commission:';
+  String get payWithFlutterwave => 'Pay With Flutterwave';
+  String get payWithUpiApps => 'Pay With Upi Apps';
+  String get payWithCard => 'Pay with Card';
+  String get upiApps => 'Upi Apps';
+
   static Languages of(BuildContext context) =>
       Localizations.of<Languages>(context, Languages)!;
 
@@ -1739,6 +1770,12 @@ abstract class Languages {
   String get lblEduUniversity;
   String get lblEduBachelors;
   String get lblEduProfessional;
+  String get lblEduNotSpecified2;
+  String get lblEduAnyGraduate2;
+  String get lblEduApprenticeship2;
+  String get lblEduTraineeship2;
+  String get lblEduSecondaryDegree2;
+  String get lblEduUndergraduate2;
   String get lblAccountHolderNameHint;
   String get lblMobileNumberHint;
   String get lblIbanNumberHint;
@@ -1780,6 +1817,8 @@ abstract class Languages {
   String get lblBudgetOrPrice;
   String get lblTotalDays;
   String get lblTotalHours;
+  String get lblStartTime;
+  String get lblEndTime;
   String get lblEducationLevel;
   String get lblSkillsAndRequirements;
   String get lblDutiesAndResponsibilities;
@@ -1856,4 +1895,6 @@ abstract class Languages {
   String get lblExp5To8Years;
   String get lblExp8To10Years;
   String get lblExpMoreThan10Years;
+  String get lblAt;
+  String get lblSelected;
 }

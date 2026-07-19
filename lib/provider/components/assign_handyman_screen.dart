@@ -115,7 +115,7 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
                       onTap: () async {
                         final commissionVal = double.tryParse(_commissionController.text.trim());
                         if (commissionVal == null || commissionVal < 1 || commissionVal > 99) {
-                          toast('Commission must be between 1 and 99');
+                          toast(languages.commissionRange);
                           return;
                         }
                         finish(context);

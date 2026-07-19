@@ -103,14 +103,14 @@ class PhonePeServices {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 SettingItemWidget(
-                  title: "Pay With Upi Apps",
+                  title: languages.payWithUpiApps,
                   leading: Icon(Icons.apps, color: context.iconColor),
                   onTap: () async {
                     handlePayClick(context);
                   },
                 ),
                 SettingItemWidget(
-                  title: "Pay with Card",
+                  title: languages.payWithCard,
                   leading: Icon(Icons.credit_card_rounded, color: context.iconColor),
                   onTap: () async {
                     handlePayClick(context, isTypeCard: true);

@@ -2654,6 +2654,19 @@ class LanguageEn extends Languages {
   String get lblEduProfessional => 'Professional Degree';
 
   @override
+  String get lblEduNotSpecified2 => 'Bachelor';
+  @override
+  String get lblEduAnyGraduate2 => 'Master';
+  @override
+  String get lblEduApprenticeship2 => 'State Examination (Staatsexamen)';
+  @override
+  String get lblEduTraineeship2 => 'Doctorate (PhD)';
+  @override
+  String get lblEduSecondaryDegree2 => 'Habilitation';
+  @override
+  String get lblEduUndergraduate2 => 'Professorship';
+
+  @override
   String get lblAccountHolderNameHint => 'Account Holder Name';
 
   @override
@@ -2775,6 +2788,12 @@ class LanguageEn extends Languages {
 
   @override
   String get lblTotalHours => 'Total Hours';
+
+  @override
+  String get lblStartTime => 'Start Time';
+
+  @override
+  String get lblEndTime => 'End Time';
 
   @override
   String get lblEducationLevel => 'Education Level';
@@ -3003,4 +3022,6 @@ class LanguageEn extends Languages {
 
   @override
   String get lblPartTime => 'Part Time';
+  @override String get lblAt => 'at';
+  @override String get lblSelected => 'selected';
 }

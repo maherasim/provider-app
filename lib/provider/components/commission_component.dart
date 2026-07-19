@@ -43,10 +43,10 @@ class CommissionComponent extends StatelessWidget {
                 textAlign: TextAlign.center,
                 list: [
                   TextSpan(
-                      text: 'Admin Commission: ',
+                      text: '${languages.adminCommission} ',
                       style: secondaryTextStyle(size: 12)),
                   TextSpan(
-                    text: '10%',
+                    text: '${commission.commission.validate()}%',
                     style: boldTextStyle(size: 12),
                   ),
                 ],

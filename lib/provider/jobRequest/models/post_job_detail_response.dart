@@ -70,7 +70,7 @@ class JobRequestDetailResponse {
   int? postRequestId;
   int? providerId;
   int? customerId;
-  int? price;
+  num? price;
   String? holdReason;
   num? advancePercent;
   String? whyChooseMe;
@@ -125,7 +125,7 @@ class JobRequestDetailResponse {
     postRequestId: json["post_request_id"],
     providerId: json["provider_id"],
     customerId: json["customer_id"],
-    price: json["price"],
+    price: json["price"] is num ? json["price"] : num.tryParse(json["price"]?.toString() ?? ''),
     holdReason: json["hold_reason"],
     advancePercent: json["advance_percent"],
     whyChooseMe: json["why_choose_me"],
@@ -183,8 +183,8 @@ class ExtraChargesData {
   int? id;
   int? postJobBidId;
   String? title;
-  int? amount;
-  int? quantity;
+  num? amount;
+  num? quantity;
   DateTime? createdAt;
   DateTime? updatedAt;
 
@@ -202,8 +202,8 @@ class ExtraChargesData {
     id: json["id"],
     postJobBidId: json["post_job_bid_id"],
     title: json["title"],
-    amount: json["amount"],
-    quantity: json["quantity"],
+    amount: json["amount"] is num ? json["amount"] : num.tryParse(json["amount"]?.toString() ?? ''),
+    quantity: json["quantity"] is num ? json["quantity"] : num.tryParse(json["quantity"]?.toString() ?? ''),
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
   );

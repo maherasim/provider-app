@@ -108,6 +108,9 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
   final List<String> mobilityList = [];
   final List<String> certifications = [];
 
+  CareerLevel selectedCareerLevel = CareerLevel.notSpecified;
+  ProfileEducationLevel selectedEducationLevel = ProfileEducationLevel.unspecified;
+
   // Profile image
   File? profileImageFile;
 
@@ -199,8 +202,18 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
       mobilityCont.text = widget.data!.mobility.validate();
       certificationCont.text = widget.data!.certification.validate();
       aboutMeCont.text = parseHtmlString(widget.data!.aboutMe.validate());
-      educationCont.text = parseHtmlString(
-          widget.data!.education.validate()); // Use education field directly
+      // Education level dropdown
+      final eduVal = widget.data!.education.validate();
+      selectedEducationLevel = ProfileEducationLevel.values.firstWhere(
+        (e) => e.backendValue == eduVal,
+        orElse: () => ProfileEducationLevel.unspecified,
+      );
+      // Career level dropdown
+      final careerVal = widget.data!.careerLevel.validate();
+      selectedCareerLevel = CareerLevel.values.firstWhere(
+        (e) => e.backendValue == careerVal,
+        orElse: () => CareerLevel.notSpecified,
+      );
 
       // Initialize availability - normalize the value to match dropdown items
       if (widget.data!.availability != null) {
@@ -747,8 +760,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
           'vat_number': vatNumberCont.text.trim(),
           if (skillsCont.text.trim().isNotEmpty)
             'skills': skillsCont.text.trim(),
-          if (educationCont.text.trim().isNotEmpty)
-            'education': educationCont.text.trim(),
+          if (selectedEducationLevel != ProfileEducationLevel.unspecified)
+            'education': selectedEducationLevel.backendValue,
           if (certificationCont.text.trim().isNotEmpty)
             'certification': certificationCont.text.trim(),
           if (mobilityCont.text.trim().isNotEmpty)
@@ -763,7 +776,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
           UserKeys.knownLanguages: jsonEncode(selectedLanguages),
           for (int i = 0; i < selectedLanguages.length; i++)
             'languages[$i]': selectedLanguages[i],
-          'career_level': CareerLevel.notSpecified.backendValue,
+          'career_level': selectedCareerLevel.backendValue,
           'years_of_experience': YearsOfExperience.lessThan1Year.backendValue,
           if (handymanCommissionCont.text.isNotEmpty)
             'handyman_commission': handymanCommissionCont.text.validate(),
@@ -802,10 +815,6 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
   }
 
   bool _validateRequiredSelections() {
-    if (selectedHandymanCommission == null || selectedHandymanCommission!.id == -1) {
-      toast('${languages.lblHandymanType}: ${languages.hintRequired}');
-      return false;
-    }
     if (serviceAddressList.isNotEmpty && (serviceAddressId == null || serviceAddressId == -1)) {
       toast('${languages.lblServiceAddress}: ${languages.hintRequired}');
       return false;
@@ -869,8 +878,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
     multiPartRequest.fields['vat_number'] = vatNumberCont.text.trim();
     if (skillsCont.text.trim().isNotEmpty)
       multiPartRequest.fields['skills'] = skillsCont.text.trim();
-    if (educationCont.text.trim().isNotEmpty)
-      multiPartRequest.fields['education'] = educationCont.text.trim();
+    if (selectedEducationLevel != ProfileEducationLevel.unspecified)
+      multiPartRequest.fields['education'] = selectedEducationLevel.backendValue;
     if (certificationCont.text.trim().isNotEmpty)
       multiPartRequest.fields['certification'] = certificationCont.text.trim();
     if (mobilityCont.text.trim().isNotEmpty)
@@ -886,8 +895,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
     for (var i = 0; i < selectedLanguages.length; i++) {
       multiPartRequest.fields['languages[$i]'] = selectedLanguages[i];
     }
-    multiPartRequest.fields['career_level'] =
-        CareerLevel.notSpecified.backendValue;
+    multiPartRequest.fields['career_level'] = selectedCareerLevel.backendValue;
     multiPartRequest.fields['years_of_experience'] =
         YearsOfExperience.lessThan1Year.backendValue;
     if (handymanCommissionCont.text.isNotEmpty)
@@ -1022,7 +1030,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
         if (data != null) {
           if ((data as String).isJson()) {
             var res = jsonDecode(data);
-            toast(res['message']?.toString() ?? 'Success');
+            toast(res['message']?.toString() ?? languages.success);
             finish(context, widget.onUpdate!.call());
           }
         }
@@ -1263,7 +1271,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                               selectedFile.path.contains('https://')) {
                             log('Warning: Selected file is a network URL, not a local file: ${selectedFile.path}');
                             toast(
-                                'Please select a new image from gallery or camera');
+                                languages.lblPleaseSelectNewImageFile);
                             return;
                           }
                           // Check if file exists
@@ -1371,7 +1379,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     ),
                     16.height,
                     // VAT number is required for handyman creation.
-                    _buildRequiredLabel('VAT number'),
+                    _buildRequiredLabel(languages.vatNumber),
                     8.height,
                     AppTextField(
                       textFieldType: TextFieldType.NAME,
@@ -1504,7 +1512,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                             textFieldType: TextFieldType.PHONE,
                             controller: mobileCont,
                             focus: mobileFocus,
-                            nextFocus: designationFocus,
+                            nextFocus: companyNameFocus,
                             enabled: true,
                             decoration: inputDecoration(
                               context,
@@ -1520,53 +1528,6 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                           ),
                         ),
                       ],
-                    ),
-                    16.height,
-                    AppTextField(
-                      textFieldType: TextFieldType.NAME,
-                      controller: designationCont,
-                      isValidationRequired: false,
-                      enabled: true, // Always enabled
-                      focus: designationFocus,
-                      nextFocus: addressFocus,
-                      decoration: inputDecoration(
-                        context,
-                        hint: languages.lblDesignation,
-                        fillColor: context.scaffoldBackgroundColor,
-                      ),
-                    ),
-                    16.height,
-                    Divider(),
-                    12.height,
-                    Text(languages.commission, style: boldTextStyle(size: 16)),
-                    12.height,
-                    // Handyman Commission - Number input (1-99)
-                    _buildRequiredLabel(languages.lblHandymanCommissionHint),
-                    8.height,
-                    AppTextField(
-                      textFieldType: TextFieldType.PHONE,
-                      controller: handymanCommissionCont,
-                      focus: handymanCommissionFocus,
-                      nextFocus: companyNameFocus,
-                      enabled: true,
-                      isValidationRequired: true,
-                      decoration: inputDecoration(
-                        context,
-                        hint: languages.lblHandymanCommissionHint,
-                        fillColor: context.scaffoldBackgroundColor,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty)
-                          return languages.hintRequired;
-                        double? commission = double.tryParse(value.trim());
-                        if (commission == null) {
-                          return languages.lblEnterValidNumber;
-                        }
-                        if (commission < 1 || commission > 99) {
-                          return 'Commission must be between 1 and 99';
-                        }
-                        return null;
-                      },
                     ),
                     16.height,
                     Divider(),
@@ -1937,8 +1898,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                                 8.width,
                                 Text(
                                   selectedLanguages.isEmpty
-                                      ? 'Select languages'
-                                      : '${selectedLanguages.length} selected',
+                                      ? languages.lblSelectLanguagesHint
+                                      : '${selectedLanguages.length} ${languages.lblSelected}',
                                   style: selectedLanguages.isEmpty
                                       ? secondaryTextStyle()
                                       : primaryTextStyle(size: 14),
@@ -1981,19 +1942,92 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                     12.height,
                     Text(languages.lblEducationAndBio, style: boldTextStyle(size: 16)),
                     12.height,
-                    // Education - Text Input (Optional)
-                    AppTextField(
-                      textFieldType: TextFieldType.NAME,
-                      controller: educationCont,
-                      focus: educationFocus,
-                      nextFocus: aboutMeFocus,
-                      enabled: true,
-                      isValidationRequired: false,
+                    // Career Level - Dropdown
+                    Text(languages.lblCareerLevelHint, style: secondaryTextStyle(size: 12)),
+                    8.height,
+                    DropdownButtonFormField<CareerLevel>(
+                      decoration: inputDecoration(
+                        context,
+                        hint: languages.lblCareerLevelHint,
+                        fillColor: context.scaffoldBackgroundColor,
+                      ),
+                      isExpanded: true,
+                      dropdownColor: context.cardColor,
+                      initialValue: selectedCareerLevel,
+                      items: CareerLevel.values.map((level) {
+                        final label = switch (level) {
+                          CareerLevel.notSpecified => languages.lblCareerNotSpecified,
+                          CareerLevel.entryLevel => languages.lblCareerEntryLevel,
+                          CareerLevel.intermediateLevel => languages.lblCareerIntermediateLevel,
+                          CareerLevel.experienced => languages.lblCareerExperienced,
+                          CareerLevel.professional => languages.lblCareerProfessional,
+                          CareerLevel.middleManagement => languages.lblCareerMiddleManagement,
+                          CareerLevel.executiveManagement => languages.lblCareerExecutiveManagement,
+                          CareerLevel.seniorManagement => languages.lblCareerSeniorManagement,
+                          CareerLevel.director => languages.lblCareerDirector,
+                          CareerLevel.technician => languages.lblCareerTechnician,
+                          CareerLevel.leader => languages.lblCareerLeader,
+                          CareerLevel.manager => languages.lblCareerManager,
+                        };
+                        return DropdownMenuItem<CareerLevel>(
+                          value: level,
+                          child: Text(label, style: primaryTextStyle()),
+                        );
+                      }).toList(),
+                      onChanged: (CareerLevel? value) {
+                        if (value != null) {
+                          selectedCareerLevel = value;
+                          setState(() {});
+                        }
+                      },
+                    ),
+                    16.height,
+                    // Education Level - Dropdown
+                    Text(languages.lblEducationHint, style: secondaryTextStyle(size: 12)),
+                    8.height,
+                    DropdownButtonFormField<ProfileEducationLevel>(
                       decoration: inputDecoration(
                         context,
                         hint: languages.lblEducationHint,
                         fillColor: context.scaffoldBackgroundColor,
                       ),
+                      isExpanded: true,
+                      dropdownColor: context.cardColor,
+                      initialValue: selectedEducationLevel,
+                      items: ProfileEducationLevel.values.map((level) {
+                        final label = switch (level) {
+                          ProfileEducationLevel.unspecified => languages.lblEduNotSpecified,
+                          ProfileEducationLevel.anyGraduate => languages.lblEduAnyGraduate,
+                          ProfileEducationLevel.apprenticeshipDegree => languages.lblEduApprenticeship,
+                          ProfileEducationLevel.traineeshipDegree => languages.lblEduTraineeship,
+                          ProfileEducationLevel.secondaryDegree => languages.lblEduSecondaryDegree,
+                          ProfileEducationLevel.undergraduateDiploma => languages.lblEduUndergraduate,
+                          ProfileEducationLevel.highSchoolGraduate => languages.lblEduHighSchool,
+                          ProfileEducationLevel.associateDegree => languages.lblEduAssociate,
+                          ProfileEducationLevel.collegeDegree => languages.lblEduCollege,
+                          ProfileEducationLevel.universityDegree => languages.lblEduUniversity,
+                          ProfileEducationLevel.bachelorsDegree => languages.lblEduBachelors,
+                          ProfileEducationLevel.mastersDegree => languages.lblEduMasters,
+                          ProfileEducationLevel.doctorateDegree => languages.lblEduDoctorate,
+                          ProfileEducationLevel.professionalDegree => languages.lblEduProfessional,
+                          ProfileEducationLevel.notSpecified2 => languages.lblEduNotSpecified2,
+                          ProfileEducationLevel.anyGraduate2 => languages.lblEduAnyGraduate2,
+                          ProfileEducationLevel.apprenticeshipDegree2 => languages.lblEduApprenticeship2,
+                          ProfileEducationLevel.traineeshipDegree2 => languages.lblEduTraineeship2,
+                          ProfileEducationLevel.secondaryDegree2 => languages.lblEduSecondaryDegree2,
+                          ProfileEducationLevel.undergraduateDiploma2 => languages.lblEduUndergraduate2,
+                        };
+                        return DropdownMenuItem<ProfileEducationLevel>(
+                          value: level,
+                          child: Text(label, style: primaryTextStyle()),
+                        );
+                      }).toList(),
+                      onChanged: (ProfileEducationLevel? value) {
+                        if (value != null) {
+                          selectedEducationLevel = value;
+                          setState(() {});
+                        }
+                      },
                     ),
                     16.height,
                     // About Me - Textarea (Optional)

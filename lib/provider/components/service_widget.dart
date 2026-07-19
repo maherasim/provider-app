@@ -148,11 +148,11 @@ class ServiceComponent extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '${data.totalBookingCount?.validate() ?? 0} Bookings',
+                    '${data.totalBookingCount?.validate() ?? 0} ${languages.lblBooking}',
                     style: primaryTextStyle(size: 10),
                   ),
               Text(
-                    'Views: ${data.views?.validate() ?? 0}',
+                    '${languages.views}: ${data.views?.validate() ?? 0}',
                 style: primaryTextStyle(size: 10),
                   ),
                 ],

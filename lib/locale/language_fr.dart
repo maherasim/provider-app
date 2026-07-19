@@ -2806,6 +2806,18 @@ class LanguageFr extends Languages {
   @override
   String get lblEduProfessional => 'Professional Degree';
   @override
+  String get lblEduNotSpecified2 => 'Bachelor';
+  @override
+  String get lblEduAnyGraduate2 => 'Master';
+  @override
+  String get lblEduApprenticeship2 => 'State Examination (Staatsexamen)';
+  @override
+  String get lblEduTraineeship2 => 'Doctorate (PhD)';
+  @override
+  String get lblEduSecondaryDegree2 => 'Habilitation';
+  @override
+  String get lblEduUndergraduate2 => 'Professorship';
+  @override
   String get lblAccountHolderNameHint => 'Account Holder Name';
   @override
   String get lblMobileNumberHint => 'Mobile Number';
@@ -2887,6 +2899,13 @@ class LanguageFr extends Languages {
   String get lblTotalDays => 'Total Days';
   @override
   String get lblTotalHours => 'Total Hours';
+
+  @override
+  String get lblStartTime => 'Start Time';
+
+  @override
+  String get lblEndTime => 'End Time';
+
   @override
   String get lblEducationLevel => 'Education Level';
   @override
@@ -3026,4 +3045,6 @@ class LanguageFr extends Languages {
   @override String get lblExp8To10Years => '8 to 10 Years';
   @override String get lblExpMoreThan10Years => 'More than 10 Years';
   @override String get lblAdvancePaymentRange => 'Advance payment must be between 20 and 99';
+  @override String get lblAt => 'at';
+  @override String get lblSelected => 'selected';
 }

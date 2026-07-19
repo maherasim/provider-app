@@ -2552,71 +2552,83 @@ class LanguageDe extends Languages {
   String get lblCareerNotSpecified => 'Nicht angegeben';
 
   @override
-  String get lblCareerEntryLevel => 'Einsteiger';
+  String get lblCareerEntryLevel => 'Praktikant';
 
   @override
-  String get lblCareerIntermediateLevel => 'Fortgeschritten';
+  String get lblCareerIntermediateLevel => 'Werkstudent';
 
   @override
-  String get lblCareerExperienced => 'Mit Berufserfahrung';
+  String get lblCareerExperienced => 'Einsteiger';
 
   @override
-  String get lblCareerProfessional => 'Fachkraft';
+  String get lblCareerProfessional => 'Spezialist';
 
   @override
-  String get lblCareerMiddleManagement => 'Mittleres Management';
+  String get lblCareerMiddleManagement => 'Teamleiter';
 
   @override
-  String get lblCareerExecutiveManagement => 'Führungsebene';
+  String get lblCareerExecutiveManagement => 'Abteilungsleiter';
 
   @override
-  String get lblCareerSeniorManagement => 'Senior Management';
+  String get lblCareerSeniorManagement => 'Meister';
 
   @override
-  String get lblCareerDirector => 'Direktion';
+  String get lblCareerDirector => 'Führungskraft';
 
   @override
-  String get lblCareerTechnician => 'Techniker';
+  String get lblCareerTechnician => 'Führungskraft';
 
   @override
-  String get lblCareerLeader => 'Teamleitung';
+  String get lblCareerLeader => 'Manager';
 
   @override
   String get lblCareerManager => 'Manager';
 
   @override
-  String get lblEduHighSchool => 'SekundarAbschluß (z. B. Abitur)';
+  String get lblEduHighSchool => 'Allgemeine Hochschulreife (Abitur)';
 
   @override
-  String get lblEduAssociate => 'Associate Degree';
+  String get lblEduAssociate => 'Fachhochschulreife (Fachabitur)';
 
   @override
-  String get lblEduUndergraduate => 'Bachelor';
+  String get lblEduUndergraduate => 'Hauptschulabschluss';
 
   @override
-  String get lblEduMasters => 'Master';
+  String get lblEduMasters => 'Fachschule';
 
   @override
-  String get lblEduDoctorate => 'Promotion (Doktor)';
-  
+  String get lblEduDoctorate => 'Fachhochschule';
+
   @override
-  String get lblEduNotSpecified => '—';
+  String get lblEduNotSpecified => 'Grundschule';
   @override
-  String get lblEduAnyGraduate => 'Beliebiger Abschluss';
+  String get lblEduAnyGraduate => 'Hauptschule';
   @override
-  String get lblEduApprenticeship => 'Berufsausbildung';
+  String get lblEduApprenticeship => 'Realschule';
   @override
-  String get lblEduTraineeship => 'Trainee-Abschluss';
+  String get lblEduTraineeship => 'Gesamtschule';
   @override
-  String get lblEduSecondaryDegree => 'Realschulabschluss';
+  String get lblEduSecondaryDegree => 'Gymnasium';
   @override
-  String get lblEduCollege => 'Fachhochschule';
+  String get lblEduCollege => 'Berufsausbildung / Ausbildung';
   @override
-  String get lblEduUniversity => 'Universitätsabschluss';
+  String get lblEduUniversity => 'Berufsschule';
   @override
-  String get lblEduBachelors => 'Bachelor';
+  String get lblEduBachelors => 'Universität';
   @override
-  String get lblEduProfessional => 'Beruflicher Abschluss';
+  String get lblEduProfessional => 'Realschulabschluss (Mittlere Reife)';
+  @override
+  String get lblEduNotSpecified2 => 'Bachelor';
+  @override
+  String get lblEduAnyGraduate2 => 'Master';
+  @override
+  String get lblEduApprenticeship2 => 'Staatsexamen';
+  @override
+  String get lblEduTraineeship2 => 'Promotion (Doktor)';
+  @override
+  String get lblEduSecondaryDegree2 => 'Habilitation';
+  @override
+  String get lblEduUndergraduate2 => 'Professur';
   
   @override
   String get lblAccountHolderNameHint => 'Name des Kontoinhabers';
@@ -2990,4 +3002,6 @@ class LanguageDe extends Languages {
   @override String get lblExp8To10Years => '8 bis 10 Jahre';
   @override String get lblExpMoreThan10Years => 'Mehr als 10 Jahre';
   @override String get lblAdvancePaymentRange => 'Vorauszahlung muss zwischen 20 und 99 liegen';
+  @override String get lblAt => 'um';
+  @override String get lblSelected => 'ausgewählt';
 }

@@ -138,7 +138,7 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> {
   Future<void> getSubCategory({required int categoryId}) async {
     getSubCategoryList(catId: categoryId.toInt()).then((value) async {
       subCategoryList = value.data.validate();
-      CategoryData allValue = CategoryData(id: -1, name: 'All');
+      CategoryData allValue = CategoryData(id: -1, name: languages.all);
       subCategoryList.insert(0, allValue);
 
       if (widget.isUpdate) {

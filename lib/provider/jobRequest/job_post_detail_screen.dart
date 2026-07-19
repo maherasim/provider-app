@@ -283,6 +283,12 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
             EducationLevel.mastersDegree => languages.lblEduMasters,
             EducationLevel.doctorateDegree => languages.lblEduDoctorate,
             EducationLevel.professionalDegree => languages.lblEduProfessional,
+            EducationLevel.notSpecified2 => languages.lblEduNotSpecified2,
+            EducationLevel.anyGraduate2 => languages.lblEduAnyGraduate2,
+            EducationLevel.apprenticeshipDegree2 => languages.lblEduApprenticeship2,
+            EducationLevel.traineeshipDegree2 => languages.lblEduTraineeship2,
+            EducationLevel.secondaryDegree2 => languages.lblEduSecondaryDegree2,
+            EducationLevel.undergraduateDiploma2 => languages.lblEduUndergraduate2,
           },
         ),
 
@@ -489,7 +495,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                       child: AppButton(
                         padding: EdgeInsets.zero,
                         child: Text(
-                          'View Job',
+                          languages.lblViewJob,
                           style: boldTextStyle(color: white, size: 12),
                         ),
                         color: Colors.transparent,
@@ -815,7 +821,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                           borderRadius: radius(14),
                         ),
                         child: Text(
-                          data.postRequestDetail!.canBid.validate() ? languages.bid : "${languages.lblUpdate} ${languages.bid}",
+                          data.postRequestDetail!.canBid.validate() ? languages.bid : languages.lblUpdateBid,
                           style: boldTextStyle(color: white),
                         ),
                       ),

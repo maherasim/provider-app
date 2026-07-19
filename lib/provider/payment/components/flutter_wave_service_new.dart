@@ -40,7 +40,7 @@ class FlutterWaveServiceNew {
       amount: totalAmount.validate().toStringAsFixed(appConfigurationStore.priceDecimalPoint),
       customer: customer,
       paymentOptions: "card, payattitude, barter",
-      customization: Customization(title: "Pay With Flutterwave", logo: appLogo),
+      customization: Customization(title: languages.payWithFlutterwave, logo: appLogo),
       isTestMode: paymentSetting.isTest == 1,
     );
     try {

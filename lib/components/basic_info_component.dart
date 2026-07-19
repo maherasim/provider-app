@@ -421,7 +421,7 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Member Since:',
+                      '${languages.lblMemberSince}:',
                       style: boldTextStyle(
                           size: 12,
                           color: appStore.isDarkMode

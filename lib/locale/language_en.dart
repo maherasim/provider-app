@@ -2872,6 +2872,18 @@ class LanguageEn extends Languages {
   String get lblPasswordMustInclude => 'Your password must include:';
 
   @override
+  String get lblPasswordRequirement12To20Characters => '12 to 20 characters';
+
+  @override
+  String get lblPasswordRequirement8To20Characters => '8 to 20 characters';
+
+  @override
+  String get lblPasswordRequirementLetter => 'At least one letter (A-Z or a-z)';
+
+  @override
+  String get lblPasswordRequirementNumber => 'At least one number (0-9)';
+
+  @override
   String get lblProfilePhoto => 'Profile photo';
 
   @override

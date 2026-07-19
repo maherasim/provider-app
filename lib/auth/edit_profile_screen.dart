@@ -75,10 +75,10 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   int taxCountryId = 0;
 
   /// Blade: `''`, `full_time`, `part_time`
-  static const Map<String, String> _profileAvailabilityOptions = {
-    '': '—',
-    'full_time': 'Full time',
-    'part_time': 'Part time',
+  static const Set<String> _profileAvailabilityOptionKeys = {
+    '',
+    'full_time',
+    'part_time',
   };
 
   String selectedAvailability = 'full_time';
@@ -1417,19 +1417,19 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           decoration:
                               inputDecoration(context, hint: languages.lblSelectAvailabilityHint),
                           isExpanded: true,
-                          initialValue: _profileAvailabilityOptions
-                                  .containsKey(selectedAvailability)
+                          initialValue: _profileAvailabilityOptionKeys
+                                  .contains(selectedAvailability)
                               ? selectedAvailability
                               : '',
                           dropdownColor: context.cardColor,
-                          items: _profileAvailabilityOptions.entries.map((e) {
-                            final label = e.key == 'full_time'
+                          items: _profileAvailabilityOptionKeys.map((value) {
+                            final label = value == 'full_time'
                                 ? languages.lblFullTime
-                                : e.key == 'part_time'
+                                : value == 'part_time'
                                     ? languages.lblPartTime
                                     : '—';
                             return DropdownMenuItem<String>(
-                              value: e.key,
+                              value: value,
                               child: Text(
                                 label,
                                 style: primaryTextStyle(),

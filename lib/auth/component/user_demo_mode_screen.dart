@@ -10,8 +10,6 @@ class UserDemoModeScreen extends StatefulWidget {
 }
 
 class _UserDemoModeScreenState extends State<UserDemoModeScreen> {
-  List<String> demoLoginName = ["Demo Provider", "Demo Handyman", "Reset"];
-
   int btnIndex = 0;
 
   @override

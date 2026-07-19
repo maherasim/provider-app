@@ -269,17 +269,17 @@ class _SignInScreenState extends State<SignInScreen> {
                 style: secondaryTextStyle(size: 12)),
             8.height,
             _buildPasswordRequirementItem(
-              '12 to 20 characters',
+              languages.lblPasswordRequirement12To20Characters,
               _hasValidPasswordLength(password),
             ),
             6.height,
             _buildPasswordRequirementItem(
-              'At least one letter (A-Z or a-z)',
+              languages.lblPasswordRequirementLetter,
               _hasPasswordLetter(password),
             ),
             6.height,
             _buildPasswordRequirementItem(
-              'At least one number (0-9)',
+              languages.lblPasswordRequirementNumber,
               _hasPasswordNumber(password),
             ),
           ],

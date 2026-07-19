@@ -2844,6 +2844,14 @@ class LanguageAr extends Languages {
   @override
   String get lblPasswordMustInclude => 'Your password must include:';
   @override
+  String get lblPasswordRequirement12To20Characters => 'من 12 إلى 20 حرفًا';
+  @override
+  String get lblPasswordRequirement8To20Characters => 'من 8 إلى 20 حرفًا';
+  @override
+  String get lblPasswordRequirementLetter => 'حرف واحد على الأقل (A-Z أو a-z)';
+  @override
+  String get lblPasswordRequirementNumber => 'رقم واحد على الأقل (0-9)';
+  @override
   String get lblProfilePhoto => 'Profile photo';
   @override
   String get lblPleaseSelectRating => 'Please select a rating';

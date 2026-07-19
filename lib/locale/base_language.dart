@@ -1795,6 +1795,10 @@ abstract class Languages {
   String get lblQuantity;
   String get lblTotalExtraCharges;
   String get lblPasswordMustInclude;
+  String get lblPasswordRequirement12To20Characters;
+  String get lblPasswordRequirement8To20Characters;
+  String get lblPasswordRequirementLetter;
+  String get lblPasswordRequirementNumber;
   String get lblProfilePhoto;
   String get lblPleaseSelectRating;
   String get lblPleaseSelectNewImageFile;

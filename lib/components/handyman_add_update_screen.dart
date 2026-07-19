@@ -153,9 +153,9 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
 
   String? _passwordValidator(String? value) {
     if (value == null || value.isEmpty) return languages.hintRequired;
-    if (!_hasValidPasswordLength(value)) return '8 to 20 characters';
-    if (!_hasPasswordLetter(value)) return 'At least one letter (A-Z or a-z)';
-    if (!_hasPasswordNumber(value)) return 'At least one number (0-9)';
+    if (!_hasValidPasswordLength(value)) return languages.lblPasswordRequirement8To20Characters;
+    if (!_hasPasswordLetter(value)) return languages.lblPasswordRequirementLetter;
+    if (!_hasPasswordNumber(value)) return languages.lblPasswordRequirementNumber;
     return null;
   }
 
@@ -500,13 +500,13 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildPasswordRequirementItem(
-              '8 to 20 characters', _hasValidPasswordLength(password)),
+              languages.lblPasswordRequirement8To20Characters, _hasValidPasswordLength(password)),
           8.height,
           _buildPasswordRequirementItem(
-              'At least one letter (A-Z or a-z)', _hasPasswordLetter(password)),
+              languages.lblPasswordRequirementLetter, _hasPasswordLetter(password)),
           8.height,
           _buildPasswordRequirementItem(
-              'At least one number (0-9)', _hasPasswordNumber(password)),
+              languages.lblPasswordRequirementNumber, _hasPasswordNumber(password)),
         ],
       ),
     );

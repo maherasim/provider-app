@@ -2868,6 +2868,18 @@ class LanguageDe extends Languages {
   String get lblPasswordMustInclude => 'Ihr Passwort muss enthalten:';
 
   @override
+  String get lblPasswordRequirement12To20Characters => '12 bis 20 Zeichen';
+
+  @override
+  String get lblPasswordRequirement8To20Characters => '8 bis 20 Zeichen';
+
+  @override
+  String get lblPasswordRequirementLetter => 'Mindestens ein Buchstabe (A-Z oder a-z)';
+
+  @override
+  String get lblPasswordRequirementNumber => 'Mindestens eine Zahl (0-9)';
+
+  @override
   String get lblProfilePhoto => 'Profilfoto';
 
   @override

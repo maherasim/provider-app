@@ -2884,6 +2884,14 @@ class LanguageHi extends Languages {
   @override
   String get lblPasswordMustInclude => 'Your password must include:';
   @override
+  String get lblPasswordRequirement12To20Characters => '12 से 20 अक्षर';
+  @override
+  String get lblPasswordRequirement8To20Characters => '8 से 20 अक्षर';
+  @override
+  String get lblPasswordRequirementLetter => 'कम से कम एक अक्षर (A-Z या a-z)';
+  @override
+  String get lblPasswordRequirementNumber => 'कम से कम एक अंक (0-9)';
+  @override
   String get lblProfilePhoto => 'Profile photo';
   @override
   String get lblPleaseSelectRating => 'Please select a rating';

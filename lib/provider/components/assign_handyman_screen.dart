@@ -59,9 +59,7 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
   Future<void> _handleAssignHandyman() async {
     if (appStore.isLoading) return;
 
-    // Pre-fill with the selected handyman's default commission
-    final defaultCommission = userListData?.handymanCommission?.toString() ?? '';
-    _commissionController.text = defaultCommission;
+    _commissionController.clear();
 
     await showInDialog(
       context,
@@ -301,7 +299,7 @@ class _AssignHandymanScreenState extends State<AssignHandymanScreen> {
               setState(() {});
             } else {
               userListData = userData;
-              _commissionController.text = userData.handymanCommission?.toString() ?? '';
+              _commissionController.clear();
               setState(() {});
             }
           } else {

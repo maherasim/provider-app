@@ -130,6 +130,7 @@ class _CategorySubCatDropDownState extends State<CategorySubCatDropDown> {
           DropdownButtonFormField<CategoryData>(
             decoration: inputDecoration(context, fillColor: context.scaffoldBackgroundColor, hint: getStringValue()),
             value: selectedSubCategory,
+            isExpanded: true,
             dropdownColor: context.scaffoldBackgroundColor,
             validator: widget.isSubCategoryValidate.validate(value: false)
                 ? (value) {
@@ -141,7 +142,7 @@ class _CategorySubCatDropDownState extends State<CategorySubCatDropDown> {
             items: subCategoryList.map((data) {
               return DropdownMenuItem<CategoryData>(
                 value: data,
-                child: Text(data.name.validate(), style: primaryTextStyle()),
+                child: Text(data.name.validate(), style: primaryTextStyle(), overflow: TextOverflow.ellipsis),
               );
             }).toList(),
             onChanged: (CategoryData? value) async {

@@ -73,7 +73,15 @@ class PusherChatService {
                 'socket_id': socketId,
               },
             );
-            return jsonDecode(res.body);
+            
+            if (res.statusCode == 200) {
+              final data = jsonDecode(res.body);
+              if (data is Map<String, dynamic> && data.containsKey('auth')) {
+                return data;
+              }
+            }
+            log('Pusher auth failed: ${res.statusCode} ${res.body}');
+            return {"auth": ""}; // Prevent Swift force-unwrap crash
           } catch (e) {
             log('Pusher auth error: $e');
             // Return a well-formed auth failure rather than empty map.

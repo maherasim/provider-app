@@ -278,7 +278,7 @@ class _UserChatScreenState extends State<UserChatScreen> with WidgetsBindingObse
     return Scaffold(
       appBar: AppBar(
         backgroundColor: context.primaryColor,
-        leadingWidth: context.width(),
+        leadingWidth: context.width() - 60,
         systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: context.primaryColor, statusBarBrightness: Brightness.dark, statusBarIconBrightness: Brightness.light),
         leading: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -365,7 +365,6 @@ class _UserChatScreenState extends State<UserChatScreen> with WidgetsBindingObse
                   title: languages.noConversation,
                   imageWidget: EmptyStateWidget(),
                 ),
-                shrinkWrap: true,
                 viewType: ViewType.list,
                 itemBuilder: (context, snap, index) {
                   ChatMessageModel data = ChatMessageModel.fromJson(snap[index].data() as Map<String, dynamic>);

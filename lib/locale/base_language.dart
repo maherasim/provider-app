@@ -1897,4 +1897,5 @@ abstract class Languages {
   String get lblExpMoreThan10Years;
   String get lblAt;
   String get lblSelected;
+  String get serviceSlots;
 }

@@ -121,12 +121,16 @@ class HandymanServicePaymentUser {
   String? name;
   String? profileImage;
   String? address;
+  String? city;
+  String? country;
 
   HandymanServicePaymentUser({
     this.id,
     this.name,
     this.profileImage,
     this.address,
+    this.city,
+    this.country,
   });
 
   factory HandymanServicePaymentUser.fromJson(Map<String, dynamic> json) {
@@ -135,7 +139,18 @@ class HandymanServicePaymentUser {
       name: json['name'],
       profileImage: json['profile_image'],
       address: json['address'],
+      city: json['city'],
+      country: json['country'],
     );
+  }
+
+  String get locationDisplay {
+    final c = city?.trim() ?? '';
+    final co = country?.trim() ?? '';
+    if (c.isNotEmpty && co.isNotEmpty) return '$c - $co';
+    if (c.isNotEmpty) return c;
+    if (co.isNotEmpty) return co;
+    return address?.trim() ?? '';
   }
 
   Map<String, dynamic> toJson() {
@@ -144,6 +159,8 @@ class HandymanServicePaymentUser {
     data['name'] = name;
     data['profile_image'] = profileImage;
     data['address'] = address;
+    data['city'] = city;
+    data['country'] = country;
     return data;
   }
 }

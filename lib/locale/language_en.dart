@@ -3024,4 +3024,5 @@ class LanguageEn extends Languages {
   String get lblPartTime => 'Part Time';
   @override String get lblAt => 'at';
   @override String get lblSelected => 'selected';
+  @override String get serviceSlots => 'Service Slots';
 }

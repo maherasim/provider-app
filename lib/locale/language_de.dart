@@ -3011,4 +3011,5 @@ class LanguageDe extends Languages {
   @override String get lblAdvancePaymentRange => 'Vorauszahlung muss zwischen 20 und 99 liegen';
   @override String get lblAt => 'um';
   @override String get lblSelected => 'ausgewählt';
+  @override String get serviceSlots => 'Servicetermine';
 }

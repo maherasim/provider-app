@@ -227,7 +227,7 @@ class _BookingFilterScreenState extends State<BookingFilterScreen> {
               builder: (_) => Container(
                 decoration: boxDecorationDefault(color: context.scaffoldBackgroundColor),
                 width: context.width(),
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16 + MediaQuery.of(context).padding.bottom),
                 child: DecoratedBox(
                   decoration: BoxDecoration(gradient: kAppPrimaryGradient, borderRadius: radius(8)),
                 child: AppButton(

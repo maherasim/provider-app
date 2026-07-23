@@ -2670,8 +2670,8 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
                   decoration: BoxDecoration(color: context.cardColor),
                   child: _action(res: res.data!),
                   padding: showBottomActionBar
-                      ? EdgeInsets.all(16)
-                      : EdgeInsets.zero,
+                      ? EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16 + MediaQuery.of(context).padding.bottom)
+                      : EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
                 ),
               )
             ],

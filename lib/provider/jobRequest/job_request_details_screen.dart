@@ -346,7 +346,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
       children: [
         Expanded(
           child: AnimatedScrollView(
-            padding: EdgeInsets.only(bottom: 60, top: 16, right: 16, left: 16),
+            padding: EdgeInsets.only(bottom: 60 + MediaQuery.of(context).padding.bottom, top: 16, right: 16, left: 16),
             physics: AlwaysScrollableScrollPhysics(),
             listAnimationType: ListAnimationType.FadeIn,
             fadeInConfiguration: FadeInConfiguration(duration: 2.seconds),
@@ -911,7 +911,7 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
                     ),
                   ],
                 ],
-              ).paddingOnly(bottom: 24),
+              ).paddingOnly(bottom: 24 + MediaQuery.of(context).padding.bottom),
             ],
           ),
         ),

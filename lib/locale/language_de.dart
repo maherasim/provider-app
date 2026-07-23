@@ -7,7 +7,7 @@ class LanguageDe extends Languages {
   String get appName => 'Auftragnehmer';
 
   @override
-  String get provider => 'Agentur/Auftragnehmer';
+  String get provider => 'Agentur';
 
   @override
   String get lblShowingOnly4Handyman => 'Nur 4 Fachkräfte anzeigen';
@@ -129,7 +129,7 @@ class LanguageDe extends Languages {
   String get noDataFound => 'Keine Daten gefunden';
 
   @override
-  String get pending => 'Ausstehend';
+  String get pending => 'Offen';
 
   @override
   String get darkMode => 'Dunkler Modus';
@@ -236,7 +236,7 @@ class LanguageDe extends Languages {
 
   @override
   String get lblAmount => 'Betrag';
-  @override
+    @override
   String get amount => 'Betrag';
   @override
   String get dateAndTime => 'Datum & Uhrzeit';
@@ -498,7 +498,7 @@ class LanguageDe extends Languages {
   String get lblNoReviewYet => 'Noch keine Bewertungen';
 
   @override
-  String get lblWaitingForResponse => 'Rückmeldung ausstehend';
+  String get lblWaitingForResponse => 'Rückmeldung Offen';
 
   @override
   String get lblConfirmPayment => 'Zahlung bestätigen';
@@ -831,10 +831,10 @@ class LanguageDe extends Languages {
   String get lblEnterAmount => 'Betrag eingeben';
 
   @override
-  String get lblHourly => 'Stündlich';
+  String get lblHourly => 'Stunde';
 
   @override
-  String get lblDaily => 'Täglich';
+  String get lblDaily => 'Tag';
 
   @override
   String get noBookingTitle => 'Keine Buchungen gefunden';
@@ -1108,7 +1108,7 @@ class LanguageDe extends Languages {
   String get packageServicesWillAppearHere => 'Paketservices werden hier angezeigt';
 
   @override
-  String get showingFixPriceServices => 'Pauschaldienste anzeigen (ohne stündliche Services)';
+  String get showingFixPriceServices => 'Pauschalangebote anzeigen';
 
   @override
   String get pleaseSelectTheCategory => 'Bitte Kategorie auswählen';
@@ -1271,7 +1271,7 @@ class LanguageDe extends Languages {
   String get completed => 'Abgeschloßen';
 
   @override
-  String get pendingApproval => 'Genehmigung Ausstehend';
+  String get pendingApproval => 'Genehmigung Offen';
 
   @override
   String get waiting => 'Offen';
@@ -1280,7 +1280,7 @@ class LanguageDe extends Languages {
   String get paid => 'Bezahlt';
 
   @override
-  String get advancePaid => 'Anzahlung geleistet';
+  String get advancePaid => 'Anzahlung bestätigt';
 
   @override
   String get advancePayAmountPer => 'Anzahlungsbetrag (%)';
@@ -1337,7 +1337,7 @@ class LanguageDe extends Languages {
   String get providerHome => 'Home Agentur & Dienstleister';
 
   @override
-  String get handymanHome => 'Home Fachkräfte & Führungskräfte';
+  String get handymanHome => 'Home Fach- & Führungskräfte';
 
   @override
   String get home => 'Start';
@@ -1429,7 +1429,7 @@ class LanguageDe extends Languages {
   String get isAcceptedAsOn => 'wurde akzeptiert am';
 
   @override
-  String get sendCashToProvider => 'Bargeld an Dienstleister senden';
+  String get sendCashToProvider => 'Bargeld an Agentur senden';
 
   @override
   String get sendCashToAdmin => 'Bargeld an Administrator senden';
@@ -1441,19 +1441,19 @@ class LanguageDe extends Languages {
   String get approvedByHandyman => 'Vom Fachkraft genehmigt';
 
   @override
-  String get sentToProvider => 'An Dienstleister gesendet';
+  String get sentToProvider => 'An Agentur gesendet';
 
   @override
-  String get pendingByProvider => 'Ausstehend beim Dienstleister';
+  String get pendingByProvider => 'Offen bei der Agentur';
 
   @override
-  String get approvedByProvider => 'Vom Dienstleister genehmigt';
+  String get approvedByProvider => 'Von der Agentur freigegeben';
 
   @override
-  String get pendingByAdmin => 'Ausstehend beim Administrator';
+  String get pendingByAdmin => 'Offen beim Administrator';
 
   @override
-  String get approvedByAdmin => 'Vom Administrator genehmigt';
+  String get approvedByAdmin => 'Vom Administrator freigegeben';
 
   @override
   String get sentToAdmin => 'An Administrator gesendet';
@@ -1477,16 +1477,16 @@ class LanguageDe extends Languages {
   String get handymanApprovedTheRequest => 'Anfrage wurde vom Fachkraft genehmigt';
 
   @override
-  String get requestSentToTheProvider => 'Anfrage an Dienstleister gesendet';
+  String get requestSentToTheProvider => 'Anfrage an Agentur gesendet';
 
   @override
   String get requestSentToTheAdmin => 'Anfrage an Admin gesendet';
 
   @override
-  String get requestPendingWithTheProvider => 'Wartet auf Freigabe durch den Dienstleister.';
+  String get requestPendingWithTheProvider => 'Wartet auf Freigabe durch den Agentur.';
 
   @override
-  String get providerApprovedTheRequest => 'Anfrage wurde vom Dienstleister genehmigt';
+  String get providerApprovedTheRequest => 'Anfrage von der Agentur genehmigt';
 
   @override
   String get requestPendingWithTheAdmin => 'Anfrage Wartet auf Administratorfreigabe';
@@ -1542,7 +1542,7 @@ class LanguageDe extends Languages {
   String get sendToAdmin => 'An Administrator senden';
 
   @override
-  String get sendToProvider => 'An Dienstleister senden';
+  String get sendToProvider => 'An Agentur senden';
 
   @override
   String get detailsOfTheBank => 'Bankdetails';
@@ -1760,7 +1760,7 @@ class LanguageDe extends Languages {
   String get userDidnTEnterThePin => 'Der Benutzer hat keine PIN eingegeben';
 
   @override
-  String get transactionInPendingState => 'Transaktion ausstehend. Bitte später erneut prüfen';
+  String get transactionInPendingState => 'Transaktion Offen. Bitte später erneut prüfen';
 
   @override
   String get userWalletDoesNot => 'Wallet-Guthaben reicht nicht aus';
@@ -2375,10 +2375,10 @@ class LanguageDe extends Languages {
   String get lblCancellationPolicy => 'Stornierungsrichtlinie';
 
   @override
-  String get waitingForAdvancePayment => 'Anzahlung ausstehend';
+  String get waitingForAdvancePayment => 'Anzahlung Offen';
 
   @override
-  String get waitingForPaymentApproval => 'Zahlungsfreigabe ausstehend';
+  String get waitingForPaymentApproval => 'Zahlungsfreigabe Offen';
 
   @override
   String get waitingForCustomerToConfirm => 'Kundenbestätigung („Lass uns beginnen“) ausstehend';
@@ -2387,7 +2387,7 @@ class LanguageDe extends Languages {
   String get workInProgressWaitingForProvider => 'In Bearbeitung – warte auf Update oder Abschluß durch Dienstleister';
 
   @override
-  String get jobCompletedWaitingForCustomer => 'Auftrag Abgeschloßen – Restzahlung durch den Kunden ausstehend';
+  String get jobCompletedWaitingForCustomer => 'Auftrag Abgeschloßen – Restzahlung durch den Kunden Offen';
 
   @override
   String get paymentCompletedDownloadInvoice => 'Zahlung Abgeschloßen. Rechnung kann heruntergeladen werden';
@@ -2504,7 +2504,6 @@ class LanguageDe extends Languages {
 
   @override
   String get lblVatNumberHint => 'USt-IdNr.';
-
   @override
   String get vatNumber => 'USt-IdNr.';
 
@@ -2515,9 +2514,9 @@ class LanguageDe extends Languages {
   String get lblSelectCountryTaxHint => 'Landessteuer auswählen';
 
   @override
-  String get lblMobilityHint => 'Mobilität (z. B. Weltweit, Europaweit, Raum DACH, Raum Berlin, in Zürich )';
+  String get lblMobilityHint => 'Mobilität (z. B. Weltweit, Europaweit, D-A-CH, Berlin, Zürich )';
   @override
-  String get lblExperienceDescHint => 'Berufserfahrung (Jede Berufserfahrung bitte in einer eigenen Zeile eingeben)';
+  String get lblExperienceDescHint => 'Berufserfahrung';
 
   @override
   String get lblCareerLevelHint => 'Karrierestufe';
@@ -2532,10 +2531,11 @@ class LanguageDe extends Languages {
   String get lblCertificationHint => 'Zertifizierung';
 
   @override
-  String get lblSelectProviderHint => 'Dienstleister auswählen';
+  String get lblSelectProviderHint => 'Agentur auswählen';
 
   @override
   String get lblRemoteWorkLevelHint => 'Remote-Anteil';
+
 
   @override
   String get lblTravelRequiredHint => 'Reisebereitschaft';
@@ -2555,88 +2555,60 @@ class LanguageDe extends Languages {
   @override
   String get lblRemoteWork100 => '100 % Remote';
 
+
+
+
   @override
   String get lblCareerNotSpecified => 'Nicht angegeben';
-
   @override
-  String get lblCareerEntryLevel => 'Praktikant';
-
+  String get lblCareerEntryLevel => 'Einsteiger';
   @override
   String get lblCareerIntermediateLevel => 'Werkstudent';
+  @override
+  String get lblCareerExperienced => 'Mit Berufserfahrung';
+  @override
+  String get lblCareerProfessional => 'Fachkraft';
+  @override
+  String get lblCareerMiddleManagement => 'Spezialist';
+  @override
+  String get lblCareerExecutiveManagement => 'Führungskraft';
+  @override
+  String get lblCareerSeniorManagement => 'Senior Management';
+  @override
+  String get lblCareerDirector => 'Meister';
+  @override
+  String get lblCareerTechnician => 'Branchenexperte';
+  @override
+  String get lblCareerLeader => 'Manager';
+  @override
+  String get lblCareerManager => 'Geschäftsführung';
 
-  @override
-  String get lblCareerExperienced => 'Einsteiger';
 
-  @override
-  String get lblCareerProfessional => 'Spezialist';
 
-  @override
-  String get lblCareerMiddleManagement => 'Teamleiter';
-
-  @override
-  String get lblCareerExecutiveManagement => 'Abteilungsleiter';
-
-  @override
-  String get lblCareerSeniorManagement => 'Meister';
-
-  @override
-  String get lblCareerDirector => 'Direktor';
-
-  @override
-  String get lblCareerTechnician => 'Techniker';
-
-  @override
-  String get lblCareerLeader => 'Leiter';
-
-  @override
-  String get lblCareerManager => 'Manager';
-
-  @override
-  String get lblEduHighSchool => 'Allgemeine Hochschulreife (Abitur)';
-
-  @override
-  String get lblEduAssociate => 'Fachhochschulreife (Fachabitur)';
-
-  @override
-  String get lblEduUndergraduate => 'Hauptschulabschluss';
-
-  @override
-  String get lblEduMasters => 'Fachschule';
-
-  @override
-  String get lblEduDoctorate => 'Fachhochschule';
-
-  @override
-  String get lblEduNotSpecified => 'Grundschule';
-  @override
-  String get lblEduAnyGraduate => 'Hauptschule';
-  @override
-  String get lblEduApprenticeship => 'Realschule';
-  @override
-  String get lblEduTraineeship => 'Gesamtschule';
-  @override
-  String get lblEduSecondaryDegree => 'Gymnasium';
-  @override
-  String get lblEduCollege => 'Berufsausbildung / Ausbildung';
-  @override
-  String get lblEduUniversity => 'Berufsschule';
-  @override
-  String get lblEduBachelors => 'Universität';
-  @override
-  String get lblEduProfessional => 'Realschulabschluss (Mittlere Reife)';
-  @override
-  String get lblEduNotSpecified2 => 'Bachelor';
-  @override
-  String get lblEduAnyGraduate2 => 'Master';
-  @override
-  String get lblEduApprenticeship2 => 'Staatsexamen';
-  @override
-  String get lblEduTraineeship2 => 'Promotion (Doktor)';
-  @override
-  String get lblEduSecondaryDegree2 => 'Habilitation';
-  @override
-  String get lblEduUndergraduate2 => 'Professur';
+  @override String get lblEduNotSpecified => 'Grundschule';
+  @override String get lblEduAnyGraduate => 'Hauptschule';
+  @override String get lblEduApprenticeship => 'Realschule';
+  @override String get lblEduTraineeship => 'Gesamtschule';
+  @override String get lblEduSecondaryDegree => 'Gymnasium';
+  @override String get lblEduUndergraduate => 'Hauptschulabschluss';
+  @override String get lblEduHighSchool => 'Realschulabschluss';
+  @override String get lblEduAssociate => 'Fachhochschulreife';
+  @override String get lblEduCollege => 'Allgemeine Hochschulreife';
+  @override String get lblEduUniversity => 'Abitur';
+  @override String get lblEduBachelors => 'Berufsschule';
+  @override String get lblEduMasters => 'Fachschule';
+  @override String get lblEduDoctorate => 'Fachhochschule';
+  @override String get lblEduProfessional => 'Universität';
+  @override String get lblEduNotSpecified2 => 'Bachelor';
+  @override String get lblEduAnyGraduate2 => 'Master';
+  @override String get lblEduApprenticeship2 => 'Staatsexamen';
+  @override String get lblEduTraineeship2 => 'Promotion (Doktor)';
+  @override String get lblEduSecondaryDegree2 => 'Habilitation';
+  @override String get lblEduUndergraduate2 => 'Professur';
   
+
+
+
   @override
   String get lblAccountHolderNameHint => 'Name des Kontoinhabers';
 
@@ -2724,7 +2696,7 @@ class LanguageDe extends Languages {
   String get lblRateType => 'Vergütungsart';
 
   @override
-  String get lblTotalBudget => 'Maximales Budget';
+  String get lblTotalBudget => 'Mein Budget';
 
   @override
   String get lblProposals => 'Gebote';
@@ -2902,37 +2874,37 @@ class LanguageDe extends Languages {
   String get lblProfilePhoto => 'Profilfoto';
 
   @override
-  String get lblPleaseSelectRating => 'Bitte Bewertung auswaehlen';
+  String get lblPleaseSelectRating => 'Bitte Bewertung auswählen';
 
   @override
-  String get lblPleaseSelectNewImageFile => 'Bitte eine neue Bilddatei auswaehlen';
+  String get lblPleaseSelectNewImageFile => 'Bitte eine neue Bilddatei auswählen';
 
   @override
-  String get lblSelectedFileDoesNotExist => 'Ausgewaehlte Datei existiert nicht';
+  String get lblSelectedFileDoesNotExist => 'Ausgewählte Datei existiert nicht';
 
   @override
-  String get lblChooseValidImageFormat => 'Bitte PNG, GIF, JPG oder JPEG auswaehlen.';
+  String get lblChooseValidImageFormat => 'Bitte PNG, GIF, JPG oder JPEG auswählen.';
 
   @override
   String get lblErrorImageFileNotAdded => 'Fehler: Bilddatei nicht zur Anfrage hinzugefuegt';
 
   @override
-  String get lblPleaseSelectRemoteWorkLevel => 'Bitte Remote-Arbeitslevel auswaehlen';
+  String get lblPleaseSelectRemoteWorkLevel => 'Bitte Remote-Arbeitslevel auswählen';
 
   @override
-  String get lblPleaseSelectCareerLevel => 'Bitte Karrierelevel auswaehlen';
+  String get lblPleaseSelectCareerLevel => 'Bitte Karrierelevel auswählen';
 
   @override
-  String get lblPleaseSelectTravelRequired => 'Bitte Reiseanforderung auswaehlen';
+  String get lblPleaseSelectTravelRequired => 'Bitte Reiseanforderung auswählen';
 
   @override
-  String get lblPleaseSelectProvider => 'Bitte Anbieter auswaehlen';
+  String get lblPleaseSelectProvider => 'Bitte Anbieter auswählen';
 
   @override
-  String get lblPleaseSelectValidImages => 'Bitte gueltige Bilder auswaehlen';
+  String get lblPleaseSelectValidImages => 'Bitte gueltige Bilder auswählen';
 
   @override
-  String get lblCompleteProfileBeforeService => 'Bitte Profil vervollstaendigen vor dem Erstellen eines Services';
+  String get lblCompleteProfileBeforeService => 'Bitte Profil vervollständigen vor dem Erstellen eines Services';
 
   @override
   String get lblCantFindRevenueCatProduct => 'RevenueCat-Produkt nicht gefunden';
@@ -2944,25 +2916,25 @@ class LanguageDe extends Languages {
   String get lblAllowLocationPermission => 'Bitte Standortberechtigung erteilen um Standort zu teilen';
 
   @override
-  String get lblLocationSharingOnlyInProgress => 'Standortfreigabe nur waehrend laufender Buchung verfuegbar';
+  String get lblLocationSharingOnlyInProgress => 'Standortfreigabe nur während laufender Buchung verfügbar';
 
   @override
   String get lblSavingSubscription => 'Bitte warten, Abonnement wird gespeichert';
 
   @override
-  String get lblChoosePaymentMethodFirst => 'Bitte zuerst eine Zahlungsmethode waehlen';
+  String get lblChoosePaymentMethodFirst => 'Bitte zuerst eine Zahlungsmethode wählen';
 
   @override
   String get lblErrorCapturingImage => 'Fehler beim Erfassen des Bildes';
 
   @override
-  String get lblErrorAddingProfileImage => 'Fehler beim Hinzufuegen des Profilbildes';
+  String get lblErrorAddingProfileImage => 'Fehler beim Hinzufügen des Profilbildes';
 
   @override
   String get lblError => 'Fehler';
 
   @override
-  String get lblFileSizeLimitPrefix => 'Dateigroesse muss kleiner sein als';
+  String get lblFileSizeLimitPrefix => 'Dateigrösse muss kleiner sein als';
 
   @override
   String get lblAccountStatus => 'Kontostatus';
@@ -2978,28 +2950,28 @@ class LanguageDe extends Languages {
   String get location => 'Standort';
 
   @override
-  String get lblInvalidUrlPrefix => 'Ungueltige URL';
+  String get lblInvalidUrlPrefix => 'Ungültige URL';
 
   @override
-  String get messageHiddenDueToPolicy => 'Nachricht aufgrund von Richtlinien ausgeblendet';
+  String get messageHiddenDueToPolicy => 'Nachricht ausgeblendet – Verstoß gegen Richtlinien.';
 
-  @override String get statusPending => 'Ausstehend';
+  @override String get statusPending => 'Offen';
   @override String get statusAssigned => 'Zugewiesen';
   @override String get statusRequested => 'Offen';
   @override String get statusAccepted => 'Akzeptiert';
-  @override String get statusAdvancePaymentPending => 'Anzahlung ausstehend';
-  @override String get statusAdvancePaid => 'Anzahlung geleistet';
+  @override String get statusAdvancePaymentPending => 'Anzahlung offen';
+  @override String get statusAdvancePaid => 'Anzahlung bestätigt';
   @override String get statusInProcess => 'In Bearbeitung';
-  @override String get statusInProgress => 'In Ausfuehrung';
-  @override String get statusHold => 'Angehalten';
+  @override String get statusInProgress => 'In Ausführung';
+  @override String get statusHold => 'Pausiert';
   @override String get statusDone => 'Erledigt';
-  @override String get statusConfirmDone => 'Erledigung bestaetigt';
+  @override String get statusConfirmDone => 'Abschluss bestätigt';
   @override String get statusCompleted => 'Abgeschlossen';
-  @override String get statusRemainingPaymentPending => 'Restzahlung ausstehend';
-  @override String get statusRemainingPaid => 'Restzahlung geleistet';
+  @override String get statusRemainingPaymentPending => 'Restzahlung offen';
+  @override String get statusRemainingPaid => 'Restbetrag bezahlt';
   @override String get statusCancelled => 'Storniert';
   @override String get lblSelectLanguagesHint => 'Sprachen auswählen';
-  @override String get lblAboutDescriptionHint => 'Über die Beschreibung';
+  @override String get lblAboutDescriptionHint => 'Beschreibung';
   @override String get lblPublish => 'Veröffentlichen';
   @override String get lblExpUnspecified => '—';
   @override String get lblExpLessThan1Year => 'Weniger als 1 Jahr';
@@ -3008,8 +2980,7 @@ class LanguageDe extends Languages {
   @override String get lblExp5To8Years => '5 bis 8 Jahre';
   @override String get lblExp8To10Years => '8 bis 10 Jahre';
   @override String get lblExpMoreThan10Years => 'Mehr als 10 Jahre';
-  @override String get lblAdvancePaymentRange => 'Vorauszahlung muss zwischen 20 und 99 liegen';
+  @override String get lblAdvancePaymentRange => 'Anzahlung muss zwischen 20 und 99 liegen';
   @override String get lblAt => 'um';
   @override String get lblSelected => 'ausgewählt';
-  @override String get serviceSlots => 'Servicetermine';
 }

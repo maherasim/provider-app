@@ -231,24 +231,31 @@ class _HandymanServicePaymentScreenState extends State<HandymanServicePaymentScr
                                 ),
                               ],
                             ),
-                            if (data.user?.address.validate().isNotEmpty ?? false) ...[
-                              6.height,
-                              Row(
+                            Builder(builder: (context) {
+                              final loc = data.user?.locationDisplay ?? '';
+                              if (loc.isEmpty) return SizedBox.shrink();
+                              return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Icon(Icons.location_on_outlined, size: 14, color: context.iconColor),
-                                  4.width,
-                                  Expanded(
-                                    child: Text(
-                                      data.user?.address.validate() ?? '',
-                                      style: secondaryTextStyle(size: 12),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                                  6.height,
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Icon(Icons.location_on_outlined, size: 14, color: context.iconColor),
+                                      4.width,
+                                      Expanded(
+                                        child: Text(
+                                          loc,
+                                          style: secondaryTextStyle(size: 12),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
-                              ),
-                            ],
+                              );
+                            }),
                           ],
                         ),
                       ),
@@ -367,7 +374,7 @@ class _HandymanServicePaymentScreenState extends State<HandymanServicePaymentScr
                       Icon(Icons.calendar_month, size: 18, color: gradientRed),
                       8.width,
                       Text(
-                        'Service Slots',
+                        languages.serviceSlots,
                         style: boldTextStyle(size: 15),
                       ),
                       if (data.serviceSlots != null) ...[

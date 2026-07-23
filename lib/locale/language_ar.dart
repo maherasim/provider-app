@@ -2944,4 +2944,5 @@ class LanguageAr extends Languages {
   @override String get lblExp8To10Years => '8 to 10 Years';
   @override String get lblExpMoreThan10Years => 'More than 10 Years';
   @override String get lblAdvancePaymentRange => 'Advance payment must be between 20 and 99';
+  @override String get serviceSlots => 'فترات الخدمة';
 }

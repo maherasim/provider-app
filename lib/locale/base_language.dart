@@ -1852,4 +1852,5 @@ abstract class Languages {
   String get lblExp5To8Years;
   String get lblExp8To10Years;
   String get lblExpMoreThan10Years;
+  String get serviceSlots;
 }

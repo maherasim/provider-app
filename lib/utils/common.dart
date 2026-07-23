@@ -120,6 +120,18 @@ List<LanguageDataModel> languageList() {
         languageCode: 'es',
         fullLanguageCode: 'es-ES',
         flag: 'assets/flag/ic_es.png'),
+    LanguageDataModel(
+        id: 6,
+        name: 'Arabic',
+        languageCode: 'ar',
+        fullLanguageCode: 'ar-AR',
+        flag: 'assets/flag/ic_ar.png'),
+    LanguageDataModel(
+        id: 7,
+        name: 'Hindi',
+        languageCode: 'hi',
+        fullLanguageCode: 'hi-IN',
+        flag: 'assets/flag/ic_india.png'),
   ];
 
   /*if (getStringAsync(SERVER_LANGUAGES).isNotEmpty) {

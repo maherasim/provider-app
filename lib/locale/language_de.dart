@@ -3088,4 +3088,5 @@ class LanguageDe extends Languages {
   @override String get lblExp8To10Years => '8 bis 10 Jahre';
   @override String get lblExpMoreThan10Years => 'Mehr als 10 Jahre';
   @override String get lblAdvancePaymentRange => 'Vorauszahlung muss zwischen 20 und 99 liegen';
+  @override String get serviceSlots => 'Servicetermine';
 }

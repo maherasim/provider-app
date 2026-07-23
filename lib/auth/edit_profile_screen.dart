@@ -158,27 +158,33 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     lNameCont.text = appStore.userLastName;
     emailCont.text = appStore.userEmail;
     userNameCont.text = appStore.userName;
-    mobileCont.text = appStore.userContactNumber.split("-").last.toString();
+    final rawContact = appStore.userContactNumber;
+    if (rawContact.contains('-')) {
+      final parts = rawContact.split('-');
+      final code = parts.first.replaceFirst('+', '');
+      mobileCont.text = parts.sublist(1).join('-');
+      selectedCountryPicker = Country(
+        phoneCode: code.isEmpty ? '49' : code,
+        countryCode: "",
+        e164Sc: 0,
+        geographic: true,
+        level: 0,
+        name: "",
+        example: "",
+        displayName: "",
+        displayNameNoCountryCode: "",
+        e164Key: "",
+      );
+    } else {
+      mobileCont.text = rawContact.startsWith('+') ? rawContact.substring(1) : rawContact;
+      selectedCountryPicker = defaultCountry();
+    }
     countryId = appStore.countryId;
     stateId = appStore.stateId;
     cityId = appStore.cityId;
     addressCont.text = appStore.address;
     serviceAddressId = appStore.serviceAddressId;
     designationCont.text = appStore.designation;
-    selectedCountryPicker = Country(
-      phoneCode: appStore.userContactNumber.split("-").first.isEmpty
-          ? "+91"
-          : appStore.userContactNumber.split("-").first.toString(),
-      countryCode: "",
-      e164Sc: 0,
-      geographic: true,
-      level: 0,
-      name: "",
-      example: "",
-      displayName: "",
-      displayNameNoCountryCode: "",
-      e164Key: "",
-    );
     await _loadSpokenLanguageOptions();
     userDetailAPI();
 
@@ -537,7 +543,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     multiPartRequest.fields[UserKeys.userType] = getStringAsync(USER_TYPE);
     multiPartRequest.fields[UserKeys.contactNumber] = mobileCont.text.isEmpty
         ? ''
-        : selectedCountryPicker.phoneCode + "-" + mobileCont.text;
+        : "+${selectedCountryPicker.phoneCode}-${mobileCont.text}";
     multiPartRequest.fields[UserKeys.email] = emailCont.text;
     multiPartRequest.fields[CommonKeys.countryId] = countryId.toString();
     multiPartRequest.fields[CommonKeys.stateId] = stateId.toString();

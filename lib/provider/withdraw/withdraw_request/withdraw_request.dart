@@ -211,12 +211,16 @@ class _WithdrawRequestState extends State<WithdrawRequest> {
                     controller: amount,
                     focus: amountFocus,
                     nextFocus: chooseBankFocus,
-                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
                     decoration: inputDecoration(
                       context,
                       hint: languages.eg3000,
                       fillColor: context.cardColor,
                     ),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                      FilteringTextInputFormatter.deny(RegExp(r'-')),
+                    ],
+                    keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
                     isValidationRequired: true,
                     validator: (value) {
                       if (value?.trim().isEmpty ?? true) {

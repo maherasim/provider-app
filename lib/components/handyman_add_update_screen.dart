@@ -170,8 +170,10 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
       lNameCont.text = widget.data!.lastName.validate();
       emailCont.text = widget.data!.email.validate();
       userNameCont.text = widget.data!.username.validate();
-      mobileCont.text =
-          widget.data!.contactNumber?.split("-").last.validate() ?? "";
+      final rawCN = widget.data!.contactNumber ?? '';
+      mobileCont.text = rawCN.contains('-')
+          ? rawCN.split('-').sublist(1).join('-')
+          : (rawCN.startsWith('+') ? rawCN.substring(1) : rawCN);
       serviceAddressId = widget.data!.serviceAddressId.validate();
       commissionId = widget.data!.handymanCommissionId.validate();
       designationCont.text = widget.data!.designation.validate();
@@ -253,7 +255,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
       if (widget.data!.contactNumber != null &&
           widget.data!.contactNumber!.contains("-")) {
         phoneCodeFromContact =
-            widget.data!.contactNumber!.split("-").first.trim();
+            widget.data!.contactNumber!.split("-").first.trim().replaceFirst('+', '');
       }
 
       selectedCountry = Country(
@@ -680,7 +682,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
     if (phoneCode.isEmpty && isUpdate && widget.data != null) {
       String? originalContact = widget.data!.contactNumber;
       if (originalContact != null && originalContact.contains('-')) {
-        phoneCode = originalContact.split('-').first.trim();
+        phoneCode = originalContact.split('-').first.trim().replaceFirst('+', '');
       }
     }
 
@@ -697,8 +699,8 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
       throw Exception('Phone number cannot be empty');
     }
 
-    // Return in format: phoneCode-phoneNumber
-    return '$phoneCode-$phoneNumber';
+    // Return in format: +phoneCode-phoneNumber
+    return '+$phoneCode-$phoneNumber';
   }
 
   /// Register the Handyman

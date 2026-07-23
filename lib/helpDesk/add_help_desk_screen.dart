@@ -163,7 +163,7 @@ class _AddHelpDeskScreenState extends State<AddHelpDeskScreen> {
                     borderRadius: radius(8),
                   ),
                   child: AppButton(
-                    margin: EdgeInsets.only(left: 16, bottom: 16, right: 16),
+                    margin: EdgeInsets.only(left: 16, bottom: 16 + MediaQuery.of(context).padding.bottom, right: 16),
                     text: languages.lblSubmit,
                     height: 40,
                     color: Colors.transparent,

@@ -36,6 +36,34 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
     });
   }
 
+  String _translatePaymentStatus(String? raw) {
+    switch ((raw ?? '').toLowerCase()) {
+      case 'paid':                return languages.paid;
+      case 'advanced_paid':
+      case 'advance_paid':       return languages.advancePaid;
+      case 'pending':            return languages.pending;
+      case 'cancelled':
+      case 'canceled':           return languages.cancelled;
+      case 'failed':             return languages.failed;
+      case 'rejected':           return languages.rejected;
+      case 'completed':          return languages.completed;
+      default:                   return raw ?? '-';
+    }
+  }
+
+  String _translatePaymentType(String? raw) {
+    switch ((raw ?? '').toLowerCase().replaceAll('_', '')) {
+      case 'banktransfer':
+      case 'bank':               return languages.lblBankTransfer;
+      case 'paypal':             return 'PayPal';
+      case 'stripe':             return 'Stripe';
+      case 'razorpay':           return 'Razorpay';
+      case 'cash':               return languages.cash;
+      case 'wallet':             return languages.lblWallet;
+      default:                   return raw ?? '-';
+    }
+  }
+
   Widget _buildHeaderCell(String text, double width) {
     return SizedBox(
       width: width,
@@ -122,7 +150,7 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                           : '${payment.customer?.firstName ?? ''} ${payment.customer?.lastName ?? ''}'.trim(),
                       130
                     ),
-                    _buildDataCell(payment.paymentType ?? '-', 110),
+                    _buildDataCell(_translatePaymentType(payment.paymentType), 110),
                     SizedBox(
                       width: 90,
                       child: Container(
@@ -135,7 +163,7 @@ class PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                           child: Container(
                             padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                             child: Text(
-                              payment.paymentStatus ?? '-',
+                              _translatePaymentStatus(payment.paymentStatus),
                               style: TextStyle(color: Colors.white, fontSize: 11),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,

@@ -2167,7 +2167,7 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
           Stack(
             children: [
               AnimatedScrollView(
-                padding: EdgeInsets.only(bottom: 120),
+                padding: EdgeInsets.only(bottom: 120 + MediaQuery.of(context).padding.bottom),
                 physics: AlwaysScrollableScrollPhysics(),
                 listAnimationType: ListAnimationType.FadeIn,
                 fadeInConfiguration: FadeInConfiguration(duration: 2.seconds),
@@ -2666,13 +2666,14 @@ class BookingDetailScreenState extends State<BookingDetailScreen> with WidgetsBi
               ),
               Positioned(
                 bottom: 0,
+                left: 0,
+                right: 0,
                 child: Container(
-                  width: context.width(),
                   decoration: BoxDecoration(color: context.cardColor),
-                  child: _action(res: res.data!),
                   padding: showBottomActionBar
-                      ? EdgeInsets.all(16)
-                      : EdgeInsets.zero,
+                      ? EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16 + MediaQuery.of(context).padding.bottom)
+                      : EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+                  child: _action(res: res.data!),
                 ),
               )
             ],

@@ -745,7 +745,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
               return Stack(
                 children: [
                   AnimatedScrollView(
-                    padding: EdgeInsets.only(bottom: 60),
+                    padding: EdgeInsets.only(bottom: 80 + MediaQuery.of(context).padding.bottom),
                     physics: AlwaysScrollableScrollPhysics(),
                     listAnimationType: ListAnimationType.FadeIn,
                     fadeInConfiguration: FadeInConfiguration(duration: 2.seconds),
@@ -786,7 +786,7 @@ class _JobPostDetailScreenState extends State<JobPostDetailScreen> {
                       }
                       
                       return Positioned(
-                    bottom: 16,
+                    bottom: 16 + MediaQuery.of(context).padding.bottom,
                     left: 16,
                     right: 16,
                     child: InkWell(

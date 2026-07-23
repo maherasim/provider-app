@@ -237,6 +237,10 @@ class LanguageDe extends Languages {
   @override
   String get lblAmount => 'Betrag';
   @override
+  String get amount => 'Betrag';
+  @override
+  String get dateAndTime => 'Datum & Uhrzeit';
+  @override
   String get hintAddService => 'Service hinzufügen';
 
   @override
@@ -2502,6 +2506,9 @@ class LanguageDe extends Languages {
   String get lblVatNumberHint => 'USt-IdNr.';
 
   @override
+  String get vatNumber => 'USt-IdNr.';
+
+  @override
   String get lblSelectAvailabilityHint => 'Verfügbarkeit auswählen';
 
   @override
@@ -2573,13 +2580,13 @@ class LanguageDe extends Languages {
   String get lblCareerSeniorManagement => 'Meister';
 
   @override
-  String get lblCareerDirector => 'Führungskraft';
+  String get lblCareerDirector => 'Direktor';
 
   @override
-  String get lblCareerTechnician => 'Führungskraft';
+  String get lblCareerTechnician => 'Techniker';
 
   @override
-  String get lblCareerLeader => 'Manager';
+  String get lblCareerLeader => 'Leiter';
 
   @override
   String get lblCareerManager => 'Manager';

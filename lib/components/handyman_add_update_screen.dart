@@ -1512,7 +1512,7 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                             textFieldType: TextFieldType.PHONE,
                             controller: mobileCont,
                             focus: mobileFocus,
-                            nextFocus: companyNameFocus,
+                            nextFocus: designationFocus,
                             enabled: true,
                             decoration: inputDecoration(
                               context,
@@ -1528,6 +1528,50 @@ class HandymanAddUpdateScreenState extends State<HandymanAddUpdateScreen> {
                           ),
                         ),
                       ],
+                    ),
+                    16.height,
+                    AppTextField(
+                      textFieldType: TextFieldType.NAME,
+                      controller: designationCont,
+                      isValidationRequired: false,
+                      enabled: true,
+                      focus: designationFocus,
+                      nextFocus: handymanCommissionFocus,
+                      decoration: inputDecoration(
+                        context,
+                        hint: languages.lblDesignation,
+                        fillColor: context.scaffoldBackgroundColor,
+                      ),
+                    ),
+                    16.height,
+                    Divider(),
+                    12.height,
+                    Text(languages.commission, style: boldTextStyle(size: 16)),
+                    12.height,
+                    _buildRequiredLabel(languages.lblHandymanCommissionHint),
+                    8.height,
+                    AppTextField(
+                      textFieldType: TextFieldType.PHONE,
+                      controller: handymanCommissionCont,
+                      focus: handymanCommissionFocus,
+                      nextFocus: companyNameFocus,
+                      enabled: true,
+                      isValidationRequired: true,
+                      decoration: inputDecoration(
+                        context,
+                        hint: languages.lblHandymanCommissionHint,
+                        fillColor: context.scaffoldBackgroundColor,
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty)
+                          return languages.hintRequired;
+                        double? commission = double.tryParse(value.trim());
+                        if (commission == null)
+                          return languages.lblEnterValidNumber;
+                        if (commission < 1 || commission > 99)
+                          return languages.commissionRange;
+                        return null;
+                      },
                     ),
                     16.height,
                     Divider(),

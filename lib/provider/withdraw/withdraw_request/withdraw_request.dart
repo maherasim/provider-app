@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:handyman_provider_flutter/main.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
@@ -202,11 +203,17 @@ class _WithdrawRequestState extends State<WithdrawRequest> {
                       hint: languages.eg3000,
                       fillColor: context.cardColor,
                     ),
+                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
                     isValidationRequired: true,
                     validator: (value) {
-                      if (value?.isEmpty ?? false) {
+                      if (value == null || value.trim().isEmpty) {
                         return errorThisFieldRequired;
-                      } else if (num.parse(value.toString()) > num.parse(widget.availableBalance.toString())) {
+                      }
+                      final parsed = num.tryParse(value.trim());
+                      if (parsed == null || parsed <= 0) {
+                        return languages.lblEnterValidNumber;
+                      }
+                      if (parsed > widget.availableBalance) {
                         return "${languages.pleaseAddLessThanOrEqualTo} ${widget.availableBalance.validate().toPriceFormat()}";
                       }
                       return null;

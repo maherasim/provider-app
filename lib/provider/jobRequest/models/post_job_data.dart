@@ -7,6 +7,14 @@ import 'package:handyman_provider_flutter/utils/colors.dart';
 
 import '../../../models/service_model.dart';
 
+int? _toInt(dynamic v) {
+  if (v == null) return null;
+  if (v is int) return v;
+  if (v is double) return v.toInt();
+  if (v is String) return int.tryParse(v);
+  return null;
+}
+
 class PostJobData {
 
   String? reason;
@@ -136,7 +144,7 @@ class PostJobData {
   });
 
   factory PostJobData.fromJson(Map<String, dynamic> json) => PostJobData(
-    id: json["id"],
+    id: _toInt(json["id"]),
     title: json["title"],
     description: json["description"],
     reason: json["reason"],
@@ -147,11 +155,11 @@ class PostJobData {
     canBid: json["can_bid"],
     service: json["service"] == null ? [] : List<ServiceData>.from(json["service"]!.map((x) => ServiceData.fromJson(x))),
     createdAt: json["created_at"],
-    categoryId: json["category_id"],
-    subCategoryId: json["sub_category_id"],
-    countryId: json["country_id"],
-    stateId: json["state_id"],
-    cityId: json["city_id"],
+    categoryId: _toInt(json["category_id"]),
+    subCategoryId: _toInt(json["sub_category_id"]),
+    countryId: _toInt(json["country_id"]),
+    stateId: _toInt(json["state_id"]),
+    cityId: _toInt(json["city_id"]),
     startDate: json["start_date"],
     endDate: json["end_date"],
     totalDays: json["total_days"],
@@ -210,7 +218,7 @@ class PostJobData {
     images: json["images"] == null ? [] : List<String>.from(json["images"]!.map((x) => x)),
     totalViews: json["total_views"],
     jobPrice: json["job_price"],
-    acceptedBidId: json["accepted_bid_id"]??json["cancel_bid_id"],
+    acceptedBidId: _toInt(json["accepted_bid_id"] ?? json["cancel_bid_id"]),
     advancePercent: json["advance_percent"],
     remainingPercent: json["remaining_percent"],
     proposalsCount: json["proposals_count"],
@@ -511,12 +519,12 @@ class Category {
   });
 
   factory Category.fromJson(Map<String, dynamic> json) => Category(
-    id: json["id"],
+    id: _toInt(json["id"]),
     name: json["name"],
     description: json["description"],
     color: json["color"],
-    status: json["status"],
-    isFeatured: json["is_featured"],
+    status: _toInt(json["status"]),
+    isFeatured: _toInt(json["is_featured"]),
     deletedAt: json["deleted_at"],
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),

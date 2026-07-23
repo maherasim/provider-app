@@ -87,14 +87,14 @@ Future<void> logout(BuildContext context) async {
   showInDialog(
     context,
     contentPadding: EdgeInsets.zero,
-    builder: (_) {
+    builder: (dialogContext) {
       return Stack(
         alignment: Alignment.center,
         children: [
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset(logout_logo, width: context.width(), fit: BoxFit.cover),
+              Image.asset(logout_logo, width: dialogContext.width(), fit: BoxFit.cover),
               32.height,
               Text(languages.lblDeleteTitle, style: boldTextStyle(size: 18)),
               16.height,
@@ -107,7 +107,7 @@ Future<void> logout(BuildContext context) async {
                     color: appStore.isDarkMode ? context.scaffoldBackgroundColor : context.cardColor,
                     elevation: 0,
                     onTap: () {
-                      finish(context);
+                      finish(dialogContext);
                     },
                   ).expand(),
                   16.width,
@@ -137,7 +137,7 @@ Future<void> logout(BuildContext context) async {
 
                           appStore.setLoading(false);
 
-                          SignInScreen().launch(context, isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+                          SignInScreen().launch(dialogContext, isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
                         } else {
                           toast(errorInternetNotAvailable);
                         }
@@ -157,7 +157,10 @@ Future<void> logout(BuildContext context) async {
 
 Future<void> clearPreferences() async {
   await setValue(LAST_APP_CONFIGURATION_SYNCED_TIME, 0);
-  unsubscribeFirebaseTopic(appStore.userId);
+  unsubscribeFirebaseTopic(appStore.userId).catchError((e) {
+    log('unsubscribeFirebaseTopic error: $e');
+    return false;
+  });
 
   cachedProviderDashboardResponse = null;
   cachedHandymanDashboardResponse = null;

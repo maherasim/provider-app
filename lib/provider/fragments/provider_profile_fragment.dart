@@ -810,7 +810,6 @@ class ProviderProfileFragmentState extends State<ProviderProfileFragment> {
                 child: InkWell(
                   borderRadius: radius(16),
                   onTap: () {
-                    appStore.setLoading(false);
                     logout(context);
                   },
                   child: Padding(

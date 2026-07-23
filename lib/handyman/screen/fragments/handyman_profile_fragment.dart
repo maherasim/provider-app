@@ -533,7 +533,6 @@ class _HandymanProfileFragmentState extends State<HandymanProfileFragment> {
                   child: InkWell(
                     borderRadius: radius(16),
                     onTap: () {
-                      appStore.setLoading(false);
                       logout(context);
                     },
                     child: Padding(

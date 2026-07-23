@@ -50,8 +50,12 @@ class InAppPurchaseService {
 
   Future<void> loginToRevenueCate() async {
     try {
-      await Purchases.logIn(appStore.userEmail.trim());
-      log('In App Purchase User Login Successful');
+      if (await Purchases.isConfigured) {
+        await Purchases.logIn(appStore.userEmail.trim());
+        log('In App Purchase User Login Successful');
+      } else {
+        log('In App Purchase User Login Skipped: Purchases not configured');
+      }
       setValue(HAS_IN_REVENUE_CAT_LOGIN_DONE_LEASE_ONCE, true);
     } catch (e) {
       log('In App Purchase User Login Failed: ${e.toString()}');
@@ -61,8 +65,12 @@ class InAppPurchaseService {
 
   Future<void> logoutToRevenueCate() async {
     try {
-      await Purchases.logOut();
-      log('In App Purchase User Logout Successful');
+      if (await Purchases.isConfigured) {
+        await Purchases.logOut();
+        log('In App Purchase User Logout Successful');
+      } else {
+        log('In App Purchase User Logout Skipped: Purchases not configured');
+      }
       setValue(HAS_IN_REVENUE_CAT_LOGIN_DONE_LEASE_ONCE, false);
     } catch (e) {
       log('In App Purchase User Logout Failed: ${e.toString()}');

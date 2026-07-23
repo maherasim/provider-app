@@ -246,6 +246,24 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     return value.toString();
   }
 
+  String _stripHtml(String raw) {
+    return raw
+        .replaceAll(RegExp(r'<[^>]*>'), '')
+        .replaceAll('&auml;', 'ä')
+        .replaceAll('&uuml;', 'ü')
+        .replaceAll('&ouml;', 'ö')
+        .replaceAll('&Auml;', 'Ä')
+        .replaceAll('&Uuml;', 'Ü')
+        .replaceAll('&Ouml;', 'Ö')
+        .replaceAll('&szlig;', 'ß')
+        .replaceAll('&amp;', '&')
+        .replaceAll('&lt;', '<')
+        .replaceAll('&gt;', '>')
+        .replaceAll('&nbsp;', ' ')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
+  }
+
   Future<void> userDetailAPI() async {
     await getUserDetail(appStore.userId).then((value) async {
       isEmailVerified = value.data!.isEmailVerified.validate().getBoolInt();
@@ -293,7 +311,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       }
 
       // Load experience, mobility, certification as strings
-      experienceCont.text = _safeStringFromValue(value.data!.experience);
+      experienceCont.text = _stripHtml(_safeStringFromValue(value.data!.experience));
       mobilityCont.text = _safeStringFromValue(value.data!.mobility);
       certificationCont.text = _safeStringFromValue(value.data!.certification);
 
@@ -353,12 +371,12 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
       profileAccountStatus = value.data!.status == 0 ? 0 : 1;
 
-      aboutMeCont.text = value.data!.aboutMe.validate();
+      aboutMeCont.text = _stripHtml(value.data!.aboutMe.validate());
       if (aboutMeCont.text.isEmpty) {
-        aboutMeCont.text = value.data!.description.validate();
+        aboutMeCont.text = _stripHtml(value.data!.description.validate());
       }
       aboutDescriptionCont.text = value.data!.aboutDescription.validate();
-      addressCont.text = value.data!.address.validate();
+      addressCont.text = _stripHtml(value.data!.address.validate());
 
       taxCountryId = value.data!.taxCountryId ?? countryId;
       if (countryList.isNotEmpty && taxCountryId > 0) {

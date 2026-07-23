@@ -203,7 +203,11 @@ class _WithdrawRequestState extends State<WithdrawRequest> {
                       hint: languages.eg3000,
                       fillColor: context.cardColor,
                     ),
-                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                      FilteringTextInputFormatter.deny(RegExp(r'-')),
+                    ],
+                    keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
                     isValidationRequired: true,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {

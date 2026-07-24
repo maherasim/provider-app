@@ -5,7 +5,7 @@ class LanguageDe extends Languages {
   String planAboutToExpire(int days) => 'Ihr Plan läuft in $days Tagen ab';
   @override
   String get appName => 'Auftragnehmer';
-
+ 
   @override
   String get provider => 'Agentur';
 
@@ -28,10 +28,10 @@ class LanguageDe extends Languages {
   String get signUp => 'Kostenlos Registrieren';
 
   @override
-  String get hintFirstNameTxt => 'Bitte Vorname eingeben';
+  String get hintFirstNameTxt => 'Vorname';
 
   @override
-  String get hintLastNameTxt => 'Bitte Nachname eingeben';
+  String get hintLastNameTxt => 'Benutzername';
 
   @override
   String get hintContactNumberTxt => 'Bitte Tel. Nr. eingeben';
@@ -40,7 +40,7 @@ class LanguageDe extends Languages {
   String get hintEmailAddressTxt => 'Bitte E-Mail-Adresse eingeben';
 
   @override
-  String get hintUserNameTxt => 'Bitte Benutzername eingeben';
+  String get hintUserNameTxt => 'Vollständiger Vor- und Nachname';
 
   @override
   String get hintReenterPasswordTxt => 'Bitte Passwort erneut eingeben';
@@ -236,7 +236,7 @@ class LanguageDe extends Languages {
 
   @override
   String get lblAmount => 'Betrag';
-    @override
+      @override
   String get amount => 'Betrag';
   @override
   String get dateAndTime => 'Datum & Uhrzeit';
@@ -706,7 +706,7 @@ class LanguageDe extends Languages {
   String get lblFailed => 'Bitte nennen Sie den Grund für den Fehlschlag';
 
   @override
-  String get lblDesignation => 'Bezeichnung';
+  String get lblDesignation => 'Beruf';
 
   @override
   String get lblHandymanIsOffline => 'Fachkraft ist offline';
@@ -2402,7 +2402,7 @@ class LanguageDe extends Languages {
   String get advancePercentageShouldBeBetween => 'Der Anzahlungsprozentsatz muss zwischen 1 und 99 liegen';
 
   @override
-  String get advancePercentage => 'Anzahlungsprozentsatz';
+  String get advancePercentage => 'Anzahlung in';
 
   @override
   String get remainingPercentage => 'Restlicher Prozentsatz';
@@ -2506,7 +2506,6 @@ class LanguageDe extends Languages {
   String get lblVatNumberHint => 'USt-IdNr.';
   @override
   String get vatNumber => 'USt-IdNr.';
-
   @override
   String get lblSelectAvailabilityHint => 'Verfügbarkeit auswählen';
 

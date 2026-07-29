@@ -279,8 +279,14 @@ class _JobRequestDetailsScreenState extends State<JobRequestDetailsScreen> {
             ],
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: labels.map((e) => Text(e, style: secondaryTextStyle(size: 12))).toList(),
+            children: [
+              for (int i = 0; i < labels.length; i++) ...[
+                if (i > 0) 8.width,
+                Expanded(
+                  child: Text(labels[i], style: secondaryTextStyle(size: 12), overflow: TextOverflow.ellipsis, textAlign: TextAlign.center),
+                ),
+              ],
+            ],
           ),
         ],
       );

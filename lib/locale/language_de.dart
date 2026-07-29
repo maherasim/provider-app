@@ -2560,19 +2560,19 @@ class LanguageDe extends Languages {
   @override
   String get lblCareerNotSpecified => 'Nicht angegeben';
   @override
-  String get lblCareerEntryLevel => 'Einsteiger';
+  String get lblCareerEntryLevel => 'Berufseinsteiger';
   @override
   String get lblCareerIntermediateLevel => 'Werkstudent';
   @override
-  String get lblCareerExperienced => 'Mit Berufserfahrung';
+  String get lblCareerExperienced => 'Minijobber';
   @override
-  String get lblCareerProfessional => 'Fachkraft';
+  String get lblCareerProfessional => 'Mit Berufserfahrung';
   @override
-  String get lblCareerMiddleManagement => 'Spezialist';
+  String get lblCareerMiddleManagement => 'Fachkraft';
   @override
-  String get lblCareerExecutiveManagement => 'Führungskraft';
+  String get lblCareerExecutiveManagement => 'Spezialist';
   @override
-  String get lblCareerSeniorManagement => 'Senior Management';
+  String get lblCareerSeniorManagement => 'Führungskraft';
   @override
   String get lblCareerDirector => 'Meister';
   @override

@@ -28,8 +28,8 @@ android {
         applicationId = "de.persotel.pro"
         minSdk = flutter.minSdkVersion
         targetSdk = 36
-        versionCode = 92
-        versionName = "11.13.0"
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
         ndk {
             debugSymbolLevel = "none"
         }

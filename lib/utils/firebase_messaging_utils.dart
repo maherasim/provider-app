@@ -254,17 +254,21 @@ Future<bool> subscribeToFirebaseTopic() async {
 
 Future<bool> unsubscribeFirebaseTopic(int userId) async {
   bool result = appStore.isSubscribedForPushNotification;
-  await FirebaseMessaging.instance.unsubscribeFromTopic('user_$userId').then((_) {
-    result = false;
-    log("topic-----unsubscribed----> user_$userId");
-  });
-  final topicTag = isUserTypeHandyman ? HANDYMAN_APP_TAG : PROVIDER_APP_TAG;
-  await FirebaseMessaging.instance.unsubscribeFromTopic(topicTag).then((_) {
-    result = false;
-    log('topic-----unsubscribed---->------> $topicTag');
-  });
+  try {
+    await FirebaseMessaging.instance.unsubscribeFromTopic('user_$userId').then((_) {
+      result = false;
+      log("topic-----unsubscribed----> user_$userId");
+    });
+    final topicTag = isUserTypeHandyman ? HANDYMAN_APP_TAG : PROVIDER_APP_TAG;
+    await FirebaseMessaging.instance.unsubscribeFromTopic(topicTag).then((_) {
+      result = false;
+      log('topic-----unsubscribed---->------> $topicTag');
+    });
 
-  await appStore.setPushNotificationSubscriptionStatus(result);
+    await appStore.setPushNotificationSubscriptionStatus(result);
+  } catch (e) {
+    log('Error unsubscribing from topics: $e');
+  }
   return result;
 }
 

@@ -137,7 +137,9 @@ Future<void> logout(BuildContext context) async {
 
                           appStore.setLoading(false);
 
-                          SignInScreen().launch(context, isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+                          if (context.mounted) {
+                            SignInScreen().launch(context, isNewTask: true, pageRouteAnimation: PageRouteAnimation.Fade);
+                          }
                         } else {
                           toast(errorInternetNotAvailable);
                         }

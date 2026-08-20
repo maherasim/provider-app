@@ -61,8 +61,10 @@ class InAppPurchaseService {
 
   Future<void> logoutToRevenueCate() async {
     try {
-      await Purchases.logOut();
-      log('In App Purchase User Logout Successful');
+      if (await Purchases.isConfigured) {
+        await Purchases.logOut();
+        log('In App Purchase User Logout Successful');
+      }
       setValue(HAS_IN_REVENUE_CAT_LOGIN_DONE_LEASE_ONCE, false);
     } catch (e) {
       log('In App Purchase User Logout Failed: ${e.toString()}');
